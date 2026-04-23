@@ -35,7 +35,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
    * after scene view-target cameras are turned off in `game.ts`).
    */
   @ENGINE.property({ type: 'number', min: 5, max: 80, step: 1, category: 'Camera' })
-  public cameraDistance: number = 35;
+  public cameraDistance: number = 35 * 1.15;
 
   public override initialize(options?: IsometricPlayerPawnOptions): void {
     if (options?.cameraDistance != null) {
