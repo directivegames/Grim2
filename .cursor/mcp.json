@@ -1,0 +1,20 @@
+{
+  "mcpServers": {},
+  "DISABLED_mcpServers": {
+    "genesys": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "./scripts/genesys/genesys-mcp.ts",
+        "cursor"
+      ]
+    },
+    "genesys-docs": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "./scripts/genesys/doc-server.ts"
+      ]
+    }
+  }
+}

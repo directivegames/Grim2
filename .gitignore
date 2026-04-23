@@ -1,0 +1,29 @@
+# GENESYS-SDK-BEGIN
+# The following section is managed by the Genesys SDK.
+# It will be updated when you update the SDK.
+# Add your custom ignore patterns AFTER this section (below GENESYS-SDK-END).
+
+**/.dist/**
+**/node_modules/**
+**/.engine/**
+**/**dist/**
+**/**editor/**
+**/.DS_Store
+**/*.tgz
+**/*.mcp-port
+**/.placeholder
+# Ignore all of .genesys except the sdk/ folder (SDK base files)
+**/.genesys/*
+!.genesys/sdk/
+!.genesys/sdk/**
+**/logs/**
+**/.turbo/**
+**/.cache/**
+
+# GENESYS-SDK-END
+
+# ============================================
+# Add your custom gitignore patterns below
+# These will be preserved during SDK updates
+# ============================================
+

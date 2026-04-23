@@ -1,0 +1,3 @@
+- Change the camera to THREE.OrthographicCamera
+- Enable camera absolute transform (see `SKILL_DIR/references/threejs-extension.md`)
+- Manually update the camera position/angle in the tick so it follows the player

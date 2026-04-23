@@ -1,0 +1,14 @@
+# GENESYS-SDK-BEGIN
+# The following section is managed by the Genesys SDK.
+# It will be updated when you update the SDK.
+# Add your custom ignore patterns AFTER this section (below GENESYS-SDK-END).
+
+!**/.engine/**
+**/.engine/docs/**
+
+# GENESYS-SDK-END
+
+# ============================================
+# Add your custom cursorignore patterns below
+# These will be preserved during SDK updates
+# ============================================

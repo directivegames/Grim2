@@ -1,0 +1,121 @@
+{
+  "$version": 2,
+  "$root": {
+    "$uuid": "f27223c73249cb51",
+    "actors": {
+      "1": {
+        "rootComponent": {
+          "children": [
+            {
+              "$ref": 1
+            }
+          ],
+          "uuid": "249cb5131461049b",
+          "position": {
+            "_": [
+              10,
+              50,
+              -10
+            ],
+            "$bc": "v3"
+          },
+          "castShadow": true,
+          "light": {
+            "$ref": 1
+          },
+          "$bc": "ENGINE.DirectionalLightComponent"
+        },
+        "uuid": "49cb5131461049bd",
+        "name": "Directional Light",
+        "$bc": "ENGINE.Actor"
+      },
+      "2": {
+        "rootComponent": {
+          "children": {
+            "$length": 1
+          },
+          "uuid": "9cb5131461049bd3",
+          "position": {
+            "_": [
+              0,
+              -0.9,
+              0
+            ],
+            "$bc": "v3"
+          },
+          "receiveShadow": true,
+          "uvScaleTilesPerUnit": 0.2,
+          "geometry": {
+            "_": [
+              500,
+              0.1,
+              500
+            ],
+            "$bc": "THREE.BoxGeometry"
+          },
+          "material": {
+            "name": "DefaultMaterial",
+            "$bc": "$global"
+          },
+          "$bc": "ENGINE.MeshComponent"
+        },
+        "uuid": "cb5131461049bd36",
+        "name": "Ground",
+        "$bc": "ENGINE.Actor"
+      },
+      "3": {
+        "rootComponent": {
+          "uuid": "b5131461049bd365",
+          "position": {
+            "_": [
+              0,
+              0.9,
+              0
+            ],
+            "$bc": "v3"
+          },
+          "$bc": "ENGINE.SceneComponent"
+        },
+        "uuid": "5131461049bd365a",
+        "name": "Player Start",
+        "$bc": "ENGINE.PlayerStart"
+      },
+      "4": {
+        "rootComponent": {
+          "uuid": "131461049bd365ad",
+          "textureUrl": "@engine/assets/textures/skybox/citrus_orchard_road_puresky_2k.hdr",
+          "$bc": "ENGINE.SkyboxComponent"
+        },
+        "uuid": "31461049bd365add",
+        "name": "Skybox",
+        "$bc": "ENGINE.Actor"
+      },
+      "$length": 5
+    },
+    "resources": null,
+    "editorData": {},
+    "postProcessConfiguration": null,
+    "settings": {},
+    "gameModeClass": null,
+    "$bc": "ENGINE.World"
+  },
+  "$objects": [
+    {
+      "$id": 1,
+      "$value": {
+        "_": [
+          {
+            "_": [
+              1,
+              1,
+              1
+            ],
+            "$bc": "c"
+          },
+          1
+        ]
+      },
+      "$bc": "THREE.DirectionalLight"
+    }
+  ]
+}

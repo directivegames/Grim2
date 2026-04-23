@@ -1,0 +1,9 @@
+{
+  "extends": "./.genesys/sdk/tsconfig.json",
+  "compilerOptions": {
+    // Add your custom TypeScript compiler options here
+    // These will override or extend the SDK base configuration
+  }
+  // Note: 'include' and 'exclude' are inherited from the base config.
+  // If you need to override them, add them here (they completely replace the base, not merge).
+}
