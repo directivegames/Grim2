@@ -3,8 +3,95 @@
 
 import { registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
+import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
+import { IsometricMovementComponent } from './components/movement/IsometricMovementComponent.js';
 
 export function registerMetadata(): void {
+  registerGeneratedPropertyMetadata(IsometricPlayerPawn, {
+      "cameraDistance": {
+        "type": "number",
+        "min": 5,
+        "max": 80,
+        "step": 1,
+        "category": "Camera"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(IsometricMovementComponent, {
+      "lookRightSpeed": {
+        "type": "number",
+        "hidden": true
+      },
+      "lookUpSpeed": {
+        "type": "number",
+        "hidden": true
+      },
+      "jumpSpeed": {
+        "type": "number",
+        "hidden": true
+      },
+      "maxMidAirJumps": {
+        "type": "number",
+        "hidden": true
+      },
+      "midAirAccelerationLambda": {
+        "type": "number",
+        "hidden": true
+      },
+      "midAirDecelerationLambda": {
+        "type": "number",
+        "hidden": true
+      },
+      "jumpStrengthModifier": {
+        "type": "number",
+        "hidden": true
+      },
+      "characterControllerOptions": {
+        "type": "object",
+        "fields": {
+          "offset": {
+            "type": "number"
+          },
+          "simulatedGravityScale": {
+            "type": "number"
+          },
+          "applyImpulsesToDynamicBodies": {
+            "type": "boolean"
+          },
+          "characterMass": {
+            "type": "number"
+          },
+          "slideEnabled": {
+            "type": "boolean"
+          },
+          "maxSlopeClimbAngle": {
+            "type": "number"
+          },
+          "minSlopeSlideAngle": {
+            "type": "number"
+          },
+          "snapToGroundDistance": {
+            "type": "number"
+          },
+          "autoStepConfig": {
+            "type": "object",
+            "fields": {
+              "maxHeight": {
+                "type": "number"
+              },
+              "minWidth": {
+                "type": "number"
+              },
+              "includeDynamicBodies": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "hidden": true
+      }
+    });
+
 }
 
 // Deferred to avoid circular reference issues during module initialization

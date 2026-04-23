@@ -1,0 +1,17 @@
+{
+  "$version": 2,
+  "$root": {
+    "uuid": "4e505642-bbc5-48ab-b121-eda13b7bc794",
+    "name": "Grass",
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "map": {
+      "$uuid": "8c42016b-d684-4af4-88cb-f24d02d0285a",
+      "url": "@project/assets/textures/Grass texture.png",
+      "$bc": "ENGINE.UrlTexture"
+    },
+    "flatShading": true,
+    "$bc": "THREE.MeshStandardMaterial"
+  }
+}

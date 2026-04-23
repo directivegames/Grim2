@@ -1,0 +1,17 @@
+{
+  "$version": 2,
+  "$root": {
+    "uuid": "4ee7e35d-0fb1-42a5-bf27-e347d2116947",
+    "name": "Road",
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "map": {
+      "$uuid": "13529e4c-52f5-4f3c-b596-c6d6523250c2",
+      "url": "@project/assets/textures/road.png",
+      "$bc": "ENGINE.UrlTexture"
+    },
+    "flatShading": true,
+    "$bc": "THREE.MeshStandardMaterial"
+  }
+}

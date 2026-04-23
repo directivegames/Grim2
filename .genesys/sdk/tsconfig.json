@@ -25,7 +25,9 @@
     "experimentalDecorators": true,
     "noImplicitOverride": true,
     "noEmit": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "../../src/**/*",
