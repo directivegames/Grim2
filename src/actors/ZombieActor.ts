@@ -28,26 +28,51 @@ const CAPSULE_HEIGHT = 1.75;
 /** Chase / follow stop: ~player + zombie capsule radii so kinematic bodies don’t shove the player. */
 const ZOMBIE_FOLLOW_HOLD_DISTANCE = 0.82;
 
+/**
+ * Extra distance beyond `attackRange` for leaving the “attack” BT branch and for
+ * `IsPlayerNear` / melee checks. Stops attack↔chase thrashing (path clears / BT resets)
+ * when distance jitters at the boundary.
+ */
+const ATTACK_ZONE_HYSTERESIS_MARGIN = 0.38;
+
 /** How long (seconds) to hold the hit-reaction anim before locomotion takes back over. */
 const HIT_REACTION_HOLD_SEC = 0.95;
 
-// ─── Collision profile (zombies ignore each other) ────────────────────────────
+// ─── Collision profile (horde: zombies never block each other) ───────────────
+// All zombies use object channel `Pawn` with `Pawn → Ignore` so capsule-vs-capsule
+// does not depenetrate / shove. Patch existing profile too (hot reload / old data).
+
+type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
+
+function patchZombieNpcResponses(profile: ENGINE.CollisionProfile): void {
+  const responses = (profile as unknown as { responses: MutableProfileResponses }).responses;
+  const set = (channel: ENGINE.CollisionChannel, response: ENGINE.CollisionResponse): void => {
+    const ch = channel as unknown as string;
+    const i = responses.findIndex(r => r.channel === ch);
+    if (i >= 0) responses[i] = { channel: ch, response };
+    else responses.push({ channel: ch, response });
+  };
+  // Ground / props — keep solid
+  set(ENGINE.CollisionChannel.WorldStatic, ENGINE.CollisionResponse.Block);
+  set(ENGINE.CollisionChannel.WorldDynamic, ENGINE.CollisionResponse.Block);
+  // Horde: no pawn-vs-pawn blocking (zombie–zombie; same channel as player Character “ignore pawn”)
+  set(ENGINE.CollisionChannel.Pawn, ENGINE.CollisionResponse.Ignore);
+}
 
 function ensureZombieNpcCollisionProfile(): void {
   const cfg = ENGINE.CollisionConfig.getInstance();
-  if (cfg.getProfile(ZOMBIE_NPC_PROFILE)) {
+  const existing = cfg.getProfile(ZOMBIE_NPC_PROFILE);
+  if (existing) {
+    patchZombieNpcResponses(existing);
     return;
   }
   const profile = new ENGINE.CollisionProfile(
     ZOMBIE_NPC_PROFILE,
     ENGINE.CollisionMode.QueryAndPhysics,
     ENGINE.CollisionChannel.Pawn,
-    [
-      { channel: ENGINE.CollisionChannel.WorldStatic, response: ENGINE.CollisionResponse.Block },
-      { channel: ENGINE.CollisionChannel.WorldDynamic, response: ENGINE.CollisionResponse.Block },
-      { channel: ENGINE.CollisionChannel.Pawn, response: ENGINE.CollisionResponse.Ignore },
-    ]
+    []
   );
+  patchZombieNpcResponses(profile);
   (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
 }
 
@@ -120,6 +145,8 @@ export class ZombieActor extends ENGINE.Actor {
   private _deathSequenceStarted = false;
   private _btBusy = false;
   private _btBranch: 'wander' | 'chase' | 'attack' = 'wander';
+  /** True while player is inside the attack band (with hysteresis on exit). */
+  private _attackZoneLatched = false;
   private _hitAnimEndTime = -Infinity;
   private _lastTrackedHealth = 0;
 
@@ -181,6 +208,12 @@ export class ZombieActor extends ENGINE.Actor {
       stopDistance: ZOMBIE_FOLLOW_HOLD_DISTANCE,
       movementSpeed: this.moveSpeed,
       useNavigationServer: true,
+      // Softer CC than player defaults: less vertical snap on seams; no impulse shove from dynamic props.
+      characterControllerOptions: {
+        ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
+        simulatedGravityScale: 1.5,
+        applyImpulsesToDynamicBodies: false,
+      },
     });
 
     root.add(visual);
@@ -234,6 +267,15 @@ export class ZombieActor extends ENGINE.Actor {
       }
     } else if (this._hasAggro && this.blackboard) {
       this.blackboard.setValue('HasAggro', true);
+    }
+
+    // Attack-zone hysteresis: enter at attackRange, leave only past attackRange + margin.
+    const distForLatch = this.blackboard?.getValue<number>('DistanceToPlayer');
+    if (distForLatch !== undefined) {
+      if (distForLatch <= this.attackRange) this._attackZoneLatched = true;
+      else if (distForLatch > this.attackRange + ATTACK_ZONE_HYSTERESIS_MARGIN) {
+        this._attackZoneLatched = false;
+      }
     }
 
     void this.tickBehaviorTreeAsync(deltaTime);
@@ -297,12 +339,13 @@ export class ZombieActor extends ENGINE.Actor {
   }
 
   private buildBehaviorTree(): void {
+    const engage = this.attackRange + ATTACK_ZONE_HYSTERESIS_MARGIN;
     const attackSequence = new ENGINE.SequenceNode({
       name: 'AttackBranch',
-      conditions: [new ENGINE.IsPlayerNearCondition({ range: this.attackRange })],
+      conditions: [new ENGINE.IsPlayerNearCondition({ range: engage })],
       children: [
         new ENGINE.MeleeAttackAction({
-          attackRange: this.attackRange,
+          attackRange: engage,
           damage: this.attackDamage,
           attackCooldown: this.attackCooldown,
           attackDuration: 0.45,
@@ -337,9 +380,8 @@ export class ZombieActor extends ENGINE.Actor {
   private async tickBehaviorTreeAsync(deltaTime: number): Promise<void> {
     if (!this.behaviorRoot || !this.blackboard || this._btBusy) return;
 
-    const dist = this.blackboard.getValue<number>('DistanceToPlayer') ?? Infinity;
     let desired: 'wander' | 'chase' | 'attack';
-    if (dist <= this.attackRange) desired = 'attack';
+    if (this._attackZoneLatched) desired = 'attack';
     else if (this._hasAggro) desired = 'chase';
     else desired = 'wander';
 
@@ -356,8 +398,7 @@ export class ZombieActor extends ENGINE.Actor {
         this.behaviorRoot.reset();
         // Do not force `wander` after a finished attack — that caused a full-tree reset
         // every tick while still in range and broke repeat melee. Match real priority.
-        const d = this.blackboard.getValue<number>('DistanceToPlayer') ?? Infinity;
-        if (d <= this.attackRange) this._btBranch = 'attack';
+        if (this._attackZoneLatched) this._btBranch = 'attack';
         else if (this._hasAggro) this._btBranch = 'chase';
         else this._btBranch = 'wander';
       }
@@ -388,8 +429,9 @@ export class ZombieActor extends ENGINE.Actor {
       return;
     }
 
+    const engage = this.attackRange + ATTACK_ZONE_HYSTERESIS_MARGIN;
     let state: 'idle' | 'walk' | 'attack';
-    if (dist <= this.attackRange) {
+    if (dist <= engage) {
       state = 'attack';
     } else if (this._hasAggro || dist <= this.aggroRadius) {
       state = 'walk';
