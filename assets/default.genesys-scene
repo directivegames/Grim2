@@ -70,6 +70,7 @@
             "collisionMeshType": "boundingBox"
           },
           "modelUrl": "@project/assets/models/Halloween game.glb",
+          "excludeFromNavigation": true,
           "uuid": "dbd34f25-9fa5-43bc-aeef-19503cc09ab3",
           "name": "GLTFMeshComponent",
           "position": {
@@ -206,6 +207,7 @@
             "collisionMeshType": "boundingBox"
           },
           "modelUrl": "@project/assets/models/Double house.glb",
+          "excludeFromNavigation": true,
           "uuid": "43ac1f15-20ee-4b1c-9978-c4d900987ebd",
           "name": "GLTFMeshComponent",
           "position": {
@@ -298,6 +300,7 @@
             "collisionMeshType": "boundingBox"
           },
           "modelUrl": "@project/assets/models/Double house.glb",
+          "excludeFromNavigation": true,
           "uuid": "f56c3b5fdf39a58f",
           "name": "GLTFMeshComponent",
           "position": {
@@ -320,6 +323,7 @@
             "collisionMeshType": "boundingBox"
           },
           "modelUrl": "@project/assets/models/Halloween game.glb",
+          "excludeFromNavigation": true,
           "uuid": "fe3d9f4852522267",
           "name": "GLTFMeshComponent",
           "position": {
@@ -753,6 +757,58 @@
                 {
                   "uuid": "45007c4e-8622-44c8-a4ec-e48d638f8937",
                   "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "78fd86c7-b8ea-45e2-a92b-6651ec4f1966",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "45ff79bd-8a1d-4740-9044-c87765eab403",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "85b2f94c-7e95-4dd5-9532-f4eea46c7d6b",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "efc7ebbd-a5a3-4deb-84c3-474fd4b11556",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "fcbee22d-b0f6-4639-a2e3-dfbdccb42b1a",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "ce5f38c3-2c56-49e7-91c9-e040f6d008d5",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "a0213cd2-8cc6-4159-a6a0-6ce39a167b38",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "5cac9241-1e80-4ff0-8a03-1309163a3bfd",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "125de6f2-5339-46a3-aafc-9805c1add082",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "324745a3-2a9f-4871-b220-6c329e48d3d0",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "d2754d4a-5844-4f7e-a5c2-41e7c8c3b373",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "948e5542-a012-4bab-97f1-ff8cd911055f",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "02b6f487-fa84-4454-be06-7c2dae00d61f",
+                  "$bc": "THREE.Object3D"
                 }
               ],
               "intensity": 28.1,
@@ -1067,6 +1123,58 @@
                 {
                   "uuid": "2f7e958a-46cd-4ec6-96c2-a28705f5603e",
                   "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "f03998ca-e32f-46a4-ae73-aa0c4aa998c9",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "924d4680-b88d-479b-8556-911fa28588f1",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "7df4320d-4648-45b8-95a1-71325c00a2a8",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "efc78331-1380-4999-9b70-147eab1d68ba",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "c75e3566-cf88-4b25-9458-9c8c9697a5b3",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "5192182e-af9c-414b-9d03-708eaf2274db",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "f4cbeaba-c90d-4c02-a651-38dca5fa9d7d",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "666d5ba4-29c2-4c48-946f-024e57c7c7d0",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "7e441181-f25d-4377-b9aa-07aa83bb46ec",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "61836246-2de2-4448-ad59-25fbd514091d",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "9500c1b8-34c5-4ae0-a3d9-2b7579642e24",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "48e2e768-e287-448d-b00b-116c67ad8d90",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "2153b0d7-926e-44dc-926f-89d2e5fb60cd",
+                  "$bc": "THREE.Object3D"
                 }
               ],
               "intensity": 28.1,
@@ -1103,6 +1211,7 @@
             "collisionMeshType": "boundingBox"
           },
           "modelUrl": "@project/assets/models/Car.glb",
+          "excludeFromNavigation": true,
           "uuid": "9aa06a29-0397-444f-b7fc-0ecaeaf77485",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1436,6 +1545,58 @@
                 {
                   "uuid": "3fb1758c-10fc-4c94-b337-5b2d51a225b2",
                   "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "62567046-1777-4c82-ae64-79c99c328f7d",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "f11e7597-38e2-465c-93cb-54835c4291f5",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "ae782719-c891-4051-87c3-5db44f75084b",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "da40219c-46a9-4236-94c4-d754a2bc7c73",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "8d680ead-e142-4ce2-8129-e613a0f28981",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "fe0d24f1-898e-43c2-9bbc-2967344253be",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "fd97a4ca-d7af-474e-b46a-5d097c44d678",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "f56e558c-e27d-42a2-af8c-033ea6413250",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "5ff4a848-b91b-4534-abe6-9d9d1be09a5f",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "b825ab43-7e42-442a-80dd-8ac7412794fd",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "5fb52b80-926a-4ffa-a975-94e39dac8db7",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "15ba2d3b-e2b5-4f46-8c1e-2b15a4b65820",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "3467ebdf-9521-4500-b3c8-61a70afc5fab",
+                  "$bc": "THREE.Object3D"
                 }
               ],
               "intensity": 23,
@@ -1677,6 +1838,58 @@
                 {
                   "uuid": "505ff500-e5b5-4757-8535-4299464a5661",
                   "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "6f636d43-7b0e-4a3d-85d8-3a3c1fc77d68",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "d62f1945-0d73-4019-9c3d-36c34808768d",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "86b60843-7249-4eba-acd0-85defb5dd625",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "d34d39ab-8d2e-411e-aa39-bf3cacc70dcc",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "0e977c35-3e4a-4889-bc39-5c72b68b7c12",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "87fe0fc8-d6c0-4e79-9118-885c9f2b0d93",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "ff58b92a-81b4-461d-a3d6-f9c4ccbd1dc0",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "e4134ad3-f3c7-4c8e-9bac-e797f8852d1d",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "103340be-5fb3-43a4-a9c5-f349e35d849f",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "2237c556-117e-4d07-a0c9-81208db495d1",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "46d39e71-3187-485d-bb6c-486a0ca6511a",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "591a28b3-ca20-48ef-bdff-a1a249147150",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "a60cf067-d686-4e42-b04a-640261991b11",
+                  "$bc": "THREE.Object3D"
                 }
               ],
               "intensity": 23,
@@ -1711,6 +1924,7 @@
             "collisionMeshType": "boundingBox"
           },
           "modelUrl": "@project/assets/models/car 2.glb",
+          "excludeFromNavigation": true,
           "uuid": "1de6ec2f-a6ca-48da-8df8-7c4566f8aa9e",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1778,6 +1992,7 @@
             "collisionMeshType": "boundingBox"
           },
           "modelUrl": "@project/assets/models/Car.glb",
+          "excludeFromNavigation": true,
           "uuid": "0c710f0db0d9c35e",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1845,6 +2060,7 @@
             }
           ],
           "modelUrl": "@project/assets/models/Spooky house.glb",
+          "excludeFromNavigation": true,
           "uuid": "6fee71aa-cfe7-4a59-aabe-eb2cc1315fb2",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1864,6 +2080,7 @@
       "24": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/New hedge.glb",
+          "excludeFromNavigation": true,
           "uuid": "8b9a4fc0-1e38-49d0-ab6f-a539b9d5543c",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1899,6 +2116,7 @@
       "25": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/New hedge.glb",
+          "excludeFromNavigation": true,
           "uuid": "654eef4cf4fd9ffa",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1934,6 +2152,7 @@
       "26": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/New hedge.glb",
+          "excludeFromNavigation": true,
           "uuid": "b34dea6694f0d41b",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1969,6 +2188,7 @@
       "27": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/New hedge.glb",
+          "excludeFromNavigation": true,
           "uuid": "637fec8ca6de1784",
           "name": "GLTFMeshComponent",
           "position": {
@@ -2004,6 +2224,7 @@
       "28": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/New hedge.glb",
+          "excludeFromNavigation": true,
           "uuid": "6c8bbc276fb14968",
           "name": "GLTFMeshComponent",
           "position": {
@@ -2121,6 +2342,7 @@
       "32": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/New hedge.glb",
+          "excludeFromNavigation": true,
           "uuid": "6c81b06f5c818aa2",
           "name": "GLTFMeshComponent",
           "position": {
@@ -2156,6 +2378,7 @@
       "33": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/New hedge.glb",
+          "excludeFromNavigation": true,
           "uuid": "5452735b1735e67f",
           "name": "GLTFMeshComponent",
           "position": {
@@ -2310,6 +2533,58 @@
                 {
                   "uuid": "a8ec1b8f-6702-4192-8866-63c63c2b3212",
                   "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "d3da8752-34ec-4d02-9fe0-935f07f38fe1",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "e1ab92a8-5a19-4199-94fb-ba26329857b6",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "0f369223-b597-4996-8dc7-fd89fd304874",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "ba070263-806f-48fa-8ea9-c20f680e51c1",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "e4d67f0b-a7ed-4e61-ac4f-75ff714a4b64",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "a79ffea7-6d71-42a3-b07d-3703977d619a",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "40f45b21-1021-4a17-90d1-db9d1d1fc0fa",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "e909e3f8-95fc-4c8a-91a3-49e32fd19700",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "82255282-4017-4ec6-90fc-476e8ba596ec",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "74374e04-f491-4dbb-a28c-c62522700afd",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "7fc3fdac-c2e7-4392-8c56-d2dce5bee4e0",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "648c13df-810d-45b4-8830-208978439318",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "4b319cca-8380-4a9b-8a5c-c5b60d87fb82",
+                  "$bc": "THREE.Object3D"
                 }
               ],
               "color": {
@@ -2339,6 +2614,7 @@
             }
           ],
           "modelUrl": "@project/assets/models/Lampost.glb",
+          "excludeFromNavigation": true,
           "uuid": "b3e35494-5d25-4d97-b5b3-f8092f6bb20a",
           "name": "GLTFMeshComponent",
           "position": {
@@ -2469,6 +2745,58 @@
                 },
                 {
                   "uuid": "c5798741-9b2c-4530-bda4-c60d5a4a8ecb",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "43f4b2e6-8d2d-4be7-8fa3-c4a832298155",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "b1c0b23c-52e2-4bfb-835f-9918fe6f541d",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "9c925052-720c-4156-9615-436566dcd5da",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "2ccd86fc-761e-42d3-aa47-4d8a0e58d8a9",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "747f8202-d860-4b1b-82e9-6bb6303abb73",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "2b299745-fbfb-4bbc-ae7d-f51d858f025a",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "a2eecfa9-3fed-42d6-bd09-538f4d9482b1",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "cbc4766b-e86b-436b-82b6-3166e491f50c",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "873804e1-3929-41b2-be63-7ed1342356a3",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "c40213a8-d3ef-40a8-8889-799ddb47b812",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "8916bba9-b826-40ea-9244-a6587310d7a3",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "a885b9fa-e3d6-43ec-bb5f-10eba3c480cc",
+                  "$bc": "THREE.Object3D"
+                },
+                {
+                  "uuid": "dbf0a731-820b-4851-a889-d213cf89a8fa",
                   "$bc": "THREE.Object3D"
                 }
               ],
@@ -2685,6 +3013,9 @@
         "rootComponent": {
           "children": {
             "$length": 1
+          },
+          "geometry": {
+            "$bc": "THREE.PlaneGeometry"
           },
           "material": "@project/assets/textures/Road.material.json",
           "uuid": "b321a5b08baa97da",
@@ -3051,7 +3382,7 @@
           "name": "MeshComponent",
           "position": {
             "_": [
-              -39.901005,
+              -39.891979,
               -1.021093,
               -15.147265
             ],
@@ -3072,36 +3403,6 @@
         "$bc": "ENGINE.Actor"
       },
       "55": {
-        "rootComponent": {
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Grass.material.json",
-          "uuid": "6d0ca326851bbc13",
-          "name": "MeshComponent",
-          "position": {
-            "_": [
-              -49.715415,
-              -1.021093,
-              -15.147265
-            ],
-            "$bc": "v3"
-          },
-          "scale": {
-            "_": [
-              10,
-              0.2,
-              10
-            ],
-            "$bc": "v3"
-          },
-          "$bc": "ENGINE.MeshComponent"
-        },
-        "uuid": "2d253e5a20f36771",
-        "name": "Actor_424",
-        "$bc": "ENGINE.Actor"
-      },
-      "56": {
         "rootComponent": {
           "children": {
             "$length": 1
@@ -3131,7 +3432,7 @@
         "name": "Actor_533",
         "$bc": "ENGINE.Actor"
       },
-      "57": {
+      "56": {
         "rootComponent": {
           "children": {
             "$length": 1
@@ -3161,7 +3462,7 @@
         "name": "Actor_534",
         "$bc": "ENGINE.Actor"
       },
-      "58": {
+      "57": {
         "rootComponent": {
           "children": [
             {
@@ -3232,6 +3533,7 @@
             }
           ],
           "modelUrl": "@project/assets/Store.glb",
+          "excludeFromNavigation": true,
           "uuid": "60704118-50d1-4f09-9bba-34bf5103de86",
           "name": "GLTFMeshComponent",
           "position": {
@@ -3256,7 +3558,7 @@
         "name": "Store",
         "$bc": "ENGINE.GLTFMeshActor"
       },
-      "59": {
+      "58": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/Bin.glb",
           "uuid": "4ac59e101af60b95",
@@ -3293,7 +3595,7 @@
         "name": "GLTFMeshActor_345",
         "$bc": "ENGINE.GLTFMeshActor"
       },
-      "60": {
+      "59": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/Bin.glb",
           "uuid": "9da1ca57b2e9f9d5",
@@ -3330,7 +3632,7 @@
         "name": "GLTFMeshActor_346",
         "$bc": "ENGINE.GLTFMeshActor"
       },
-      "61": {
+      "60": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/Bin.glb",
           "uuid": "2f60cc63911b3541",
@@ -3367,7 +3669,7 @@
         "name": "GLTFMeshActor_347",
         "$bc": "ENGINE.GLTFMeshActor"
       },
-      "62": {
+      "61": {
         "rootComponent": {
           "children": [
             {
@@ -3450,7 +3752,7 @@
           "name": "GLTFMeshComponent",
           "position": {
             "_": [
-              -13.299017,
+              -18.936757,
               0.292343,
               -7.14743
             ],
@@ -3470,16 +3772,16 @@
         "name": "Grim",
         "$bc": "ENGINE.GLTFMeshActor"
       },
-      "63": {
+      "62": {
         "rootComponent": {
           "modelUrl": "@project/assets/models/Zombie/Meshy_AI_Voxel_Zombie_biped/Meshy_AI_Voxel_Zombie_biped_Meshy_AI_Meshy_Merged_Animations.glb",
           "uuid": "30802b63-64f8-421f-912a-cae412683dbe",
           "name": "GLTFMeshComponent",
           "position": {
             "_": [
-              -12.575168,
+              -35.029894,
               -0.895812,
-              -8.58596
+              4.875703
             ],
             "$bc": "v3"
           },
@@ -3489,7 +3791,248 @@
         "name": "Zombie",
         "$bc": "ENGINE.GLTFMeshActor"
       },
-      "$length": 64
+      "63": {
+        "rootComponent": {
+          "children": {
+            "1": {
+              "physicsOptions": {
+                "enabled": false
+              },
+              "modelUrl": "@project/assets/models/Zombie/Meshy_AI_Voxel_Zombie_biped/Meshy_AI_Voxel_Zombie_biped_Meshy_AI_Meshy_Merged_Animations.glb",
+              "excludeFromNavigation": true,
+              "uuid": "2247e90acaa76645",
+              "name": "GLTFMeshComponent",
+              "rotation": {
+                "_": [
+                  0,
+                  3.141593,
+                  0
+                ],
+                "$bc": "e"
+              },
+              "castShadow": true,
+              "$bc": "ENGINE.GLTFMeshComponent"
+            },
+            "2": {
+              "configUrl": "@project/assets/models/Zombie/Meshy_AI_Voxel_Zombie_biped/Zombie.anim.json",
+              "uuid": "8db51c1057b41de2",
+              "name": "AnimationStateMachineComponent",
+              "$bc": "ENGINE.AnimationStateMachineComponent"
+            },
+            "3": {
+              "healthRegen": 0,
+              "speed": 2.5,
+              "uuid": "e92e3bfc1ef9f96a",
+              "name": "CharacterStatsComponent",
+              "$bc": "ENGINE.CharacterStatsComponent"
+            },
+            "4": {
+              "maxSpeed": 3.5,
+              "midAirAccelerationLambda": 100,
+              "midAirDecelerationLambda": 10,
+              "lookRightSpeed": 10,
+              "lookUpSpeed": 0,
+              "jumpSpeed": 0,
+              "uuid": "7f3412eed24b34ce",
+              "name": "NpcMovementComponent",
+              "$bc": "ENGINE.NpcMovementComponent"
+            },
+            "$length": 5
+          },
+          "physicsOptions": {
+            "motionType": "kinematicVelocityBased",
+            "collisionProfile": "ZombieNPC"
+          },
+          "geometry": {
+            "_": [
+              0.35,
+              1.05,
+              4,
+              8
+            ],
+            "$bc": "THREE.CapsuleGeometry"
+          },
+          "material": {
+            "uuid": "41916c236410caed",
+            "visible": false,
+            "color": {
+              "_": [
+                0.042311,
+                0.042311,
+                0.042311
+              ],
+              "$bc": "c"
+            },
+            "$bc": "THREE.MeshStandardMaterial"
+          },
+          "uuid": "54ccc6944217afa1",
+          "name": "MeshComponent",
+          "position": {
+            "_": [
+              -35.619491,
+              -0.600507,
+              -5.327253
+            ],
+            "$bc": "v3"
+          },
+          "$bc": "ENGINE.MeshComponent"
+        },
+        "uuid": "53b5ef8230a47172",
+        "name": "Zombie_04",
+        "$bc": "GAME.ZombieActor"
+      },
+      "64": {
+        "rootComponent": {
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Road.material.json",
+          "uuid": "c20b12d7071863b5",
+          "name": "MeshComponent",
+          "position": {
+            "_": [
+              -10.528821,
+              -1.021093,
+              -2.38995
+            ],
+            "$bc": "v3"
+          },
+          "scale": {
+            "_": [
+              10,
+              0.2,
+              10
+            ],
+            "$bc": "v3"
+          },
+          "$bc": "ENGINE.MeshComponent"
+        },
+        "uuid": "db890c20a0da04c6",
+        "name": "Actor_535",
+        "$bc": "ENGINE.Actor"
+      },
+      "65": {
+        "rootComponent": {
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Grass.material.json",
+          "uuid": "f6b394166574ad20",
+          "name": "MeshComponent",
+          "position": {
+            "_": [
+              -49.894116,
+              -1.040389,
+              -15.221541
+            ],
+            "$bc": "v3"
+          },
+          "scale": {
+            "_": [
+              10,
+              0.2,
+              10
+            ],
+            "$bc": "v3"
+          },
+          "$bc": "ENGINE.MeshComponent"
+        },
+        "uuid": "ad8047f36e195e62",
+        "name": "Actor_425",
+        "$bc": "ENGINE.Actor"
+      },
+      "66": {
+        "rootComponent": {
+          "children": {
+            "1": {
+              "physicsOptions": {
+                "enabled": false
+              },
+              "modelUrl": "@project/assets/models/Zombie/Meshy_AI_Voxel_Zombie_biped/Meshy_AI_Voxel_Zombie_biped_Meshy_AI_Meshy_Merged_Animations.glb",
+              "excludeFromNavigation": true,
+              "uuid": "fb47384f3ec92953",
+              "name": "GLTFMeshComponent",
+              "rotation": {
+                "_": [
+                  0,
+                  3.141593,
+                  0
+                ],
+                "$bc": "e"
+              },
+              "castShadow": true,
+              "$bc": "ENGINE.GLTFMeshComponent"
+            },
+            "2": {
+              "configUrl": "@project/assets/models/Zombie/Meshy_AI_Voxel_Zombie_biped/Zombie.anim.json",
+              "uuid": "e7152fcd77c20d66",
+              "name": "AnimationStateMachineComponent",
+              "$bc": "ENGINE.AnimationStateMachineComponent"
+            },
+            "3": {
+              "healthRegen": 0,
+              "attackCooldown": 1.5,
+              "speed": 3.5,
+              "uuid": "6d9559ef1873485c",
+              "name": "CharacterStatsComponent",
+              "$bc": "ENGINE.CharacterStatsComponent"
+            },
+            "4": {
+              "maxSpeed": 3.5,
+              "midAirAccelerationLambda": 100,
+              "midAirDecelerationLambda": 10,
+              "lookRightSpeed": 10,
+              "lookUpSpeed": 0,
+              "jumpSpeed": 0,
+              "uuid": "993176e8558349f2",
+              "name": "NpcMovementComponent",
+              "$bc": "ENGINE.NpcMovementComponent"
+            },
+            "$length": 5
+          },
+          "physicsOptions": {
+            "motionType": "kinematicVelocityBased",
+            "collisionProfile": "ZombieNPC"
+          },
+          "geometry": {
+            "_": [
+              0.35,
+              1.05,
+              4,
+              8
+            ],
+            "$bc": "THREE.CapsuleGeometry"
+          },
+          "material": {
+            "uuid": "fe8810c7746ea6d4",
+            "visible": false,
+            "color": {
+              "_": [
+                0.042311,
+                0.042311,
+                0.042311
+              ],
+              "$bc": "c"
+            },
+            "$bc": "THREE.MeshStandardMaterial"
+          },
+          "uuid": "d06a4f549228ebb4",
+          "name": "MeshComponent",
+          "position": {
+            "_": [
+              -35.619491,
+              -0.600507,
+              -10.281725
+            ],
+            "$bc": "v3"
+          },
+          "$bc": "ENGINE.MeshComponent"
+        },
+        "uuid": "e6e1bb834490f815",
+        "name": "Zombie_05",
+        "$bc": "GAME.ZombieActor"
+      },
+      "$length": 67
     },
     "resources": null,
     "editorData": {
@@ -3600,6 +4143,14 @@
             "nodeType": "actor"
           },
           {
+            "id": "53b5ef8230a47172",
+            "nodeType": "actor"
+          },
+          {
+            "id": "e6e1bb834490f815",
+            "nodeType": "actor"
+          },
+          {
             "id": "folder-c67027202785607a",
             "name": "Grass",
             "nodeType": "folder",
@@ -3649,15 +4200,15 @@
                     "nodeType": "actor"
                   },
                   {
+                    "id": "db890c20a0da04c6",
+                    "nodeType": "actor"
+                  },
+                  {
                     "id": "6d95b6b1d427ce84",
                     "nodeType": "actor"
                   },
                   {
                     "id": "eea5df4a338a12a2",
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "2d253e5a20f36771",
                     "nodeType": "actor"
                   },
                   {
@@ -3674,6 +4225,10 @@
                   },
                   {
                     "id": "39ad2df6cf1cb6cb",
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "ad8047f36e195e62",
                     "nodeType": "actor"
                   },
                   {

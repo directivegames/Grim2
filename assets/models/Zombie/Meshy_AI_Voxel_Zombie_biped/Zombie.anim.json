@@ -1,18 +1,143 @@
 {
   "externalAnimationSources": [],
   "parameters": {
-    "param_0": 0
+    "state": "idle"
   },
+  "initialState": "idle",
+  "oneShotClips": [],
   "states": {
-    "Shouting_Angrily": {
-      "transitions": [],
-      "clip": "Shouting_Angrily",
-      "clipOptions": {}
+    "idle": {
+      "clip": "Limping_Walk_3",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.25
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.12
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.1
+        }
+      ]
+    },
+    "walk": {
+      "clip": "Gunshot_Reaction",
+      "transitions": [
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.25
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.12
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.1
+        }
+      ]
+    },
+    "attack": {
+      "clip": "Climb_Attempt_and_Fall_5",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.2
+        },
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.2
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        },
+        {
+          "to": "idle",
+          "condition": { "clipFinished": true },
+          "blendDuration": 0.15
+        }
+      ]
+    },
+    "hit": {
+      "clip": "Climb_Attempt_and_Fall_4",
+      "transitions": [
+        {
+          "to": "idle",
+          "condition": { "clipFinished": true },
+          "blendDuration": 0.2
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        },
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.15
+        }
+      ]
+    },
+    "death": {
+      "clip": "Carry_Water_Bucket_Walk",
+      "transitions": []
     }
   },
-  "initialState": "Shouting_Angrily",
-  "oneShotClips": [
-    "Shouting_Angrily"
-  ],
-  "clipOptions": {}
+  "clipOptions": {
+    "Limping_Walk_3": {
+      "loop": "LoopRepeat"
+    },
+    "Carry_Water_Bucket_Walk": {
+      "loop": "LoopRepeat"
+    },
+    "Climb_Attempt_and_Fall_5": {
+      "loop": "LoopOnce",
+      "clampWhenFinished": true
+    },
+    "Climb_Attempt_and_Fall_4": {
+      "loop": "LoopOnce",
+      "clampWhenFinished": true
+    },
+    "Gunshot_Reaction": {
+      "loop": "LoopRepeat"
+    }
+  }
 }

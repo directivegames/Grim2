@@ -4,6 +4,7 @@
 
 import * as ENGINE from '@gnsx/genesys.js';
 
+import './auto-imports.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 
 /** Spring-arm length (world units). ~15% further than prior 35. */
@@ -30,6 +31,32 @@ class MyGameMode extends ENGINE.GameMode {
 class MyGame extends ENGINE.BaseGameLoop {
   protected override createLoadingScreen(): ENGINE.ILoadingScreen | null {
     return new ENGINE.DefaultLoadingScreen();
+  }
+
+  public override getWorldConfiguration(): ENGINE.WorldOptions {
+    const base = super.getWorldConfiguration();
+    return {
+      ...base,
+      navigationOptions: {
+        engine: ENGINE.NavigationEngine.RecastNavigation,
+        generateOnStartUp: true,
+        options: {
+          cs: 0.5,
+          ch: 0.2,
+          walkableSlopeAngle: 35,
+          walkableHeight: 2,
+          walkableClimb: 0.3,
+          walkableRadius: 0.5,
+          maxEdgeLen: 12,
+          maxSimplificationError: 1.3,
+          minRegionArea: 8,
+          mergeRegionArea: 20,
+          maxVertsPerPoly: 6,
+          detailSampleDist: 6,
+          detailSampleMaxError: 1,
+        },
+      },
+    };
   }
 
   /**
