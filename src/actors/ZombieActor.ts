@@ -4,7 +4,8 @@
  * Behaviour:
  *  1. Wanders in a small radius when the player is out of aggro range.
  *  2. Once the player enters aggroRadius the zombie locks on and ALWAYS chases
- *     (sticky aggro — never drops).
+ *     (sticky aggro — never drops). Chase uses direct XZ steer + separation (Vampire Survivors style),
+ *     not Recast follow-to-player.
  *  3. When within attackRange (tight, “on top” of player), melee attack + attack anim;
  *    damage comes from MeleeAttackAction only.
  *  4. On death: stops, plays death clip, gets launched, destroyed after 3 s.
@@ -37,6 +38,19 @@ const ATTACK_ZONE_HYSTERESIS_MARGIN = 0.38;
 
 /** How long (seconds) to hold the hit-reaction anim before locomotion takes back over. */
 const HIT_REACTION_HOLD_SEC = 0.95;
+
+/** Speed variance per zombie so the horde staggers (less synchronized blob). */
+const SPEED_JITTER_RANGE = 0.8;
+
+/** Vampire Survivors–style chase: XZ seek + separation, no Recast path to the player. */
+const STEER_LOOKAHEAD = 3.5;
+const STEER_GOAL_STOP = 0.12;
+const STEER_SEPARATION_RADIUS = 0.88;
+const STEER_SEPARATION_WEIGHT = 2.0;
+/** Tight waypoint tolerance; must be less than `STEER_LOOKAHEAD` and less than engine default (3). */
+const ZOMBIE_PATH_FOLLOWING_ACCURACY = 0.25;
+/** `setPath` drops waypoints closer than `pathFollowingAccuracy` on 3D distance — keep XZ goal beyond that. */
+const STEER_GOAL_MIN_XY_FROM_AGENT = ZOMBIE_PATH_FOLLOWING_ACCURACY + 0.1;
 
 // ─── Collision profile (horde: zombies never block each other) ───────────────
 // All zombies use object channel `Pawn` with `Pawn → Ignore` so capsule-vs-capsule
@@ -96,6 +110,28 @@ class StickyChaseCondition extends ENGINE.ConditionEvaluator {
   }
 }
 
+/**
+ * Chase placeholder — locomotion is {@link ZombieActor.applyDirectSteerChase} (no `FollowActorAction` / no nav path to player).
+ */
+class SteerChaseNoopAction extends ENGINE.BehaviorAction {
+  constructor() {
+    super({ name: 'SteerChase' });
+  }
+
+  protected override onInitialize(_blackboard: ENGINE.Blackboard): void {}
+
+  protected override onEnter(blackboard: ENGINE.Blackboard): void {
+    this.getOwner(blackboard)?.getComponent(ENGINE.NpcMovementComponent)?.stop();
+  }
+
+  protected override async onUpdate(
+    _blackboard: ENGINE.Blackboard,
+    _deltaTime: number,
+  ): Promise<ENGINE.BehaviorStatus> {
+    return ENGINE.BehaviorStatus.Running;
+  }
+}
+
 // ─── ZombieActor ─────────────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
@@ -150,6 +186,14 @@ export class ZombieActor extends ENGINE.Actor {
   private _hitAnimEndTime = -Infinity;
   private _lastTrackedHealth = 0;
 
+  /** Effective chase speed (`moveSpeed` ± jitter) — set in `doBeginPlay`. */
+  private _jitteredSpeed = 3.5;
+  private readonly _steerMyPos = new THREE.Vector3();
+  private readonly _steerToPlayer = new THREE.Vector3();
+  private readonly _steerSep = new THREE.Vector3();
+  private readonly _steerOtherPos = new THREE.Vector3();
+  private readonly _steerGoal = new THREE.Vector3();
+
   // ── Damage → hit-reaction ──────────────────────────────────────────────────
 
   private readonly _onHealthChanged = (current: number, _max: number): void => {
@@ -203,18 +247,24 @@ export class ZombieActor extends ENGINE.Actor {
     });
 
     const npc = ENGINE.NpcMovementComponent.create({
-      pathFollowingAccuracy: 0.28,
+      pathFollowingAccuracy: ZOMBIE_PATH_FOLLOWING_ACCURACY,
       actorFollowingDistance: ZOMBIE_FOLLOW_HOLD_DISTANCE,
       stopDistance: ZOMBIE_FOLLOW_HOLD_DISTANCE,
       movementSpeed: this.moveSpeed,
       useNavigationServer: true,
-      // Softer CC than player defaults: less vertical snap on seams; no impulse shove from dynamic props.
+      turnSpeed: 2.5,
       characterControllerOptions: {
         ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
-        simulatedGravityScale: 1.5,
+        simulatedGravityScale: 1.0,
         applyImpulsesToDynamicBodies: false,
+        slideEnabled: false,
+        snapToGroundDistance: 0.05,
       },
     });
+
+    // Stock `NpcMovementComponent.initialize` may not apply accuracy/follow from `create()` — force instance fields.
+    (npc as unknown as { pathFollowingAccuracy: number }).pathFollowingAccuracy = ZOMBIE_PATH_FOLLOWING_ACCURACY;
+    (npc as unknown as { actorFollowingDistance: number }).actorFollowingDistance = ZOMBIE_FOLLOW_HOLD_DISTANCE;
 
     root.add(visual);
     root.add(anim);
@@ -224,6 +274,19 @@ export class ZombieActor extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+
+    this._jitteredSpeed = this.moveSpeed + (Math.random() - 0.5) * SPEED_JITTER_RANGE;
+    const npc = this.getComponent(ENGINE.NpcMovementComponent) as unknown as {
+      maxSpeed: number;
+      pathFollowingAccuracy: number;
+      actorFollowingDistance: number;
+    } | null;
+    if (npc) {
+      npc.maxSpeed = this._jitteredSpeed;
+      npc.pathFollowingAccuracy = ZOMBIE_PATH_FOLLOWING_ACCURACY;
+      npc.actorFollowingDistance = ZOMBIE_FOLLOW_HOLD_DISTANCE;
+    }
+
     this.syncStatsAndMovementFromProperties();
 
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
@@ -279,6 +342,7 @@ export class ZombieActor extends ENGINE.Actor {
     }
 
     void this.tickBehaviorTreeAsync(deltaTime);
+    this.applyDirectSteerChase();
     this.syncAnimationState();
     super.tickPrePhysics(deltaTime);
   }
@@ -325,6 +389,101 @@ export class ZombieActor extends ENGINE.Actor {
 
   // ─── Internal helpers ──────────────────────────────────────────────────────
 
+  /**
+   * Seek player on XZ + light separation from other zombies; `useNavigationServer` off during chase
+   * so movement is a straight steer goal (Vampire Survivors style, avoids paired nav follow rubber-banding).
+   */
+  private applyDirectSteerChase(): void {
+    const npc = this.getComponent(ENGINE.NpcMovementComponent) as unknown as {
+      useNavigationServer: boolean;
+      setTargetPosition: (p: THREE.Vector3, stop?: number) => void;
+    } | null;
+    if (!npc) return;
+
+    const steerChase = this._hasAggro && !this._attackZoneLatched;
+    if (!steerChase) {
+      npc.useNavigationServer = true;
+      return;
+    }
+
+    const w = this.getWorld();
+    const player = w?.getFirstPlayerPawn();
+    if (!w || !player) {
+      npc.useNavigationServer = true;
+      return;
+    }
+
+    npc.useNavigationServer = false;
+
+    this.rootComponent.getWorldPosition(this._steerMyPos);
+    player.rootComponent.getWorldPosition(this._steerToPlayer);
+    this._steerToPlayer.sub(this._steerMyPos);
+    this._steerToPlayer.y = 0;
+    if (this._steerToPlayer.lengthSq() < 1e-8) {
+      this._steerToPlayer.set(1, 0, 0);
+    } else {
+      this._steerToPlayer.normalize();
+    }
+
+    this._steerSep.set(0, 0, 0);
+    const rSep = STEER_SEPARATION_RADIUS;
+    const rSepSq = rSep * rSep;
+    const others = w.getActors(ZombieActor);
+    for (let i = 0; i < others.length; i++) {
+      const z = others[i];
+      if (z === this || z._deathSequenceStarted) continue;
+      z.rootComponent.getWorldPosition(this._steerOtherPos);
+      let dx = this._steerMyPos.x - this._steerOtherPos.x;
+      let dz = this._steerMyPos.z - this._steerOtherPos.z;
+      const dsq = dx * dx + dz * dz;
+      if (dsq >= rSepSq || dsq < 1e-10) continue;
+      const d = Math.sqrt(dsq);
+      dx /= d;
+      dz /= d;
+      const pen = rSep - d;
+      this._steerSep.x += dx * pen * STEER_SEPARATION_WEIGHT;
+      this._steerSep.z += dz * pen * STEER_SEPARATION_WEIGHT;
+    }
+
+    this._steerGoal.copy(this._steerToPlayer).add(this._steerSep);
+    this._steerGoal.y = 0;
+    if (this._steerGoal.lengthSq() < 1e-8) {
+      this._steerGoal.copy(this._steerToPlayer);
+    } else {
+      this._steerGoal.normalize();
+    }
+
+    this._steerGoal.multiplyScalar(STEER_LOOKAHEAD).add(this._steerMyPos);
+
+    const nav = w.getNavigationServer() as {
+      isReady?: () => boolean;
+      isPointOnNavigationMesh?: (p: THREE.Vector3) => boolean;
+      getClosestPointOnNavigationMesh?: (p: THREE.Vector3) => THREE.Vector3;
+    } | null;
+    if (
+      nav?.isReady?.() &&
+      nav.isPointOnNavigationMesh &&
+      !nav.isPointOnNavigationMesh(this._steerGoal) &&
+      nav.getClosestPointOnNavigationMesh
+    ) {
+      try {
+        this._steerGoal.copy(nav.getClosestPointOnNavigationMesh(this._steerGoal));
+      } catch {
+        /* keep raw goal */
+      }
+    }
+
+    this._steerOtherPos.copy(this._steerGoal).sub(this._steerMyPos);
+    this._steerOtherPos.y = 0;
+    if (this._steerOtherPos.length() < STEER_GOAL_MIN_XY_FROM_AGENT) {
+      this._steerGoal
+        .copy(this._steerMyPos)
+        .addScaledVector(this._steerToPlayer, Math.max(STEER_LOOKAHEAD, STEER_GOAL_MIN_XY_FROM_AGENT));
+    }
+
+    npc.setTargetPosition(this._steerGoal, STEER_GOAL_STOP);
+  }
+
   private syncStatsAndMovementFromProperties(): void {
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     if (stats) {
@@ -334,8 +493,16 @@ export class ZombieActor extends ENGINE.Actor {
       stats.setAttackDamage(this.attackDamage);
       stats.setSpeed(this.moveSpeed);
     }
-    const npc = this.getComponent(ENGINE.NpcMovementComponent);
-    if (npc) npc.maxSpeed = this.moveSpeed;
+    const npc = this.getComponent(ENGINE.NpcMovementComponent) as unknown as {
+      maxSpeed: number;
+      pathFollowingAccuracy: number;
+      actorFollowingDistance: number;
+    } | null;
+    if (npc) {
+      npc.maxSpeed = this._jitteredSpeed > 0 ? this._jitteredSpeed : this.moveSpeed;
+      npc.pathFollowingAccuracy = ZOMBIE_PATH_FOLLOWING_ACCURACY;
+      npc.actorFollowingDistance = ZOMBIE_FOLLOW_HOLD_DISTANCE;
+    }
   }
 
   private buildBehaviorTree(): void {
@@ -356,13 +523,7 @@ export class ZombieActor extends ENGINE.Actor {
     const chaseSequence = new ENGINE.SequenceNode({
       name: 'ChaseBranch',
       conditions: [new StickyChaseCondition(this.aggroRadius)],
-      children: [
-        new ENGINE.FollowActorAction({
-          targetActorKey: 'PlayerActor',
-          stopDistance: ZOMBIE_FOLLOW_HOLD_DISTANCE,
-          continueAfterReached: true,
-        }),
-      ],
+      children: [new SteerChaseNoopAction()],
     });
 
     const wander = new ENGINE.WanderAction({

@@ -4,6 +4,8 @@
 
 import * as ENGINE from '@gnsx/genesys.js';
 
+// Must run before any actor ticks — harness bundle may omit patched `NpcMovementComponent` from `node_modules`.
+import './apply-npc-follow-offset-engine-patch.js';
 import './auto-imports.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 
