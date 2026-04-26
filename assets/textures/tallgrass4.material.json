@@ -1,0 +1,18 @@
+{
+  "$version": 2,
+  "$root": {
+    "uuid": "30059d1e-5f21-4700-90bd-0b3a0fbb76c1",
+    "name": "tallgrass4",
+    "transparent": true,
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "map": {
+      "$uuid": "7138cd7b-c6cf-46ad-98b7-bcbc75a3b6ca",
+      "url": "@project/assets/textures/grass update.png",
+      "$bc": "ENGINE.UrlTexture"
+    },
+    "flatShading": true,
+    "$bc": "THREE.MeshStandardMaterial"
+  }
+}

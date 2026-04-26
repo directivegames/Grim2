@@ -15,62 +15,12 @@
         {
           "to": "walk",
           "condition": { "state": { "equalTo": "walk" } },
-          "blendDuration": 0.25
+          "blendDuration": 0.08
         },
         {
           "to": "attack",
           "condition": { "state": { "equalTo": "attack" } },
-          "blendDuration": 0.15
-        },
-        {
-          "to": "hit",
-          "condition": { "state": { "equalTo": "hit" } },
-          "blendDuration": 0.12
-        },
-        {
-          "to": "death",
-          "condition": { "state": { "equalTo": "death" } },
           "blendDuration": 0.1
-        }
-      ]
-    },
-    "walk": {
-      "clip": "Running",
-      "transitions": [
-        {
-          "to": "idle",
-          "condition": { "state": { "equalTo": "idle" } },
-          "blendDuration": 0.25
-        },
-        {
-          "to": "attack",
-          "condition": { "state": { "equalTo": "attack" } },
-          "blendDuration": 0.15
-        },
-        {
-          "to": "hit",
-          "condition": { "state": { "equalTo": "hit" } },
-          "blendDuration": 0.12
-        },
-        {
-          "to": "death",
-          "condition": { "state": { "equalTo": "death" } },
-          "blendDuration": 0.1
-        }
-      ]
-    },
-    "attack": {
-      "clip": "Climb_Attempt_and_Fall_5",
-      "transitions": [
-        {
-          "to": "walk",
-          "condition": { "state": { "equalTo": "walk" } },
-          "blendDuration": 0.2
-        },
-        {
-          "to": "idle",
-          "condition": { "state": { "equalTo": "idle" } },
-          "blendDuration": 0.2
         },
         {
           "to": "hit",
@@ -84,11 +34,56 @@
         }
       ]
     },
+    "walk": {
+      "clip": "Running",
+      "transitions": [
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        }
+      ]
+    },
+    "attack": {
+      "clip": "Climb_Attempt_and_Fall_5",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.05
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.03
+        }
+      ]
+    },
     "hit": {
       "clip": "Climb_Attempt_and_Fall_4",
       "transitions": [
         {
-          "to": "idle",
+          "to": "walk",
           "condition": { "clipFinished": true },
           "blendDuration": 0.2
         },
@@ -105,11 +100,6 @@
         {
           "to": "attack",
           "condition": { "state": { "equalTo": "attack" } },
-          "blendDuration": 0.15
-        },
-        {
-          "to": "idle",
-          "condition": { "state": { "equalTo": "idle" } },
           "blendDuration": 0.15
         }
       ]

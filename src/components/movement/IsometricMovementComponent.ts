@@ -16,12 +16,26 @@ import * as ENGINE from '@gnsx/genesys.js';
 /** Yaw (radians) of the isometric camera – defines the movement axes. */
 export const ISO_YAW = Math.PI / 4; // 45°
 
-/** World-space forward axis for the iso view (W key). */
+// Pre-computed constant axis vectors to avoid per-call allocations
+const SIN_YAW = Math.sin(ISO_YAW);
+const COS_YAW = Math.cos(ISO_YAW);
+
+/** Pre-computed world-space forward axis for the iso view (W key). */
+export const ISO_FORWARD_AXIS = Object.freeze(
+  new THREE.Vector3(-SIN_YAW, 0, -COS_YAW).normalize()
+);
+
+/** Pre-computed world-space right axis for the iso view (D key). */
+export const ISO_RIGHT_AXIS = Object.freeze(
+  new THREE.Vector3(COS_YAW, 0, -SIN_YAW).normalize()
+);
+
+/** World-space forward axis for the iso view (W key) - DEPRECATED: use ISO_FORWARD_AXIS constant. */
 export function isoForwardAxis(yaw: number): THREE.Vector3 {
   return new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw)).normalize();
 }
 
-/** World-space right axis for the iso view (D key). */
+/** World-space right axis for the iso view (D key) - DEPRECATED: use ISO_RIGHT_AXIS constant. */
 export function isoRightAxis(yaw: number): THREE.Vector3 {
   return new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw)).normalize();
 }
@@ -45,7 +59,9 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
 
   // ── Internal state ────────────────────────────────────────────────────────
 
-  private _worldVelocity: THREE.Vector3 = new THREE.Vector3();
+  private _worldVelocity = new THREE.Vector3();
+  // Scratch vector to avoid per-frame allocations in hot path
+  private readonly _deltaScratch = new THREE.Vector3();
 
   /** Current world-space planar velocity – read by the pawn for visual rotation. */
   public getWorldVelocity(): THREE.Vector3 {
@@ -92,23 +108,23 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
       deltaTime,
     });
 
-    const isoFwd   = isoForwardAxis(ISO_YAW);
-    const isoRight = isoRightAxis(ISO_YAW);
-
-    const delta = new THREE.Vector3()
-      .addScaledVector(isoFwd,   this.forwardVelocity * deltaTime)
-      .addScaledVector(isoRight, this.rightVelocity   * deltaTime);
+    // Use pre-computed constant axis vectors (no allocations)
+    // Use scratch vector instead of allocating new Vector3
+    this._deltaScratch
+      .set(0, 0, 0)
+      .addScaledVector(ISO_FORWARD_AXIS, this.forwardVelocity * deltaTime)
+      .addScaledVector(ISO_RIGHT_AXIS, this.rightVelocity * deltaTime);
 
     // Cache velocity so the pawn can read it without re-computing.
     this._worldVelocity.set(0, 0, 0)
-      .addScaledVector(isoFwd,   this.forwardVelocity)
-      .addScaledVector(isoRight, this.rightVelocity);
+      .addScaledVector(ISO_FORWARD_AXIS, this.forwardVelocity)
+      .addScaledVector(ISO_RIGHT_AXIS, this.rightVelocity);
 
     if (this.hasCharacterController && root instanceof ENGINE.PrimitiveComponent) {
-      this._applyControllerMovement(root, delta, deltaTime);
+      this._applyControllerMovement(root, this._deltaScratch, deltaTime);
     } else {
-      delta.y = 0;
-      root.addWorldPosition(delta);
+      this._deltaScratch.y = 0;
+      root.addWorldPosition(this._deltaScratch);
     }
 
     // Root yaw is NEVER changed here.

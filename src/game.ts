@@ -6,7 +6,10 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 // Must run before any actor ticks — harness bundle may omit patched `NpcMovementComponent` from `node_modules`.
 import './apply-npc-follow-offset-engine-patch.js';
+import './apply-grass-shader-engine-patch.js';
 import './auto-imports.js';
+// PERFORMANCE: Import grass uniform manager to enable batched uniform updates
+import './materials/grass/GrassUniformManager.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 
 /** Spring-arm length (world units). ~15% further than prior 35. */

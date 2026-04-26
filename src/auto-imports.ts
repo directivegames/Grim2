@@ -1,5 +1,12 @@
 import './actors/IsometricPlayerPawn.ts';
+import './actors/TallGrassActor.ts';
 import './actors/ZombieActor.ts';
+import './actors/ZombieSpatialManager.ts';
+import './apply-grass-shader-engine-patch.ts';
 import './apply-npc-follow-offset-engine-patch.ts';
 import './components/movement/IsometricMovementComponent.ts';
 import './game-data.ts';
+import './materials/grass/GenesysGrassSwayNodeMaterial.ts';
+import './materials/grass/grassDualBackend.ts';
+import './materials/grass/GrassSwayShaderMaterial.ts';
+import './materials/grass/GrassUniformManager.ts';

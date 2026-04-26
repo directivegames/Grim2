@@ -4,6 +4,7 @@
 import { registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
+import { TallGrassActor } from './actors/TallGrassActor.js';
 import { ZombieActor } from './actors/ZombieActor.js';
 import { IsometricMovementComponent } from './components/movement/IsometricMovementComponent.js';
 
@@ -22,6 +23,69 @@ export function registerMetadata(): void {
         "max": 2,
         "step": 0.001,
         "category": "Visual"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(TallGrassActor, {
+      "textureUrl": {
+        "type": "string",
+        "category": "Tall Grass"
+      },
+      "width": {
+        "type": "number",
+        "min": 0.05,
+        "max": 10,
+        "step": 0.05,
+        "category": "Tall Grass"
+      },
+      "height": {
+        "type": "number",
+        "min": 0.05,
+        "max": 10,
+        "step": 0.05,
+        "category": "Tall Grass"
+      },
+      "windSpeed": {
+        "type": "number",
+        "min": 0,
+        "max": 10,
+        "step": 0.1,
+        "category": "Wind"
+      },
+      "windRigidness": {
+        "type": "number",
+        "min": 1,
+        "max": 80,
+        "step": 1,
+        "category": "Wind"
+      },
+      "windAmplitude": {
+        "type": "number",
+        "min": 0,
+        "max": 0.2,
+        "step": 0.001,
+        "category": "Wind"
+      },
+      "yOffset": {
+        "type": "number",
+        "min": -1,
+        "max": 2,
+        "step": 0.01,
+        "category": "Wind"
+      },
+      "interactorRadius": {
+        "type": "number",
+        "min": 0.1,
+        "max": 10,
+        "step": 0.1,
+        "category": "Interaction"
+      },
+      "interactorStrength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "category": "Interaction"
       }
     });
 

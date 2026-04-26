@@ -1,0 +1,18 @@
+{
+  "$version": 2,
+  "$root": {
+    "uuid": "8848cb74-7698-403d-9664-a7f4d6526862",
+    "name": "backofhouse",
+    "transparent": true,
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "map": {
+      "$uuid": "ddc24b4f-c8be-439a-a94a-25ca1bec05a5",
+      "url": "@project/assets/textures/back of house.png",
+      "$bc": "ENGINE.UrlTexture"
+    },
+    "flatShading": true,
+    "$bc": "THREE.MeshStandardMaterial"
+  }
+}
