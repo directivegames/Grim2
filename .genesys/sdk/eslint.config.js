@@ -8,6 +8,7 @@ import sceneComponentMaterialType from '../../node_modules/@gnsx/genesys.js/esli
 import tweenTimeArgument from '../../node_modules/@gnsx/genesys.js/eslint-rules/tween-time-argument.js';
 import requireCreateMethod from '../../node_modules/@gnsx/genesys.js/eslint-rules/require-create-method.js';
 import classRegistrationDecoratorOnly from '../../node_modules/@gnsx/genesys.js/eslint-rules/class-registration-decorator-only.js';
+import noPropertyFunctionField from '../../node_modules/@gnsx/genesys.js/eslint-rules/no-property-function-field.js';
 
 
 export default [
@@ -33,7 +34,8 @@ export default [
           'scene-component-material-type': sceneComponentMaterialType,
           'tween-time-argument': tweenTimeArgument,
           'require-create-method': requireCreateMethod,
-          'class-registration-decorator-only': classRegistrationDecoratorOnly
+          'class-registration-decorator-only': classRegistrationDecoratorOnly,
+          'no-property-function-field': noPropertyFunctionField
         }
       }
     },
@@ -46,7 +48,8 @@ export default [
       'custom/scene-component-material-type': 'error',
       'custom/tween-time-argument': 'error',
       'custom/require-create-method': 'error',
-      'custom/class-registration-decorator-only': 'error'
+      'custom/class-registration-decorator-only': 'error',
+      'custom/no-property-function-field': 'error'
     }
   },
   {

@@ -15,7 +15,7 @@
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
-    "@gnsx/genesys.js": "10.2.1",
+    "@gnsx/genesys.js": "10.3.0",
     "three": "0.184.0",
     "@gnsx/genesys.harness": "latest"
   },

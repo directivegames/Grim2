@@ -10,7 +10,9 @@ import './apply-grass-shader-engine-patch.js';
 import './auto-imports.js';
 // PERFORMANCE: Import grass uniform manager to enable batched uniform updates
 import './materials/grass/GrassUniformManager.js';
+import { BackgroundMusicActor } from './actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
+import { SpinningWeaponActor } from './actors/SpinningWeaponActor.js';
 
 /** Spring-arm length (world units). ~15% further than prior 35. */
 const ISO_CAMERA_DISTANCE = 35 * 1.15;
@@ -100,6 +102,26 @@ class MyGame extends ENGINE.BaseGameLoop {
         vtc.setActive(false);
       }
     }
+
+    // Spawn background music actor
+    void this.spawnBackgroundMusic();
+
+    // Spawn spinning weapon actor
+    void this.spawnSpinningWeapon();
+  }
+
+  private async spawnBackgroundMusic(): Promise<void> {
+    const world = this.getWorld();
+    if (!world) return;
+    const musicActor = await BackgroundMusicActor.create();
+    world.addActor(musicActor);
+  }
+
+  private async spawnSpinningWeapon(): Promise<void> {
+    const world = this.getWorld();
+    if (!world) return;
+    const weaponActor = await SpinningWeaponActor.create();
+    world.addActor(weaponActor);
   }
 }
 

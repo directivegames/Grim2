@@ -1,4 +1,6 @@
+import './actors/BackgroundMusicActor.ts';
 import './actors/IsometricPlayerPawn.ts';
+import './actors/SpinningWeaponActor.ts';
 import './actors/TallGrassActor.ts';
 import './actors/ZombieActor.ts';
 import './actors/ZombieSpatialManager.ts';

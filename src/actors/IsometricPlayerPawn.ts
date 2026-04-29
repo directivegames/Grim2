@@ -101,6 +101,14 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   private _sceneGrimPlaceholderRemoved: boolean = false;
 
+  // ── Screen shake state ──────────────────────────────────────────────────
+
+  private _shakeIntensity = 0;
+  private _shakeDuration = 0;
+  private _shakeElapsed = 0;
+  private readonly _shakeOffset = new THREE.Vector3();
+  private readonly _basePivotPosition = new THREE.Vector3();
+
   // ── Component factory overrides ───────────────────────────────────────────
 
   /** Grim has no rigged locomotion clips — skip the mannequin state machine. */
@@ -199,6 +207,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     super.tickPrePhysics(deltaTime); // handles animation parameters
     this._updateVisualFacing(deltaTime);
     this._updateFloatingBob(deltaTime);
+    this._updateScreenShake(deltaTime);
   }
 
   // ── Visual facing ─────────────────────────────────────────────────────────
@@ -258,5 +267,45 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       right     : 0,
       left      : 0,
     };
+  }
+
+  // ── Screen shake ─────────────────────────────────────────────────────────
+
+  /**
+   * Trigger a brief camera shake effect.
+   * @param intensity - Maximum shake offset in world units
+   * @param duration - Shake duration in seconds
+   */
+  public triggerScreenShake(intensity: number, duration: number): void {
+    this._shakeIntensity = intensity;
+    this._shakeDuration = duration;
+    this._shakeElapsed = 0;
+  }
+
+  private _updateScreenShake(deltaTime: number): void {
+    if (this._shakeDuration <= 0 || !this.cameraPivot) return;
+
+    this._shakeElapsed += deltaTime;
+
+    if (this._shakeElapsed >= this._shakeDuration) {
+      // Shake finished - reset camera pivot position
+      this.cameraPivot.position.set(0, 0, 0);
+      this._shakeDuration = 0;
+      return;
+    }
+
+    // Calculate falloff (1 at start, 0 at end)
+    const t = this._shakeElapsed / this._shakeDuration;
+    const falloff = 1 - t;
+    const currentIntensity = this._shakeIntensity * falloff;
+
+    // Random offset on X and Z only (don't shake Y as it looks weird in isometric)
+    this._shakeOffset.set(
+      (Math.random() - 0.5) * 2 * currentIntensity,
+      0,
+      (Math.random() - 0.5) * 2 * currentIntensity
+    );
+
+    this.cameraPivot.position.copy(this._shakeOffset);
   }
 }

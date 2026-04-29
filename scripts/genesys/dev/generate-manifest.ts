@@ -76,8 +76,8 @@ function getContentType(fileName: string): string | undefined {
     '.wav': 'audio/wav',
     '.mp3': 'audio/mpeg',
     '.ogg': 'audio/ogg',
-    '.genesys-scene': 'application/json',
-    '.genesys-project': 'application/json'
+    [ENGINE.SCENE_NAME_EXT]: 'application/json',
+    [ENGINE.GAME_PROJECT_FILE_EXT]: 'application/json'
   };
 
   return contentTypes[ext];

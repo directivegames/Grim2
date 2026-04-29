@@ -399,22 +399,6 @@ export class ZombieActor extends ENGINE.Actor {
     zombieSpatialManager.registerZombie(this);
   }
 
-  protected override doEndPlay(): void {
-    this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
-
-    // PERFORMANCE: Unregister from spatial grid
-    zombieSpatialManager.unregisterZombie(this);
-
-    if (this.behaviorRoot) {
-      this.behaviorRoot.reset();
-      this.behaviorRoot.destroy();
-      this.behaviorRoot = null;
-    }
-    this.blackboard?.clear();
-    this.blackboard = null;
-    super.doEndPlay();
-  }
-
   public override tickPrePhysics(deltaTime: number): void {
     if (this._deathSequenceStarted) {
       super.tickPrePhysics(deltaTime);
@@ -967,6 +951,111 @@ export class ZombieActor extends ENGINE.Actor {
         }
       }
     }
+  }
+
+  // ─── Visual Feedback ────────────────────────────────────────────────────────
+
+  private _isFlashing = false;
+  private _flashTimeoutId: ReturnType<typeof globalThis.setTimeout> | null = null;
+
+  /**
+   * Flash the zombie yellow to indicate damage.
+   * Works with MeshStandardMaterial (emissive) and falls back to color tint
+   * for MeshBasicMaterial / any other material type used by voxel models.
+   */
+  public flashYellow(): void {
+    if (this._isFlashing) return;
+    this._isFlashing = true;
+
+    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    if (!visual) {
+      this._isFlashing = false;
+      return;
+    }
+
+    type RestoreEntry = {
+      mesh: THREE.Mesh;
+      restore: () => void;
+    };
+
+    const restoreList: RestoreEntry[] = [];
+
+    visual.traverse((child: THREE.Object3D) => {
+      if (!(child instanceof THREE.Mesh)) return;
+
+      const mesh = child;
+      // Ensure per-instance material so we don't tint every zombie
+      if (!mesh.userData._flashMat) {
+        const orig = mesh.material;
+        if (Array.isArray(orig)) {
+          mesh.userData._flashMat = orig.map((m: THREE.Material) => m.clone());
+        } else {
+          mesh.userData._flashMat = (orig as THREE.Material).clone();
+        }
+      }
+      mesh.material = mesh.userData._flashMat;
+
+      const applyToMat = (mat: THREE.Material): (() => void) => {
+        if (mat instanceof THREE.MeshStandardMaterial) {
+          const prevEmissive = mat.emissive.clone();
+          const prevIntensity = mat.emissiveIntensity;
+          mat.emissive.setHex(0xffff00);
+          mat.emissiveIntensity = 1.5;
+          return () => { mat.emissive.copy(prevEmissive); mat.emissiveIntensity = prevIntensity; };
+        } else if ('color' in mat) {
+          const colored = mat as THREE.MeshBasicMaterial;
+          const prevColor = colored.color.clone();
+          colored.color.setHex(0xffff00);
+          return () => { colored.color.copy(prevColor); };
+        }
+        return () => { /* nothing to restore */ };
+      };
+
+      if (Array.isArray(mesh.material)) {
+        const restoreFns = (mesh.material as THREE.Material[]).map(applyToMat);
+        restoreList.push({ mesh, restore: () => restoreFns.forEach(fn => fn()) });
+      } else {
+        const restoreFn = applyToMat(mesh.material as THREE.Material);
+        restoreList.push({ mesh, restore: restoreFn });
+      }
+    });
+
+    if (restoreList.length === 0) {
+      this._isFlashing = false;
+      return;
+    }
+
+    this._flashTimeoutId = globalThis.setTimeout(() => {
+      for (const { restore } of restoreList) {
+        restore();
+      }
+      this._isFlashing = false;
+      this._flashTimeoutId = null;
+    }, 150);
+  }
+
+  // ─── Cleanup ───────────────────────────────────────────────────────────────
+
+  protected override doEndPlay(): void {
+    // Cancel any pending flash timeout
+    if (this._flashTimeoutId !== null) {
+      globalThis.clearTimeout(this._flashTimeoutId);
+      this._flashTimeoutId = null;
+    }
+
+    this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
+
+    // PERFORMANCE: Unregister from spatial grid
+    zombieSpatialManager.unregisterZombie(this);
+
+    if (this.behaviorRoot) {
+      this.behaviorRoot.reset();
+      this.behaviorRoot.destroy();
+      this.behaviorRoot = null;
+    }
+    this.blackboard?.clear();
+    this.blackboard = null;
+    super.doEndPlay();
   }
 
   public override getEditorClassIcon(): string | null {
