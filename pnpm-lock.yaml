@@ -12,8 +12,8 @@ importers:
         specifier: latest
         version: 0.0.6
       '@gnsx/genesys.js':
-        specifier: 10.3.0
-        version: 10.3.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.0)
+        specifier: 10.4.2
+        version: 10.4.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.0)
       three:
         specifier: 0.184.0
         version: 0.184.0
@@ -343,8 +343,8 @@ packages:
   '@gnsx/genesys.harness@0.0.6':
     resolution: {integrity: sha512-Y2+3BL8AR0xDVp1oZ0M7hZACJ69t5Ncel5P5EwYGrZcvxDPDqnEbjgDyrssHQKYmp5J6osy+8dWlIALV1LoZhA==}
 
-  '@gnsx/genesys.js@10.3.0':
-    resolution: {integrity: sha512-roZ6r2UKwuZhe80B+3nCXsENtEraVVdw8tjLoMwk68fsfhcHwkIgPz3ww2OlBs8nisaqZPBo7QGXd3tzVG6KYw==}
+  '@gnsx/genesys.js@10.4.2':
+    resolution: {integrity: sha512-zr0O1XcBXsQEoVPZmB1R3C6O/yvD5njq2R8JYOGFe0N2PbFDvphK6EaWxHGy8RiYbbJJ5qDkSxzQfvKIXmPQlQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2564,7 +2564,7 @@ snapshots:
 
   '@gnsx/genesys.harness@0.0.6': {}
 
-  '@gnsx/genesys.js@10.3.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.0)':
+  '@gnsx/genesys.js@10.4.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.0)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@recast-navigation/three': 0.39.0(@types/three@0.184.0)(three@0.184.0)

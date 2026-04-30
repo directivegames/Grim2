@@ -5,14 +5,14 @@
  * This dramatically improves performance with large hordes (50-100+ zombies).
  */
 import * as THREE from 'three';
-import type { ZombieActor } from './ZombieActor.js';
+import * as ENGINE from '@gnsx/genesys.js';
 
 const CELL_SIZE = 4; // Units - adjust based on separation radius (0.88) * ~4
 
 export class ZombieSpatialManager {
   private static instance: ZombieSpatialManager;
-  private grid = new Map<string, ZombieActor[]>();
-  private zombieToCell = new Map<ZombieActor, string>();
+  private grid = new Map<string, ENGINE.Actor[]>();
+  private zombieToCell = new Map<ENGINE.Actor, string>();
 
   static getInstance(): ZombieSpatialManager {
     if (!ZombieSpatialManager.instance) {
@@ -25,7 +25,7 @@ export class ZombieSpatialManager {
    * Register a zombie in the spatial grid.
    * Call this in ZombieActor.doBeginPlay().
    */
-  registerZombie(zombie: ZombieActor): void {
+  registerZombie(zombie: ENGINE.Actor): void {
     const pos = new THREE.Vector3();
     zombie.rootComponent.getWorldPosition(pos);
     const cell = this.getCell(pos);
@@ -52,7 +52,7 @@ export class ZombieSpatialManager {
    * Update zombie position in the grid.
    * Call this periodically (e.g., every 0.5s) in tick.
    */
-  updateZombiePosition(zombie: ZombieActor): void {
+  updateZombiePosition(zombie: ENGINE.Actor): void {
     const pos = new THREE.Vector3();
     zombie.rootComponent.getWorldPosition(pos);
     const newCell = this.getCell(pos);
@@ -75,7 +75,7 @@ export class ZombieSpatialManager {
    * Unregister a zombie from the grid.
    * Call this in ZombieActor.doEndPlay().
    */
-  unregisterZombie(zombie: ZombieActor): void {
+  unregisterZombie(zombie: ENGINE.Actor): void {
     const cell = this.zombieToCell.get(zombie);
     if (cell) {
       this.removeFromCell(zombie, cell);
@@ -87,8 +87,8 @@ export class ZombieSpatialManager {
    * Get nearby zombies within separation radius.
    * PERFORMANCE: O(1) lookup - only checks 9 cells max.
    */
-  getNearbyZombies(position: THREE.Vector3, radius: number): ZombieActor[] {
-    const results: ZombieActor[] = [];
+  getNearbyZombies(position: THREE.Vector3, radius: number): ENGINE.Actor[] {
+    const results: ENGINE.Actor[] = [];
     const radiusSq = radius * radius;
 
     // Calculate cell range to check
@@ -139,7 +139,7 @@ export class ZombieSpatialManager {
     return `${x},${z}`;
   }
 
-  private removeFromCell(zombie: ZombieActor, cell: string): void {
+  private removeFromCell(zombie: ENGINE.Actor, cell: string): void {
     const cellArray = this.grid.get(cell);
     if (cellArray) {
       const index = cellArray.indexOf(zombie);

@@ -4,6 +4,7 @@
 import { registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
+import { NewZombieActor } from './actors/NewZombieActor.js';
 import { TallGrassActor } from './actors/TallGrassActor.js';
 import { ZombieActor } from './actors/ZombieActor.js';
 import { IsometricMovementComponent } from './components/movement/IsometricMovementComponent.js';
@@ -23,6 +24,79 @@ export function registerMetadata(): void {
         "max": 2,
         "step": 0.001,
         "category": "Visual"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(NewZombieActor, {
+      "maxHealth": {
+        "type": "number",
+        "min": 1,
+        "max": 5000,
+        "step": 1,
+        "category": "Zombie"
+      },
+      "moveSpeed": {
+        "type": "number",
+        "min": 0.5,
+        "max": 20,
+        "step": 0.1,
+        "category": "Zombie"
+      },
+      "aggroRadius": {
+        "type": "number",
+        "min": 1,
+        "max": 100,
+        "step": 0.5,
+        "category": "Zombie"
+      },
+      "attackRange": {
+        "type": "number",
+        "min": 0.35,
+        "max": 5,
+        "step": 0.05,
+        "category": "Zombie"
+      },
+      "attackDamage": {
+        "type": "number",
+        "min": 0,
+        "max": 500,
+        "step": 1,
+        "category": "Zombie"
+      },
+      "attackCooldown": {
+        "type": "number",
+        "min": 0.1,
+        "max": 10,
+        "step": 0.05,
+        "category": "Zombie"
+      },
+      "deathLaunchForce": {
+        "type": "number",
+        "min": 0,
+        "max": 10,
+        "step": 0.1,
+        "category": "Zombie"
+      },
+      "wanderRadius": {
+        "type": "number",
+        "min": 2,
+        "max": 50,
+        "step": 0.5,
+        "category": "Zombie"
+      },
+      "wanderWaitMin": {
+        "type": "number",
+        "min": 0.5,
+        "max": 20,
+        "step": 0.5,
+        "category": "Zombie"
+      },
+      "wanderWaitMax": {
+        "type": "number",
+        "min": 0.5,
+        "max": 30,
+        "step": 0.5,
+        "category": "Zombie"
       }
     });
 
@@ -135,8 +209,8 @@ export function registerMetadata(): void {
       "deathLaunchForce": {
         "type": "number",
         "min": 0,
-        "max": 30,
-        "step": 0.5,
+        "max": 10,
+        "step": 0.1,
         "category": "Zombie"
       },
       "wanderRadius": {

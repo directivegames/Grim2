@@ -1,0 +1,130 @@
+{
+  "externalAnimationSources": [],
+  "stripPositionTracksOnBones": [
+    "Hips"
+  ],
+  "parameters": {
+    "state": "idle"
+  },
+  "initialState": "idle",
+  "oneShotClips": [],
+  "states": {
+    "idle": {
+      "clip": "run_fast_8_inplace",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        }
+      ]
+    },
+    "walk": {
+      "clip": "Limping_Walk_3_inplace",
+      "transitions": [
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        }
+      ]
+    },
+    "attack": {
+      "clip": "run_fast_6_inplace",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.05
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.03
+        }
+      ]
+    },
+    "hit": {
+      "clip": "Gunshot_Reaction",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "clipFinished": true },
+          "blendDuration": 0.2
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        },
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.15
+        }
+      ]
+    },
+    "death": {
+      "clip": "run_fast_10_inplace",
+      "transitions": []
+    }
+  },
+  "clipOptions": {
+    "run_fast_8_inplace": {
+      "loop": "LoopRepeat"
+    },
+    "Limping_Walk_3_inplace": {
+      "loop": "LoopRepeat"
+    },
+    "run_fast_6_inplace": {
+      "loop": "LoopRepeat"
+    },
+    "Gunshot_Reaction": {
+      "loop": "LoopOnce",
+      "clampWhenFinished": true
+    },
+    "run_fast_10_inplace": {
+      "loop": "LoopRepeat"
+    }
+  }
+}

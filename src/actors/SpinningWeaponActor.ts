@@ -15,7 +15,6 @@ import * as ENGINE from '@gnsx/genesys.js';
 import type { DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
-import { ZombieActor } from './ZombieActor.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -55,7 +54,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _selfSpinAngle = 0;
 
   /** Map of zombie -> last hit timestamp to enforce cooldown. */
-  private _hitCooldowns = new Map<ZombieActor, number>();
+  private _hitCooldowns = new Map<ENGINE.Actor, number>();
 
   /** Reusable vectors for position calculations. */
   private _scratchPos = new THREE.Vector3();
@@ -160,7 +159,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
   }
 
-  private _hitZombie(zombie: ZombieActor, currentTime: number, player: ENGINE.Pawn): void {
+  private _hitZombie(zombie: ENGINE.Actor, currentTime: number, player: ENGINE.Pawn): void {
     this._hitCooldowns.set(zombie, currentTime);
 
     zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
@@ -177,7 +176,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
 
     // Flash zombie yellow
-    zombie.flashYellow();
+    (zombie as unknown as { flashYellow(): void }).flashYellow();
 
     // Trigger screen shake on player
     if (player instanceof IsometricPlayerPawn) {
