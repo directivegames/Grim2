@@ -326,6 +326,7 @@ export class ZombieActor extends ENGINE.Actor {
       rotation: new THREE.Euler(0, Math.PI, 0),
       physicsOptions: { enabled: false },
       castShadow: true,
+      receiveShadow: true,
     });
 
     const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: ZOMBIE_ANIM_URL });

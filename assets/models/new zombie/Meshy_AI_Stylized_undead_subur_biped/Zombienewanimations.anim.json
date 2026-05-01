@@ -80,13 +80,8 @@
       ]
     },
     "hit": {
-      "clip": "Gunshot_Reaction",
+      "clip": "Walking",
       "transitions": [
-        {
-          "to": "walk",
-          "condition": { "clipFinished": true },
-          "blendDuration": 0.2
-        },
         {
           "to": "death",
           "condition": { "state": { "equalTo": "death" } },
@@ -95,6 +90,11 @@
         {
           "to": "walk",
           "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
           "blendDuration": 0.15
         },
         {
@@ -110,7 +110,7 @@
     }
   },
   "clipOptions": {
-    "run_fast_8_inplace": {
+    "Gunshot_Reaction": {
       "loop": "LoopRepeat"
     },
     "Limping_Walk_3_inplace": {
@@ -119,11 +119,11 @@
     "run_fast_6_inplace": {
       "loop": "LoopRepeat"
     },
-    "Gunshot_Reaction": {
+    "Walking": {
       "loop": "LoopRepeat"
     },
     "run_fast_10_inplace": {
-      "loop": "LoopRepeat"
+      "loop": "LoopOnce"
     }
   }
 }

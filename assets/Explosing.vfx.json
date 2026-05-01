@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "name": "Explosing",
+  "particles": [
+    {
+      "nbParticles": 1000,
+      "gravity": [
+        0,
+        0,
+        0
+      ],
+      "renderMode": "billboard",
+      "intensity": 1,
+      "appearance": "circular",
+      "easeFunction": "easeLinear",
+      "fadeAlpha": [
+        0,
+        1
+      ],
+      "fadeSize": [
+        0,
+        1
+      ],
+      "blendingMode": "normal"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 10,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        1,
+        2
+      ],
+      "startPositionMin": [
+        -0.1,
+        0,
+        -0.1
+      ],
+      "startPositionMax": [
+        0.1,
+        0,
+        0.1
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        0
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        0
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0
+      ],
+      "directionMin": [
+        0,
+        1,
+        0
+      ],
+      "directionMax": [
+        0,
+        1,
+        0
+      ],
+      "size": [
+        0.1,
+        0.1
+      ],
+      "speed": [
+        1,
+        1
+      ],
+      "colorStart": [
+        "#ffffff"
+      ],
+      "colorEnd": [
+        "#ffffff"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

@@ -2,11 +2,11 @@
  * NewZombieActor — identical behaviour to ZombieActor, uses the new stylised zombie model.
  *
  * Animation mapping (new model clips → state machine states):
- *   idle    → "run fast 8"           (roaming / wandering)
- *   walk    → "Limping walk 3 in place"  (chasing player)
- *   attack  → "Running fast 6"       (melee range)
- *   hit     → "walking"              (taking damage)
- *   death   → "run fast 10"          (on death)
+ *   idle    → "Gunshot_Reaction"         (standing still, no aggro)
+ *   walk    → "Limping_Walk_3_inplace"   (chasing player)
+ *   attack  → "run_fast_6_inplace"       (melee range)
+ *   hit     → "Walking"                  (taking damage, looped while held)
+ *   death   → "run_fast_10_inplace"      (on death, 2.0s then destroy)
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -143,10 +143,10 @@ export class NewZombieActor extends ENGINE.Actor {
   public wanderRadius: number = 12;
 
   @ENGINE.property({ type: 'number', min: 0.5, max: 20, step: 0.5, category: 'Zombie' })
-  public wanderWaitMin: number = 2;
+  public wanderWaitMin: number = 4;
 
   @ENGINE.property({ type: 'number', min: 0.5, max: 30, step: 0.5, category: 'Zombie' })
-  public wanderWaitMax: number = 5;
+  public wanderWaitMax: number = 10;
 
   // ── Private state ──────────────────────────────────────────────────────────
 
@@ -190,7 +190,7 @@ export class NewZombieActor extends ENGINE.Actor {
 
   // FIX: Debounce timer for idle↔walk animation switching to prevent rapid oscillation
   private _idleWalkDebounceTimer = 0;
-  private _pendingAnimState: 'idle' | 'walk' | null = null;
+  private _pendingAnimState: 'idle' | 'walk' | 'attack' | null = null;
   private static readonly IDLE_WALK_DEBOUNCE_TIME = 0.25; // 250ms debounce before switching
   private static readonly MOVEMENT_THRESHOLD = 0.015; // Slightly higher threshold (was 0.008)
 
@@ -206,6 +206,9 @@ export class NewZombieActor extends ENGINE.Actor {
   private static readonly HIGH_LOD_DISTANCE = 20;
   private static readonly MEDIUM_LOD_DISTANCE = 35;
   private _lodLevel: 'high' | 'medium' | 'low' = 'high';
+
+  // Frozen position during death animation - prevents any residual movement
+  private _deathPosition: THREE.Vector3 | null = null;
 
   private _tickOffset = 0;
   private static readonly TICK_INTERVAL = 2;
@@ -283,6 +286,7 @@ export class NewZombieActor extends ENGINE.Actor {
       rotation: new THREE.Euler(0, Math.PI, 0),
       physicsOptions: { enabled: false },
       castShadow: true,
+      receiveShadow: true,
     });
 
     const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: NEW_ZOMBIE_ANIM_URL });
@@ -386,7 +390,20 @@ export class NewZombieActor extends ENGINE.Actor {
 
   public override tickPrePhysics(deltaTime: number): void {
     if (this._deathSequenceStarted) {
-      // Death is handled in handleDeath - just call parent tick
+      // Lock physics capsule position to death spot
+      if (this._deathPosition) {
+        this.rootComponent.position.set(
+          this._deathPosition.x,
+          this._deathPosition.y,
+          this._deathPosition.z
+        );
+      }
+      // Also lock the visual mesh's local position to prevent animation
+      // root motion from sliding the mesh within the physics capsule
+      const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+      if (visual) {
+        visual.position.set(0, 0, 0);
+      }
       super.tickPrePhysics(deltaTime);
       return;
     }
@@ -431,6 +448,11 @@ export class NewZombieActor extends ENGINE.Actor {
     const inHitReaction = world !== null && world !== undefined && world.getGameTime() < this._hitAnimEndTime;
     if (!inHitReaction) {
       this.applyDirectSteerChase();
+    } else {
+      // Keep stopping the NPC every tick during hit reaction - its internal tick
+      // will resume pathfinding otherwise even after a single npc.stop() call
+      const npc = this.getComponent(ENGINE.NpcMovementComponent);
+      npc?.stop();
     }
 
     // FIX: Handle startup animation initialization - wait for animation system to be ready
@@ -529,6 +551,15 @@ export class NewZombieActor extends ENGINE.Actor {
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
     if (!anim?.isReady()) return;
 
+    // Never override death or hit animations
+    if (this._deathSequenceStarted) return;
+
+    const w = this.getWorld();
+    if (w && w.getGameTime() < this._hitAnimEndTime) {
+      anim.setParameter('state', 'hit');
+      return;
+    }
+
     const currentPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(currentPos);
     const wasMoving = this._isActuallyMoving;
@@ -549,14 +580,12 @@ export class NewZombieActor extends ENGINE.Actor {
       return;
     }
 
-    // Mirror the high-LOD logic with debounce: walk only if actually moving, otherwise idle
-    const desiredState: 'idle' | 'walk' = this._isActuallyMoving ? 'walk' : 'idle';
-    const currentState = this._pendingAnimState ?? (wasMoving ? 'walk' : 'idle');
+    // No aggro = always idle
+    const desiredState: 'idle' = 'idle';
+    const currentState = this._pendingAnimState ?? 'idle';
 
-    // FIX: Debounce idle↔walk transitions
     if (desiredState !== currentState) {
       if (wasMoving !== this._isActuallyMoving) {
-        // Movement state changed - start debounce
         this._idleWalkDebounceTimer = 0;
         this._pendingAnimState = desiredState;
       } else {
@@ -652,22 +681,29 @@ export class NewZombieActor extends ENGINE.Actor {
     const physics = this.getPhysicsEngine();
     if (npc && physics) physics.removeCharacterController(npc);
 
-    // Disable animation
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
-    if (anim?.isReady()) {
-      (anim as unknown as { enabled: boolean }).enabled = false;
+    // Disable the NPC component entirely so its internal tick can't apply
+    // any further velocity to the physics body after death
+    if (npc) {
+      (npc as unknown as { enabled: boolean }).enabled = false;
     }
 
-    // Get death position
-    const world = this.getWorld();
+    // Capture and freeze position so the zombie doesn't drift during death anim
     const deathPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(deathPos);
+    this._deathPosition = deathPos.clone();
 
-    // Defer spawning to next frame so this frame's death cleanup finishes first
-    globalThis.setTimeout(() => { this.spawnDeathObjects(deathPos); }, 0);
+    // Play death animation
+    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    if (anim?.isReady()) {
+      anim.setParameter('state', 'death');
+    }
 
-    // Quick destroy - no ragdoll
-    globalThis.setTimeout(() => this.destroy(), 300);
+    // At 0.95s (HIT_REACTION_HOLD_SEC), destroy zombie and spawn grave + soul.
+    // Cut short before root motion slide starts, similar to hit reaction timing.
+    globalThis.setTimeout(() => {
+      this.spawnDeathObjects(deathPos);
+      this.destroy();
+    }, HIT_REACTION_HOLD_SEC * 1000);
   }
 
   /**
@@ -884,6 +920,9 @@ export class NewZombieActor extends ENGINE.Actor {
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
     if (!anim?.isReady()) return;
 
+    // Never override death or hit animations
+    if (this._deathSequenceStarted) return;
+
     const currentPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(currentPos);
     const movedDist = currentPos.distanceTo(this._lastAnimPosition);
@@ -907,39 +946,29 @@ export class NewZombieActor extends ENGINE.Actor {
       } else {
         desiredState = 'walk';
       }
-    } else if (dist !== undefined && dist <= this.aggroRadius) {
-      desiredState = 'walk';
-    } else if (this._isActuallyMoving) {
-      desiredState = 'walk';
     } else {
+      // No aggro = always idle (no wandering/chase animation)
       desiredState = 'idle';
     }
 
-    // FIX: Debounce idle↔walk transitions to prevent rapid oscillation
-    // Only apply debounce for idle↔walk (not attack or hit)
+    // Debounce idle↔walk transitions to prevent rapid oscillation
     const currentState = this._pendingAnimState ?? (wasMoving ? 'walk' : 'idle');
     const isIdleWalkTransition = (desiredState === 'idle' || desiredState === 'walk') &&
                                   (currentState === 'idle' || currentState === 'walk') &&
                                   desiredState !== currentState;
 
     if (isIdleWalkTransition) {
-      // We're trying to switch between idle and walk - use debounce
       if (wasMoving !== this._isActuallyMoving) {
-        // Movement state changed - start/restart debounce timer
         this._idleWalkDebounceTimer = 0;
-        this._pendingAnimState = desiredState as 'idle' | 'walk';
+        this._pendingAnimState = desiredState;
       } else {
-        // Continue debouncing
         this._idleWalkDebounceTimer += NewZombieActor.ANIM_UPDATE_INTERVAL;
         if (this._idleWalkDebounceTimer >= NewZombieActor.IDLE_WALK_DEBOUNCE_TIME) {
-          // Debounce complete - apply the state change
           this._pendingAnimState = null;
           anim.setParameter('state', desiredState);
         }
-        // Else: wait for debounce to complete, keep current animation
       }
     } else {
-      // Not an idle↔walk transition, or state hasn't changed - apply immediately
       this._pendingAnimState = null;
       this._idleWalkDebounceTimer = 0;
       anim.setParameter('state', desiredState);
