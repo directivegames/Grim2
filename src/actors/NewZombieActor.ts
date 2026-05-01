@@ -13,6 +13,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
+import { DeadGraveActor } from './DeadGraveActor.js';
+import { SoulActor } from './SoulActor.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -186,6 +188,12 @@ export class NewZombieActor extends ENGINE.Actor {
   private _isActuallyMoving = false;
   private _animStateChangeTimer = 0;
 
+  // FIX: Debounce timer for idle↔walk animation switching to prevent rapid oscillation
+  private _idleWalkDebounceTimer = 0;
+  private _pendingAnimState: 'idle' | 'walk' | null = null;
+  private static readonly IDLE_WALK_DEBOUNCE_TIME = 0.25; // 250ms debounce before switching
+  private static readonly MOVEMENT_THRESHOLD = 0.015; // Slightly higher threshold (was 0.008)
+
   private _stuckCheckTimer = 0;
   private _stuckCheckPosition = new THREE.Vector3();
   private _consecutiveStuckChecks = 0;
@@ -206,13 +214,23 @@ export class NewZombieActor extends ENGINE.Actor {
   private _btTimer = 0;
   private static readonly BT_UPDATE_INTERVAL = 0.15;
   private _animTimer = Math.random() * 0.1;
-  private static readonly ANIM_UPDATE_INTERVAL = 0.1;
+  private static readonly ANIM_UPDATE_INTERVAL = 0.033; // 30Hz animation updates (was 0.1 = 10Hz)
   private _shadowCheckTimer = 0;
   private static readonly SHADOW_CHECK_INTERVAL = 0.5;
 
   private _individualOffset = Math.random() * 1000;
   private _stateChangeTimer = 0;
   private _nextStateChangeTime = 2 + Math.random() * 4;
+
+  // FIX: Startup animation randomization - wait for animation system to be ready
+  private _animInitTimer = 0;
+  private static readonly ANIM_INIT_TIMEOUT = 5.0; // Max 5 seconds to wait for animation ready
+  private _animationInitialized = false;
+
+  // FIX: Per-zombie initial idle delay for random startup behavior
+  private _initialIdleDelay = 0;
+  private _startupTimer = 0;
+  private _startupComplete = false;
 
   // ── Damage → hit-reaction ──────────────────────────────────────────────────
 
@@ -334,20 +352,18 @@ export class NewZombieActor extends ENGINE.Actor {
       stats.onHealthChanged.add(this._onHealthChanged);
     }
 
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
-    if (anim?.isReady()) {
-      const initialState = Math.random() > 0.5 ? 'idle' : 'walk';
-      anim.setParameter('state', initialState);
-
-      const anyAnim = anim as unknown as {
-        mixer?: { time: number };
-        _mixer?: { time: number };
-      };
-      const mixer = anyAnim.mixer ?? anyAnim._mixer;
-      if (mixer) {
-        mixer.time = Math.random() * 10;
-      }
+    // FIX: Per-zombie initial idle delay - 30% start idle, 70% start walking
+    // This creates a natural mix of behaviors from the first frame
+    const startAsIdler = Math.random() < 0.3; // 30% chance to start as idler
+    if (startAsIdler) {
+      this._initialIdleDelay = 1.0 + Math.random() * 4.0; // 1-5 second idle delay
+    } else {
+      this._initialIdleDelay = 0; // No delay, start wandering immediately
     }
+
+    // FIX: Startup animation randomization - will be applied once animation system is ready
+    // We can't set it here because the model isn't loaded yet (isReady() returns false)
+    // The actual initialization happens in tickPrePhysics
 
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
@@ -370,27 +386,7 @@ export class NewZombieActor extends ENGINE.Actor {
 
   public override tickPrePhysics(deltaTime: number): void {
     if (this._deathSequenceStarted) {
-      if (!this._deathLanded) {
-        const currentY = this.rootComponent.position.y;
-        if (currentY <= this._deathStartY + 0.15) {
-          this._deathLanded = true;
-          const root = this.rootComponent as ENGINE.MeshComponent;
-          root.setPhysicsVectorParam(ENGINE.PhysicsVectorParam.LinearVelocity, [0, 0, 0]);
-          this._deathSpinRate.set(0, 0, 0);
-        }
-      }
-
-      if (this._deathSpinRate.lengthSq() > 0.001) {
-        const visual = this.getComponent(ENGINE.GLTFMeshComponent);
-        if (visual) {
-          visual.rotation.x += this._deathSpinRate.x * deltaTime;
-          visual.rotation.y += this._deathSpinRate.y * deltaTime;
-          visual.rotation.z += this._deathSpinRate.z * deltaTime;
-        }
-        const decay = this._deathLanded ? 8.0 : 1.5;
-        this._deathSpinRate.multiplyScalar(Math.max(0, 1 - decay * deltaTime));
-      }
-
+      // Death is handled in handleDeath - just call parent tick
       super.tickPrePhysics(deltaTime);
       return;
     }
@@ -437,7 +433,44 @@ export class NewZombieActor extends ENGINE.Actor {
       this.applyDirectSteerChase();
     }
 
-    if (!this._hasAggro) {
+    // FIX: Handle startup animation initialization - wait for animation system to be ready
+    if (!this._animationInitialized) {
+      this._animInitTimer += deltaTime;
+      const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+      if (anim?.isReady()) {
+        // Animation system is ready - apply random initial state for visual desync
+        const initialState = Math.random() > 0.5 ? 'idle' : 'walk';
+        anim.setParameter('state', initialState);
+        this._animationInitialized = true;
+      } else if (this._animInitTimer >= NewZombieActor.ANIM_INIT_TIMEOUT) {
+        // Timeout - give up waiting
+        this._animationInitialized = true;
+      }
+    }
+
+    // FIX: Handle initial idle delay - some zombies idle at startup
+    if (!this._startupComplete && !this._hasAggro) {
+      this._startupTimer += deltaTime;
+      if (this._startupTimer < this._initialIdleDelay) {
+        // Still in initial idle period - stop movement
+        const npc = this.getComponent(ENGINE.NpcMovementComponent);
+        if (npc) {
+          npc.stop();
+        }
+        // Force idle animation during startup delay (only set once to avoid state machine thrashing)
+        const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+        if (anim?.isReady() && this._animationInitialized) {
+          const currentState = anim.getGraphState('base');
+          if (currentState !== 'idle') {
+            anim.setParameter('state', 'idle');
+          }
+        }
+      } else {
+        this._startupComplete = true;
+      }
+    }
+
+    if (!this._hasAggro && this._startupComplete) {
       this.updateIndividualBehavior(deltaTime);
     }
 
@@ -498,7 +531,8 @@ export class NewZombieActor extends ENGINE.Actor {
 
     const currentPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(currentPos);
-    this._isActuallyMoving = currentPos.distanceTo(this._lastAnimPosition) > 0.008;
+    const wasMoving = this._isActuallyMoving;
+    this._isActuallyMoving = currentPos.distanceTo(this._lastAnimPosition) > NewZombieActor.MOVEMENT_THRESHOLD;
     this._lastAnimPosition.copy(currentPos);
 
     if (this._hasAggro) {
@@ -510,10 +544,33 @@ export class NewZombieActor extends ENGINE.Actor {
       } else {
         anim.setParameter('state', 'walk');
       }
+      this._pendingAnimState = null;
+      this._idleWalkDebounceTimer = 0;
       return;
     }
 
-    anim.setParameter('state', this._isActuallyMoving ? 'walk' : 'idle');
+    // Mirror the high-LOD logic with debounce: walk only if actually moving, otherwise idle
+    const desiredState: 'idle' | 'walk' = this._isActuallyMoving ? 'walk' : 'idle';
+    const currentState = this._pendingAnimState ?? (wasMoving ? 'walk' : 'idle');
+
+    // FIX: Debounce idle↔walk transitions
+    if (desiredState !== currentState) {
+      if (wasMoving !== this._isActuallyMoving) {
+        // Movement state changed - start debounce
+        this._idleWalkDebounceTimer = 0;
+        this._pendingAnimState = desiredState;
+      } else {
+        this._idleWalkDebounceTimer += NewZombieActor.ANIM_UPDATE_INTERVAL;
+        if (this._idleWalkDebounceTimer >= NewZombieActor.IDLE_WALK_DEBOUNCE_TIME) {
+          this._pendingAnimState = null;
+          anim.setParameter('state', desiredState);
+        }
+      }
+    } else {
+      this._pendingAnimState = null;
+      this._idleWalkDebounceTimer = 0;
+      anim.setParameter('state', desiredState);
+    }
   }
 
   private updateShadowLOD(): void {
@@ -595,59 +652,38 @@ export class NewZombieActor extends ENGINE.Actor {
     const physics = this.getPhysicsEngine();
     if (npc && physics) physics.removeCharacterController(npc);
 
+    // Disable animation
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
     if (anim?.isReady()) {
       (anim as unknown as { enabled: boolean }).enabled = false;
     }
 
-    const root = this.rootComponent as ENGINE.MeshComponent;
-    root.overridePhysicsOptions({
-      enabled: true,
-      motionType: ENGINE.PhysicsMotionType.Dynamic,
-      gravityScale: 1.8,
-      collisionProfile: ENGINE.DefaultCollisionProfile.Ragdoll,
-    });
+    // Get death position
+    const world = this.getWorld();
+    const deathPos = new THREE.Vector3();
+    this.rootComponent.getWorldPosition(deathPos);
 
-    root.setPhysicsScalarParam(ENGINE.PhysicsScalarParam.LinearDamping, 0.4);
-    root.setPhysicsScalarParam(ENGINE.PhysicsScalarParam.AngularDamping, 0.5);
+    // Defer spawning to next frame so this frame's death cleanup finishes first
+    globalThis.setTimeout(() => { this.spawnDeathObjects(deathPos); }, 0);
 
-    this._deathStartY = this.rootComponent.position.y;
-    this._deathLanded = false;
+    // Quick destroy - no ragdoll
+    globalThis.setTimeout(() => this.destroy(), 300);
+  }
 
-    const s = this._deathScratch;
-    s.launch.set(0, 1.0, 0);
-    this.rootComponent.getWorldPosition(s.ownerPos);
-    const player = this.getWorld()?.getFirstPlayerPawn();
-    if (player) {
-      player.rootComponent.getWorldPosition(s.playerPos);
-      s.flat.copy(s.ownerPos).sub(s.playerPos);
-      s.flat.y = 0;
-      if (s.flat.lengthSq() > 1e-6) {
-        s.flat.normalize().multiplyScalar(0.25);
-        s.launch.add(s.flat);
-      }
-    }
+  /**
+   * Spawn grave and soul at death position.
+   */
+  private spawnDeathObjects(deathPos: THREE.Vector3): void {
+    const world = this.getWorld();
+    if (!world) return;
 
-    s.launch.multiplyScalar(this.deathLaunchForce);
-    const maxUp = 4.0;
-    const maxH  = 1.5;
-    s.launch.y = Math.min(s.launch.y, maxUp);
-    const hLen = Math.sqrt(s.launch.x * s.launch.x + s.launch.z * s.launch.z);
-    if (hLen > maxH) {
-      const scale = maxH / hLen;
-      s.launch.x *= scale;
-      s.launch.z *= scale;
-    }
+    const gravePos = deathPos.clone().add(new THREE.Vector3(0, 0.5, 0));
+    const grave = DeadGraveActor.create({ position: gravePos });
+    world.addActor(grave);
 
-    root.setPhysicsVectorParam(ENGINE.PhysicsVectorParam.LinearVelocity, [s.launch.x, s.launch.y, s.launch.z]);
-
-    this._deathSpinRate.set(
-      (Math.random() - 0.5) * 8,
-      (Math.random() - 0.5) * 5,
-      (Math.random() - 0.5) * 8,
-    );
-
-    globalThis.setTimeout(() => this.destroy(), 3500);
+    const soulPos = deathPos.clone().add(new THREE.Vector3(0, 0.8, 0));
+    const soul = SoulActor.create({ position: soulPos });
+    world.addActor(soul);
   }
 
   // ─── Internal helpers ──────────────────────────────────────────────────────
@@ -851,7 +887,8 @@ export class NewZombieActor extends ENGINE.Actor {
     const currentPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(currentPos);
     const movedDist = currentPos.distanceTo(this._lastAnimPosition);
-    this._isActuallyMoving = movedDist > 0.008;
+    const wasMoving = this._isActuallyMoving;
+    this._isActuallyMoving = movedDist > NewZombieActor.MOVEMENT_THRESHOLD;
     this._lastAnimPosition.copy(currentPos);
 
     const w = this.getWorld();
@@ -862,23 +899,51 @@ export class NewZombieActor extends ENGINE.Actor {
 
     const dist = this.blackboard?.getValue<number>('DistanceToPlayer');
     const engage = this.attackRange + ATTACK_ZONE_HYSTERESIS_MARGIN;
-    let state: 'idle' | 'walk' | 'attack';
+    let desiredState: 'idle' | 'walk' | 'attack';
 
     if (this._hasAggro) {
       if (dist !== undefined && dist <= engage) {
-        state = 'attack';
+        desiredState = 'attack';
       } else {
-        state = 'walk';
+        desiredState = 'walk';
       }
     } else if (dist !== undefined && dist <= this.aggroRadius) {
-      state = 'walk';
+      desiredState = 'walk';
     } else if (this._isActuallyMoving) {
-      state = 'walk';
+      desiredState = 'walk';
     } else {
-      state = 'idle';
+      desiredState = 'idle';
     }
 
-    anim.setParameter('state', state);
+    // FIX: Debounce idle↔walk transitions to prevent rapid oscillation
+    // Only apply debounce for idle↔walk (not attack or hit)
+    const currentState = this._pendingAnimState ?? (wasMoving ? 'walk' : 'idle');
+    const isIdleWalkTransition = (desiredState === 'idle' || desiredState === 'walk') &&
+                                  (currentState === 'idle' || currentState === 'walk') &&
+                                  desiredState !== currentState;
+
+    if (isIdleWalkTransition) {
+      // We're trying to switch between idle and walk - use debounce
+      if (wasMoving !== this._isActuallyMoving) {
+        // Movement state changed - start/restart debounce timer
+        this._idleWalkDebounceTimer = 0;
+        this._pendingAnimState = desiredState as 'idle' | 'walk';
+      } else {
+        // Continue debouncing
+        this._idleWalkDebounceTimer += NewZombieActor.ANIM_UPDATE_INTERVAL;
+        if (this._idleWalkDebounceTimer >= NewZombieActor.IDLE_WALK_DEBOUNCE_TIME) {
+          // Debounce complete - apply the state change
+          this._pendingAnimState = null;
+          anim.setParameter('state', desiredState);
+        }
+        // Else: wait for debounce to complete, keep current animation
+      }
+    } else {
+      // Not an idle↔walk transition, or state hasn't changed - apply immediately
+      this._pendingAnimState = null;
+      this._idleWalkDebounceTimer = 0;
+      anim.setParameter('state', desiredState);
+    }
   }
 
   private updateIndividualBehavior(deltaTime: number): void {

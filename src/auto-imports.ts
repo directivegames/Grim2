@@ -1,6 +1,8 @@
 import './actors/BackgroundMusicActor.ts';
+import './actors/DeadGraveActor.ts';
 import './actors/IsometricPlayerPawn.ts';
 import './actors/NewZombieActor.ts';
+import './actors/SoulActor.ts';
 import './actors/SpinningWeaponActor.ts';
 import './actors/TallGrassActor.ts';
 import './actors/ZombieActor.ts';
@@ -13,3 +15,4 @@ import './materials/grass/GenesysGrassSwayNodeMaterial.ts';
 import './materials/grass/grassDualBackend.ts';
 import './materials/grass/GrassSwayShaderMaterial.ts';
 import './materials/grass/GrassUniformManager.ts';
+import './ui/SoulCounterUI.ts';

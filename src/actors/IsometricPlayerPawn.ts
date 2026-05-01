@@ -101,6 +101,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   private _sceneGrimPlaceholderRemoved: boolean = false;
 
+  /** Souls collected from defeated zombies. */
+  public soulsCollected: number = 0;
+
   // ── Screen shake state ──────────────────────────────────────────────────
 
   private _shakeIntensity = 0;
