@@ -460,9 +460,8 @@ export class NewZombieActor extends ENGINE.Actor {
       this._animInitTimer += deltaTime;
       const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
       if (anim?.isReady()) {
-        // Animation system is ready - apply random initial state for visual desync
-        const initialState = Math.random() > 0.5 ? 'idle' : 'walk';
-        anim.setParameter('state', initialState);
+        // Animation system is ready - always start idle
+        anim.setParameter('state', 'idle');
         this._animationInitialized = true;
       } else if (this._animInitTimer >= NewZombieActor.ANIM_INIT_TIMEOUT) {
         // Timeout - give up waiting
@@ -580,26 +579,10 @@ export class NewZombieActor extends ENGINE.Actor {
       return;
     }
 
-    // No aggro = always idle
-    const desiredState: 'idle' = 'idle';
-    const currentState = this._pendingAnimState ?? 'idle';
-
-    if (desiredState !== currentState) {
-      if (wasMoving !== this._isActuallyMoving) {
-        this._idleWalkDebounceTimer = 0;
-        this._pendingAnimState = desiredState;
-      } else {
-        this._idleWalkDebounceTimer += NewZombieActor.ANIM_UPDATE_INTERVAL;
-        if (this._idleWalkDebounceTimer >= NewZombieActor.IDLE_WALK_DEBOUNCE_TIME) {
-          this._pendingAnimState = null;
-          anim.setParameter('state', desiredState);
-        }
-      }
-    } else {
-      this._pendingAnimState = null;
-      this._idleWalkDebounceTimer = 0;
-      anim.setParameter('state', desiredState);
-    }
+    // No aggro = always idle immediately
+    anim.setParameter('state', 'idle');
+    this._pendingAnimState = null;
+    this._idleWalkDebounceTimer = 0;
   }
 
   private updateShadowLOD(): void {
@@ -622,7 +605,7 @@ export class NewZombieActor extends ENGINE.Actor {
     this.rootComponent.getWorldPosition(currentPos);
     const movedDist = currentPos.distanceTo(this._stuckCheckPosition);
 
-    const shouldBeMoving = this._hasAggro || this._btBranch === 'wander';
+    const shouldBeMoving = this._hasAggro;
 
     if (shouldBeMoving && movedDist < NewZombieActor.STUCK_DISTANCE_THRESHOLD) {
       this._consecutiveStuckChecks++;
@@ -698,12 +681,12 @@ export class NewZombieActor extends ENGINE.Actor {
       anim.setParameter('state', 'death');
     }
 
-    // At 0.95s (HIT_REACTION_HOLD_SEC), destroy zombie and spawn grave + soul.
-    // Cut short before root motion slide starts, similar to hit reaction timing.
+    // At 1.1s, destroy zombie and spawn grave + soul.
+    // Cut short before root motion slide starts.
     globalThis.setTimeout(() => {
       this.spawnDeathObjects(deathPos);
       this.destroy();
-    }, HIT_REACTION_HOLD_SEC * 1000);
+    }, 1100);
   }
 
   /**
@@ -947,17 +930,18 @@ export class NewZombieActor extends ENGINE.Actor {
         desiredState = 'walk';
       }
     } else {
-      // No aggro = always idle (no wandering/chase animation)
-      desiredState = 'idle';
+      // No aggro = always idle immediately, no debounce
+      anim.setParameter('state', 'idle');
+      this._pendingAnimState = null;
+      this._idleWalkDebounceTimer = 0;
+      return;
     }
 
-    // Debounce idle↔walk transitions to prevent rapid oscillation
+    // With aggro: debounce walk↔attack transitions
     const currentState = this._pendingAnimState ?? (wasMoving ? 'walk' : 'idle');
-    const isIdleWalkTransition = (desiredState === 'idle' || desiredState === 'walk') &&
-                                  (currentState === 'idle' || currentState === 'walk') &&
-                                  desiredState !== currentState;
+    const isTransition = desiredState !== currentState;
 
-    if (isIdleWalkTransition) {
+    if (isTransition) {
       if (wasMoving !== this._isActuallyMoving) {
         this._idleWalkDebounceTimer = 0;
         this._pendingAnimState = desiredState;
