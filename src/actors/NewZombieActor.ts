@@ -681,12 +681,12 @@ export class NewZombieActor extends ENGINE.Actor {
       anim.setParameter('state', 'death');
     }
 
-    // At 1.1s, destroy zombie and spawn grave + soul.
+    // At 0.95s (HIT_REACTION_HOLD_SEC), destroy zombie and spawn grave + soul.
     // Cut short before root motion slide starts.
     globalThis.setTimeout(() => {
       this.spawnDeathObjects(deathPos);
       this.destroy();
-    }, 1100);
+    }, HIT_REACTION_HOLD_SEC * 1000);
   }
 
   /**

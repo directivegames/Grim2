@@ -5,8 +5,9 @@
  * named "weapon" and drives its position/rotation each frame.
  *
  * The weapon:
- *  - Orbits the player at a fixed radius on the XZ plane
- *  - Deals damage to zombies on contact
+ *  - Handle base sits at Grim's position; blade points radially outward
+ *  - The whole weapon orbits Grim (no self-spin — the blade does not tumble)
+ *  - Deals damage to zombies on contact with the blade
  *  - Triggers visual feedback (zombie flashes yellow, screen shake)
  */
 import * as THREE from 'three';
@@ -16,24 +17,73 @@ import type { DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 
+// ─── Collision Profile ──────────────────────────────────────────────────────
+
+const WEAPON_COLLISION_PROFILE = 'WeaponNoBlock';
+
+type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
+
+function ensureWeaponCollisionProfile(): void {
+  const cfg = ENGINE.CollisionConfig.getInstance();
+  const existing = cfg.getProfile(WEAPON_COLLISION_PROFILE);
+  if (existing) return;
+
+  const profile = new ENGINE.CollisionProfile(
+    WEAPON_COLLISION_PROFILE,
+    ENGINE.CollisionMode.QueryOnly,
+    ENGINE.CollisionChannel.WorldDynamic,
+    []
+  );
+
+  const responses = (profile as unknown as { responses: MutableProfileResponses }).responses;
+  const set = (channel: ENGINE.CollisionChannel, response: ENGINE.CollisionResponse): void => {
+    const ch = channel as unknown as string;
+    const i = responses.findIndex(r => r.channel === ch);
+    if (i >= 0) responses[i].response = response;
+    else responses.push({ channel: ch, response });
+  };
+
+  // Ignore Pawns (player) so weapon doesn't push Grim back
+  set(ENGINE.CollisionChannel.Pawn, ENGINE.CollisionResponse.Ignore);
+  // Ignore other WorldDynamic so it doesn't push zombies either
+  set(ENGINE.CollisionChannel.WorldDynamic, ENGINE.CollisionResponse.Ignore);
+  // Keep blocking WorldStatic if needed (though physics is disabled anyway)
+  set(ENGINE.CollisionChannel.WorldStatic, ENGINE.CollisionResponse.Ignore);
+
+  (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
+}
+
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 /** Name of the editor-placed scene actor that acts as the weapon visual. */
 const WEAPON_ACTOR_NAME = 'weapon';
 
-/** Orbit radius around the player (world units). */
-const ORBIT_RADIUS = 5.0;
-
 /** Angular speed of the orbit (radians per second). */
-const ORBIT_SPEED = 5.0;
-
-/** Self-spin speed on the weapon's own Z axis (radians per second). */
-const SELF_SPIN_SPEED = 12;
+const ORBIT_SPEED = 6.5;
 
 /** Height offset from player's Y position (world units). */
 const WEAPON_HEIGHT = 0.6;
 
-/** XZ-plane hit detection radius (world units). Y-axis is ignored so height differences don't cause misses. */
+/**
+ * Distance from the model's pivot to the handle end (world units).
+ * Shifts the weapon outward so the handle visually sits on Grim rather than the model centre.
+ * Tune this until the handle lines up with Grim's body.
+ */
+const HANDLE_OFFSET = 2.7;
+
+/**
+ * Distance from Grim's position to the blade tip used for hit detection (world units).
+ * Tune this to match the visual length of the scythe model.
+ */
+const BLADE_REACH = 4.0;
+
+/**
+ * Fixed rotation offset (radians) applied to make the blade point radially outward.
+ * Tune this if the weapon aligns parallel to the orbit path instead of perpendicular.
+ */
+const BLADE_ANGLE_OFFSET = Math.PI / 2;
+
+/** XZ-plane hit detection radius around the blade tip (world units). */
 const HIT_RADIUS = 1.2;
 
 /** Damage dealt per hit. */
@@ -51,7 +101,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _sceneWeaponActor: ENGINE.Actor | null = null;
 
   private _orbitAngle = 0;
-  private _selfSpinAngle = 0;
+
+  /** Base orientation from the scene editor, stored as a quaternion so tilt is preserved correctly. */
+  private _baseQuat = new THREE.Quaternion();
+
+  /** Whether the base quaternion has been captured from the live scene transform yet. */
+  private _baseQuatCaptured = false;
+
+  /** Reusable quaternion and axis for orbit rotation — avoids allocations each tick. */
+  private _orbitQuat = new THREE.Quaternion();
+  private static readonly _Y_AXIS = new THREE.Vector3(0, 1, 0);
 
   /** Map of zombie -> last hit timestamp to enforce cooldown. */
   private _hitCooldowns = new Map<ENGINE.Actor, number>();
@@ -60,6 +119,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _scratchPos = new THREE.Vector3();
   private _scratchPlayerPos = new THREE.Vector3();
   private _scratchZombiePos = new THREE.Vector3();
+
+  /** Weapon hitbox line segment: start (near handle) and end (blade tip). */
+  private _weaponStart = new THREE.Vector3();
+  private _weaponEnd = new THREE.Vector3();
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
@@ -78,10 +141,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       }
 
       if (this._sceneWeaponActor) {
-        // Disable physics so the weapon passes through enemies without blocking them
+        // Ensure collision profile exists
+        ensureWeaponCollisionProfile();
+
+        // Disable physics and set collision to ignore Pawns so it doesn't push Grim back
         const root = this._sceneWeaponActor.rootComponent;
         if (root instanceof ENGINE.MeshComponent) {
-          root.overridePhysicsOptions({ enabled: false });
+          root.overridePhysicsOptions({
+            enabled: false,
+            collisionProfile: WEAPON_COLLISION_PROFILE,
+          });
         }
       } else {
         console.warn(`[SpinningWeaponActor] No scene actor named "${WEAPON_ACTOR_NAME}" found.`);
@@ -95,28 +164,48 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (!player || !this._sceneWeaponActor) return;
 
-    // Update angles
+    // Capture the scene-editor orientation on the very first tick, once the scene
+    // transform is fully settled. Reading it in doBeginPlay can return identity
+    // if the engine hasn't applied the serialized rotation yet.
+    if (!this._baseQuatCaptured) {
+      this._baseQuat.copy(this._sceneWeaponActor.rootComponent.quaternion);
+      this._baseQuatCaptured = true;
+    }
+
+    // Update orbit angle
     this._orbitAngle += ORBIT_SPEED * deltaTime;
-    this._selfSpinAngle += SELF_SPIN_SPEED * deltaTime;
 
     // Get player world position
     player.rootComponent.getWorldPosition(this._scratchPlayerPos);
 
-    // Calculate orbit position on XZ plane
-    const weaponX = this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * ORBIT_RADIUS;
-    const weaponZ = this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * ORBIT_RADIUS;
     const weaponY = this._scratchPlayerPos.y + WEAPON_HEIGHT;
 
-    // Drive the scene weapon actor's position
-    this._sceneWeaponActor.rootComponent.position.set(weaponX, weaponY, weaponZ);
+    // Shift outward by HANDLE_OFFSET so the handle end sits on Grim rather than the model centre
+    this._sceneWeaponActor.rootComponent.position.set(
+      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * HANDLE_OFFSET,
+      weaponY,
+      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * HANDLE_OFFSET,
+    );
 
-    // Y faces along the orbit tangent; Z spins the weapon on its own axis (fast blade spin)
-    this._sceneWeaponActor.rootComponent.rotation.set(0, this._orbitAngle + Math.PI / 2, this._selfSpinAngle, 'YXZ');
+    // Rotate so the weapon faces radially outward along the orbit direction.
+    // Negate the angle so rotation direction matches the position direction (clockwise).
+    // Add BLADE_ANGLE_OFFSET so the blade points outward rather than along the tangent.
+    this._orbitQuat.setFromAxisAngle(SpinningWeaponActor._Y_AXIS, -this._orbitAngle + BLADE_ANGLE_OFFSET);
+    this._sceneWeaponActor.rootComponent.quaternion.multiplyQuaternions(this._orbitQuat, this._baseQuat);
 
-    // Store current weapon world position for hit detection
-    this._scratchPos.set(weaponX, weaponY, weaponZ);
+    // Store weapon hitbox: start near the handle (close to Grim), end at blade tip
+    this._weaponStart.set(
+      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * 0.5,
+      weaponY,
+      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * 0.5,
+    );
+    this._weaponEnd.set(
+      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * BLADE_REACH,
+      weaponY,
+      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * BLADE_REACH,
+    );
 
-    // Check for hits
+    // Check for hits anywhere along the weapon
     this._checkForHits(player);
 
     // Clean up expired cooldowns
@@ -129,8 +218,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const currentTime = world.getGameTime();
 
-    // Query nearby zombies using spatial grid
-    const nearbyZombies = zombieSpatialManager.getNearbyZombies(this._scratchPos, HIT_RADIUS);
+    // Query a larger area covering the full weapon length
+    const queryCenterX = (this._weaponStart.x + this._weaponEnd.x) * 0.5;
+    const queryCenterZ = (this._weaponStart.z + this._weaponEnd.z) * 0.5;
+    const queryRadius = BLADE_REACH * 0.5 + HIT_RADIUS;
+    this._scratchPos.set(queryCenterX, this._weaponStart.y, queryCenterZ);
+
+    const nearbyZombies = zombieSpatialManager.getNearbyZombies(this._scratchPos, queryRadius);
 
     for (const zombie of nearbyZombies) {
       // Skip zombies already in death sequence
@@ -144,19 +238,56 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         continue;
       }
 
-      // Verify XZ distance only — Y differences (weapon height vs zombie center)
-      // should not prevent a hit when they are visually overlapping.
+      // Check distance to the weapon line segment (XZ plane only)
       zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
-      const dx = this._scratchPos.x - this._scratchZombiePos.x;
-      const dz = this._scratchPos.z - this._scratchZombiePos.z;
-      const xzDistSq = dx * dx + dz * dz;
-      if (xzDistSq > HIT_RADIUS * HIT_RADIUS) {
+      const distSq = this._pointToSegmentDistSq(
+        this._scratchZombiePos.x,
+        this._scratchZombiePos.z,
+        this._weaponStart.x,
+        this._weaponStart.z,
+        this._weaponEnd.x,
+      this._weaponEnd.z,
+      );
+
+      if (distSq > HIT_RADIUS * HIT_RADIUS) {
         continue;
       }
 
       // Hit confirmed
       this._hitZombie(zombie, currentTime, player);
     }
+  }
+
+  /** Calculate squared distance from point (px,pz) to line segment (x1,z1)-(x2,z2). */
+  private _pointToSegmentDistSq(
+    px: number,
+    pz: number,
+    x1: number,
+    z1: number,
+    x2: number,
+    z2: number,
+  ): number {
+    const dx = x2 - x1;
+    const dz = z2 - z1;
+    const segLenSq = dx * dx + dz * dz;
+
+    if (segLenSq === 0) {
+      // Segment is a point
+      const dxp = px - x1;
+      const dzp = pz - z1;
+      return dxp * dxp + dzp * dzp;
+    }
+
+    // Project point onto line, clamped to segment
+    let t = ((px - x1) * dx + (pz - z1) * dz) / segLenSq;
+    t = Math.max(0, Math.min(1, t));
+
+    const closestX = x1 + t * dx;
+    const closestZ = z1 + t * dz;
+
+    const dxp = px - closestX;
+    const dzp = pz - closestZ;
+    return dxp * dxp + dzp * dzp;
   }
 
   private _hitZombie(zombie: ENGINE.Actor, currentTime: number, player: ENGINE.Pawn): void {

@@ -1,0 +1,22 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "flatShading": true,
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "c32b2095-bbe0-43e6-8ea5-47791059c40a",
+      "url": "@project/assets/textures/colour map.webp"
+    },
+    "name": "Zombie2",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "5fc43529-3827-463a-9905-538edbb099c1",
+      "url": "@project/assets/textures/normal map zombie.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "c7f2ac92-9e93-4678-af2e-16bea1903c75"
+  },
+  "$version": 2
+}

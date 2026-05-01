@@ -224,7 +224,7 @@ export class ZombieActor extends ENGINE.Actor {
 
   // FIX: Debounce timer for idle↔walk animation switching to prevent rapid oscillation
   private _idleWalkDebounceTimer = 0;
-  private _pendingAnimState: 'idle' | 'walk' | null = null;
+  private _pendingAnimState: 'idle' | 'walk' | 'attack' | null = null;
   private static readonly IDLE_WALK_DEBOUNCE_TIME = 0.25; // 250ms debounce before switching
   private static readonly MOVEMENT_THRESHOLD = 0.015; // Slightly higher threshold (was 0.008)
 
@@ -497,9 +497,8 @@ export class ZombieActor extends ENGINE.Actor {
       this._animInitTimer += deltaTime;
       const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
       if (anim?.isReady()) {
-        // Animation system is ready - apply random initial state for visual desync
-        const initialState = Math.random() > 0.5 ? 'idle' : 'walk';
-        anim.setParameter('state', initialState);
+        // Animation system is ready - always start idle
+        anim.setParameter('state', 'idle');
         this._animationInitialized = true;
       } else if (this._animInitTimer >= ZombieActor.ANIM_INIT_TIMEOUT) {
         // Timeout - give up waiting
@@ -624,28 +623,10 @@ export class ZombieActor extends ENGINE.Actor {
       return;
     }
 
-    // Mirror the high-LOD logic with debounce: walk only if actually moving, otherwise idle
-    const desiredState: 'idle' | 'walk' = this._isActuallyMoving ? 'walk' : 'idle';
-    const currentState = this._pendingAnimState ?? (wasMoving ? 'walk' : 'idle');
-
-    // FIX: Debounce idle↔walk transitions
-    if (desiredState !== currentState) {
-      if (wasMoving !== this._isActuallyMoving) {
-        // Movement state changed - start debounce
-        this._idleWalkDebounceTimer = 0;
-        this._pendingAnimState = desiredState;
-      } else {
-        this._idleWalkDebounceTimer += ZombieActor.ANIM_UPDATE_INTERVAL;
-        if (this._idleWalkDebounceTimer >= ZombieActor.IDLE_WALK_DEBOUNCE_TIME) {
-          this._pendingAnimState = null;
-          anim.setParameter('state', desiredState);
-        }
-      }
-    } else {
-      this._pendingAnimState = null;
-      this._idleWalkDebounceTimer = 0;
-      anim.setParameter('state', desiredState);
-    }
+    // No aggro = always idle immediately
+    anim.setParameter('state', 'idle');
+    this._pendingAnimState = null;
+    this._idleWalkDebounceTimer = 0;
   }
 
   /**
@@ -677,7 +658,7 @@ export class ZombieActor extends ENGINE.Actor {
     const movedDist = currentPos.distanceTo(this._stuckCheckPosition);
 
     // Check if zombie should be moving
-    const shouldBeMoving = this._hasAggro || this._btBranch === 'wander';
+    const shouldBeMoving = this._hasAggro;
 
     if (shouldBeMoving && movedDist < ZombieActor.STUCK_DISTANCE_THRESHOLD) {
       this._consecutiveStuckChecks++;
@@ -747,22 +728,26 @@ export class ZombieActor extends ENGINE.Actor {
     const physics = this.getPhysicsEngine();
     if (npc && physics) physics.removeCharacterController(npc);
 
-    // Disable animation
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
-    if (anim?.isReady()) {
-      (anim as unknown as { enabled: boolean }).enabled = false;
+    // Disable the NPC component entirely
+    if (npc) {
+      (npc as unknown as { enabled: boolean }).enabled = false;
     }
 
-    // Get death position
-    const world = this.getWorld();
+    // Capture death position
     const deathPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(deathPos);
 
-    // Defer spawning to next frame so this frame's death cleanup finishes first
-    globalThis.setTimeout(() => { this.spawnDeathObjects(deathPos); }, 0);
+    // Play death animation
+    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    if (anim?.isReady()) {
+      anim.setParameter('state', 'death');
+    }
 
-    // Quick destroy - no ragdoll
-    globalThis.setTimeout(() => this.destroy(), 300);
+    // At 0.95s, destroy zombie and spawn grave + soul
+    globalThis.setTimeout(() => {
+      this.spawnDeathObjects(deathPos);
+      this.destroy();
+    }, HIT_REACTION_HOLD_SEC * 1000);
   }
 
   /**
@@ -1012,50 +997,37 @@ export class ZombieActor extends ENGINE.Actor {
     const engage = this.attackRange + ATTACK_ZONE_HYSTERESIS_MARGIN;
     let desiredState: 'idle' | 'walk' | 'attack';
 
-    // CRITICAL FIX: If has aggro, NEVER show idle - always walk (or attack if close)
     if (this._hasAggro) {
       // Has aggro - check if close enough to attack
       if (dist !== undefined && dist <= engage) {
         desiredState = 'attack';
       } else {
-        desiredState = 'walk';  // Always walk when chasing, even if not moving much
+        desiredState = 'walk';  // Always walk when chasing
       }
-    } else if (dist !== undefined && dist <= this.aggroRadius) {
-      // Just spotted player but hasn't locked aggro yet
-      desiredState = 'walk';
-    } else if (this._isActuallyMoving) {
-      // Wandering and moving
-      desiredState = 'walk';
     } else {
-      // Truly idle
-      desiredState = 'idle';
+      // No aggro = always idle (no wandering animation)
+      anim.setParameter('state', 'idle');
+      this._pendingAnimState = null;
+      this._idleWalkDebounceTimer = 0;
+      return;
     }
 
-    // FIX: Debounce idle↔walk transitions to prevent rapid oscillation
-    // Only apply debounce for idle↔walk (not attack or hit)
-    const currentState = this._pendingAnimState ?? (wasMoving ? 'walk' : 'idle');
-    const isIdleWalkTransition = (desiredState === 'idle' || desiredState === 'walk') &&
-                                  (currentState === 'idle' || currentState === 'walk') &&
-                                  desiredState !== currentState;
+    // With aggro: debounce walk↔attack transitions
+    const currentState = this._pendingAnimState ?? 'walk';
+    const isTransition = desiredState !== currentState;
 
-    if (isIdleWalkTransition) {
-      // We're trying to switch between idle and walk - use debounce
+    if (isTransition) {
       if (wasMoving !== this._isActuallyMoving) {
-        // Movement state changed - start/restart debounce timer
         this._idleWalkDebounceTimer = 0;
-        this._pendingAnimState = desiredState as 'idle' | 'walk';
+        this._pendingAnimState = desiredState;
       } else {
-        // Continue debouncing
         this._idleWalkDebounceTimer += ZombieActor.ANIM_UPDATE_INTERVAL;
         if (this._idleWalkDebounceTimer >= ZombieActor.IDLE_WALK_DEBOUNCE_TIME) {
-          // Debounce complete - apply the state change
           this._pendingAnimState = null;
           anim.setParameter('state', desiredState);
         }
-        // Else: wait for debounce to complete, keep current animation
       }
     } else {
-      // Not an idle↔walk transition, or state hasn't changed - apply immediately
       this._pendingAnimState = null;
       this._idleWalkDebounceTimer = 0;
       anim.setParameter('state', desiredState);
