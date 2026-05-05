@@ -1,0 +1,32 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "fa3dae8e-ac00-4e9a-b888-ec7d2ffe8ecb",
+      "url": "@project/assets/textures/Grim color.webp"
+    },
+    "metalness": 0.39,
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "2c1b38f7-7236-48a5-8a84-e4f52035965f",
+      "url": "@project/assets/textures/grim matalic.webp"
+    },
+    "name": "Grim2texture",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "3746bfed-6088-4dbb-ba97-e4687fe99aeb",
+      "url": "@project/assets/textures/grim normal.webp"
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "5259960d-f739-44f3-9758-a8b1ecac5664",
+      "url": "@project/assets/textures/grim roughness.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "4824ea5b-dd01-4413-9673-3c8bfeff8f6f"
+  },
+  "$version": 2
+}
