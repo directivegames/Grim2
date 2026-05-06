@@ -4,16 +4,22 @@ import * as ENGINE from '@gnsx/genesys.js';
 import type { ActorOptions } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
+import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const FIST_ACTOR_NAME = 'fistofannoyance';
+const SLOMO_VALUE     = 0.35;
+
+function setSlomo(world: ENGINE.World, value: number): void {
+  (world as unknown as { slomo: number }).slomo = value;
+}
 
 /** Y offset below ground level where the fist starts (fully hidden). */
 const FIST_START_Y = -3.5;
 
 /** Y offset above ground level at the peak of the punch. */
-const FIST_PEAK_Y = 1.8;
+const FIST_PEAK_Y = -0.1;
 
 const RISE_DURATION     = 0.26;  // fast punch up
 const PAUSE_DURATION    = 0.38;  // brief hold at top
@@ -110,9 +116,16 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._hasHit       = false;
     this._vfxSpawned   = false;
 
-    // Start hidden underground at spawn position
+    // Move fist to attack position (it stays "visible" at all times so the GPU
+    // shader is always compiled – no stall on first use).
     this._setFistPosition(this._groundY + FIST_START_Y);
-    this._sceneFistActor.rootComponent.visible = true;
+
+    // Cinematic: slow motion + camera pan to fist
+    const player = world.getFirstPlayerPawn();
+    if (player instanceof IsometricPlayerPawn) {
+      player.startCinematicFocus(this.rootComponent.position.clone());
+    }
+    setSlomo(world, SLOMO_VALUE);
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -152,6 +165,13 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         if (this._phaseElapsed >= PAUSE_DURATION) {
           this._phase = 'retracting';
           this._phaseElapsed = 0;
+
+          // Camera starts returning to player as fist retracts
+          const w = this.getWorld();
+          if (w) {
+            const p = w.getFirstPlayerPawn();
+            if (p instanceof IsometricPlayerPawn) p.endCinematicFocus();
+          }
         }
         break;
       }
@@ -167,9 +187,13 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
         if (t >= 1) {
           this._phase = 'done';
-          this._sceneFistActor.rootComponent.visible = false;
+          // Park the fist far underground again (stays rendered so shader stays warm)
+          this._setFistPosition(-1000);
           this._updateVFX(deltaTime);
           this._cleanupVFX();
+          // Restore normal speed
+          const w = this.getWorld();
+          if (w) setSlomo(w, 1);
           this.destroy();
           return;
         }
@@ -355,8 +379,11 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._dust.length   = 0;
   }
 
-  public override endPlay(): void {
+  protected override doEndPlay(): void {
     this._cleanupVFX();
-    super.endPlay();
+    // Safety: always restore slomo in case actor is destroyed mid-cinematic
+    const world = this.getWorld();
+    if (world) setSlomo(world, 1);
+    super.doEndPlay();
   }
 }

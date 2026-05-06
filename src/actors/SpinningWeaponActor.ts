@@ -210,10 +210,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       console.warn(`[SpinningWeaponActor] No scene actor named "${WEAPON_ACTOR_NAME}" found.`);
     }
 
-    // Find and hide the scene fist actor at startup
+    // Park the fist far underground so its shader is compiled by the GPU immediately
+    // but the mesh is never visible to the player.
     for (const actor of world.getActors()) {
       if (actor.name.toLowerCase() === 'fistofannoyance') {
-        actor.rootComponent.visible = false;
+        actor.rootComponent.position.y = -1000;
         break;
       }
     }

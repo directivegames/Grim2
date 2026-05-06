@@ -90,6 +90,14 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private _shakeElapsed = 0;
   private readonly _shakeOffset = new THREE.Vector3();
 
+  // ── Cinematic focus state ────────────────────────────────────────────────
+
+  private _cinematicActive    = false;
+  private _cinematicReturning = false;
+  private readonly _cinematicTarget = new THREE.Vector3();
+  private readonly _cinematicOffset = new THREE.Vector3();
+  private readonly _cinematicDesired = new THREE.Vector3();
+
   // ── Component factory overrides ───────────────────────────────────────────
 
   protected override setupAnimationComponent(): ENGINE.AnimationStateMachineComponent | null {
@@ -191,6 +199,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
     super.tickPrePhysics(deltaTime); // handles animation parameters
     this._updateVisualFacing(deltaTime);
+    this._updateCinematicCamera(deltaTime);
     this._updateScreenShake(deltaTime);
   }
 
@@ -253,26 +262,88 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   private _updateScreenShake(deltaTime: number): void {
-    if (this._shakeDuration <= 0 || !this.cameraPivot) return;
+    if (!this.cameraPivot) return;
 
-    this._shakeElapsed += deltaTime;
+    if (this._shakeDuration > 0) {
+      this._shakeElapsed += deltaTime;
 
-    if (this._shakeElapsed >= this._shakeDuration) {
-      this.cameraPivot.position.set(0, 0, 0);
-      this._shakeDuration = 0;
+      if (this._shakeElapsed >= this._shakeDuration) {
+        this._shakeOffset.set(0, 0, 0);
+        this._shakeDuration = 0;
+      } else {
+        const t = this._shakeElapsed / this._shakeDuration;
+        const currentIntensity = this._shakeIntensity * (1 - t);
+        this._shakeOffset.set(
+          (Math.random() - 0.5) * 2 * currentIntensity,
+          0,
+          (Math.random() - 0.5) * 2 * currentIntensity,
+        );
+      }
+    } else {
+      this._shakeOffset.set(0, 0, 0);
+    }
+
+    // Combine cinematic pan + shake into final cameraPivot offset
+    this.cameraPivot.position.set(
+      this._cinematicOffset.x + this._shakeOffset.x,
+      this._cinematicOffset.y + this._shakeOffset.y,
+      this._cinematicOffset.z + this._shakeOffset.z,
+    );
+  }
+
+  // ── Cinematic focus ───────────────────────────────────────────────────────
+
+  /** Pan the camera toward a world position and hold there. */
+  public startCinematicFocus(worldTarget: THREE.Vector3): void {
+    this._cinematicTarget.copy(worldTarget);
+    this._cinematicActive    = true;
+    this._cinematicReturning = false;
+  }
+
+  /** Begin returning the camera to the player. */
+  public endCinematicFocus(): void {
+    this._cinematicReturning = true;
+  }
+
+  private _updateCinematicCamera(deltaTime: number): void {
+    if (!this._cinematicActive && this._cinematicOffset.lengthSq() < 0.0001) return;
+
+    const PAN_SPEED    = 5.0;   // lerp speed toward/from target
+    const MAX_OFFSET   = 7.0;   // max world-unit pan distance
+    const PAN_FRACTION = 0.45;  // how far toward the fist to pan (45%)
+
+    if (this._cinematicReturning || !this._cinematicActive) {
+      this._cinematicOffset.lerp(new THREE.Vector3(0, 0, 0), PAN_SPEED * deltaTime);
+      if (this._cinematicOffset.lengthSq() < 0.001) {
+        this._cinematicOffset.set(0, 0, 0);
+        this._cinematicActive    = false;
+        this._cinematicReturning = false;
+      }
       return;
     }
 
-    const t = this._shakeElapsed / this._shakeDuration;
-    const falloff = 1 - t;
-    const currentIntensity = this._shakeIntensity * falloff;
+    // Compute desired offset in root-local (=world) XZ toward the fist
+    const playerPos = new THREE.Vector3();
+    this.rootComponent.getWorldPosition(playerPos);
 
-    this._shakeOffset.set(
-      (Math.random() - 0.5) * 2 * currentIntensity,
+    this._cinematicDesired.set(
+      this._cinematicTarget.x - playerPos.x,
       0,
-      (Math.random() - 0.5) * 2 * currentIntensity
-    );
+      this._cinematicTarget.z - playerPos.z,
+    ).multiplyScalar(PAN_FRACTION);
 
-    this.cameraPivot.position.copy(this._shakeOffset);
+    const len = this._cinematicDesired.length();
+    if (len > MAX_OFFSET) this._cinematicDesired.multiplyScalar(MAX_OFFSET / len);
+
+    this._cinematicOffset.lerp(this._cinematicDesired, PAN_SPEED * deltaTime);
+  }
+
+  protected override doEndPlay(): void {
+    // Ensure slomo is restored if the pawn is destroyed mid-cinematic
+    const world = this.getWorld();
+    if (world) {
+      (world as unknown as { slomo: number }).slomo = 1;
+    }
+    super.doEndPlay();
   }
 }
