@@ -30,7 +30,8 @@ export class DeadGraveActor extends ENGINE.Actor {
         enabled: true,
         motionType: ENGINE.PhysicsMotionType.Dynamic,
         collisionProfile: ENGINE.DefaultCollisionProfile.BlockAllDynamic,
-        gravityScale: 1.0,
+        gravityScale: 3.5,
+        density: 3.0,
       },
     });
 
@@ -48,6 +49,20 @@ export class DeadGraveActor extends ENGINE.Actor {
     root.add(visual);
 
     super.initialize({ ...options, rootComponent: root });
+  }
+
+  protected override doBeginPlay(): void {
+    super.doBeginPlay();
+
+    // Apply heavy damping so the gravestone settles quickly and feels weighty
+    const physics = this.getPhysicsEngine();
+    const root = this.rootComponent as ENGINE.MeshComponent;
+    if (physics && root) {
+      // Use string literals that match the enum values
+      type ScalarParam = 'linearDamping' | 'angularDamping' | 'gravityScale';
+      physics.setScalarParam(root, 'linearDamping' as ScalarParam as any, 0.6);
+      physics.setScalarParam(root, 'angularDamping' as ScalarParam as any, 0.8);
+    }
   }
 
   public override getEditorClassIcon(): string | null {

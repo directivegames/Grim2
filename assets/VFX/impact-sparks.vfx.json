@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "name": "impact-sparks",
+  "particles": [
+    {
+      "nbParticles": 400,
+      "gravity": [
+        0.02,
+        -8.5,
+        0.01
+      ],
+      "renderMode": "stretchBillboard",
+      "stretchScale": 1.85,
+      "intensity": 1.2,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/EmberStreakSharp.png",
+      "easeFunction": "easeOutQuad",
+      "fadeAlpha": [
+        0.01,
+        0.44
+      ],
+      "fadeSize": [
+        0.16,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 320,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        0.23,
+        0.64
+      ],
+      "startPositionMin": [
+        -0.08,
+        0,
+        -0.08
+      ],
+      "startPositionMax": [
+        0.08,
+        0,
+        0.08
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -3.2
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        3.2
+      ],
+      "directionMin": [
+        -0.9749279121818236,
+        -0.22252093395631434,
+        -0.9749279121818236
+      ],
+      "directionMax": [
+        0.9749279121818236,
+        1,
+        0.9749279121818236
+      ],
+      "size": [
+        0.083,
+        0.202
+      ],
+      "speed": [
+        5.704,
+        9.2
+      ],
+      "colorStart": [
+        "#fff3d1",
+        "#ffd86c"
+      ],
+      "colorEnd": [
+        "#ff4308",
+        "#181408"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

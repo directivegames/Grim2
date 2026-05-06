@@ -1,5 +1,6 @@
 import './actors/BackgroundMusicActor.ts';
 import './actors/DeadGraveActor.ts';
+import './actors/GoreExplosionActor.ts';
 import './actors/IsometricPlayerPawn.ts';
 import './actors/NewZombieActor.ts';
 import './actors/SoulActor.ts';

@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "name": "rain",
+  "particles": [
+    {
+      "nbParticles": 400,
+      "gravity": [
+        0.05,
+        -18,
+        0.02
+      ],
+      "renderMode": "stretchBillboard",
+      "stretchScale": 1.85,
+      "intensity": 0.75,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/Streak.png",
+      "easeFunction": "easeLinear",
+      "fadeAlpha": [
+        0.01,
+        0.9
+      ],
+      "fadeSize": [
+        0.2,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 180,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        0.518,
+        0.72
+      ],
+      "startPositionMin": [
+        -1.6,
+        -0.05,
+        -1.6
+      ],
+      "startPositionMax": [
+        1.6,
+        0.05,
+        1.6
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        0
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0
+      ],
+      "directionMin": [
+        -0.05,
+        -1,
+        -0.05
+      ],
+      "directionMax": [
+        0.05,
+        -0.92,
+        0.05
+      ],
+      "size": [
+        0.041,
+        0.11
+      ],
+      "speed": [
+        0,
+        0.08
+      ],
+      "colorStart": [
+        "#bfd7ea",
+        "#c8dde9"
+      ],
+      "colorEnd": [
+        "#8d97a5",
+        "#757e8a"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

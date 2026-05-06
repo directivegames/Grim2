@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "impact-dust",
+  "particles": [
+    {
+      "nbParticles": 350,
+      "gravity": [
+        0.04,
+        0.25,
+        0.02
+      ],
+      "renderMode": "billboard",
+      "intensity": 0.85,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/DustPuffSoft.png",
+      "easeFunction": "easeOutQuad",
+      "fadeAlpha": [
+        0.04,
+        0.34
+      ],
+      "fadeSize": [
+        0.18,
+        1
+      ],
+      "blendingMode": "normal"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 295,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        0.882,
+        1.4
+      ],
+      "startPositionMin": [
+        -0.18,
+        0,
+        -0.18
+      ],
+      "startPositionMax": [
+        0.18,
+        0.04,
+        0.18
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.55
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.55
+      ],
+      "directionMin": [
+        -1,
+        -0.5,
+        -1
+      ],
+      "directionMax": [
+        1,
+        1,
+        1
+      ],
+      "size": [
+        0.302,
+        0.689
+      ],
+      "speed": [
+        0.28,
+        0.86
+      ],
+      "colorStart": [
+        "#c8b18a",
+        "#bca682"
+      ],
+      "colorEnd": [
+        "#7a6a52",
+        "#5a4e3e"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

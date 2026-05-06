@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "name": "ember-fountain",
+  "particles": [
+    {
+      "nbParticles": 150,
+      "gravity": [
+        0.05,
+        -3.4,
+        0.03
+      ],
+      "renderMode": "stretchBillboard",
+      "stretchScale": 1.85,
+      "intensity": 1.05,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/EmberStreakSharp.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.01,
+        0.52
+      ],
+      "fadeSize": [
+        0.14,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 65,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        0.63,
+        1.4
+      ],
+      "startPositionMin": [
+        -0.05,
+        0,
+        -0.05
+      ],
+      "startPositionMax": [
+        0.05,
+        0.02,
+        0.05
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -3.2
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        3.2
+      ],
+      "directionMin": [
+        -0.08421052631578949,
+        0.52,
+        -0.08421052631578949
+      ],
+      "directionMax": [
+        0.08421052631578949,
+        1,
+        0.08421052631578949
+      ],
+      "size": [
+        0.2,
+        0.4
+      ],
+      "speed": [
+        1.976,
+        3.8
+      ],
+      "colorStart": [
+        "#fff1bf",
+        "#ffd478"
+      ],
+      "colorEnd": [
+        "#e02610",
+        "#220801"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

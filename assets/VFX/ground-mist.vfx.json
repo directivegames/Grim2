@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "ground-mist",
+  "particles": [
+    {
+      "nbParticles": 500,
+      "gravity": [
+        0.03,
+        0,
+        0.01
+      ],
+      "renderMode": "billboard",
+      "intensity": 0.72,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/GlowSoft.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.12,
+        0.46
+      ],
+      "fadeSize": [
+        0.18,
+        0.85
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 38,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        3.024,
+        4.8
+      ],
+      "startPositionMin": [
+        -1.2,
+        -0.03,
+        -1.2
+      ],
+      "startPositionMax": [
+        1.2,
+        0.03,
+        1.2
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.45
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.45
+      ],
+      "directionMin": [
+        -0.5833333333333334,
+        0.16666666666666669,
+        -0.5833333333333334
+      ],
+      "directionMax": [
+        0.5833333333333334,
+        1,
+        0.5833333333333334
+      ],
+      "size": [
+        0.452,
+        0.951
+      ],
+      "speed": [
+        0.02,
+        0.12
+      ],
+      "colorStart": [
+        "#c7d0d8",
+        "#cbd4dc"
+      ],
+      "colorEnd": [
+        "#7a838c",
+        "#7a838c"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

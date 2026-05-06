@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "healing-aura",
+  "particles": [
+    {
+      "nbParticles": 150,
+      "gravity": [
+        0,
+        0.02,
+        0
+      ],
+      "renderMode": "billboard",
+      "intensity": 1.1,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/GlowSoft.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.04,
+        0.74
+      ],
+      "fadeSize": [
+        0.18,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 30,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        1.632,
+        2.4
+      ],
+      "startPositionMin": [
+        -0.18,
+        -0.18,
+        -0.18
+      ],
+      "startPositionMax": [
+        0.18,
+        0.18,
+        0.18
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -2
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        2
+      ],
+      "directionMin": [
+        -0.65,
+        0.2,
+        -0.65
+      ],
+      "directionMax": [
+        0.65,
+        1,
+        0.65
+      ],
+      "size": [
+        0.3,
+        0.5
+      ],
+      "speed": [
+        0.12,
+        0.46
+      ],
+      "colorStart": [
+        "#8cff9b",
+        "#b6ffc6"
+      ],
+      "colorEnd": [
+        "#44834b",
+        "#2c4e31"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

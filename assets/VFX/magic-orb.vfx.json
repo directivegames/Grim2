@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "magic-orb",
+  "particles": [
+    {
+      "nbParticles": 150,
+      "gravity": [
+        0,
+        0.02,
+        0
+      ],
+      "renderMode": "billboard",
+      "intensity": 1,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/GlowSharp.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.04,
+        0.78
+      ],
+      "fadeSize": [
+        0.22,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 50,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        1.872,
+        2.6
+      ],
+      "startPositionMin": [
+        -0.12,
+        -0.12,
+        -0.12
+      ],
+      "startPositionMax": [
+        0.12,
+        0.12,
+        0.12
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -2.5
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        2.5
+      ],
+      "directionMin": [
+        -0.85,
+        0.1,
+        -0.85
+      ],
+      "directionMax": [
+        0.85,
+        0.85,
+        0.85
+      ],
+      "size": [
+        0.35,
+        0.6
+      ],
+      "speed": [
+        0.18,
+        0.56
+      ],
+      "colorStart": [
+        "#a7ece4",
+        "#aafff8"
+      ],
+      "colorEnd": [
+        "#20555a",
+        "#0c2027"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

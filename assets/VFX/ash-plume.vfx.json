@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "ash-plume",
+  "particles": [
+    {
+      "nbParticles": 150,
+      "gravity": [
+        0.06,
+        0.01,
+        0.02
+      ],
+      "renderMode": "billboard",
+      "intensity": 0.9,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/DustPuffSoft.png",
+      "easeFunction": "easeOutQuad",
+      "fadeAlpha": [
+        0.15,
+        0.6
+      ],
+      "fadeSize": [
+        0.22,
+        0.85
+      ],
+      "blendingMode": "normal"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 32,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        2.205,
+        3.5
+      ],
+      "startPositionMin": [
+        -0.16,
+        -0.16,
+        -0.16
+      ],
+      "startPositionMax": [
+        0.16,
+        0.16,
+        0.16
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.55
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.55
+      ],
+      "directionMin": [
+        -0.11111111111111112,
+        0.3333333333333333,
+        -0.11111111111111112
+      ],
+      "directionMax": [
+        0.11111111111111112,
+        1,
+        0.11111111111111112
+      ],
+      "size": [
+        0.258,
+        0.616
+      ],
+      "speed": [
+        0.24,
+        0.72
+      ],
+      "colorStart": [
+        "#d4ceba",
+        "#cac2b4"
+      ],
+      "colorEnd": [
+        "#8a8a8c",
+        "#90909294"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

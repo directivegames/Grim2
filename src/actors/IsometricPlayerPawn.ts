@@ -143,6 +143,11 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   /** No-op: root never rotates so camera is always stable. */
   protected override updateCamera(_dt: number): void { /* intentionally empty */ }
 
+  /** Current visual facing angle (radians, Y-axis). Used by the weapon for sweep directions. */
+  public getFacingYaw(): number {
+    return this._facingYaw;
+  }
+
   /** Jumping disabled for VS-style. */
   public override handleJump(_strength: number = 1): void { /* intentionally empty */ }
 

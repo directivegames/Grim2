@@ -3665,6 +3665,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "07bd4d58-1f7c-4e0c-8111-29353b06304a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c2ecc83e-ba89-496f-ad1f-761af6ccb61b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9beb3f7b-12b2-41c7-8037-e4f851133162"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "10f762ef-9769-442e-b3a2-49c9beabed79"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8282ca26-31da-461c-88a5-4f7aadb2ecb4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a363714c-4f2f-40bc-a644-08c4ca18a921"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "693a524e-85d0-46ab-a7c6-e2c05e922586"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "73a86307-0d28-430c-9d4e-5773dd29d677"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7e507652-3bea-409f-b911-e2ee3d8147ee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7e1752bc-d4ab-4bf3-914c-d6d0c3f99bbb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "97df1d1e-5cd1-4e7f-9edb-554c3693b337"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a3e34e03-056c-4c80-b8d7-dc9abbad8dfb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "57166aa2-3896-4933-81d7-31125f3d604f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0e192341-0416-44f0-9583-83e3e4591d41"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cf3e8ed3-a9a2-4ee0-b70b-8db0ce560ca8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3e5cce88-04ec-44b1-b963-c104c71b746f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4960378e-c699-4849-bd0c-b7fa9e8a935e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "34b7009e-035f-45a9-b810-614735e4e4b2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "db6883cb-4a19-4ea3-8709-4dbdf8580097"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "02a831d3-4bff-4cc9-9d62-714794ed1148"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0c4f330e-e261-4e9c-9674-9fd986e3e681"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "19a3fa48-03b0-4301-bfcb-d1d80f7cd8e0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "22f3cf61-8fed-4ea8-8e4f-7d186a7bcf1a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "871513af-2edb-4879-a0de-465e1a1067e2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "95b6faa9-3796-42d7-92ab-a0d4f75b6401"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "83a1732e-e206-4ad5-80be-f1c58a1ee92a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "edc55b67-f15a-41f2-9ed1-bffcfd4c688b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8b93196b-1950-4634-bd7f-352af848de69"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "43020139-55d9-4d3f-be1d-32c7ea4a4604"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "01433a30-127e-4e9b-9b83-fd9837d06be3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "75dab772-f6ed-47ab-a0ce-df09ff9ad5de"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cb14af26-68c2-4da7-b66d-e93325139b21"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1eec1215-c2e7-4f28-932a-612d36d5d287"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9dd7d23b-b1c2-4af5-99aa-626aef93de77"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9babb289-ddc9-4710-af56-df2da2c4deaf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bebd690b-5875-42b5-bcdf-fbaa6578197f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "57416ecc-6437-4133-b7b7-2573a98bdc52"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b151d6a4-33c4-4bb2-a4e5-8ad0d6fe3751"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fc7770d9-7bad-42ee-88cd-11f9453a9aa7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b3ee08b4-8fae-4843-8c2b-3412bafd4da9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1bba5f8c-6e82-4155-8ece-11b2ce91ef17"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "699019ab-18e0-4f6f-90db-9dfc20e7d2fe"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "389fda0b-23f5-412e-b1b0-1b2aa34c4d67"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e9db0f0b-0b96-4ae1-a0d4-f9c60af61ae0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1ea01b54-0295-4802-958c-bebbee3a6ec0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fd652635-bcea-43af-be70-afd95c28ebfa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "da7d44a3-f6c7-4816-8333-b161bdd7d327"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4c426617-9ef7-4e85-ad34-dc070f879e09"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "187fd03e-66ab-47db-848e-6c81827d7edf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "773825df-dfe5-420d-860c-24d22cbb044b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "99dddaca-42d6-4c44-817d-75fb5a0759df"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "48aa97df-4f5c-49b3-841b-59a71b40ff45"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b17e5abe-e3c3-443e-a065-3f905738f704"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "536e9717-1ef0-471c-a550-0f1a92ebfec7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3ab5db4e-c4a5-451e-9d80-dcc43108897d"
                 }
               ],
               "intensity": 23,
@@ -5766,6 +5982,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "2ad5de2e-3c21-491e-8ca5-70a7f63e21fc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3492f998-7d74-465f-9773-2d62051698ff"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "befce6fe-71ab-4f0e-9923-e4a04882aaa6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "01bf481b-98d7-4972-b19f-ac904e2b1176"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7366452a-8b19-409f-9754-27c77ad782d9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e0f4b228-91b0-483c-b31a-042a0a6c33f3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fdb30eb4-dda5-4de9-a470-1af0c9bf1ae1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6869342e-f92f-440c-a838-7a0ac1a2eb9a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9f142de8-b673-4ec0-be40-ff3712653cfd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3e3887a8-a612-42b2-ba90-544b8b8f0943"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bb3d7032-0aeb-476c-b330-76904b1ddf5d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c43fc048-7d57-4193-b170-8597dc94c47e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f000fefa-d26f-44f1-989d-3482eab9e7a5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e3751d54-181e-4eb7-bf41-9a438b197b4d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9ada5e7c-d8ee-497d-99f1-a34e44dec92f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3cf26950-4bf9-4832-86c1-c3c30ca7f412"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e661fe38-a94f-4c0d-a6dd-1868bf12273b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4e84bec6-d8ab-49e8-b905-5cd48bd520aa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3440ec52-353b-4cbd-86e5-273d69f86ac4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "62a9e9bb-8a8c-4745-8b61-1057b56f67f6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4a9f95bf-750f-4774-8bca-2e592ad4cbce"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "06180b31-7f21-4192-a963-c427452e9582"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3af1fe74-bf6c-4f54-8ae0-1489480e9710"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2f75b34f-2e0d-4c73-b7ac-29c047c31128"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9e2852d9-00f0-4899-b67c-1fd471d85931"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "caf5fc45-6dff-4382-b124-a0254527daee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f1172c80-1a76-4e9f-b357-636520ac40b6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c13f61f1-d71b-43ea-9cc6-5567a4dd654b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "78fabbc2-b68c-42ea-a8ae-15ace477b0ae"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8b6c1888-5d54-4e2f-9737-d31b85b7e3a8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9cccb81c-ab6e-46db-a322-1c64f568dd05"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "47eb7826-444f-4764-bbcb-1e7771379e49"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f248432f-2209-4d4d-aa91-a5b0f14222cb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a2972392-1135-4045-9635-6b66c7e8230d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "21ac4915-452e-4a41-adb9-2d554b49f112"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1ac3a46b-a34a-4288-9fb5-ed0c3fcfb624"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "64e623c2-30bb-4048-991a-2879be658e90"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "94e1ada5-a1cf-4bc1-a19e-924c2ddc1692"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4040870c-d5a5-4040-95a2-8ca8b4efd04b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a95c9d02-3bbe-4f72-8cb1-2b2e4aeba660"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b086aa5c-eb3b-4f83-ab2c-69b87421b8e9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dbe38aed-7cc8-4df3-b35e-b844a5d28006"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7ac2a976-ce3e-4487-9a35-c37e5f49ca47"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cf3b2373-bf38-40bf-887e-0ea95f49d80d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "57116891-fdea-4e03-a089-229fd6ccc8ef"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "baad211b-4ca7-4ec4-ab6d-fc6f1ca1f63c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2f9da231-b1ae-4c1c-afc0-68423b3d5384"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aa87258e-f79f-4b6f-9e51-db70af4680a9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5a75ca32-8862-4431-b1cd-e09538512af7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3937e557-9a78-4a35-a412-d72f9ada94ac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "291f5904-d1ac-4381-a5ab-85e776a8232b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a34f42df-3d77-47d1-a2a9-647e0d394f36"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9df61646-f676-4ced-b75d-7f032febef2d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cfbedde4-3621-4672-895c-1888ce99e21e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a8044584-e51b-4278-8472-bcd048ff1c34"
                 }
               ],
               "intensity": 23,
@@ -8249,6 +8681,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "dc0b930a-b398-4c31-b80c-6262bc79798e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "34084dd2-e10a-4067-b3e5-aeea18c7a720"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0b965fce-ff5b-4286-89d1-f09b051dac08"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "69281696-447f-4d85-add6-f1c66897baaa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "19baa49c-8939-44dd-9da9-f66db0089bf7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "82d03a37-3a31-4fc3-80a9-69ec1fabb3b8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5f0d0e7a-4d29-4201-8443-0302771b3e3c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4df85bb9-274c-4914-ada9-3b846d10bc38"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d9d59740-e97f-4f8c-b57e-1098b018cf42"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1614e5cf-200b-4274-8ab6-7aba2b4958bc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9d96ce82-5234-4a18-8819-dde0fe3e0548"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e657afcf-28af-435b-a045-e37b20313b90"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4d50b054-2d09-4fbb-ab3a-a478795a2e7a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "265e989d-016c-4e7c-9b18-48d8e9197da7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "087c1125-4a32-4e25-902a-78075b255f34"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "edd00155-8bc5-4d50-a87d-6dc05485af4a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b64480bd-0b04-44b3-b713-0ddbf4a44a83"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5c3e2ec6-4975-4e79-aeec-766badb38329"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d520d60c-dd07-4f4f-8e27-f21b3a8ae566"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "60450fd3-88c1-413a-9c27-e5753b6efe59"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "715175ac-b381-475a-8cb1-b825b5609020"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1378083b-f6c9-4458-9ee4-232dac3f83e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "14eec848-83df-47a7-ad3b-93356afae7c5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "61edc60b-8fe6-477e-a253-7ac3340c049b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "068ee30a-eb45-4431-aa92-c7af11932916"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7f723818-57df-4624-941e-33b1326b5367"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "05f093a6-2db4-4e14-9663-106264d28adf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "05602f96-b4e1-46c6-a1fb-bce2ebdfd56a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "48438b69-c45f-49dc-9892-463e581a62ae"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "109a3345-eec9-4115-a552-4b47c2ced7d3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7ff3619a-d2c9-4a97-8036-ae1c2792e378"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "52a6930f-c02e-4d2a-8665-337e7421dc97"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f0729aa4-c1e1-4789-b072-bcdd81da9f94"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "544cfa9d-c2e0-4854-a6b8-d689983dd878"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "97b1c47b-5ea3-42f4-a6b4-834c4e9e666f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f1f9da26-a853-4f6f-a34d-b951abd3e808"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a63ce709-d99e-4872-a51d-58bb832aa386"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dc1a26b8-ef10-44b3-96c4-88ca8c4a185d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8810d9d1-f1d1-4223-b011-fae889930ffa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6198d319-9d48-47c5-8f68-f8530694ca72"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "66194e6c-07e0-461f-b78e-cbd769aa0ae5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9971e9ef-118b-4fc2-8ffe-d7da4e54af2e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "630b6c43-2ce0-44bb-8684-25dcd7f266cc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7ca49169-4e7c-4301-89c4-de8eff68f70b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "05218f9f-d349-436b-8f2f-b623f9f2ae33"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "33a0e8bb-eac6-4937-813e-672814cc98e4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0b9afa12-de34-4cca-8709-de72ea2e8e1d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "06d04584-5877-431a-9552-9a0110d93b5f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b7373fae-9860-43d5-8665-5a0a830f8a77"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c6b32749-556e-44dc-b990-68746b775f01"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2408d90c-2b3f-4c28-be11-861da5d4e3e8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b7566576-9954-457f-82e1-37482c6fc521"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "22d08e21-e6d6-474a-ba13-61287066d215"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "84ff4e38-5cfe-43c1-b04d-fa5084fde1d0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e50567fe-0f14-4dfa-9186-f72222c511df"
                 }
               ],
               "color": {
@@ -10270,6 +10918,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "3f3269d8-53d7-435d-a24f-081aa3fd1c17"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8c1367dd-ae1b-46e6-b71e-c1d43451705c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "df957c67-cbfd-4994-8b51-e88e03062afc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6a941ab9-5429-4270-8e0f-3ad02a4b50ea"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7e91bc87-ebd2-4d80-8fb7-5371a3fb6342"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "67c83194-8d2a-41e2-a973-dd148d9e4e34"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2c2f7261-ffee-4d63-bc9e-9b1f2141912b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4ed6fd11-f917-4c17-9e89-bad671949d78"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aa62eff5-07d2-4dab-8e1d-eecde3770605"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e0c6712c-6f74-4842-a312-5c67fe01e924"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ceddccc7-dbe5-4638-be1b-a711881a3490"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f2492b4f-be91-44d6-986f-c96b1dca1490"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b3e12777-6ae9-4ad1-9aa5-90e7a5d010b3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "399b0898-2e68-4bfd-9073-4cdd8de4b48c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4f46a123-03ac-4453-9bbd-d81dcd8aaa1c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0c4dac9e-2611-4357-9b56-8c6bb4663d62"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cc102ad8-2998-4a38-83d3-d8bd8f8ac9bd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fa2e7d37-2193-40e1-84d1-7fa47d4a6205"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "64eb5eeb-e92d-4207-8c66-74e54a5d567e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c878409e-4757-4e70-8f59-9d0ae1ac572d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6028b57e-bdc8-44c1-921b-b0ac19d631f3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6b06665c-c445-46ea-abd2-9db44559c968"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7a3fec79-91d5-478a-99ad-a4439c4d7b6a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5d3e9ebb-6ec4-4b53-82cb-78095f701366"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "02c7ee6f-513e-4181-beb5-5e72a696ebc3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1fdd5df9-d3c9-4afa-a36d-50732f8cf180"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "814d577f-0a00-4391-b999-4befb067e482"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a326cc5e-d9b4-44fb-8ad9-81d656136e87"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5eb4863c-47a0-4106-baa1-86c80cf05eca"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aa018e72-71e2-4db2-a953-acd266dbb411"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0a57903b-231e-4589-baf0-462bdfe5a392"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7abb064e-e5f4-479f-a63d-45c5d0f8d23e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "024fbcde-60f9-4725-83e5-70ed82f6de09"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8d817018-adc3-4b5d-8889-94a84f12fe72"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "523d793f-af6d-4ad9-9d44-eec929d07f63"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8eb8da63-e1a6-4873-9256-abaec9004d9d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e049056e-c580-4e50-8ec1-10ba5e1279b9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e3b6da73-694f-4aa2-91b2-b55fa7563b29"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "798e6365-1667-4222-b639-63625ef0ad11"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "740546a7-8f90-41a9-bbdb-9404ebbc1edd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b3aaab43-fdc5-476e-ab64-ce700cb6380a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "87671f25-216c-471f-88ef-4f7f3819b7fc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "305efd21-659a-4c2f-808f-accd6b52718c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cfcce261-2347-4e44-bdc2-d121f19b57e4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4bb75743-53a7-473d-9b4f-a0c84489342d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "49fc1641-ea7f-4bc7-80e1-f6261694658b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f907b68b-e73a-4c90-b437-d50af492eeed"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ab24182d-27aa-4258-a442-54b8628dbc38"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "54a76421-129b-4485-b305-efddca5295ae"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "63da0f19-c51d-4eff-8f44-da7ea467b6a9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "53e59f25-65a2-4bcd-96d9-9e50979c42d7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4ab782e0-6cdc-4346-a819-d351a1132e3b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0eeef33c-4ac6-4853-8817-575a7be1af40"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9e75dfd8-fa66-4c16-bc13-820f6dae3321"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a0b9dbd9-5c4c-4779-aaba-dc3ab03b445a"
                 }
               ],
               "color": {
@@ -13660,6 +14524,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "adc6e0fb-8d7c-4e38-b161-6b12189c9768"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d970eb39-a504-4174-81f3-e7810c7c7907"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ccabf70a-ac2d-4ef9-a6f3-4c13f61e0297"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d701ad03-70e1-4450-a8ed-532241cf7ff0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "58f0a434-36d9-45ec-acfb-cc1fa1bbc7e1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c2e1f941-d8a1-4e3c-8ee9-36d1cddac2fd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1b130de2-bc21-4bec-8ff0-d95262837a96"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2df7edaf-be57-4f54-9154-f00d7808047d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "da559a79-693b-4c64-9683-b6370fdf3f5b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cef58fed-586f-411e-b399-36d28acfad66"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b62cab89-19fd-4d1e-a08c-8c24656be0dc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bfab3368-a1aa-4e4e-8a17-e07e2d9c3719"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7cce7fe2-3323-4c57-887d-8d5fb1dd9fed"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d1ad144e-9552-4104-a39f-5b68651c8710"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e91546af-5b24-4883-ae69-a23bd98f23e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6371ce8d-8fa9-4580-b50e-1a97bf3c35b7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e3b11b42-c4c2-4404-b6c9-ca1df4b6849e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "56a73ba7-494f-4e30-b9e8-5d0c7f4adb1b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "184d40a6-b1ed-472f-8d9f-1b209528b8e5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8b590aa7-91b5-4303-93d8-2f464eb8892b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "533a441d-a344-4fde-82df-f55956f06897"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6b7947ff-7273-46c9-85a6-b1b40b542f05"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3d6f9d08-88cf-47f6-b6d1-d6287b4aaf74"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bba36cdf-72f9-4029-9e1f-70172684f8ba"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8ae99cd3-e73a-4725-8064-241513cf6e75"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "52d2942c-645c-4a23-9309-f2c4695045d8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aba8ce62-7177-4103-902c-34ca52446271"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8499980f-ed3b-48bc-854f-a7317fdb5536"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d5c12761-6a93-42e9-8c2c-7e7123940793"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "df101cc7-316b-492a-acfc-2fd5cde16557"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f6160399-9957-433a-b0f5-64681a3bc68f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b824ab5a-1e29-4cf4-946a-75d0a02b8cac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ba952986-89ab-416c-a1f0-ce14a027cdf9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3de2890c-e8ad-45cc-80ee-d8f615805a17"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e738578d-0218-4dc9-9f3d-36ac8c98e52b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9d72e39a-aedc-45bb-a1ac-2fefa719367f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bc11e4f8-6e38-4f5b-9e6b-9150ab84f69f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b26c9830-d924-4d23-a533-a0070f7405af"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5a5edbcb-56e7-4760-af04-76bc7179f224"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f777bdc4-746b-48c1-a34c-6e2a66abb456"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "83612c57-a751-48ac-89c2-7ebf5a50af64"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bca0c24b-019f-4253-a74c-489b3b482562"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "51f72868-b883-4dd4-9cdc-4ca223bce9fb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "02c9ceeb-c0ee-44be-b4fe-1817007161a1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "13b20350-9677-41e1-a93b-e18625163cae"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "868b3431-433e-4cc6-b637-6e916ea85914"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "24c96d3f-6c01-4f4e-8ba0-152596c11d63"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6439443c-fdfa-4bae-b12c-45b9ae2fc341"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "694cb573-6ac8-4797-b26d-f90ac79c1217"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "513a3c2a-8b63-46cd-971c-8697a08e7198"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a79c2974-fc23-4220-bfe7-b24c1ef1447b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0e4669c2-acf6-42fe-beca-e01a94d7a60a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9c6b1c96-5501-4ffb-90a1-047eba6397a8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "924ed1d8-6743-4da5-9aa3-357e0dd92652"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "23e4821d-884c-444c-b995-1a2dd58a5b57"
                 }
               ],
               "color": {
@@ -20815,6 +21895,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "0ac74b17-f8f9-42cf-90b8-568e6952cbab"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "70a90e1f-3758-40e5-b905-30a6dcc8a94d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b1610854-cfac-4222-bfef-528e582f82a7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "42018eb8-2951-488b-85e8-315843e24e1a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a57c7974-3927-416d-9260-60b2aa6c9c90"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "da84954d-c22d-408d-90f8-bc523be275e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d04ce8e9-70a0-4437-8d5b-671885557a2d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bcafeb93-88a0-4cdd-9edd-8f1a53a6ba73"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "47858e7e-491b-421f-a6b3-950eafc01956"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5976ee10-973f-46ba-92b6-cfa3b910c704"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9b6aca6e-c1b7-4216-9b0e-59b5d55e54b2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2ecc9c48-0643-43eb-90e3-9692e88edd52"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c390b9ab-7de6-47c6-9414-7e85524f5e68"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bf507d4a-1a0b-427e-9e66-7ea5c47fe00d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1fc1a0ea-b2ed-4583-9896-92841c028fef"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3e7d2ad9-2b26-4e17-b9cb-fa2ebd38b836"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cb451d4d-2705-4d75-bb49-4772a4a8ad8f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8914fdcd-70b6-4f95-9dc2-9964cf3fe626"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3cc92375-2b3c-48d1-9588-9f9383dcdb83"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dcd5de48-42e0-4b3b-8562-f7d478b01957"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "403fdef1-6fc5-449b-aece-96f15431a4aa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9cf58901-08b8-4930-868b-06ca9c210a57"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "eadccfb4-0c26-4a63-90d0-414b1a90e7f9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bb101cea-7593-44ab-9d00-0131735031af"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d9f8a675-235f-486c-ae6c-774e382f2d5e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "665db419-ecd1-4e2e-9373-260ba18f91b1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "44273c5b-e67f-4181-97b8-67d4945ffc37"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7a1dd22c-8d86-4d2a-bb89-5e9f66179d40"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d07e5438-f22e-49d1-b2c0-a1c39983f3ac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4e004941-ef03-40e5-9b1a-dcba7c4db48f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cd4c641e-1411-478d-8f05-f7468e081ae2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4740a3ac-33e1-4e0c-ab8b-3b42fcdd1133"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "84ad5212-8e6e-4a3f-be90-706ecfce2d86"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "38eb3f3c-a53e-43cc-a86b-ddea19ad3dac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2e460d62-72b1-4d42-ae0f-2958725578cc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8ded7636-380c-4dff-a5ca-be582dc985f2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3925efb2-c318-4bff-9d4e-04fec3602260"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "efb955a8-e39a-4c9f-809a-d517397b2c15"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "96f9b5aa-79a0-4e6e-ac93-cfac146b954c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ce6d9980-2799-49a8-80b8-6a470002979e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d33ab9fb-0622-4470-a7ce-bb20bf11498f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "24c15947-4a43-425e-ac76-ff9f32bcc268"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c83e191d-8bb6-4ba2-af64-fb0c52b23433"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "22926567-35da-470c-b66f-1cb2742b3b68"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "79c08c3b-c754-42d3-a78c-4e2b7fd23798"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8c33e768-c1d9-4d9f-a767-06a3f6a2f2bf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8fdbb595-ef21-457f-aa25-25333ea62693"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "15ee7451-bec6-4ee7-9bfa-3788a2f03f4f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "88c98168-1b17-4ca3-81f9-2c6f8cac9782"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "13d2befc-c621-4078-b924-24314baff591"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "70a30bae-2f64-4f1a-97e0-ec0ffd026176"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "58598aa3-393e-422d-b162-1303087eb6d2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4bb96337-f6d5-45a1-910e-6b95ed4cde6c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a5fbb9ae-9c94-47ab-8a8f-c1be201b0084"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "699b23b3-fc94-4d32-b8e6-af4a8384c8da"
                 }
               ],
               "intensity": 23,
@@ -22920,6 +24216,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "136d703d-d46e-4fe4-8155-bd8526c1d8fe"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "eb79fd74-56aa-460e-a246-707d2e264df0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d43a60e6-bc79-4dde-ac9f-30bfcca02a76"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e906eab3-c8fd-4f91-9f96-b8ad70dfcc5e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f084c253-b2d4-47d4-808f-d9a7010f8e2f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "963aa786-4d04-41e1-97f8-b9ee7bbdf84f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d69fda42-dd6d-4528-9929-f32ade7671d2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7fbcfb7b-4159-4e9b-b20e-2ebe2e41898a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0a1fe153-7f24-4008-a391-c7220a3d5a90"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "93679daf-f857-4f87-a38d-b8c593bf1406"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c2809cfe-e8a2-4c76-8499-ebf83c7834a3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ec4bbad2-f5b6-464e-bd6b-863810a082e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0d31b65f-6434-4c04-850e-6044135c5c45"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "469fe0d1-2661-482b-a022-7fa3618d69ee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cd8baadc-da16-4295-af2d-a891e785d72f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "78c4b4e4-7c2c-415f-beff-6a7ed44b2129"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5a72860c-7acb-4bb2-a5ba-66f291afd05a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "929c596d-fc72-4cd7-9f93-17faa4373e2c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a2bedf3a-8503-49b7-bd32-ec5dd7f8f481"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fa14ddfb-0a2d-43e3-9772-c8338aed7013"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "83e00a53-d014-46c6-884e-2a57edaf7c0a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9cbb5db4-ce74-4c2b-9049-480fe452878d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a1e5a01f-e9ec-49af-bf76-427047cc8fdc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9578d8d8-ae20-49cd-891d-97ebf6de5199"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3e11bbed-9a48-4a25-9017-d30ed6fd3bde"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "048cc46e-4955-4d3f-819a-a46f94431886"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9c06870b-8ebf-4e34-ab6e-671c4a0270fb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4504e894-ec65-4ce0-9a50-64fe7cd7295e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d4ca33a2-14ff-4d4d-af68-2cc3d6767f89"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "31a4c8d8-37ff-4447-b317-f72766bb239d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a9a939fc-22e6-4544-bc6a-e3858c3f4287"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fd3da7de-db00-4398-826e-d0b7868b4fec"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "52d0fd01-deff-4738-9055-c0de7cb7e7e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "229a5701-81f5-4b29-bc5a-0f8a2a4cf906"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2f822079-4005-434f-98dd-098a632e0af4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1369c43e-1bc4-4ba1-b190-16eeff6fe34b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "142b1673-331a-426b-8de3-d70f4761eddc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "40042ea6-736a-4971-be47-140abc5f60b7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8d684c39-08be-431c-ad97-813bb69dc37c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f6bdd66f-9d11-4f6a-b775-a7c8f7207112"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f3c88f8b-27e6-4335-93cf-48435de5275d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2a831dac-82ce-47d3-89b0-1c7c7cd322ea"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "abbd9c50-0459-422e-a6eb-f5919bfe459a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "92a79773-5d2d-4508-886e-f51e12fc05d1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1a57b061-c920-4992-843a-a5334a834486"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e4d705df-b4a0-47f5-9339-fb5089d47036"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fd93bda1-c62a-46e9-82c3-de860b1ca4a7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2c57a77a-4a45-467b-8c2c-70d73d77efba"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2688a5e4-01c2-4cb1-b5c6-23f0df4d632f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2b1bbb62-fe87-4be0-add1-32864aebf104"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c0370654-c1d3-46ee-ab37-f5a45ab07f8b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b6333290-5dad-49b2-8ef1-d7ea803639f9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "15ab30bd-c153-4bc7-84ac-5b4842f0135f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "31c8d21c-32cb-4c9e-810b-f221ee507c0c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "75b4a691-f3c5-478c-954c-6f47dc35e3ad"
                 }
               ],
               "intensity": 23,
@@ -25084,6 +26596,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "f9f8c39d-bd55-45e8-81cc-08184c54fb18"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3d961d55-88cd-49cd-be1d-1ad85d57b5bb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "466ea5d8-98f9-4d47-b5d0-bce3450b30b9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b3a8b202-2527-44d3-9f54-92a0514f0e66"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cb1e91e8-ca9b-41ce-92d8-a3a078f71357"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cc25da87-5797-4783-adc5-9c75dd69cc22"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8916af5c-7fab-48fb-bd28-d67f59665757"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c6f08e29-79e3-4af6-b59e-00951e1b21af"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4c8b8f5a-6fc5-46b9-9836-f2e9801f8d70"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1cae6bbd-8371-4410-827f-d2d1833c401e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d8d16fee-8ec3-4962-b2da-3493cf90ebc8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "946629c1-0586-4f70-a160-6100858cca4e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0ded77e2-01ab-430f-88ea-7ac7b45eb0cc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3bda0066-9840-4455-9c1b-4edee9a5b097"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "51924422-2ed4-4404-b1c8-23dbe7647a2a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5309e0da-c85b-4a23-9589-10bed42192b3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5d3d930b-4309-4e21-8432-df0f2e17a076"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c67df43d-c3e6-4de2-b025-efed10fd7622"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8b507d09-1af4-4a0d-86de-c5c0b5ab6dd7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b0bb151a-8c9f-4844-ad4b-7ddb6fe2315f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d7fe3e47-02d7-444a-9ab1-e138c63facda"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d126e611-40ae-4874-b336-14bd703ac78f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "98b3085c-6af2-42e6-a4e5-9b3606a0b54c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f766198e-ba67-43d4-b0bf-d96d29fcafa4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b2efc41a-64c3-498a-b156-5747a18fb86c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6a0e7ebe-b836-4130-a470-9c806af17b9b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2efa201b-bd2e-4f51-8ce1-950cf5f01e66"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3d01b3da-0b33-4ca1-9dee-96b5ee4a1b8c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8d24590b-bba8-43e2-a144-9ccc001f036b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b018cb87-d79f-4bfa-8071-bdb2999609cd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cb934bc4-b675-468c-a40d-65fb7bb9d1b0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "52b17fea-e6c8-47f5-ab23-6a61cee9c242"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "56a08ecc-dfc0-42b8-b449-c09f75074bab"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0ee4f3b6-f81c-4a93-926f-0656681ca139"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0a8b1a11-b6b4-4d1e-8f78-03b5454081fb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a15db153-98a4-4faa-bf28-85d6834f8766"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3c128b02-6ba0-44f2-958f-d1fba6eef3ac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d8a13721-d21e-4516-aa32-d07bb505ba82"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dc6f0302-2e3b-472e-a540-14dc1df15f36"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b2bec41e-989e-438f-bcbe-c9f1255b4fcf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "af277335-a7aa-4293-a79b-694af2f96ab1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7816cb44-f6df-477e-9cca-7a28a8e03857"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0bd64c24-9bb0-4fef-9fe0-c03ac87ebf15"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5e301231-281d-4194-85cc-97580974b7cf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ac1a9cdf-b836-41bc-933c-ba26b32b624e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c2da80d2-b279-42af-91af-7c53d11aedfa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "137077c7-fc3c-4a0b-95d6-9dba0a551aa5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a1caae6c-3d42-42c6-b7ee-c8dd6eec2b18"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e340c9d0-c23d-4881-a083-bc20e66fe5ae"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "73f69f9b-6699-4c15-92d4-27b7eaf12497"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "006e0f3f-363d-465d-852a-337fb8911046"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "68cdf535-540c-4fce-adca-b3ec5bf79dcc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "329ebc40-47f5-45af-b6fe-4dd33d0c5244"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9080ec18-2f7e-4cd8-a69c-742237d0dd65"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "14d66742-d16e-48d1-80de-1b2f2c865303"
                 }
               ],
               "color": {
@@ -28060,6 +29788,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "21bb111b-0039-4be9-bb7b-4505b07ddd32"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8e979a76-ee06-44fe-a95a-2d122704e627"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fd671df7-eb43-4b55-9200-2c36eed04f55"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "704e2d27-6f9c-400a-9f47-5eb3ba0a8bca"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9728297a-dd91-4d0f-b4c3-c47a5603db96"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4b039555-6729-4387-92ac-91781dcc85e0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "229430c5-18a8-49b9-a98d-a9c7532cd933"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "21d2d15c-c67d-47bd-840a-b25a4df33844"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cc3535cd-9b73-4ec9-be0e-12dcefe7340a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ec3707ee-75f6-4d0f-9b2e-372d6a080766"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "449b916e-7f4d-4638-af55-8502ccc9f2df"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7817ed8a-2090-425c-81a2-aa026ed06a5c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0e2e9eb8-905c-4cea-bc46-6c602fe1041d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5ff051f3-fe77-4cc7-9f36-6e648aa862d6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c6e4f857-c815-4f6e-a17a-48a760d66b97"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "981eda6b-86c4-4bb3-904e-d9784a6ddd70"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f6f46444-7795-484d-a85f-e7b56dd3d31d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b9ba1f34-4b74-4171-885c-5bda29f1b003"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1012c88e-94eb-44af-9576-cc3537063ea2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e3d90ae1-a295-4846-afc4-ab1d586c76ea"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "05a88db1-fb92-45bf-8954-3148a09c3025"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dc922e70-16a1-43fa-beab-2caa1327b2bb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "098f7c5a-d3fe-48aa-bfc8-906fbe0af006"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ce068914-bb32-4e48-8241-2bb2beb56586"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ff994cc5-8be2-4624-b968-29c2728ce5df"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e059df32-ffc6-436d-9550-82d35aecef10"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ff55e3bb-220d-4d43-b787-4823f706f45b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "84f1594e-ed6c-403c-96fc-dd3bee16e17a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9913c4da-86ad-45e7-ad05-088a22c46b00"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d8b4cfa2-1e8e-4eef-b8f7-9559d7b1a611"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d2f059f2-2608-4712-87fc-8d048b3e58b3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ff8761b4-c783-414b-ba83-6532e9569970"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "07aaf137-8361-4cd5-86ab-5949e03b3282"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c629aeb6-4901-4676-81bc-4dbaa7291cf8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3832b6b3-48b4-4c58-b9eb-2c88645756dd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9c69c3e2-54d7-48f3-ae56-b3b96c91241b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "576752b5-f910-40b6-8acf-919e0bc39163"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e9d76c36-64e6-4dcc-8c55-ef9ef75ad356"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "187eacdc-44ff-40ca-9bfc-f5fb9a53ef63"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "41ec62fe-7463-4203-a4c7-0913b97ad4ac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2f5bd69b-dc3c-46c4-bcce-bd0af3fec9d7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "33eeba89-1b85-4900-8088-9b33c7b22a57"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a4a6d46b-3069-4ab9-b6cf-a0161eea3320"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "93a65b78-1f4e-4524-82a3-658a823a9227"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a209cc16-9e09-4770-8029-5ddaebf6a9e1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "02d4df66-6b85-44b2-bf17-124cc3683bb7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1af5e538-66a1-444b-a7bd-49e60d439c27"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "408867f4-549c-4d28-953d-0409c7dbd1ce"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "94ea19e2-1600-4481-81c1-a3bfa50587eb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ca38644b-c912-4b7b-9228-6224ad976980"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dcad9eea-2d0d-4d2a-a040-cd710364af48"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dbfe040f-0d17-4ff1-8197-6843ff6fc751"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "65b22d4a-d898-4ed8-95bf-ad18fd028bbf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "72f928e1-b703-473e-89f7-ef72e96d7549"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "59b0ba7a-ce1f-4042-b591-0f71f5002fd9"
                 }
               ],
               "intensity": 23,
@@ -30165,6 +32109,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "aad2c589-60e4-46bb-b5f1-2d30f485527a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c075a350-ee16-4ada-81ad-b40aa17d123f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "27548cd5-801b-4a18-b6a6-6ca811e0bea6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9119b51e-bf57-4fc3-b86e-94e79c5da5d4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "37d68603-7296-4d1a-a3ff-d12891cc9857"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "70f98fd8-49bd-4678-b590-c164afd3cf94"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ca6a377f-c103-4a27-8b20-7e82a9e1902f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7d57ede0-4d9c-4f90-b60c-e6d200ebd3c3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2603cb19-a45a-4136-b12d-8177d75630ac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f0e4b2e1-cd92-4c5e-8e8b-f673d9824e80"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4262d142-03eb-4f39-8854-04e69fc2475c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1b5df167-0fe2-4423-9339-ed693552cb6a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5aad25a3-1554-45b0-beaf-86cd634b7e4b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f0805724-203e-4d3c-8da1-0499382d42fa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2cf00448-f9d2-42bd-bd38-cbb6ff4e0579"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8a5363f4-2319-4d50-993c-80d1c0c13a5f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "22b33dda-7fff-484b-b71c-68ddf2260b1c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ff098f28-6bdb-4955-b477-a7d5a82b3053"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d9dc27ff-79c0-46e9-b720-75f62b6a58f6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "633b264f-2e24-4040-be7d-531205133f4b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8c459686-8c14-4fc7-8b45-4327bd9a490e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "70af9a03-be40-4823-a5d9-69154ea84ca6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d1e2ec65-2ede-49b8-9216-aef82d4e1b1b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1329eeaf-fe37-4c81-84c7-a8eb55a568c7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4d8ef529-95a2-4f2e-b731-1ee0431b1050"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c30167e8-8531-4edd-b434-2933e5d5cb60"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6616117b-af65-47b2-b516-ab121e931a0f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "85eec571-0827-448d-9066-640624882e6b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1d7da29c-4e41-47c3-a026-a5b6f5e06f6b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "68625281-3d85-4440-9422-c9f54dec8c93"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "49097998-92f4-4e9f-9180-49dcd05e4191"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e46a5f2e-8d43-49f7-ba86-414bd6eb0140"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "de852789-2805-42e3-b68b-f1952b0866b0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a47a9d00-e5b2-4d73-af38-107b928c09ce"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1e60c71e-96eb-4ee4-936a-553393e9f276"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e4c4aa29-9e7f-4361-b43b-68711a8bc27e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f812a65c-aa20-43b9-92ba-984095700cbb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8d8edab1-a82a-414b-87a2-d8dd6bfd3bd1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e91833ab-7894-4922-8cde-b49bda5cf3e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3f0978d8-aeae-4513-8ee5-c9b297ac5553"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5ed19d7d-5c3d-45cc-a5ab-3ff641ea480a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "99982ec9-e107-4b2f-844a-0d293c8422dd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a021eaa2-cf72-43e3-a710-a16c230db41f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "75012d8f-7869-4266-9616-3c00b1bc6242"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3ca8f512-b861-4eeb-aeb5-d5cf77057ca8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f6cd1451-27fd-4217-a46a-146118b87177"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3b0f7f89-3289-4cce-89b3-f1404b1ceecb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "360bae21-562d-4ba5-b149-fb1c06de0d6c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "641eeb13-600e-45ca-bd23-37978e1203f5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ab461f2c-d7b6-42b7-89cd-ed37c7edab6c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "116453a8-0672-45e7-9457-4b752ad8e130"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "27b37d1c-b1a7-45f4-a531-96c579f1b795"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c0319472-5aa5-4c5e-916d-d225371b7763"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "81b28cda-5a05-419b-b82e-6f7d09dc2be7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cb64baa3-63d2-4af1-a090-61fd96a39454"
                 }
               ],
               "intensity": 23,
@@ -36455,6 +38615,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "5684e68e-6c9f-4883-94bd-d202d7d9c393"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4ea93ea7-dec0-4787-b3e1-0b566ee5637b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2b833d00-efaf-437b-a7b1-17b0083e5330"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9daa8ea7-0438-459f-a57b-e3824a4f895d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "50236623-df3f-42dd-a949-890483104be1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8c5fe7f0-5d1d-4d9b-9871-ef67b80b6220"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e8a13eb5-b8c4-4481-be8b-c8cb5fec6f7a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fa73d65b-0d7f-475e-8dbe-1f6b5b9b6ce2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7cf8b403-cebc-410d-a7da-2befdc448e51"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d53078c1-d3da-4688-ac86-0c6166f455e6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3e43ca49-2865-44a2-82e1-6d2fa722d438"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b02b0f98-0685-47e1-bcb1-bc8778761be9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "79ee2af2-f9ac-4287-883b-3e1a5fa6cb62"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cef8495a-a877-46eb-918c-0e8863bfb5ea"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2f7beeac-c311-4142-8a3b-7d16f2bea945"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "89cb2f26-f96f-41c7-bb39-50ffc1ac52d9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d9aa0ae6-f782-49b6-9a27-3c0e4ee34da0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f87ed3fd-99c8-4a72-8b1f-529ad66bdb32"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c78452a4-29f3-4f49-9df8-a07236eefc03"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e5e5417a-12ef-442a-a20c-391f3a712e9a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2e9bde2a-b48f-4e62-bb60-225ade07cbe7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "52690209-64a5-45f4-a5f3-6b41392fe4b0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "061b96c5-7955-4e33-a3b4-a3c22d133c76"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "51865a84-1c0d-45e8-b523-89070424612c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e972981a-2552-4b73-8115-0e792dfd795e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2a7f7eee-47dd-4fae-a892-368301594856"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ed1d9f2d-68ee-4419-a09d-af3b5c2e054c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f63c5104-b9d7-4869-bd3e-970479c3fdd4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "70318a70-8902-4e9e-ae2b-2967f13bbdd2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8f901365-ed4a-4cf6-8a0d-751e044117a8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "95769919-7ecf-4015-9acb-21483aec6955"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "31736cd1-7a94-470f-8b43-18d6ce2bd5ee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "49466393-91d2-4df0-bfe1-5f1da8bff640"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c0ddd8ed-6f8d-4a56-9d86-a8fbc6822e49"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e445dd5a-91d4-415b-bf94-31c175a34db0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2e0a6c4f-4331-4db7-bfa3-56077a7ba114"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "92f20622-7d7f-4052-a191-30e30506b38b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "04d7fb7f-22c0-4241-84ac-57bc4dad6053"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2279ff73-db86-4693-8c11-94ca8fbeb83e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8e443e64-fb11-49a6-bb10-93c85d59ac72"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3c51b79c-825d-4fda-9e17-b3ed0930dd09"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b02c3caf-ef67-490a-ac27-c5cf06a98442"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f71854a3-308f-4e02-89cc-1f02c486f3a1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ecf96ff8-0565-43be-8def-6d9adc88646a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4d5ce3ed-b295-47e7-ae60-e4c138ce48c2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b9c503ee-5f1a-4ba2-ba59-98b253f33aaa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a24873dd-2b95-4033-91bd-08ee661052eb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3f18a216-a8f6-4031-9d39-0dc8fa23eb98"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "44443cbc-1402-4df7-8dd8-4224ad10ef94"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bf28e536-1a98-4671-ba6a-9876636a47d4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dcfe310b-5580-4534-a3cd-ce5a5a45ecbe"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2473ef29-677d-4f9e-afae-1ebde21ae5a4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e4f37438-f9b7-43b0-b534-f07c66fcad98"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "90561286-8f8d-4cd3-a990-29798c08136c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8f18a02b-46aa-4159-9623-5c1f50db295d"
                 }
               ],
               "intensity": 23,
@@ -38565,6 +40941,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "81140a1d-1374-4b7b-a0f7-cf8531674665"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aed7a16d-dae4-4b78-90f3-7ed43b33b635"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b068084f-6f1a-492e-8de6-6a588418ba67"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0d9b9d06-ecb7-4d48-8d70-55a9376247b5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ba99c22e-dd89-40af-a3ac-06ce79b4f341"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4824bcfc-2041-4b83-956a-1e54485b1d14"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "11bbfa3b-0bee-4c06-a323-0ffd99d8a0a3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6dce8a25-884b-4d56-83ab-a91225737c47"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e9b57501-663f-4905-941a-53e4b0b349d7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "441985e9-1785-4213-9af6-0bbc412eba07"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d670a9fd-0a5f-46b1-9e9c-ea429b0fd61b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "236e612e-5650-4133-b59e-d73f079a5f08"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5edec8e8-723a-4101-bb2d-cc3ea4abb1ee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "75df2932-ef38-4149-9bb1-cfe430ba7d7c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "984f8acf-6011-444a-bdaf-c87bca93224c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0be3bec6-f3b3-4acd-980b-a69954b22a27"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2d192b3a-d803-47cd-8bcd-b2d487f660cc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "88f65adc-6b86-4e6a-996d-96beacb768fa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fb3ee743-1e12-4b49-b2b4-37407b6362b8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "724e42db-39a8-4855-8502-1ac5fc46faee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "89e3cd63-9ae3-468f-8738-b6e7a15805a7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e35428cb-181f-4983-9ac9-89138a8846d2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7912f413-ef9d-42fa-8576-6f858aaf9098"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c13ae4fa-6061-4ea4-92b8-3d6f12c0ece4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "22cf3150-65f2-43c0-930e-0166e29e6a34"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e91cf16b-e974-4343-bc7c-91120c9fac55"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "67c04d71-234d-486c-a6d1-824f178c53f7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c62e8b6a-d4e1-4ffb-9eeb-4ba066ae922f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "24fc0382-1aab-469f-829e-8ddc755db0f9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "98b43c17-22e8-4eee-873b-4d33e3b14d33"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bff0def4-2367-46b0-a094-c4aa0d09cc81"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f108cbd8-3e08-4d4d-967a-ab1d73fe668a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "343ee300-18d4-4659-bcf6-c9e9b752d9dc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d3c30f1a-c34c-4844-8767-feada7c792ed"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "27015781-51ae-4994-bb03-7955025cb3c2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "41b3e6b1-8ba7-4095-abbb-fa69b65796f8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b3062b81-902b-487b-8219-38182c92a4b5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e4ef9ef7-2bd1-43ea-b7bc-3ffeee55981b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3d099b7b-e70c-4d73-b87d-85c447b04cb5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d5fe3f81-331c-491c-9b1c-b5ea19bbef46"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4f4278e1-8eb2-41c5-9aa4-c6d2988c6f59"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6ef09abe-8c9b-4c56-a384-5bc986cc44fe"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d1d69b82-c7a7-40af-8855-d8a8b94c3a9b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "61ac988e-ba59-4e2a-9134-c76060073cc7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "85e5d672-ae56-49cd-9a02-55acbf7ecc3e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4edeea62-9168-4418-aa64-67df7240ae10"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "067d6085-b682-4852-a5bd-7120787b0790"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "63b5547f-6ad0-45f3-ae45-5f6c7a4b09b3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e04e5535-aa68-4e98-a835-473102014d19"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "84455228-7545-4575-bd58-bf121f6ea4ac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "02e08832-f9a6-43ca-8dc2-a0e36f9eade0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "63d2bd25-5ecc-4aaf-8cb1-60624b5c74c9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d29d889e-f711-4c93-ac0b-8247ff5f78b3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "eafcfe44-7770-42cc-bfd3-726611436b23"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "762e68e0-860c-40fd-9efb-d56cd11cd915"
                 }
               ],
               "intensity": 23,
@@ -45874,6 +48466,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "42a23d9c-0027-46c1-8998-29feea2db04b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6e24475a-900e-4b65-aeee-658338eaa8f6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5ca6ac77-31e8-4c5a-b751-1477aa680377"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "02245897-3d8c-44ea-8f84-1971e935548c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "998a6133-1280-4cd0-bfc5-0d9d67cea918"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2c964f92-f5cf-4e18-ae3f-a2bea2d3224f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4ff1c150-fe02-42d5-b3a9-be7e6bd5a9ee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d4f4b2a2-ffce-43e2-9dd8-0cd17069c293"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c2e67363-9f41-44a1-9af8-62abad7cbd71"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9cf529f6-9a62-4c97-a410-7e80493daf43"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "93df3628-3e95-4511-98a2-bdf70f87a26e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f5063372-9dec-4711-b1a3-d9aa0c7ece80"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b77c1854-2df2-41ee-a378-0becbf80c05d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7c32ae8d-b4b1-49d3-bdec-c2c6f09ea26a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5bfc27d8-3ee0-4210-8632-6514ad563ecb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d2b74bdb-e042-4150-a0ab-bc047080d271"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "942e2b8f-88fe-4bc1-be51-7d50524b3e49"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9cdcc40b-802d-4ea0-b07d-481cf3176fd1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "138cc409-2050-4cad-8bce-05fa63d2781e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aa5f1a44-7bc1-4a9e-832c-e5bb96c709ea"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a6c35f8b-5e4b-4b6d-a077-e8a533483b66"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1af25355-f6e6-4622-b1d2-571402b6f7ef"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d78b4779-9671-4a78-acae-df7a43d60ddc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2990987f-e11b-498a-bc15-7849987d3d90"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9cf1af85-d439-4578-8831-2f4e7084171e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f9fe6ad6-8527-41f1-9592-bdb5c2d9f666"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8481dda0-b877-45d9-b188-1871e25c6f48"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "93d2d270-8b29-402e-93f4-7f572cb4421f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3293e318-6b66-4d69-ad66-edc969bc56cf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "49b7b805-d213-42be-a640-81a4e87ecd23"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d9372941-7c3c-4ee1-8572-a9c1eaff4bee"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bb2911ab-369c-490b-b5db-383b55e78afa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "39b3cb96-009a-49ca-a999-fd2ce33e0bd4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d66cd7be-6400-4b61-bbb5-7f5fc8906259"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b9208748-20e2-4b2f-a7df-9f737748a4ff"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "092f1510-5343-412d-8d5c-3644cbd83b31"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d3de8cb4-6b50-4390-aaa4-37a6cd1e5bde"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "13d438f5-9deb-4a5d-8e1c-a540419f3dfb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0edcdfa3-7c5f-4371-8586-7f895cd0f24a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d0c348f1-3866-4ba1-adb3-e9196767fc03"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8d4b0ef6-615e-46b5-b134-f8f868b6a0f0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "451b5b8b-8a32-4ab5-847a-69eb33346d5c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "581462c2-d6fa-4359-a02c-c9e79ea2fbde"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "240cf39f-f874-4a3c-a656-fd2f2d52d71c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3ed23e85-bd73-48db-b034-139e6b2a7fcc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "56edb066-f4d7-4d09-9999-9033b4ceaaf0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5f8c3f79-cd3c-4606-a8f1-bbc9dc9bf6d1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "66e6388c-45de-459c-ada4-8c56e7c80446"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2ae1d77a-45d4-41bd-9520-71518ab1cdf1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6239394d-9c43-497a-9262-88d7fede48dc"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ea58a727-7211-4b8e-b35f-466c6f639c25"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "94b8b3a9-4c9c-4305-8a24-00677596d038"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "797dfe66-b9d0-404d-a7d1-6c52e2f386b2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "33615bf4-24f5-42cd-bfe4-7abb33b30b64"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "88e0b377-f996-457c-a861-f20def4b2c79"
                 }
               ],
               "intensity": 23,
@@ -47979,6 +50787,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "5bdc6e19-07e1-4721-8430-eb6dc84bae83"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7fa49e83-e594-417e-acfb-2c632920fffa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "562c6873-fb2d-43bd-8415-1f0cb3a27fb4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a0d9e4b4-cb4b-442d-ae8f-df6145a1bb45"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "18966a56-9c00-4ffc-b507-7f020415c488"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1e3d5b10-2fa4-4319-886b-8bae7f988855"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3568a8c5-6781-4400-98d9-968fad5f7576"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ea14c23e-09f2-4ab7-b4da-feb99c0106b4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "084d13f5-c30a-43c4-b4ac-8f0d7656a904"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d3d341c9-f5e2-4283-bcda-fd58a37daf2f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0f2c2c5a-8dd0-4874-93aa-e1e40f4d76f8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "83d52af6-1eb3-431b-bd7e-b10754c753a2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c2a3e89d-2f64-46f6-ab74-6ed629ed107d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "62e95db0-5721-40ae-bfca-63bd45bb74e1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9b0b5e71-e7a7-44c4-a9d7-1c0977c45010"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b9bfa107-66c6-49b2-a35c-c5baeb01c38b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2774f108-6dcc-4fa8-a1dc-16f1d0c14d80"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cc79f825-147d-4a51-a2aa-4f5df34aeea5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ef481bc3-e7ca-469c-b712-0eb56ec54de1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1a4e074c-db80-4b8d-b3d8-12ab44566601"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "05815cd1-667f-4185-8d0c-823d286642a4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d89ca42f-50c1-4e62-aea1-ecda4cd3d51e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3b9e2651-9691-4ce6-87d4-3148f511a10c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "500c2b06-2ee8-400e-97ec-1f9cc1d3b16c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f773aa6d-4036-4514-97ab-be52bd21cf1c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "34fa2a0f-a88d-44f8-8e46-284254dd6c33"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7d879bb7-c354-43b2-84d6-d6dc0e33caac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3d8480d5-53a0-48ba-82b1-dbaa9000d43c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "35e6765c-10bb-4fd1-b92b-6d56130ef38e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5b6ec1b5-0398-4d25-9b1c-6281f3334a62"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7f4f4493-63db-495b-bc1a-dfe109146e6b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3c106e07-1f36-4ba4-9d19-32660418f9c2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5b18cdbd-dda6-4f22-9fc2-39148e6bc1f9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "edfc44c8-82ec-43df-9e7c-a3453950b9c5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fb04583a-41b1-4ebf-899a-cfbf8dc399b9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fb6f4c60-da24-4b04-8dda-54453c217997"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d0e5c710-fd43-4f30-8189-b4808440cc0d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ef263893-51b7-4b92-9d08-1dfc496a258d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "75c2c162-2f5e-452f-a404-4d1befd81774"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7198474b-081f-42f3-9753-9b24b483ac1e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "484dea29-3c8c-42c8-afee-4ed7191d26b3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f74ee601-fad0-4f52-8df2-646d575104a7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3be5fa2d-9faa-449d-a23e-301b19ddeae9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0d518f4a-0ee7-4a91-8111-f4c30947debd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "89153dd7-6c58-4767-b9b2-1633f5640231"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8f5efc2b-765e-41a7-bee1-d87cfaf6de4d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7643d909-c508-4f9f-bdde-3c144c558e9d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8fbdb030-5340-467a-b8be-c1ea35ebeeca"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "645ae073-71ef-462f-8ea7-7ad4d9c0a409"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "879ba664-5a3a-413c-bbb5-850455d8c972"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4c89324d-64cf-4484-9bfe-ac6d0bdc0fdf"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cbed318a-f36f-429b-80ec-51300b744a9b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a4aa1f5b-9b44-4313-b76f-cfa45aa16121"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0e6ccd0a-0dfc-4112-84e6-c20c79ba05b4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b5bb86a0-117d-4d40-9775-5754bd2ba7f4"
                 }
               ],
               "intensity": 23,
@@ -48027,7 +51051,7 @@
             "_": [
               1.570796,
               0,
-              0
+              0.174533
             ]
           },
           "scale": {
@@ -48261,14 +51285,6 @@
               -17.180525
             ]
           },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              -3.141593,
-              0,
-              -3.141593
-            ]
-          },
           "scale": {
             "$bc": "v3",
             "_": [
@@ -48296,14 +51312,6 @@
               -17.180524
             ]
           },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              -3.141593,
-              0,
-              -3.141593
-            ]
-          },
           "scale": {
             "$bc": "v3",
             "_": [
@@ -48329,14 +51337,6 @@
               86.570635,
               -0.885763,
               -17.180523
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              -3.141593,
-              0,
-              -3.141593
             ]
           },
           "scale": {
@@ -48369,9 +51369,9 @@
           "rotation": {
             "$bc": "e",
             "_": [
-              -3.141593,
-              0,
-              2.792527
+              -0.123848,
+              0.327201,
+              0.369535
             ]
           },
           "scale": {
@@ -48399,14 +51399,6 @@
               82.958461,
               -0.885763,
               -13.792971
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              -3.141593,
-              0,
-              -3.141593
             ]
           },
           "scale": {
@@ -50889,6 +53881,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "8ac9e84f-fa47-4847-8f89-c83fee0c6980"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e0ac776e-d642-4820-8190-cbef86d7450c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d4dac6d8-1ffd-45e3-bb57-9815e94446a3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e84879e9-a965-4a52-a9d5-2156e65be4f6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "df4f21bc-1dcd-4b24-98d0-05d3f6f332ab"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8869319f-78cd-4a93-822d-4c3644783800"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5d5c4e69-f187-4415-9790-45581adb7df4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "270d583f-7918-48ef-8de9-ad870e74699f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "af94ce8b-3027-47e3-8722-4d7bef582610"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3d6f028a-cbf6-4b30-91ff-ff1c90514fa2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "30d6ad06-7d3e-401f-8958-9a5194039985"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "789bebe4-9845-4a5f-96c1-800d54776058"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c7a53d9d-c2f2-4b0d-9173-c3a1b1a9446d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9785a886-e519-4476-ae92-13a76d76d94b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d22318c0-8425-4458-ac4b-efcf7a1f03ba"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "040f5aa6-cb5e-4f0b-925f-598d707cd66a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "838c9062-2aab-48de-89d6-e882e0a98db5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a47c7348-c37a-4017-be1b-6d0f79e7cd35"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9c7d0300-7993-4809-b958-68665c1ac127"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "67478641-b06e-4d4b-8caf-97f35fc90ad8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "825d9ad1-73ac-447f-9b0e-f55f413812ff"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9d4af127-4285-4cc1-98be-edacc038414b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e2596468-1c94-47b7-8a6a-462a43ee9d50"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "539cf829-2856-4034-9492-7c009bea867d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "57742bb8-b283-41a1-88c6-63e017a02532"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "171d6ec6-cfca-47e5-8a80-5aa35bcb5a6c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2d020a86-3e58-4c44-9c8b-0a8e3b200e67"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "73418b0f-b5e6-43ea-bb6e-d944fbadc04e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d78f2fb8-0483-48e1-9097-a001e1b52e33"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4a800faa-8450-471c-9086-b95a189dcbe9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e9e2cba5-9b09-4909-9754-c49f3428947b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "48f93afb-7d7f-4c05-965b-243390dc4a75"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f68dfbc1-ae02-473f-8e4c-6e3533b5770f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "852c1c66-607a-4f07-9a0d-530eb9004166"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cd1b4ff6-484a-4940-be56-166dcc7878f7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a375b547-d4e5-406c-bd3d-d665ce8948c1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b96b115c-ab62-4e76-a415-0091f0a6193e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "9d07201c-ac7a-450d-be65-4ef127ea9fef"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dbe4db9f-f25d-4ed2-9b96-502baf29d290"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "990444de-349e-4fee-8471-4029d3913c25"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "02280469-fb9b-4e89-8d1b-0206223e4d96"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4494b0fe-94e6-4140-acc3-912c9b824b96"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "358d633c-25ae-4149-a8f4-5ea9da5b7d75"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7b555d28-3a2c-4225-99ce-2334e797ce12"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8598b68c-cf2e-422b-b526-a01d5b1db6c0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "189a47c0-51cf-41f0-90cc-3b481c457c46"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "234ff3cb-b628-4814-ad37-e8ef6050c98a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b017c1f0-d8bc-4f03-b431-127982e86db8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c1740e9f-23fa-47b6-88c9-cc9e334a6212"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "364bcc85-c7c3-4626-87b2-45f6ca7d6ee2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cb241185-5902-4144-bd07-3683ff7259be"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6f4b1080-5ea7-438f-8d72-672a4878bf76"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aa1cb986-7d58-4a1a-8fd4-ec9b88b0ffbb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "81aa181b-7b4e-408f-9109-ae6b622d50e9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1a83ac61-5520-40fe-b97a-196a11e03076"
                 }
               ],
               "color": {
@@ -52914,6 +56122,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "ed6c9f34-7c9e-4b80-82e2-864d4fdd3274"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1f31f2b8-ca31-47b4-bee5-89db32389e4d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f7ed095a-53c3-4371-a117-9f65a56f0e4d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "67d1930e-a822-4a09-ae38-35621e1169c8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b1e0f9c2-0453-4245-9c86-2014d778814a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0c4ebdb2-7eea-4845-b0b6-be6a7dcccde4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "71f6a5a0-d4d4-48fb-83a5-c4e02a057350"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8a6b8f8f-caee-4333-8aad-7f45c0a587b0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "46a8f65d-3079-48f8-b00a-f6902d5c9f5f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8db42b0e-cfbf-4dc3-a0c9-6586e2c8fe54"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b684ddb1-6a11-4764-b4d0-4c6fa5478e55"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4ac5cfbb-888e-414c-a622-48c4ba946ba5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "30484d48-2191-477a-bb54-ac2078e64c2a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d897bc79-3bd7-4dd7-8294-823bb5ff0211"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a6f848f6-25af-4453-b83a-85c27d83f42f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f1728c7c-2c97-4860-b768-a99f3cecbc19"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "32d9a776-de4e-4f8e-aaf4-007ea49c3399"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "383a8e49-c529-4527-b467-f1d338897848"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a6785ce6-3286-4682-999b-c3e652409f8d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6b7cf117-b797-4bdc-96cd-32b1e207bbc5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f163fd63-17a0-47a3-8797-6a1ee00b578b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "89bf70bd-124d-48a3-9849-4022d3c05658"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c33874ad-e111-47a1-b6eb-58f087b8560a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6cf910a6-d6b6-4d53-baf0-d550bf2f1fdd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "43e2b682-8b06-47b7-a898-34805359091f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3cc7f49d-a9eb-4d47-a1ea-7618277e7de9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6282587c-1eee-4f83-9928-f4c37fcdab00"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "77d7c1e0-027b-4d49-9bdd-feb6dadd955b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a55217a2-15d8-4bcd-959c-d1585f2836db"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1635ff8f-3c97-4466-b831-8049dc13c291"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "663937c1-9c40-4054-bad0-cfed8eb5fb4e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "637c7385-b8cc-4904-9c61-d68cb2c9bda9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "61c56acc-f5b4-48ed-9d87-148eb620d049"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "bfe6cadd-7201-4b96-a3d4-7691005be2e7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a0309d8e-2ffb-4abf-b7ec-a96d9673f0f9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "84fb4cdb-d096-4822-842b-97201108fdf3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7d3fa472-6436-45a6-a2bb-ff41e2aeb92a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6c4b718f-f7f7-4d13-80f1-36e4fdf63d1b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1a19961a-99e8-4283-9b65-6d9210682016"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "eaef5fcb-88ec-4661-961d-e8a1cb80d5a5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "aef34fb0-9cf3-4324-837e-6dba7c333954"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "28ec6e5c-e31c-4a4b-a297-819c70e99f85"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "08c1fafb-9005-4a75-b9d1-4fa64b573957"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "4eb31983-7a33-48e4-840e-4b640db99ff8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2d43bb79-dfb4-44dd-8bcb-4fe514aed832"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d0af9f7e-fe94-4d3c-ab2c-d16fbc9dea15"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c783fa4e-3899-4d92-9f64-8a9292063845"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "09c89a9b-9959-4dbd-859b-f85377879952"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ac3414e5-bca2-43f9-bd24-3eb3ece9406c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7e3cecbf-e002-452e-8ed7-dc252b771a4d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5af31faa-566e-45f0-8195-4735b890d060"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5c5f6d7d-914c-4a89-99ee-9671e13d9cd9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d40cff6f-2f6b-4bdf-ba3b-9c1252197de1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cb2738a1-2d8e-407b-9783-63c50f3cbac1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "165b5562-8aca-47bd-929e-8f541cb0b3a1"
                 }
               ],
               "color": {
@@ -55944,6 +59368,222 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "823d8e8d-6b56-4c78-91bd-2f636294a2f6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "16389e04-289a-4f03-ab28-bb88eda9237c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8a3b0390-bee9-491e-bf74-b1ae73956ffa"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "989a834d-1e43-4456-83ae-aa4ae84f46e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0fdd8a22-b8dd-4a89-ab3a-a40037ba045b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "26fc0ef5-a0cf-4f4d-af8e-d900d4c2bc3c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a7781c57-3d96-4636-821f-f18ccadbb27c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ec1dd59b-969a-4833-bd50-3bd8e14dea91"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "13cb397f-00c0-467f-b461-e7665975158b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1fbd6576-2912-45e8-aa5b-58cc306d197b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0a929b69-68a9-4c96-8aef-cb526ea75274"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f17e4999-29e5-49b7-9cea-4e8f880e85dd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "612057fe-817f-4f84-a4ae-4900dfffeb8a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "72d9d4a2-58c4-4c32-87de-51abe8e8e36d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "586e63bc-4edf-4b06-8bbe-6f500b2701c3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ef503fb1-8f2e-4df6-86d5-cc809119f792"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0bfcd872-6e94-4bcc-ab74-81db1abcac38"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "358dff9e-f517-4602-8bee-f919cb561a7d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3806d89c-b38e-46e3-8168-864573b6649c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "b9de6dc3-6fc9-4712-9e1e-8e9cced26adb"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "81edcfd8-98cc-48c7-b0b0-25c8c68d068d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1fbe27c1-91b2-4d01-b67d-f2797355f9b1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "32eb8b61-6c2d-4120-8190-c2bd94f92158"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6f1f1f03-b70d-47b9-8e72-bafe80a33b83"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "6ada05b8-bbb0-41b2-9a05-40c82d9896fe"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5877dc51-a0e8-45fa-87c7-211c741e22e7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d340bd88-b8d7-47c7-90ba-7d462e916ef6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "72d30f70-bddf-4eeb-8bfb-763d70a23698"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "e110c3a3-5ef1-494b-b56b-cda487c28f9d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "315eb5d2-9017-4bce-89d9-58d4f81b5409"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "38064ae4-5c38-4b0f-9b64-a83d60b936da"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c00567b3-aa80-4ff2-bc56-799debfda5ac"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "43555e59-b124-49ed-b33e-583a85cced81"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8da54405-3ec4-4510-8e5f-3c4232167b8b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "35ebf514-babe-4af7-83d8-86c0a4c874f6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "64f983da-f225-4a00-97b3-409a5a62e7e7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "81094c7e-322d-4c78-9b03-b38ccc1a77bd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dc61470c-8909-424d-b67c-989db3b87cf8"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "412b4b6d-9753-44e0-b639-e9567aa887b3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ab137288-ba54-4481-8d00-5e90d8837103"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1b9df4a8-3c4b-49ef-a1d9-a777ed5da081"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c52a1d2e-cd67-40c2-a867-c338438677a0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "217b3c35-0f63-4753-a096-064e82756cbe"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7343307e-345b-4051-9c69-14cab030b28e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d94da513-2a39-46dd-8b66-030b291541a2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "793126a2-2c0b-464b-9e43-dd13f94761dd"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "cbfb413a-9b3a-4321-950f-1760cd3db717"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a76e7d4a-cbd1-490f-9c64-ef76b7f67a23"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1d49f204-72c9-4461-b3fe-f6d6b117a90c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dd431d7f-c594-468e-8ec5-92269aa3aa69"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "749a8c2e-ea19-4254-8d8f-3307983d94b6"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f11acae3-daa6-4472-afcd-a0d623123476"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0b692b34-77f9-45bb-82b3-48e7b5985801"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8679c150-60ad-4939-8ead-e5a1bea59049"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f272bdb1-6415-4c2f-a211-2e2df0aee084"
                 }
               ],
               "color": {
@@ -61777,7 +65417,37 @@
         },
         "uuid": "32ad1f768d0ee3b0"
       },
-      "$length": 544
+      "544": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 432",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Grass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              9.553813,
+              -1.037168,
+              -25.066962
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "b465403ab89c0cb3"
+        },
+        "uuid": "00733f97343c9d16"
+      },
+      "$length": 545
     },
     "editorData": {
       "sceneTree": {
@@ -63168,6 +66838,11 @@
                     "nodeType": "actor"
                   },
                   {
+                    "id": "00733f97343c9d16",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
                     "id": "5a0724c33fee5481",
                     "isExpanded": false,
                     "nodeType": "actor"
@@ -63438,7 +67113,6 @@
               }
             ],
             "id": "folder-c67027202785607a",
-            "isExpanded": false,
             "name": "Grass",
             "nodeType": "folder"
           },
@@ -63876,7 +67550,6 @@
               }
             ],
             "id": "folder-c4d23e1493e717b9",
-            "isExpanded": false,
             "name": "Rocks and tunnels",
             "nodeType": "folder"
           },

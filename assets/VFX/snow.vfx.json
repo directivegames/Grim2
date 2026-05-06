@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "snow",
+  "particles": [
+    {
+      "nbParticles": 500,
+      "gravity": [
+        0.04,
+        -0.26,
+        0.02
+      ],
+      "renderMode": "billboard",
+      "intensity": 0.5,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/GlowSoft.png",
+      "easeFunction": "easeLinear",
+      "fadeAlpha": [
+        0.06,
+        0.74
+      ],
+      "fadeSize": [
+        0.2,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 60,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        3.528,
+        5.6
+      ],
+      "startPositionMin": [
+        -1.5,
+        -0.05,
+        -1.5
+      ],
+      "startPositionMax": [
+        1.5,
+        0.05,
+        1.5
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.45
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.45
+      ],
+      "directionMin": [
+        -0.5,
+        -1,
+        -0.5
+      ],
+      "directionMax": [
+        0.5,
+        -0.5,
+        0.5
+      ],
+      "size": [
+        0.05,
+        0.15
+      ],
+      "speed": [
+        0,
+        0.06
+      ],
+      "colorStart": [
+        "#ffffff",
+        "#f4f8ff"
+      ],
+      "colorEnd": [
+        "#d6dcea",
+        "#cad4e0"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

@@ -15,6 +15,7 @@ import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { SoulActor } from './SoulActor.js';
+import { GoreExplosionActor } from './GoreExplosionActor.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -681,9 +682,14 @@ export class NewZombieActor extends ENGINE.Actor {
       anim.setParameter('state', 'death');
     }
 
-    // At 0.95s (HIT_REACTION_HOLD_SEC), destroy zombie and spawn grave + soul.
+    // At 0.95s (HIT_REACTION_HOLD_SEC), spawn gore explosion, grave, soul, then destroy.
     // Cut short before root motion slide starts.
     globalThis.setTimeout(() => {
+      const world = this.getWorld();
+      if (world) {
+        GoreExplosionActor.spawnAt(world, deathPos);
+      }
+
       this.spawnDeathObjects(deathPos);
       this.destroy();
     }, HIT_REACTION_HOLD_SEC * 1000);
@@ -699,6 +705,17 @@ export class NewZombieActor extends ENGINE.Actor {
     const gravePos = deathPos.clone().add(new THREE.Vector3(0, 0.5, 0));
     const grave = DeadGraveActor.create({ position: gravePos });
     world.addActor(grave);
+
+    // Apply random outward velocity so graves don't stack
+    const physics = world.getPhysicsEngine();
+    const graveRoot = grave.rootComponent as ENGINE.MeshComponent;
+    if (physics && graveRoot) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 2.5; // 1.5-4.0 m/s outward
+      const velocity = new THREE.Vector3(Math.cos(angle) * speed, 0.3, Math.sin(angle) * speed);
+      type VectorParam = 'linearVelocity' | 'angularVelocity';
+      physics.setVectorParam(graveRoot, 'linearVelocity' as VectorParam as any, velocity.toArray() as [number, number, number]);
+    }
 
     const soulPos = deathPos.clone().add(new THREE.Vector3(0, 0.8, 0));
     const soul = SoulActor.create({ position: soulPos });

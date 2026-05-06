@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "name": "jet-flame",
+  "particles": [
+    {
+      "nbParticles": 250,
+      "gravity": [
+        0,
+        0.02,
+        0.08
+      ],
+      "renderMode": "stretchBillboard",
+      "stretchScale": 1.85,
+      "intensity": 1.25,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/Flame.png",
+      "easeFunction": "easeOutQuad",
+      "fadeAlpha": [
+        0.02,
+        0.22
+      ],
+      "fadeSize": [
+        0.12,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 145,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        0.27,
+        0.48
+      ],
+      "startPositionMin": [
+        -0.05,
+        -0.05,
+        0
+      ],
+      "startPositionMax": [
+        0.05,
+        0.05,
+        0
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.8
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.8
+      ],
+      "directionMin": [
+        -0.3420201433256687,
+        -0.3420201433256687,
+        0.9396926207859084
+      ],
+      "directionMax": [
+        0.3420201433256687,
+        0.3420201433256687,
+        1
+      ],
+      "size": [
+        0.144,
+        0.272
+      ],
+      "speed": [
+        1.904,
+        2.8
+      ],
+      "colorStart": [
+        "#fff4bf",
+        "#fff18a"
+      ],
+      "colorEnd": [
+        "#ff4b12",
+        "#521400"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

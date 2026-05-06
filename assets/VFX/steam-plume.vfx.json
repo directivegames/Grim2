@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "steam-plume",
+  "particles": [
+    {
+      "nbParticles": 2000,
+      "gravity": [
+        0.03,
+        0.01,
+        0.01
+      ],
+      "renderMode": "billboard",
+      "intensity": 0.78,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/SmokePuffSoft.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.14,
+        0.34
+      ],
+      "fadeSize": [
+        0.28,
+        1
+      ],
+      "blendingMode": "normal"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 42,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        2.646,
+        4.2
+      ],
+      "startPositionMin": [
+        -0.08,
+        0,
+        -0.08
+      ],
+      "startPositionMax": [
+        0.08,
+        0.02,
+        0.08
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.55
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.55
+      ],
+      "directionMin": [
+        -0.09375,
+        0.375,
+        -0.09375
+      ],
+      "directionMax": [
+        0.09375,
+        1,
+        0.09375
+      ],
+      "size": [
+        0.377,
+        0.892
+      ],
+      "speed": [
+        0.18,
+        0.48
+      ],
+      "colorStart": [
+        "#d8dce0",
+        "#dde1e5"
+      ],
+      "colorEnd": [
+        "#94999e",
+        "#8e9398"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

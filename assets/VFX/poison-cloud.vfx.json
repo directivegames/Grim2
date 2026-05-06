@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "poison-cloud",
+  "particles": [
+    {
+      "nbParticles": 500,
+      "gravity": [
+        0.02,
+        0.01,
+        0.04
+      ],
+      "renderMode": "billboard",
+      "intensity": 0.95,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/CloudChunky.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.08,
+        0.42
+      ],
+      "fadeSize": [
+        0.18,
+        0.75
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 60,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        2.268,
+        3.6
+      ],
+      "startPositionMin": [
+        -0.22,
+        -0.22,
+        -0.22
+      ],
+      "startPositionMax": [
+        0.22,
+        0.22,
+        0.22
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.7
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.7
+      ],
+      "directionMin": [
+        -0.24454545454545454,
+        0.2727272727272727,
+        -0.24454545454545454
+      ],
+      "directionMax": [
+        0.24454545454545454,
+        1,
+        0.24454545454545454
+      ],
+      "size": [
+        0.432,
+        1.048
+      ],
+      "speed": [
+        0.12,
+        0.44
+      ],
+      "colorStart": [
+        "#7ecc57",
+        "#9adc62"
+      ],
+      "colorEnd": [
+        "#16280a",
+        "#1a3210"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

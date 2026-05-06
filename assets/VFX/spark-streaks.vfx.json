@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "name": "spark-streaks",
+  "particles": [
+    {
+      "nbParticles": 300,
+      "gravity": [
+        0.04,
+        -4.2,
+        0.02
+      ],
+      "renderMode": "stretchBillboard",
+      "stretchScale": 1.85,
+      "intensity": 1.1,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/Streak.png",
+      "easeFunction": "easeOutQuad",
+      "fadeAlpha": [
+        0.01,
+        0.58
+      ],
+      "fadeSize": [
+        0.14,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 60,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        0.386,
+        0.92
+      ],
+      "startPositionMin": [
+        -0.24,
+        0,
+        -0.24
+      ],
+      "startPositionMax": [
+        0.24,
+        0,
+        0.24
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -3.2
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        3.2
+      ],
+      "directionMin": [
+        -0.9898214418809327,
+        0.14231483827328534,
+        -0.9898214418809327
+      ],
+      "directionMax": [
+        0.9898214418809327,
+        1,
+        0.9898214418809327
+      ],
+      "size": [
+        0.09,
+        0.295
+      ],
+      "speed": [
+        3.074,
+        5.8
+      ],
+      "colorStart": [
+        "#fff6cc",
+        "#ffefa0"
+      ],
+      "colorEnd": [
+        "#ff4708",
+        "#481408"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

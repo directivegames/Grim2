@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "name": "magic-wisp",
+  "particles": [
+    {
+      "nbParticles": 200,
+      "gravity": [
+        0.03,
+        0.01,
+        0.04
+      ],
+      "renderMode": "stretchBillboard",
+      "stretchScale": 0.95,
+      "intensity": 1.05,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/MagicWisp.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.03,
+        0.64
+      ],
+      "fadeSize": [
+        0.18,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 40,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        1.512,
+        2.8
+      ],
+      "startPositionMin": [
+        -0.1,
+        0,
+        -0.1
+      ],
+      "startPositionMax": [
+        0.1,
+        0.03,
+        0.1
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -3.2
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        3.2
+      ],
+      "directionMin": [
+        -0.15952380952380954,
+        0.2619047619047619,
+        -0.15952380952380954
+      ],
+      "directionMax": [
+        0.15952380952380954,
+        1,
+        0.15952380952380954
+      ],
+      "size": [
+        0.16,
+        0.28
+      ],
+      "speed": [
+        0.22,
+        0.84
+      ],
+      "colorStart": [
+        "#2fe4d2",
+        "#5df9e7"
+      ],
+      "colorEnd": [
+        "#184f54",
+        "#16333c"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

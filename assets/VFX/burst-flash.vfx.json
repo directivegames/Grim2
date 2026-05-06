@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "burst-flash",
+  "particles": [
+    {
+      "nbParticles": 200,
+      "gravity": [
+        0.02,
+        0,
+        0.01
+      ],
+      "renderMode": "billboard",
+      "intensity": 1.4,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/BurstFlash.png",
+      "easeFunction": "easeOutCubic",
+      "fadeAlpha": [
+        0.01,
+        0.28
+      ],
+      "fadeSize": [
+        0.16,
+        1
+      ],
+      "blendingMode": "additive"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 320,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        0.286,
+        0.42
+      ],
+      "startPositionMin": [
+        -0.08,
+        0,
+        -0.08
+      ],
+      "startPositionMax": [
+        0.08,
+        0.02,
+        0.08
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.9
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.9
+      ],
+      "directionMin": [
+        -0.125,
+        0.16666666666666669,
+        -0.125
+      ],
+      "directionMax": [
+        0.125,
+        1,
+        0.125
+      ],
+      "size": [
+        0.115,
+        0.173
+      ],
+      "speed": [
+        0.04,
+        0.24
+      ],
+      "colorStart": [
+        "#fff8e2",
+        "#ffe9a0"
+      ],
+      "colorEnd": [
+        "#ff5710",
+        "#4d1404"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}

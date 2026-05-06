@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "explosion-cloud",
+  "particles": [
+    {
+      "nbParticles": 300,
+      "gravity": [
+        0.05,
+        0.33,
+        0.02
+      ],
+      "renderMode": "billboard",
+      "intensity": 1,
+      "appearance": "circular",
+      "alphaMapPath": "@project/assets/textures/vfx/CloudChunky.png",
+      "easeFunction": "easeOutSine",
+      "fadeAlpha": [
+        0.15,
+        0.5
+      ],
+      "fadeSize": [
+        0.16,
+        0.8
+      ],
+      "blendingMode": "normal"
+    }
+  ],
+  "emitters": [
+    {
+      "particlesIndex": 0,
+      "loop": true,
+      "duration": 1,
+      "nbParticles": 320,
+      "spawnMode": "time",
+      "delay": 0,
+      "particlesLifetime": [
+        1.323,
+        2.1
+      ],
+      "startPositionMin": [
+        -0.18,
+        -0.18,
+        -0.18
+      ],
+      "startPositionMax": [
+        0.18,
+        0.18,
+        0.18
+      ],
+      "startRotationMin": [
+        0,
+        0,
+        0
+      ],
+      "startRotationMax": [
+        0,
+        0,
+        6.28
+      ],
+      "rotationSpeedMin": [
+        0,
+        0,
+        -0.55
+      ],
+      "rotationSpeedMax": [
+        0,
+        0,
+        0.55
+      ],
+      "directionMin": [
+        -0.20583333333333334,
+        0.3125,
+        -0.20583333333333334
+      ],
+      "directionMax": [
+        0.20583333333333334,
+        1,
+        0.20583333333333334
+      ],
+      "size": [
+        0.446,
+        1.464
+      ],
+      "speed": [
+        0.3,
+        0.96
+      ],
+      "colorStart": [
+        "#b0a496",
+        "#827a73"
+      ],
+      "colorEnd": [
+        "#6e5c45",
+        "#806e5b"
+      ],
+      "useLocalDirection": false
+    }
+  ]
+}
