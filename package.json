@@ -16,7 +16,7 @@
   "type": "module",
   "dependencies": {
     "@gnsx/genesys.harness": "latest",
-    "@gnsx/genesys.js": "10.4.2",
+    "@gnsx/genesys.js": "10.4.3",
     "three": "0.184.0"
   },
   "pnpm": {
@@ -32,13 +32,13 @@
     "@types/ws": "8.18.1",
     "@typescript-eslint/parser": "8.29.1",
     "@typescript-eslint/utils": "8.38.0",
-    "ajv": "8.17.1",
+    "ajv": "8.20.0",
     "canvas": "3.1.0",
-    "esbuild": "0.25.12",
+    "esbuild": "0.28.0",
     "eslint": "9.24.0",
     "get-port": "7.1.0",
     "jsdom": "26.1.0",
-    "nanoid": "5.1.9",
+    "nanoid": "5.1.11",
     "ts-morph": "26.0.0",
     "tsx": "4.20.3",
     "turbo": "2.8.11",

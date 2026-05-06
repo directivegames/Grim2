@@ -13,6 +13,7 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { ISO_YAW, IsometricMovementComponent } from '../components/movement/IsometricMovementComponent.js';
+import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -23,6 +24,7 @@ const ROTATE_SPEED = 20; // rad/s – visual mesh facing
 
 const GRIM2_MODEL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grim2/Grim2.glb` as ENGINE.ModelPath;
 const GRIM2_ANIM_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grim2/Animationgrim.anim.json`;
+const GRIM2_MATERIAL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/textures/Grim2texture.material.json` as ENGINE.MaterialPath;
 
 /** Editor-placed Grim2 prop to remove at runtime. */
 const SCENE_PLACEHOLDER_GRIM2_ACTOR_UUID = '7e97a710b8d5f00b';
@@ -99,6 +101,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   protected override setupVisualComponent(): ENGINE.SceneComponent | null {
     const meshComponent = ENGINE.GLTFMeshComponent.create({
       modelUrl: GRIM2_MODEL_URL,
+      material: GRIM2_MATERIAL_URL,
       scale: new THREE.Vector3(1, 1, 1),
       rotation: new THREE.Euler(0, Math.PI, 0),
       position: new THREE.Vector3(0, this.visualGroundClearance, 0),
@@ -106,7 +109,28 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       castShadow: true,
     });
 
+    // Add the 2 point lights from the scene Grim2
+    const leftLight = ENGINE.PointLightComponent.create({
+      color: new THREE.Color(0.964686, 0.964686, 0.061246),
+      intensity: 5,
+      position: new THREE.Vector3(-0.114043, 1.331329, 0.335526),
+    });
+    leftLight.name = 'Point Light';
+    meshComponent.add(leftLight);
+
+    const rightLight = ENGINE.PointLightComponent.create({
+      color: new THREE.Color(0.964686, 0.964686, 0.061246),
+      intensity: 5,
+      position: new THREE.Vector3(0.060097, 1.331329, 0.335526),
+    });
+    rightLight.name = 'Point Light 02';
+    meshComponent.add(rightLight);
+
     this.rootComponent.add(meshComponent);
+
+    const dustTrail = DustTrailComponent.create();
+    this.rootComponent.add(dustTrail);
+
     return meshComponent;
   }
 

@@ -1,5 +1,6 @@
 import './actors/BackgroundMusicActor.ts';
 import './actors/DeadGraveActor.ts';
+import './actors/FistOfAnnoyanceActor.ts';
 import './actors/GoreExplosionActor.ts';
 import './actors/IsometricPlayerPawn.ts';
 import './actors/NewZombieActor.ts';
@@ -11,6 +12,9 @@ import './actors/ZombieSpatialManager.ts';
 import './apply-grass-shader-engine-patch.ts';
 import './apply-npc-follow-offset-engine-patch.ts';
 import './components/movement/IsometricMovementComponent.ts';
+import './components/vfx/DustTrailComponent.ts';
+import './components/vfx/WeaponSlashComponent.ts';
+import './components/vfx/WeaponSummonVFXComponent.ts';
 import './game-data.ts';
 import './materials/grass/GenesysGrassSwayNodeMaterial.ts';
 import './materials/grass/grassDualBackend.ts';
