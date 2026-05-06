@@ -74,6 +74,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private _sceneFistActor: ENGINE.Actor | null = null;
   private _phase: FistPhase = 'rising';
   private _phaseElapsed  = 0;
+  private _phaseStartMs  = 0;   // real-time stamp (performance.now) for current phase
   private _groundY       = 0;
   private _hasHit        = false;
   private _vfxSpawned    = false;
@@ -111,10 +112,11 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     }
 
     this._groundY = this.rootComponent.position.y;
-    this._phase        = 'rising';
-    this._phaseElapsed = 0;
-    this._hasHit       = false;
-    this._vfxSpawned   = false;
+    this._phase         = 'rising';
+    this._phaseElapsed  = 0;
+    this._phaseStartMs  = performance.now();
+    this._hasHit        = false;
+    this._vfxSpawned    = false;
 
     // Move fist to attack position (it stays "visible" at all times so the GPU
     // shader is always compiled – no stall on first use).
@@ -132,7 +134,8 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     super.tickPrePhysics(deltaTime);
     if (this._phase === 'done' || !this._sceneFistActor) return;
 
-    this._phaseElapsed += deltaTime;
+    // Use real elapsed time (ms→s) so phases are immune to slomo scaling.
+    this._phaseElapsed = (performance.now() - this._phaseStartMs) / 1000;
 
     switch (this._phase) {
       case 'rising': {
@@ -157,7 +160,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
         if (!this._hasHit) this._checkHits();
 
-        if (t >= 1) { this._phase = 'paused'; this._phaseElapsed = 0; }
+        if (t >= 1) { this._phase = 'paused'; this._phaseElapsed = 0; this._phaseStartMs = performance.now(); }
         break;
       }
 
@@ -165,6 +168,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         if (this._phaseElapsed >= PAUSE_DURATION) {
           this._phase = 'retracting';
           this._phaseElapsed = 0;
+          this._phaseStartMs = performance.now();
 
           // Camera starts returning to player as fist retracts
           const w = this.getWorld();

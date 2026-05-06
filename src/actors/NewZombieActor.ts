@@ -13,6 +13,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
+import { killStreakTracker } from './KillStreakTracker.js';
+import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { SoulActor } from './SoulActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
@@ -660,6 +662,13 @@ export class NewZombieActor extends ENGINE.Actor {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
+    // Track kill for streak detection
+    const world = this.getWorld();
+    if (world) {
+      killStreakTracker.recordKill(world);
+      comboMeterTracker.recordKill(world);
+    }
+
     const npc = this.getComponent(ENGINE.NpcMovementComponent);
     npc?.stop();
     const physics = this.getPhysicsEngine();
@@ -1035,12 +1044,12 @@ export class NewZombieActor extends ENGINE.Actor {
           const prevEmissive = mat.emissive.clone();
           const prevIntensity = mat.emissiveIntensity;
           mat.emissive.setHex(0xffff00);
-          mat.emissiveIntensity = 1.5;
+          mat.emissiveIntensity = 0.5;
           return () => { mat.emissive.copy(prevEmissive); mat.emissiveIntensity = prevIntensity; };
         } else if ('color' in mat) {
           const colored = mat as THREE.MeshBasicMaterial;
           const prevColor = colored.color.clone();
-          colored.color.setHex(0xffff00);
+          colored.color.lerp(new THREE.Color(0xffff00), 0.4);
           return () => { colored.color.copy(prevColor); };
         }
         return () => { /* nothing to restore */ };

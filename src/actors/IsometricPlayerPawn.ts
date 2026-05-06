@@ -85,9 +85,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   // ── Screen shake state ──────────────────────────────────────────────────
 
-  private _shakeIntensity = 0;
-  private _shakeDuration = 0;
-  private _shakeElapsed = 0;
+  private _shakeIntensity  = 0;
+  private _shakeDurationMs = 0;   // real-time ms
+  private _shakeStartMs    = 0;   // performance.now() when shake began
   private readonly _shakeOffset = new THREE.Vector3();
 
   // ── Cinematic focus state ────────────────────────────────────────────────
@@ -97,6 +97,21 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private readonly _cinematicTarget = new THREE.Vector3();
   private readonly _cinematicOffset = new THREE.Vector3();
   private readonly _cinematicDesired = new THREE.Vector3();
+
+  // ── Damage vignette state ────────────────────────────────────────────────
+
+  private _vignetteEl:       HTMLDivElement | null = null;
+  private _vignetteStartMs   = 0;     // performance.now() when vignette was shown
+  private _vignetteDurationMs = 900;  // 0.9 real seconds to fade out
+  private _vignetteActive    = false;
+  private _lastKnownHealth   = -1;
+
+  private readonly _onHealthChanged = (current: number): void => {
+    if (this._lastKnownHealth >= 0 && current < this._lastKnownHealth) {
+      this._showDamageVignette();
+    }
+    this._lastKnownHealth = current;
+  };
 
   // ── Component factory overrides ───────────────────────────────────────────
 
@@ -175,6 +190,17 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   /** No-op: root never rotates so camera is always stable. */
   protected override updateCamera(_dt: number): void { /* intentionally empty */ }
 
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
+  protected override doBeginPlay(): void {
+    super.doBeginPlay();
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (stats) {
+      this._lastKnownHealth = stats.getCurrentHealth();
+      stats.onHealthChanged.add(this._onHealthChanged);
+    }
+  }
+
   /** Current visual facing angle (radians, Y-axis). Used by the weapon for sweep directions. */
   public getFacingYaw(): number {
     return this._facingYaw;
@@ -201,6 +227,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._updateVisualFacing(deltaTime);
     this._updateCinematicCamera(deltaTime);
     this._updateScreenShake(deltaTime);
+    this._updateDamageVignette(deltaTime);
   }
 
   // ── Visual facing ─────────────────────────────────────────────────────────
@@ -256,22 +283,22 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
    * @param duration - Shake duration in seconds
    */
   public triggerScreenShake(intensity: number, duration: number): void {
-    this._shakeIntensity = intensity;
-    this._shakeDuration = duration;
-    this._shakeElapsed = 0;
+    this._shakeIntensity  = intensity;
+    this._shakeDurationMs = duration * 1000;  // convert seconds → ms for real-time comparison
+    this._shakeStartMs    = performance.now();
   }
 
-  private _updateScreenShake(deltaTime: number): void {
+  private _updateScreenShake(_deltaTime: number): void {
     if (!this.cameraPivot) return;
 
-    if (this._shakeDuration > 0) {
-      this._shakeElapsed += deltaTime;
+    if (this._shakeDurationMs > 0) {
+      const elapsed = performance.now() - this._shakeStartMs;
 
-      if (this._shakeElapsed >= this._shakeDuration) {
+      if (elapsed >= this._shakeDurationMs) {
         this._shakeOffset.set(0, 0, 0);
-        this._shakeDuration = 0;
+        this._shakeDurationMs = 0;
       } else {
-        const t = this._shakeElapsed / this._shakeDuration;
+        const t = elapsed / this._shakeDurationMs;
         const currentIntensity = this._shakeIntensity * (1 - t);
         this._shakeOffset.set(
           (Math.random() - 0.5) * 2 * currentIntensity,
@@ -338,12 +365,51 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._cinematicOffset.lerp(this._cinematicDesired, PAN_SPEED * deltaTime);
   }
 
+  // ── Damage vignette ──────────────────────────────────────────────────────
+
+  private _showDamageVignette(): void {
+    const world = this.getWorld();
+    if (!world) return;
+    const container = world.gameContainer;
+    if (!container) return;
+
+    if (!this._vignetteEl) {
+      const el = document.createElement('div');
+      el.style.cssText = [
+        'position:absolute',
+        'inset:0',
+        'background:radial-gradient(circle,transparent 40%,rgba(200,0,0,0.65) 100%)',
+        'pointer-events:none',
+        'opacity:0',
+        'z-index:150',
+      ].join(';');
+      container.appendChild(el);
+      this._vignetteEl = el;
+    }
+
+    this._vignetteEl.style.opacity = '1';
+    this._vignetteActive  = true;
+    this._vignetteStartMs = performance.now();
+  }
+
+  private _updateDamageVignette(_deltaTime: number): void {
+    if (!this._vignetteActive || !this._vignetteEl) return;
+    const elapsed = performance.now() - this._vignetteStartMs;
+    const alpha = Math.max(0, 1 - elapsed / this._vignetteDurationMs);
+    this._vignetteEl.style.opacity = String(alpha);
+    if (alpha <= 0) this._vignetteActive = false;
+  }
+
   protected override doEndPlay(): void {
     // Ensure slomo is restored if the pawn is destroyed mid-cinematic
     const world = this.getWorld();
     if (world) {
       (world as unknown as { slomo: number }).slomo = 1;
     }
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    stats?.onHealthChanged.remove(this._onHealthChanged);
+    this._vignetteEl?.remove();
+    this._vignetteEl = null;
     super.doEndPlay();
   }
 }

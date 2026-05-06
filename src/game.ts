@@ -110,6 +110,7 @@ class MyGame extends ENGINE.BaseGameLoop {
     void this.spawnSpinningWeapon();
   }
 
+
   private async spawnBackgroundMusic(): Promise<void> {
     const world = this.getWorld();
     if (!world) return;

@@ -18,6 +18,8 @@ import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { WeaponSlashComponent } from '../components/vfx/WeaponSlashComponent.js';
 import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../components/vfx/WeaponSummonVFXComponent.js';
+import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
+import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
@@ -99,8 +101,16 @@ const enum AttackIndex {
 export class SpinningWeaponActor extends ENGINE.Actor {
 
   private _sceneWeaponActor: ENGINE.Actor | null = null;
-  private _slashComponent: WeaponSlashComponent | null = null;
-  private _summonVFX: WeaponSummonVFXComponent | null = null;
+  private _slashComponent:    WeaponSlashComponent | null = null;
+  private _summonVFX:         WeaponSummonVFXComponent | null = null;
+  private _bloodSplatter:     BloodSplatterComponent | null = null;
+  private _boomerangTrail:    BoomerangTrailComponent | null = null;
+
+  // ── Shockwave state (attack-3 finisher) ──────────────────────────────────
+  private _shockwaveMesh:    THREE.Mesh | null = null;
+  private _shockwaveElapsed  = 0;
+  private static readonly _SHOCKWAVE_DURATION = 0.45;
+  private static readonly _SHOCKWAVE_MAX_SCALE = 7;
 
   /** Current orbital angle (radians). Updated each frame during attacks. */
   private _orbitAngle = 0;
@@ -111,8 +121,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Target angle at which the current attack ends. */
   private _attackEndAngle = 0;
 
-  /** Elapsed time (seconds) within the current attack. */
-  private _attackElapsed = 0;
+  /** Real-time stamp (performance.now ms) when the current attack started. */
+  private _attackStartMs = 0;
 
   /** Which attack fires next (0 = attack1, 1 = attack2, 2 = attack3). */
   private _comboIndex: AttackIndex = AttackIndex.One;
@@ -146,6 +156,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _scratchZombiePos  = new THREE.Vector3();
   private _weaponStart       = new THREE.Vector3();
   private _weaponEnd         = new THREE.Vector3();
+
+  // ── Mouse-to-world helpers (pre-allocated, no per-throw GC) ──────────────
+  private readonly _raycaster     = new THREE.Raycaster();
+  private readonly _groundPlane   = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  private readonly _mouseHitPoint = new THREE.Vector3();
 
   // ── Input handler ─────────────────────────────────────────────────────────
 
@@ -226,6 +241,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     this._summonVFX = WeaponSummonVFXComponent.create();
     this.rootComponent.add(this._summonVFX);
+
+    this._bloodSplatter = BloodSplatterComponent.create();
+    this.rootComponent.add(this._bloodSplatter);
+
+    this._boomerangTrail = BoomerangTrailComponent.create();
+    this.rootComponent.add(this._boomerangTrail);
   }
 
   protected override doEndPlay(): void {
@@ -253,9 +274,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._baseQuatCaptured = true;
     }
 
-    this._attackElapsed += deltaTime;
+    // Use real elapsed time so hit-stop (slomo=0.04) doesn't stretch the sweep duration.
+    const attackElapsed = (performance.now() - this._attackStartMs) / 1000;
     const duration = ATTACK_DURATIONS[this._comboIndex];
-    const rawProgress = Math.min(this._attackElapsed / duration, 1);
+    const rawProgress = Math.min(attackElapsed / duration, 1);
     const progress = easeOut(rawProgress);
 
     this._orbitAngle = this._attackStartAngle + (this._attackEndAngle - this._attackStartAngle) * progress;
@@ -295,11 +317,17 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     // Attack complete
     if (rawProgress >= 1) {
+      // Attack-3 finisher shockwave
+      if (this._comboIndex === AttackIndex.Three) {
+        this._spawnShockwave(this._scratchPlayerPos);
+      }
       this._comboIndex = ((this._comboIndex + 1) % 3) as AttackIndex;
       this._isAttacking = false;
       this._setWeaponVisible(false);
       this._slashComponent?.stopTrail();
     }
+
+    this._tickShockwave(deltaTime);
   }
 
   // ── Combat ────────────────────────────────────────────────────────────────
@@ -399,7 +427,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
 
     this._orbitAngle    = this._attackStartAngle;
-    this._attackElapsed = 0;
+    this._attackStartMs = performance.now();
     this._isAttacking   = true;
     this._setWeaponVisible(true);
     this._slashComponent?.startTrail();
@@ -421,10 +449,37 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _throwBoomerang(player: ENGINE.Pawn): void {
     if (!this._sceneWeaponActor) return;
 
-    const facing = player instanceof IsometricPlayerPawn ? player.getFacingYaw() : 0;
+    const world = this.getWorld();
+    let dirSet = false;
 
-    // facingYaw = atan2(vel.x, vel.z) → forward dir in XZ
-    this._boomerangDir.set(Math.sin(facing), 0, Math.cos(facing)).normalize();
+    if (world) {
+      const camera = world.getActiveCamera();
+      if (camera) {
+        const ndcMouse = world.inputManager.getMousePosition();
+
+        // Set ground plane at the player's Y level
+        player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+        this._groundPlane.constant = -this._scratchPlayerPos.y;
+
+        this._raycaster.setFromCamera(ndcMouse, camera);
+
+        if (this._raycaster.ray.intersectPlane(this._groundPlane, this._mouseHitPoint)) {
+          const dx = this._mouseHitPoint.x - this._scratchPlayerPos.x;
+          const dz = this._mouseHitPoint.z - this._scratchPlayerPos.z;
+          const len = Math.sqrt(dx * dx + dz * dz);
+          if (len > 0.01) {
+            this._boomerangDir.set(dx / len, 0, dz / len);
+            dirSet = true;
+          }
+        }
+      }
+    }
+
+    // Fallback: use Grim's facing direction if the ray missed
+    if (!dirSet) {
+      const facing = player instanceof IsometricPlayerPawn ? player.getFacingYaw() : 0;
+      this._boomerangDir.set(Math.sin(facing), 0, Math.cos(facing));
+    }
 
     player.rootComponent.getWorldPosition(this._boomerangPos);
     this._boomerangPos.y += BOOMERANG_HEIGHT;
@@ -436,6 +491,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     this._sceneWeaponActor.rootComponent.position.copy(this._boomerangPos);
     this._sceneWeaponActor.rootComponent.visible = true;
+    this._boomerangTrail?.start();
     if (this._summonVFX) {
       this._summonVFX.burst(this._boomerangPos.clone(), APPEAR_COUNT);
     }
@@ -459,16 +515,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       }
     } else {
       // Steer toward Grim's current position
-      const playerPos = new THREE.Vector3();
-      player.rootComponent.getWorldPosition(playerPos);
-      playerPos.y += BOOMERANG_HEIGHT;
+      player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+      this._scratchPlayerPos.y += BOOMERANG_HEIGHT;
 
-      const toGrim = playerPos.clone().sub(this._boomerangPos);
-      const dist   = toGrim.length();
+      this._scratchPos.copy(this._scratchPlayerPos).sub(this._boomerangPos); // toGrim
+      const dist = this._scratchPos.length();
 
       if (dist < BOOMERANG_CATCH_RADIUS) {
         // Caught
         this._boomerangPhase = 'idle';
+        this._boomerangTrail?.stop();
         this._sceneWeaponActor.rootComponent.visible = false;
         if (this._summonVFX) {
           this._summonVFX.burst(this._boomerangPos.clone(), DISMISS_COUNT);
@@ -476,10 +532,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         return;
       }
 
-      this._boomerangPos.addScaledVector(toGrim.normalize(), BOOMERANG_RETURN_SPEED * deltaTime);
+      this._boomerangPos.addScaledVector(this._scratchPos.normalize(), BOOMERANG_RETURN_SPEED * deltaTime);
     }
 
     this._sceneWeaponActor.rootComponent.position.copy(this._boomerangPos);
+    this._boomerangTrail?.addPoint(this._boomerangPos.clone());
     this._checkBoomerangHits();
   }
 
@@ -513,6 +570,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       };
       zombie.getComponent(ENGINE.CharacterStatsComponent)?.takeDamage(WEAPON_DAMAGE, hitInfo);
       (zombie as unknown as { flashYellow(): void }).flashYellow();
+
+      // Blood splatter at hit location
+      this._bloodSplatter?.burst(this._scratchZombiePos);
+
+      // Floating damage number + hit stop
+      this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE);
+      this._triggerHitStop();
 
       if (player instanceof IsometricPlayerPawn) {
         player.triggerScreenShake(0.1, 0.2);
@@ -600,9 +664,130 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     (zombie as unknown as { flashYellow(): void }).flashYellow();
 
+    // Blood splatter at hit location
+    this._bloodSplatter?.burst(this._scratchZombiePos);
+
+    // Floating damage number
+    this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE);
+
+    // Hit stop — brief global pause for impact weight
+    this._triggerHitStop();
+
     if (player instanceof IsometricPlayerPawn) {
       player.triggerScreenShake(0.15, 0.25);
     }
+  }
+
+  // ── Shockwave ─────────────────────────────────────────────────────────────
+
+  private _spawnShockwave(center: THREE.Vector3): void {
+    const world = this.getWorld();
+    if (!world) return;
+
+    // Dispose previous if still fading
+    if (this._shockwaveMesh) {
+      this._shockwaveMesh.removeFromParent();
+      this._shockwaveMesh.geometry.dispose();
+      (this._shockwaveMesh.material as THREE.Material).dispose();
+      this._shockwaveMesh = null;
+    }
+
+    const geo = new THREE.RingGeometry(0.1, 0.7, 40);
+    const mat = new THREE.MeshBasicMaterial({
+      color:       0xaa44ff,
+      transparent: true,
+      opacity:     0.85,
+      depthWrite:  false,
+      side:        THREE.DoubleSide,
+    });
+
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.rotation.x = -Math.PI / 2; // flat on ground
+    mesh.position.set(center.x, center.y + 0.05, center.z);
+    world.scene.add(mesh);
+
+    this._shockwaveMesh    = mesh;
+    this._shockwaveElapsed = 0;
+  }
+
+  private _tickShockwave(deltaTime: number): void {
+    if (!this._shockwaveMesh) return;
+
+    this._shockwaveElapsed += deltaTime;
+    const t = Math.min(this._shockwaveElapsed / SpinningWeaponActor._SHOCKWAVE_DURATION, 1);
+    const scale = 1 + t * SpinningWeaponActor._SHOCKWAVE_MAX_SCALE;
+
+    this._shockwaveMesh.scale.setScalar(scale);
+    (this._shockwaveMesh.material as THREE.MeshBasicMaterial).opacity = 0.85 * (1 - t);
+
+    if (t >= 1) {
+      this._shockwaveMesh.removeFromParent();
+      this._shockwaveMesh.geometry.dispose();
+      (this._shockwaveMesh.material as THREE.Material).dispose();
+      this._shockwaveMesh = null;
+    }
+  }
+
+  // ── Hit stop ──────────────────────────────────────────────────────────────
+
+  private _lastHitStopMs = -1000;
+
+  private _triggerHitStop(): void {
+    const now = performance.now();
+    // One hit-stop per second max — prevents chaining when hitting multiple enemies.
+    if (now - this._lastHitStopMs < 1000) return;
+
+    const world = this.getWorld();
+    if (!world) return;
+
+    const worldAny = world as unknown as { slomo: number };
+    // Don't stack with kill streak or fist slow-mo.
+    if (worldAny.slomo < 0.85) return;
+
+    this._lastHitStopMs = now;
+    worldAny.slomo = 0.04;
+    globalThis.setTimeout(() => { worldAny.slomo = 1; }, 75);
+  }
+
+  // ── Floating damage numbers ───────────────────────────────────────────────
+
+  private _spawnDamageNumber(worldPos: THREE.Vector3, damage: number): void {
+    const world = this.getWorld();
+    if (!world) return;
+
+    const camera    = world.getActiveCamera();
+    const container = world.gameContainer;
+    if (!camera || !container) return;
+
+    const ndc = worldPos.clone().project(camera);
+    const x   = (ndc.x * 0.5 + 0.5)  * container.clientWidth;
+    const y   = (-ndc.y * 0.5 + 0.5) * container.clientHeight;
+
+    const el = document.createElement('div');
+    el.textContent = String(damage);
+    el.style.cssText = [
+      'position:absolute',
+      `left:${x}px`,
+      `top:${y}px`,
+      'color:#ffdd44',
+      'font-family:"Arial Black",Arial,sans-serif',
+      'font-size:17px',
+      'font-weight:bold',
+      'text-shadow:1px 1px 2px #000,0 0 8px #ff6600',
+      'pointer-events:none',
+      'transform:translateX(-50%)',
+    ].join(';');
+    container.appendChild(el);
+
+    const startTime = performance.now();
+    const floatUp   = (): void => {
+      const t = Math.min((performance.now() - startTime) / 700, 1);
+      el.style.top     = `${y - 55 * t}px`;
+      el.style.opacity = String(1 - t * t);
+      if (t < 1) requestAnimationFrame(floatUp);
+      else el.remove();
+    };
+    requestAnimationFrame(floatUp);
   }
 
   private _cleanupCooldowns(): void {

@@ -105,7 +105,6 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
       puff.mesh.material.opacity = 0.6 * alpha;
 
       if (progress >= 1) {
-        puff.mesh.geometry.dispose();
         puff.mesh.material.dispose();
         puff.mesh.removeFromParent();
         this._puffs.splice(i, 1);
@@ -115,7 +114,6 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
 
   public override endPlay(): void {
     for (const puff of this._puffs) {
-      puff.mesh.geometry.dispose();
       puff.mesh.material.dispose();
       puff.mesh.removeFromParent();
     }
