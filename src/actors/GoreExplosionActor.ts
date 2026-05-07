@@ -5,8 +5,12 @@ import type { ActorOptions } from '@gnsx/genesys.js';
 
 const LIFETIME = 1.8;
 const GRAVITY = 9.5;
-const SMOKE_COUNT = 14;
-const CHUNK_COUNT = 22;
+const SMOKE_COUNT = 5;
+const CHUNK_COUNT = 8;
+
+/** Max simultaneous gore explosions — prevents kill-streak lag. */
+const MAX_ACTIVE = 3;
+let activeCount = 0;
 
 const SMOKE_GEOMETRY = new THREE.SphereGeometry(1, 12, 8);
 const CHUNK_GEOMETRY = new THREE.BoxGeometry(1, 1, 1);
@@ -84,11 +88,14 @@ export class GoreExplosionActor extends ENGINE.Actor {
     }
 
     if (this.elapsed >= LIFETIME) {
+      activeCount = Math.max(0, activeCount - 1);
       this.destroy();
     }
   }
 
-  public static spawnAt(world: ENGINE.World, position: THREE.Vector3): GoreExplosionActor {
+  public static spawnAt(world: ENGINE.World, position: THREE.Vector3): GoreExplosionActor | null {
+    if (activeCount >= MAX_ACTIVE) return null;
+    activeCount++;
     const actor = GoreExplosionActor.create({ position: position.clone() });
     world.addActor(actor);
     return actor;

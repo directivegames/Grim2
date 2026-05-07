@@ -97,6 +97,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private readonly _cinematicTarget = new THREE.Vector3();
   private readonly _cinematicOffset = new THREE.Vector3();
   private readonly _cinematicDesired = new THREE.Vector3();
+  private readonly _cinematicPlayerPos = new THREE.Vector3();
+  private static readonly _ZERO_VEC = new THREE.Vector3(0, 0, 0);
 
   // ── Damage vignette state ────────────────────────────────────────────────
 
@@ -340,7 +342,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     const PAN_FRACTION = 0.45;  // how far toward the fist to pan (45%)
 
     if (this._cinematicReturning || !this._cinematicActive) {
-      this._cinematicOffset.lerp(new THREE.Vector3(0, 0, 0), PAN_SPEED * deltaTime);
+      this._cinematicOffset.lerp(IsometricPlayerPawn._ZERO_VEC, PAN_SPEED * deltaTime);
       if (this._cinematicOffset.lengthSq() < 0.001) {
         this._cinematicOffset.set(0, 0, 0);
         this._cinematicActive    = false;
@@ -350,7 +352,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     }
 
     // Compute desired offset in root-local (=world) XZ toward the fist
-    const playerPos = new THREE.Vector3();
+    const playerPos = this._cinematicPlayerPos;
     this.rootComponent.getWorldPosition(playerPos);
 
     this._cinematicDesired.set(

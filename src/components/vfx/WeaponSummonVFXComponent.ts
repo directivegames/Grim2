@@ -2,10 +2,15 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 const PARTICLE_LIFETIME = 0.6;
-const APPEAR_COUNT      = 22;
-const DISMISS_COUNT     = 18;
+const APPEAR_COUNT      = 12;
+const DISMISS_COUNT     = 10;
 
 const STREAK_GEO = new THREE.PlaneGeometry(0.05, 0.30);
+
+/** Shared scratch vectors for orientation math in burst(). */
+const _up   = new THREE.Vector3(0, 1, 0);
+const _dir  = new THREE.Vector3();
+const _axis = new THREE.Vector3();
 
 interface Spark {
   mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
@@ -37,8 +42,6 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
     if (!world) return;
 
     for (let i = 0; i < count; i++) {
-      const t = i / count;
-
       const material = new THREE.MeshBasicMaterial({
         color: sparkColor(Math.random()),
         transparent: true,
@@ -52,7 +55,6 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
       mesh.position.copy(worldPos);
       mesh.position.y += randomBetween(-0.6, 0.8);
 
-      // Wider rectangular spread — faster outward, flatter vertical
       const angle = randomBetween(0, Math.PI * 2);
       const speed = randomBetween(4, 10);
       const vy    = randomBetween(-0.5, 2);
@@ -62,16 +64,15 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
         Math.sin(angle) * speed,
       );
 
-      // Orient streak along its velocity direction
-      const up = new THREE.Vector3(0, 1, 0);
-      const axis = new THREE.Vector3().crossVectors(up, velocity).normalize();
-      const ang  = Math.acos(Math.min(1, up.dot(velocity.clone().normalize())));
-      if (axis.lengthSq() > 0.001) {
-        mesh.quaternion.setFromAxisAngle(axis, ang);
+      // Orient streak along its velocity direction using shared scratch vectors
+      _dir.copy(velocity).normalize();
+      _axis.crossVectors(_up, _dir).normalize();
+      const ang = Math.acos(Math.min(1, _up.dot(_dir)));
+      if (_axis.lengthSq() > 0.001) {
+        mesh.quaternion.setFromAxisAngle(_axis, ang);
       }
 
       world.scene.add(mesh);
-
       this._sparks.push({ mesh, elapsed: 0, velocity });
     }
   }
@@ -86,23 +87,23 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
   // ── Internal ────────────────────────────────────────────────────────────────
 
   private _updateSparks(deltaTime: number): void {
-    for (let i = this._sparks.length - 1; i >= 0; i--) {
-      const spark = this._sparks[i];
+    const sparks = this._sparks;
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const spark = sparks[i];
       spark.elapsed += deltaTime;
 
       const progress = spark.elapsed / PARTICLE_LIFETIME;
 
       spark.mesh.position.addScaledVector(spark.velocity, deltaTime);
-      // Gravity drag
       spark.velocity.y -= 4 * deltaTime;
-
-      // Fade out
       spark.mesh.material.opacity = Math.max(0, 1 - progress);
 
       if (progress >= 1) {
         spark.mesh.material.dispose();
         spark.mesh.removeFromParent();
-        this._sparks.splice(i, 1);
+        // Swap-with-last: O(1) removal, no array shifting
+        sparks[i] = sparks[sparks.length - 1];
+        sparks.pop();
       }
     }
   }

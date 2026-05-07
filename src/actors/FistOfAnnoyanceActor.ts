@@ -5,15 +5,15 @@ import type { ActorOptions } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
+import { requestHitStopSlomo, endHitStopSlomo, SLOMO_PRIORITY, slomoManager } from './KillStreakTracker.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const FIST_ACTOR_NAME = 'fistofannoyance';
-const SLOMO_VALUE     = 0.35;
+const SLOMO_VALUE     = 0.30; // Slightly slower for more cinematic feel
 
-function setSlomo(world: ENGINE.World, value: number): void {
-  (world as unknown as { slomo: number }).slomo = value;
-}
+/** Priority for fist slomo (higher than kill streak, lower than hit stop). */
+const FIST_SLOMO_PRIORITY = 2;
 
 /** Y offset below ground level where the fist starts (fully hidden). */
 const FIST_START_Y = -3.5;
@@ -40,7 +40,7 @@ const DUST_GEO  = new THREE.SphereGeometry(1, 8, 6);
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type FistPhase = 'rising' | 'paused' | 'retracting' | 'done';
+type FistPhase = 'rising' | 'paused' | 'retracting' | 'finishing' | 'done';
 
 interface Chunk {
   mesh: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>;
@@ -78,6 +78,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private _groundY       = 0;
   private _hasHit        = false;
   private _vfxSpawned    = false;
+  private _cinematicReturned = false;
 
   private readonly _chunks: Chunk[] = [];
   private readonly _dust:   Dust[]  = [];
@@ -117,6 +118,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._phaseStartMs  = performance.now();
     this._hasHit        = false;
     this._vfxSpawned    = false;
+    this._cinematicReturned = false;
 
     // Move fist to attack position (it stays "visible" at all times so the GPU
     // shader is always compiled – no stall on first use).
@@ -127,7 +129,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     if (player instanceof IsometricPlayerPawn) {
       player.startCinematicFocus(this.rootComponent.position.clone());
     }
-    setSlomo(world, SLOMO_VALUE);
+
+    // Apply slomo with priority (will override kill streak but not hit stop)
+    slomoManager.setSlomo(world, SLOMO_VALUE, FIST_SLOMO_PRIORITY);
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -147,14 +151,15 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         );
         this._setFistPosition(y);
 
-        if (!this._vfxSpawned && y >= this._groundY) {
+        // Spawn VFX when fist is halfway up (t >= 0.5) - guarantees they always play
+        if (!this._vfxSpawned && t >= 0.5) {
           this._spawnGroundBreakVFX();
           this._vfxSpawned = true;
-          // Heavy impact shake
+          // Heavy impact shake - stronger for more cinematic feel
           const world = this.getWorld();
           const player = world?.getFirstPlayerPawn();
           if (player && (player as unknown as { triggerScreenShake?: (a: number, d: number) => void }).triggerScreenShake) {
-            (player as unknown as { triggerScreenShake(a: number, d: number): void }).triggerScreenShake(0.55, 0.7);
+            (player as unknown as { triggerScreenShake(a: number, d: number): void }).triggerScreenShake(1.0, 1.5);
           }
         }
 
@@ -190,14 +195,33 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         this._setFistPosition(y);
 
         if (t >= 1) {
-          this._phase = 'done';
-          // Park the fist far underground again (stays rendered so shader stays warm)
+          // Transition to finishing phase to let VFX play out fully
+          this._phase = 'finishing';
+          this._phaseElapsed = 0;
+          // Park the fist far underground (stays rendered so shader stays warm)
           this._setFistPosition(-1000);
-          this._updateVFX(deltaTime);
-          this._cleanupVFX();
-          // Restore normal speed
+          // Restore normal speed - VFX will continue at normal time
           const w = this.getWorld();
-          if (w) setSlomo(w, 1);
+          if (w) slomoManager.resetIfPriority(w, FIST_SLOMO_PRIORITY);
+        }
+        break;
+      }
+
+      case 'finishing': {
+        // Just update VFX - let them complete their natural lifetime
+        // Camera returns to player during this phase
+        const w = this.getWorld();
+        if (w) {
+          const p = w.getFirstPlayerPawn();
+          if (p instanceof IsometricPlayerPawn && !this._cinematicReturned) {
+            p.endCinematicFocus();
+            this._cinematicReturned = true;
+          }
+        }
+
+        // Wait until all VFX particles have expired
+        if (this._chunks.length === 0 && this._dust.length === 0) {
+          this._phase = 'done';
           this.destroy();
           return;
         }
@@ -385,9 +409,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
   protected override doEndPlay(): void {
     this._cleanupVFX();
-    // Safety: always restore slomo in case actor is destroyed mid-cinematic
+    // Safety: restore slomo if we're the current priority
     const world = this.getWorld();
-    if (world) setSlomo(world, 1);
+    if (world) slomoManager.resetIfPriority(world, FIST_SLOMO_PRIORITY);
     super.doEndPlay();
   }
 }

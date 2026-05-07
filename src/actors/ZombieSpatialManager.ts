@@ -14,6 +14,9 @@ export class ZombieSpatialManager {
   private grid = new Map<string, ENGINE.Actor[]>();
   private zombieToCell = new Map<ENGINE.Actor, string>();
 
+  /** Scratch vector reused for all position queries — avoids per-call GC. */
+  private readonly _zPos = new THREE.Vector3();
+
   static getInstance(): ZombieSpatialManager {
     if (!ZombieSpatialManager.instance) {
       ZombieSpatialManager.instance = new ZombieSpatialManager();
@@ -26,9 +29,8 @@ export class ZombieSpatialManager {
    * Call this in ZombieActor.doBeginPlay().
    */
   registerZombie(zombie: ENGINE.Actor): void {
-    const pos = new THREE.Vector3();
-    zombie.rootComponent.getWorldPosition(pos);
-    const cell = this.getCell(pos);
+    zombie.rootComponent.getWorldPosition(this._zPos);
+    const cell = this.getCell(this._zPos);
 
     // Remove from old cell if present
     const oldCell = this.zombieToCell.get(zombie);
@@ -53,9 +55,8 @@ export class ZombieSpatialManager {
    * Call this periodically (e.g., every 0.5s) in tick.
    */
   updateZombiePosition(zombie: ENGINE.Actor): void {
-    const pos = new THREE.Vector3();
-    zombie.rootComponent.getWorldPosition(pos);
-    const newCell = this.getCell(pos);
+    zombie.rootComponent.getWorldPosition(this._zPos);
+    const newCell = this.getCell(this._zPos);
     const oldCell = this.zombieToCell.get(zombie);
 
     if (oldCell !== newCell) {
@@ -105,9 +106,8 @@ export class ZombieSpatialManager {
 
         for (const zombie of zombies) {
           // Verify actual distance
-          const zPos = new THREE.Vector3();
-          zombie.rootComponent.getWorldPosition(zPos);
-          const distSq = position.distanceToSquared(zPos);
+          zombie.rootComponent.getWorldPosition(this._zPos);
+          const distSq = position.distanceToSquared(this._zPos);
           if (distSq <= radiusSq) {
             results.push(zombie);
           }

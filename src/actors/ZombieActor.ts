@@ -199,6 +199,12 @@ export class ZombieActor extends ENGINE.Actor {
   private readonly _steerOtherPos = new THREE.Vector3();
   private readonly _steerGoal = new THREE.Vector3();
 
+  /** Scratch vectors — reused each tick to avoid per-frame GC. */
+  private readonly _lodMyPos      = new THREE.Vector3();
+  private readonly _lodPlayerPos  = new THREE.Vector3();
+  private readonly _animCurrentPos  = new THREE.Vector3();
+  private readonly _stuckCurrentPos = new THREE.Vector3();
+
   // Scratch vectors for death sequence to avoid per-frame allocations
   private readonly _deathScratch = {
     launch: new THREE.Vector3(),
@@ -419,11 +425,9 @@ export class ZombieActor extends ENGINE.Actor {
     // PERFORMANCE: Initialize LOD and position tracking
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
-      const myPos = new THREE.Vector3();
-      this.rootComponent.getWorldPosition(myPos);
-      const playerPos = new THREE.Vector3();
-      player.rootComponent.getWorldPosition(playerPos);
-      this._distanceToPlayer = myPos.distanceTo(playerPos);
+      this.rootComponent.getWorldPosition(this._lodMyPos);
+      player.rootComponent.getWorldPosition(this._lodPlayerPos);
+      this._distanceToPlayer = this._lodMyPos.distanceTo(this._lodPlayerPos);
       this._updateLODLevel();
     }
 
@@ -448,11 +452,9 @@ export class ZombieActor extends ENGINE.Actor {
     // PERFORMANCE: Update distance to player for LOD
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
-      const myPos = new THREE.Vector3();
-      this.rootComponent.getWorldPosition(myPos);
-      const playerPos = new THREE.Vector3();
-      player.rootComponent.getWorldPosition(playerPos);
-      this._distanceToPlayer = myPos.distanceTo(playerPos);
+      this.rootComponent.getWorldPosition(this._lodMyPos);
+      player.rootComponent.getWorldPosition(this._lodPlayerPos);
+      this._distanceToPlayer = this._lodMyPos.distanceTo(this._lodPlayerPos);
       this._updateLODLevel();
     }
 
@@ -655,7 +657,7 @@ export class ZombieActor extends ENGINE.Actor {
 
     this._stuckCheckTimer = 0;
 
-    const currentPos = new THREE.Vector3();
+    const currentPos = this._stuckCurrentPos;
     this.rootComponent.getWorldPosition(currentPos);
     const movedDist = currentPos.distanceTo(this._stuckCheckPosition);
 
@@ -988,7 +990,7 @@ export class ZombieActor extends ENGINE.Actor {
     if (!anim?.isReady()) return;
 
     // Track actual movement for animation state
-    const currentPos = new THREE.Vector3();
+    const currentPos = this._animCurrentPos;
     this.rootComponent.getWorldPosition(currentPos);
     const movedDist = currentPos.distanceTo(this._lastAnimPosition);
     const wasMoving = this._isActuallyMoving;

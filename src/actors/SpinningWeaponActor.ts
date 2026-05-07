@@ -21,6 +21,8 @@ import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../compon
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
+import { DeadGraveActor } from './DeadGraveActor.js';
+import { requestHitStopSlomo, endHitStopSlomo } from './KillStreakTracker.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
 
@@ -106,12 +108,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _bloodSplatter:     BloodSplatterComponent | null = null;
   private _boomerangTrail:    BoomerangTrailComponent | null = null;
 
-  // ── Shockwave state (attack-3 finisher) ──────────────────────────────────
-  private _shockwaveMesh:    THREE.Mesh | null = null;
-  private _shockwaveElapsed  = 0;
-  private static readonly _SHOCKWAVE_DURATION = 0.45;
-  private static readonly _SHOCKWAVE_MAX_SCALE = 7;
-
   /** Current orbital angle (radians). Updated each frame during attacks. */
   private _orbitAngle = 0;
 
@@ -151,11 +147,19 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Game-time timestamp of the last fist strike (starts negative so it's ready immediately). */
   private _lastFistTime = -FIST_COOLDOWN;
 
+  /** Buffered melee input - set when clicked during active attack. */
+  private _queuedMelee = false;
+
   private _scratchPos        = new THREE.Vector3();
   private _scratchPlayerPos  = new THREE.Vector3();
   private _scratchZombiePos  = new THREE.Vector3();
   private _weaponStart       = new THREE.Vector3();
   private _weaponEnd         = new THREE.Vector3();
+
+  /** Reused each call to _checkForHits — avoids per-frame Set allocation. */
+  private readonly _hitZombiesThisFrame = new Set<ENGINE.Actor>();
+  /** Scratch for NDC projection in damage numbers — avoids .clone() per hit. */
+  private readonly _ndcScratch = new THREE.Vector3();
 
   // ── Mouse-to-world helpers (pre-allocated, no per-throw GC) ──────────────
   private readonly _raycaster     = new THREE.Raycaster();
@@ -234,6 +238,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       }
     }
 
+    // Pre-warm a grave actor off-screen so its GLB loads and shaders compile at startup,
+    // preventing stutter when the first zombie dies and spawns a visible tombstone.
+    const warmupGrave = DeadGraveActor.create({
+      position: new THREE.Vector3(0, -1000, 0),
+    });
+    world.addActor(warmupGrave);
+    setTimeout(() => warmupGrave.destroy(), 100);
+
     world.inputManager.addInputHandler(this._inputHandler);
 
     this._slashComponent = WeaponSlashComponent.create();
@@ -259,11 +271,20 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
 
+    // Watchdog: restore slomo after 110ms and accumulate pause time.
+    this._tickHitStop();
+
     const player = this.getWorld()?.getFirstPlayerPawn();
 
     // Boomerang takes priority — runs independently of melee
     if (this._boomerangPhase !== 'idle' && player) {
       this._tickBoomerang(deltaTime, player);
+    }
+
+    // Process buffered melee input if not attacking
+    if (!this._isAttacking && this._queuedMelee && player) {
+      this._queuedMelee = false;
+      this._startAttack(player);
     }
 
     if (!this._isAttacking || !this._sceneWeaponActor) return;
@@ -274,10 +295,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._baseQuatCaptured = true;
     }
 
-    // Use real elapsed time so hit-stop (slomo=0.04) doesn't stretch the sweep duration.
-    const attackElapsed = (performance.now() - this._attackStartMs) / 1000;
+    // Real elapsed time minus hit-stop pause = actual attack progress
+    const nowMs = performance.now();
+    const realElapsedMs = nowMs - this._attackStartMs;
+    const attackElapsedSec = Math.max(0, (realElapsedMs - this._hitStopPausedMs) / 1000);
+
     const duration = ATTACK_DURATIONS[this._comboIndex];
-    const rawProgress = Math.min(attackElapsed / duration, 1);
+    const rawProgress = Math.min(attackElapsedSec / duration, 1);
     const progress = easeOut(rawProgress);
 
     this._orbitAngle = this._attackStartAngle + (this._attackEndAngle - this._attackStartAngle) * progress;
@@ -317,23 +341,28 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     // Attack complete
     if (rawProgress >= 1) {
-      // Attack-3 finisher shockwave
-      if (this._comboIndex === AttackIndex.Three) {
-        this._spawnShockwave(this._scratchPlayerPos);
-      }
       this._comboIndex = ((this._comboIndex + 1) % 3) as AttackIndex;
       this._isAttacking = false;
+      this._hitStopPausedMs = 0; // Reset pause accumulator for next attack
       this._setWeaponVisible(false);
       this._slashComponent?.stopTrail();
-    }
 
-    this._tickShockwave(deltaTime);
+      // Process buffered melee input immediately
+      if (this._queuedMelee && player) {
+        this._queuedMelee = false;
+        this._startAttack(player);
+      }
+    }
   }
 
   // ── Combat ────────────────────────────────────────────────────────────────
 
   private _onLeftClick(): void {
-    if (this._isAttacking) return;
+    // Buffer input during active melee (for combo fluidity) or boomerang flight
+    if (this._isAttacking) {
+      this._queuedMelee = true;
+      return;
+    }
     if (this._boomerangPhase !== 'idle') return; // weapon is in flight
 
     const player = this.getWorld()?.getFirstPlayerPawn();
@@ -402,11 +431,30 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _startAttack(player: ENGINE.Pawn): void {
-    const facing = player instanceof IsometricPlayerPawn ? player.getFacingYaw() : 0;
+    // Compute attack direction toward mouse cursor (same pattern as boomerang throw).
+    let attackYaw = player instanceof IsometricPlayerPawn ? player.getFacingYaw() : 0;
 
-    // Convert facingYaw (angle from +Z axis) into orbit space (angle from +X axis).
-    // facingYaw = atan2(vel.x, vel.z), orbit uses cos→X / sin→Z, offset is π/2.
-    const orbitCenter = Math.PI / 2 - facing;
+    const world = this.getWorld();
+    if (world) {
+      const camera = world.getActiveCamera();
+      if (camera) {
+        const ndcMouse = world.inputManager.getMousePosition();
+        player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+        this._groundPlane.constant = -this._scratchPlayerPos.y;
+        this._raycaster.setFromCamera(ndcMouse, camera);
+        if (this._raycaster.ray.intersectPlane(this._groundPlane, this._mouseHitPoint)) {
+          const dx = this._mouseHitPoint.x - this._scratchPlayerPos.x;
+          const dz = this._mouseHitPoint.z - this._scratchPlayerPos.z;
+          if (dx * dx + dz * dz > 0.0001) {
+            attackYaw = Math.atan2(dx, dz); // angle from +Z toward cursor
+          }
+        }
+      }
+    }
+
+    // Convert attackYaw (angle from +Z axis) into orbit space (angle from +X axis).
+    // orbit uses cos→X / sin→Z, offset is π/2.
+    const orbitCenter = Math.PI / 2 - attackYaw;
 
     switch (this._comboIndex) {
       case AttackIndex.One:
@@ -426,9 +474,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         break;
     }
 
-    this._orbitAngle    = this._attackStartAngle;
-    this._attackStartMs = performance.now();
-    this._isAttacking   = true;
+    this._orbitAngle       = this._attackStartAngle;
+    this._attackStartMs    = performance.now();
+    this._isAttacking      = true;
+    this._hitStopPausedMs  = 0;        // Reset pause accumulator
+    this._hasPrevWeaponPos = false;    // Reset swept detection
+    this._queuedMelee      = false;    // Clear any buffered input
     this._setWeaponVisible(true);
     this._slashComponent?.startTrail();
   }
@@ -536,7 +587,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
 
     this._sceneWeaponActor.rootComponent.position.copy(this._boomerangPos);
-    this._boomerangTrail?.addPoint(this._boomerangPos.clone());
+    this._boomerangTrail?.addPoint(this._boomerangPos);
     this._checkBoomerangHits();
   }
 
@@ -584,42 +635,80 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
   }
 
+  /** Previous frame weapon positions for swept hit detection. */
+  private _prevWeaponStart = new THREE.Vector3();
+  private _prevWeaponEnd = new THREE.Vector3();
+  private _hasPrevWeaponPos = false;
+
   private _checkForHits(player: ENGINE.Pawn): void {
     const world = this.getWorld();
     if (!world) return;
 
     const currentTime = world.getGameTime();
 
-    const queryCenterX = (this._weaponStart.x + this._weaponEnd.x) * 0.5;
-    const queryCenterZ = (this._weaponStart.z + this._weaponEnd.z) * 0.5;
-    const queryRadius  = BLADE_REACH * 0.5 + HIT_RADIUS;
+    // Swept detection: if we have previous positions, check multiple substeps
+    // to prevent the blade from teleporting through enemies during frame drops
+    const startX = this._hasPrevWeaponPos ? this._prevWeaponStart.x : this._weaponStart.x;
+    const startZ = this._hasPrevWeaponPos ? this._prevWeaponStart.z : this._weaponStart.z;
+    const endX = this._hasPrevWeaponPos ? this._prevWeaponEnd.x : this._weaponEnd.x;
+    const endZ = this._hasPrevWeaponPos ? this._prevWeaponEnd.z : this._weaponEnd.z;
+
+    // Calculate how far we moved this frame for determining substeps
+    const dx = this._weaponEnd.x - endX;
+    const dz = this._weaponEnd.z - endZ;
+    const moveDist = Math.sqrt(dx * dx + dz * dz);
+
+    // Use more substeps for larger movements (up to 4 substeps max)
+    const subSteps = Math.min(4, Math.max(1, Math.ceil(moveDist / 1.5)));
+
+    // Query a larger area to cover the swept volume
+    const queryCenterX = (startX + this._weaponEnd.x) * 0.5;
+    const queryCenterZ = (startZ + this._weaponEnd.z) * 0.5;
+    const queryRadius  = Math.max(BLADE_REACH, moveDist) * 0.5 + HIT_RADIUS + 1.0;
     this._scratchPos.set(queryCenterX, this._weaponStart.y, queryCenterZ);
 
     const nearbyZombies = zombieSpatialManager.getNearbyZombies(this._scratchPos, queryRadius);
+    const hitZombies = this._hitZombiesThisFrame;
+    hitZombies.clear();
 
-    for (const zombie of nearbyZombies) {
-      if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) {
-        continue;
+    // Check each substep along the swept path
+    for (let step = 0; step < subSteps; step++) {
+      const t = step / (subSteps - 1 || 1); // 0 to 1
+      const stepStartX = THREE.MathUtils.lerp(startX, this._weaponStart.x, t);
+      const stepStartZ = THREE.MathUtils.lerp(startZ, this._weaponStart.z, t);
+      const stepEndX = THREE.MathUtils.lerp(endX, this._weaponEnd.x, t);
+      const stepEndZ = THREE.MathUtils.lerp(endZ, this._weaponEnd.z, t);
+
+      for (const zombie of nearbyZombies) {
+        if (hitZombies.has(zombie)) continue; // Already hit this frame
+
+        if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) {
+          continue;
+        }
+
+        const lastHit = this._hitCooldowns.get(zombie);
+        if (lastHit !== undefined && currentTime - lastHit < HIT_COOLDOWN) {
+          continue;
+        }
+
+        zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+        const distSq = this._pointToSegmentDistSq(
+          this._scratchZombiePos.x, this._scratchZombiePos.z,
+          stepStartX, stepStartZ,
+          stepEndX,    stepEndZ,
+        );
+
+        if (distSq <= HIT_RADIUS * HIT_RADIUS) {
+          hitZombies.add(zombie);
+          this._hitZombie(zombie, currentTime, player);
+        }
       }
-
-      const lastHit = this._hitCooldowns.get(zombie);
-      if (lastHit !== undefined && currentTime - lastHit < HIT_COOLDOWN) {
-        continue;
-      }
-
-      zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
-      const distSq = this._pointToSegmentDistSq(
-        this._scratchZombiePos.x, this._scratchZombiePos.z,
-        this._weaponStart.x,      this._weaponStart.z,
-        this._weaponEnd.x,        this._weaponEnd.z,
-      );
-
-      if (distSq > HIT_RADIUS * HIT_RADIUS) {
-        continue;
-      }
-
-      this._hitZombie(zombie, currentTime, player);
     }
+
+    // Store positions for next frame's sweep
+    this._prevWeaponStart.copy(this._weaponStart);
+    this._prevWeaponEnd.copy(this._weaponEnd);
+    this._hasPrevWeaponPos = true;
   }
 
   private _pointToSegmentDistSq(
@@ -678,59 +767,30 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
   }
 
-  // ── Shockwave ─────────────────────────────────────────────────────────────
-
-  private _spawnShockwave(center: THREE.Vector3): void {
-    const world = this.getWorld();
-    if (!world) return;
-
-    // Dispose previous if still fading
-    if (this._shockwaveMesh) {
-      this._shockwaveMesh.removeFromParent();
-      this._shockwaveMesh.geometry.dispose();
-      (this._shockwaveMesh.material as THREE.Material).dispose();
-      this._shockwaveMesh = null;
-    }
-
-    const geo = new THREE.RingGeometry(0.1, 0.7, 40);
-    const mat = new THREE.MeshBasicMaterial({
-      color:       0xaa44ff,
-      transparent: true,
-      opacity:     0.85,
-      depthWrite:  false,
-      side:        THREE.DoubleSide,
-    });
-
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.rotation.x = -Math.PI / 2; // flat on ground
-    mesh.position.set(center.x, center.y + 0.05, center.z);
-    world.scene.add(mesh);
-
-    this._shockwaveMesh    = mesh;
-    this._shockwaveElapsed = 0;
-  }
-
-  private _tickShockwave(deltaTime: number): void {
-    if (!this._shockwaveMesh) return;
-
-    this._shockwaveElapsed += deltaTime;
-    const t = Math.min(this._shockwaveElapsed / SpinningWeaponActor._SHOCKWAVE_DURATION, 1);
-    const scale = 1 + t * SpinningWeaponActor._SHOCKWAVE_MAX_SCALE;
-
-    this._shockwaveMesh.scale.setScalar(scale);
-    (this._shockwaveMesh.material as THREE.MeshBasicMaterial).opacity = 0.85 * (1 - t);
-
-    if (t >= 1) {
-      this._shockwaveMesh.removeFromParent();
-      this._shockwaveMesh.geometry.dispose();
-      (this._shockwaveMesh.material as THREE.Material).dispose();
-      this._shockwaveMesh = null;
-    }
-  }
-
   // ── Hit stop ──────────────────────────────────────────────────────────────
 
-  private _lastHitStopMs = -1000;
+  /** Real-time ms when the current hit stop was started (0 = none active). */
+  private _hitStopStartMs   = 0;
+  private _hitStopActive    = false;
+  private _lastHitStopMs   = -1000;
+  /** Total ms of hit-stop pause accumulated during current attack. */
+  private _hitStopPausedMs  = 0;
+  /** Track when we entered hit stop to accumulate pause time. */
+  private _hitStopPauseStartMs = 0;
+
+  private _tickHitStop(): void {
+    if (!this._hitStopActive) return;
+
+    const now = performance.now();
+    if (now - this._hitStopStartMs < 110) return;
+
+    // Hit stop ended - accumulate pause time
+    this._hitStopPausedMs += now - this._hitStopPauseStartMs;
+    this._hitStopActive = false;
+
+    const world = this.getWorld();
+    if (world) endHitStopSlomo(world);
+  }
 
   private _triggerHitStop(): void {
     const now = performance.now();
@@ -740,13 +800,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    const worldAny = world as unknown as { slomo: number };
-    // Don't stack with kill streak or fist slow-mo.
-    if (worldAny.slomo < 0.85) return;
+    // Use priority system - will fail if kill streak or fist is active
+    if (!requestHitStopSlomo(world)) return;
 
-    this._lastHitStopMs = now;
-    worldAny.slomo = 0.04;
-    globalThis.setTimeout(() => { worldAny.slomo = 1; }, 75);
+    this._lastHitStopMs     = now;
+    this._hitStopStartMs    = now;
+    this._hitStopPauseStartMs = now;
+    this._hitStopActive     = true;
   }
 
   // ── Floating damage numbers ───────────────────────────────────────────────
@@ -759,7 +819,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const container = world.gameContainer;
     if (!camera || !container) return;
 
-    const ndc = worldPos.clone().project(camera);
+    const ndc = this._ndcScratch.copy(worldPos).project(camera);
     const x   = (ndc.x * 0.5 + 0.5)  * container.clientWidth;
     const y   = (-ndc.y * 0.5 + 0.5) * container.clientHeight;
 
