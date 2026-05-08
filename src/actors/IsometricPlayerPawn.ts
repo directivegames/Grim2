@@ -290,7 +290,11 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._shakeStartMs    = performance.now();
   }
 
-  private _updateScreenShake(_deltaTime: number): void {
+  // ── Screen shake with smooth noise (not raw random) for polished feel ─────
+
+  private _shakePhase = 0; // Accumulated phase for noise sampling
+
+  private _updateScreenShake(deltaTime: number): void {
     if (!this.cameraPivot) return;
 
     if (this._shakeDurationMs > 0) {
@@ -299,17 +303,23 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       if (elapsed >= this._shakeDurationMs) {
         this._shakeOffset.set(0, 0, 0);
         this._shakeDurationMs = 0;
+        this._shakePhase = 0;
       } else {
         const t = elapsed / this._shakeDurationMs;
-        const currentIntensity = this._shakeIntensity * (1 - t);
-        this._shakeOffset.set(
-          (Math.random() - 0.5) * 2 * currentIntensity,
-          0,
-          (Math.random() - 0.5) * 2 * currentIntensity,
-        );
+        const currentIntensity = this._shakeIntensity * (1 - t * t); // Ease-out decay
+
+        // Advance phase based on time (8Hz shake frequency)
+        this._shakePhase += deltaTime * 50;
+
+        // Smooth noise-like shake using multiple sine waves
+        const x = this._shakeNoise(this._shakePhase) * currentIntensity;
+        const z = this._shakeNoise(this._shakePhase + 100) * currentIntensity;
+
+        this._shakeOffset.set(x, 0, z);
       }
     } else {
       this._shakeOffset.set(0, 0, 0);
+      this._shakePhase = 0;
     }
 
     // Combine cinematic pan + shake into final cameraPivot offset
@@ -318,6 +328,19 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       this._cinematicOffset.y + this._shakeOffset.y,
       this._cinematicOffset.z + this._shakeOffset.z,
     );
+  }
+
+  /**
+   * Smooth pseudo-noise function using summed sines.
+   * Produces continuous, non-jittery shake motion that feels polished.
+   */
+  private _shakeNoise(phase: number): number {
+    // Multiple sine waves at different frequencies for noise-like but smooth motion
+    const a = Math.sin(phase) * 0.5;
+    const b = Math.sin(phase * 1.3 + 1) * 0.25;
+    const c = Math.sin(phase * 2.1 + 2) * 0.125;
+    const d = Math.sin(phase * 3.7 + 3) * 0.0625;
+    return a + b + c + d; // Range roughly [-0.9, 0.9], normalized feel
   }
 
   // ── Cinematic focus ───────────────────────────────────────────────────────

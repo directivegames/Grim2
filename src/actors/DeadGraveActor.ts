@@ -18,8 +18,12 @@ const GRAVE_MODEL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grave.glb` 
 const SHARED_ROOT_GEOMETRY = new THREE.BoxGeometry(0.7, 1.1, 0.3);
 const SHARED_ROOT_MATERIAL = new THREE.MeshStandardMaterial({ visible: false });
 
+/** Seconds before grave auto-destroys to prevent physics/shadow accumulation. */
+const GRAVE_LIFETIME_SEC = 30;
+
 @ENGINE.GameClass()
 export class DeadGraveActor extends ENGINE.Actor {
+  private _spawnTime = 0;
 
   public override initialize(options?: ActorOptions): void {
     // Invisible box as the physics root - ready immediately, no async loading needed
@@ -53,6 +57,7 @@ export class DeadGraveActor extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+    this._spawnTime = performance.now();
 
     // Apply heavy damping so the gravestone settles quickly and feels weighty
     const physics = this.getPhysicsEngine();
@@ -62,6 +67,14 @@ export class DeadGraveActor extends ENGINE.Actor {
       type ScalarParam = 'linearDamping' | 'angularDamping' | 'gravityScale';
       physics.setScalarParam(root, 'linearDamping' as ScalarParam as any, 0.6);
       physics.setScalarParam(root, 'angularDamping' as ScalarParam as any, 0.8);
+    }
+  }
+
+  public override tickPrePhysics(_deltaTime: number): void {
+    super.tickPrePhysics(_deltaTime);
+    // Auto-cleanup after lifetime to prevent physics/shadow accumulation
+    if (performance.now() - this._spawnTime > GRAVE_LIFETIME_SEC * 1000) {
+      this.destroy();
     }
   }
 

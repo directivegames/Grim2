@@ -1,0 +1,7 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "name": "Grass2"
+  },
+  "$version": 2
+}

@@ -333,8 +333,8 @@ export class ZombieActor extends ENGINE.Actor {
       modelUrl: ZOMBIE_MODEL_URL,
       rotation: new THREE.Euler(0, Math.PI, 0),
       physicsOptions: { enabled: false },
-      castShadow: true,
-      receiveShadow: true,
+      castShadow: false,
+      receiveShadow: false,
     });
 
     const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: ZOMBIE_ANIM_URL });
@@ -634,15 +634,14 @@ export class ZombieActor extends ENGINE.Actor {
   }
 
   /**
-   * PERFORMANCE: Distance-based shadow casting.
+   * PERFORMANCE: Shadow casting disabled entirely for performance.
+   * Shadows were causing significant frame drops on mid-range GPUs.
    */
   private updateShadowLOD(): void {
     const visual = this.getComponent(ENGINE.GLTFMeshComponent);
     if (!visual) return;
-
-    // Only cast shadows if close to player
-    const shouldCastShadow = this._distanceToPlayer < ZombieActor.HIGH_LOD_DISTANCE;
-    visual.castShadow = shouldCastShadow;
+    visual.castShadow = false;
+    visual.receiveShadow = false;
   }
 
   /**

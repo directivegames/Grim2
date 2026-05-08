@@ -22,6 +22,8 @@ import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
+import { GoreExplosionActor } from './GoreExplosionActor.js';
+import { SoulActor } from './SoulActor.js';
 import { requestHitStopSlomo, endHitStopSlomo } from './KillStreakTracker.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
@@ -240,11 +242,30 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     // Pre-warm a grave actor off-screen so its GLB loads and shaders compile at startup,
     // preventing stutter when the first zombie dies and spawns a visible tombstone.
+    // Kept alive for 2 seconds to ensure GPU has actually compiled the shader programs.
     const warmupGrave = DeadGraveActor.create({
       position: new THREE.Vector3(0, -1000, 0),
     });
     world.addActor(warmupGrave);
-    setTimeout(() => warmupGrave.destroy(), 100);
+    setTimeout(() => warmupGrave.destroy(), 2000);
+
+    // Pre-warm gore explosion materials so first kill doesn't stall on shader compile.
+    // Smoke and chunks each use unique material parameters that trigger separate shader compiles.
+    const warmupGore = GoreExplosionActor.create({ position: new THREE.Vector3(0, -1000, 0) });
+    world.addActor(warmupGore);
+    setTimeout(() => warmupGore.destroy(), 2000);
+
+    // Pre-warm soul actor so the soul.glb model and its materials compile at startup.
+    const warmupSoul = SoulActor.create({ position: new THREE.Vector3(0, -1000, 0) });
+    world.addActor(warmupSoul);
+    setTimeout(() => warmupSoul.destroy(), 2000);
+
+    // Pre-warm blood splatter materials (MeshBasicMaterial with transparency/double-side).
+    // Burst at y=-1000 creates drops that auto-cleanup via their own lifecycle.
+    this._bloodSplatter?.burst(new THREE.Vector3(0, -1000, 0));
+
+    // Pre-warm weapon summon/dismiss VFX materials (additive blending, double-side).
+    this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 3);
 
     world.inputManager.addInputHandler(this._inputHandler);
 
@@ -478,6 +499,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._attackStartMs    = performance.now();
     this._isAttacking      = true;
     this._hitStopPausedMs  = 0;        // Reset pause accumulator
+    this._hitStopTriggeredThisAttack = false; // Reset hit stop for new attack
     this._hasPrevWeaponPos = false;    // Reset swept detection
     this._queuedMelee      = false;    // Clear any buffered input
     this._setWeaponVisible(true);
@@ -772,11 +794,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Real-time ms when the current hit stop was started (0 = none active). */
   private _hitStopStartMs   = 0;
   private _hitStopActive    = false;
-  private _lastHitStopMs   = -1000;
   /** Total ms of hit-stop pause accumulated during current attack. */
   private _hitStopPausedMs  = 0;
   /** Track when we entered hit stop to accumulate pause time. */
   private _hitStopPauseStartMs = 0;
+  /** Track if we've triggered hit stop for the current attack (one per swing). */
+  private _hitStopTriggeredThisAttack = false;
 
   private _tickHitStop(): void {
     if (!this._hitStopActive) return;
@@ -793,9 +816,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _triggerHitStop(): void {
-    const now = performance.now();
-    // One hit-stop per second max — prevents chaining when hitting multiple enemies.
-    if (now - this._lastHitStopMs < 1000) return;
+    // Only one hit-stop per attack swing - consistent feel, prevents multi-hit spam
+    if (this._hitStopTriggeredThisAttack) return;
+    if (this._hitStopActive) return; // Don't stack if watchdog hasn't fired yet
 
     const world = this.getWorld();
     if (!world) return;
@@ -803,13 +826,18 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Use priority system - will fail if kill streak or fist is active
     if (!requestHitStopSlomo(world)) return;
 
-    this._lastHitStopMs     = now;
+    const now = performance.now();
+    this._hitStopTriggeredThisAttack = true;
     this._hitStopStartMs    = now;
     this._hitStopPauseStartMs = now;
     this._hitStopActive     = true;
   }
 
   // ── Floating damage numbers ───────────────────────────────────────────────
+
+  /** Pool of reused DOM elements for damage numbers - eliminates per-hit GC. */
+  private _damageNumberPool: HTMLDivElement[] = [];
+  private _activeDamageNumbers: Map<HTMLDivElement, { startTime: number; baseX: number; baseY: number }> = new Map();
 
   private _spawnDamageNumber(worldPos: THREE.Vector3, damage: number): void {
     const world = this.getWorld();
@@ -823,31 +851,82 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const x   = (ndc.x * 0.5 + 0.5)  * container.clientWidth;
     const y   = (-ndc.y * 0.5 + 0.5) * container.clientHeight;
 
-    const el = document.createElement('div');
+    // Get or create pooled element
+    let el: HTMLDivElement;
+    if (this._damageNumberPool.length > 0) {
+      el = this._damageNumberPool.pop()!;
+    } else {
+      el = document.createElement('div');
+    }
+
     el.textContent = String(damage);
+    // Use transform for GPU-accelerated animation (no layout thrashing)
     el.style.cssText = [
       'position:absolute',
-      `left:${x}px`,
-      `top:${y}px`,
+      'left:0',
+      'top:0',
+      `transform:translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translateX(-50%)`,
       'color:#ffdd44',
       'font-family:"Arial Black",Arial,sans-serif',
       'font-size:17px',
       'font-weight:bold',
       'text-shadow:1px 1px 2px #000,0 0 8px #ff6600',
       'pointer-events:none',
-      'transform:translateX(-50%)',
+      'will-change:transform,opacity',
     ].join(';');
+
     container.appendChild(el);
 
     const startTime = performance.now();
-    const floatUp   = (): void => {
-      const t = Math.min((performance.now() - startTime) / 700, 1);
-      el.style.top     = `${y - 55 * t}px`;
-      el.style.opacity = String(1 - t * t);
-      if (t < 1) requestAnimationFrame(floatUp);
-      else el.remove();
-    };
-    requestAnimationFrame(floatUp);
+    this._activeDamageNumbers.set(el, { startTime, baseX: x, baseY: y });
+
+    // Single RAF loop for all damage numbers (more efficient than per-number)
+    if (this._activeDamageNumbers.size === 1) {
+      this._scheduleDamageNumberUpdate();
+    }
+  }
+
+  /** Batch update all active damage numbers in one frame. */
+  private _scheduleDamageNumberUpdate(): void {
+    requestAnimationFrame(() => this._updateDamageNumbers());
+  }
+
+  private _updateDamageNumbers(): void {
+    if (this._activeDamageNumbers.size === 0) return;
+
+    const now = performance.now();
+    const toRemove: HTMLDivElement[] = [];
+
+    for (const [el, data] of this._activeDamageNumbers) {
+      const t = Math.min((now - data.startTime) / 700, 1);
+
+      if (t >= 1) {
+        toRemove.push(el);
+        continue;
+      }
+
+      const newY = data.baseY - 55 * t;
+      const opacity = 1 - t * t;
+
+      // Update transform directly (GPU-accelerated, no layout)
+      el.style.transform = `translate3d(${data.baseX.toFixed(1)}px, ${newY.toFixed(1)}px, 0) translateX(-50%)`;
+      el.style.opacity = String(opacity);
+    }
+
+    // Remove finished numbers back to pool
+    for (const el of toRemove) {
+      this._activeDamageNumbers.delete(el);
+      el.remove();
+      // Reset for reuse
+      el.style.opacity = '1';
+      el.style.transform = '';
+      this._damageNumberPool.push(el);
+    }
+
+    // Schedule next frame if still active
+    if (this._activeDamageNumbers.size > 0) {
+      this._scheduleDamageNumberUpdate();
+    }
   }
 
   private _cleanupCooldowns(): void {

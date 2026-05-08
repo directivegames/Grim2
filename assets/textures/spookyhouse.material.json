@@ -1,0 +1,33 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "emissiveIntensity": 54.1,
+    "envMapIntensity": 0.95,
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "842e8b63-ec01-49a4-a534-5a93e8245b61",
+      "url": "@project/assets/textures/spookyhousehdcolour.webp"
+    },
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "f483845b-5abb-4ee3-9b36-6b3946000f73",
+      "url": "@project/assets/textures/spookyhousematalic.webp"
+    },
+    "name": "spookyhouse",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "b1aee64a-fbcc-4cd6-805d-ff151712af53",
+      "url": "@project/assets/textures/spookyhousenormal.webp"
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "10238892-e6de-47d7-b183-1dbc01b8ade3",
+      "url": "@project/assets/textures/spookyhouserough.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "e52aa929-8cd8-4bc8-9d5c-7eed277a1210"
+  },
+  "$version": 2
+}

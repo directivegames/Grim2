@@ -10,6 +10,7 @@ const PATCHED = '__grimNpcFollowOffsetPatched' as const;
 const OFFSET_VEC_KEY = '__grimFollowTargetWorldOffset' as const;
 
 const pathGoalScratch = new THREE.Vector3();
+const actorPosScratch = new THREE.Vector3();
 
 function offsetVec(self: Record<string, unknown>): THREE.Vector3 {
   let v = self[OFFSET_VEC_KEY] as THREE.Vector3 | undefined;
@@ -23,7 +24,7 @@ function offsetVec(self: Record<string, unknown>): THREE.Vector3 {
 function patchedUpdateActorFollowingTarget(this: any, currentPosition: THREE.Vector3): void {
   if (!this.actorToFollow) return;
 
-  const actorPosition = new THREE.Vector3();
+  const actorPosition = actorPosScratch;
   this.actorToFollow.rootComponent.getWorldPosition(actorPosition);
   const distanceToActor = currentPosition.distanceTo(actorPosition);
 

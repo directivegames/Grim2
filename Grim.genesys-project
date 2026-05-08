@@ -1,4 +1,5 @@
 {
   "defaultScene": "./assets/default.genesys-scene",
-  "engineVersion": "10.4.3"
+  "engineVersion": "10.6.1",
+  "rendererType": "webgl"
 }

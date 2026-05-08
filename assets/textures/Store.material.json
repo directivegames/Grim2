@@ -1,0 +1,32 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "flatShading": true,
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "3c15aaf6-3634-4289-a921-de1e74d6649a",
+      "url": "@project/assets/textures/Storetexture.webp"
+    },
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "10a19b1a-fc33-43a5-8fe0-6c5185df136d",
+      "url": "@project/assets/textures/storemetal.webp"
+    },
+    "name": "Store",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "3f2363ef-f69a-4501-9652-65beb45492dd",
+      "url": "@project/assets/textures/storenormal.webp"
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "68845159-41d3-43ec-9922-b7bb99593a99",
+      "url": "@project/assets/textures/storerough.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "ccdc0187-90b7-4fdd-97e2-c94ab7dee178"
+  },
+  "$version": 2
+}

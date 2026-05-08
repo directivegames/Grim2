@@ -35,9 +35,33 @@ class MyGameMode extends ENGINE.GameMode {
   }
 }
 
+/** Custom loading screen that stays visible until shader warmups complete.
+ *  Ensures no stutter from first-time material compilation during gameplay.
+ */
+class GrimLoadingScreen implements ENGINE.ILoadingScreen {
+  private _default = new ENGINE.DefaultLoadingScreen();
+  private _startTime = 0;
+  private _minDurationMs = 2500; // 2.5s covers navmesh + 2s shader warmup
+
+  public start(world: ENGINE.World): void {
+    this._startTime = performance.now();
+    this._default.start(world);
+  }
+
+  public stop(): void {
+    const elapsed = performance.now() - this._startTime;
+    const remaining = Math.max(0, this._minDurationMs - elapsed);
+
+    // Delay stop until minimum duration has passed (shader warmups still running)
+    setTimeout(() => {
+      this._default.stop();
+    }, remaining);
+  }
+}
+
 class MyGame extends ENGINE.BaseGameLoop {
   protected override createLoadingScreen(): ENGINE.ILoadingScreen | null {
-    return new ENGINE.DefaultLoadingScreen();
+    return new GrimLoadingScreen();
   }
 
   public override getWorldConfiguration(): ENGINE.WorldOptions {

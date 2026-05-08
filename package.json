@@ -16,7 +16,7 @@
   "type": "module",
   "dependencies": {
     "@gnsx/genesys.harness": "latest",
-    "@gnsx/genesys.js": "10.4.3",
+    "@gnsx/genesys.js": "10.6.1",
     "three": "0.184.0"
   },
   "pnpm": {

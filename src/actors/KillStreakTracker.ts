@@ -26,7 +26,7 @@ class SlomoManager {
   get priority(): number { return this._priority; }
 
   setSlomo(world: ENGINE.World, value: number, newPriority: number): boolean {
-    if (newPriority < this._priority) return false;
+    if (newPriority <= this._priority) return false;
 
     // Push current state before upgrading
     this._stack.push({ priority: this._priority, value: (world as unknown as { slomo: number }).slomo });
