@@ -19,6 +19,7 @@ import { DeadGraveActor } from './DeadGraveActor.js';
 import { SoulActor } from './SoulActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
+import { GameAudioManager } from './GameAudioManager.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -255,7 +256,17 @@ export class NewZombieActor extends ENGINE.Actor {
     const w = this.getWorld();
     if (w) {
       this._hitAnimEndTime = w.getGameTime() + HIT_REACTION_HOLD_SEC;
+
+      // Play random zombie hit sound (zombiehit1 or zombiehit2)
+      const audioManager = w.getActors().find(
+        (a): a is GameAudioManager => a instanceof GameAudioManager
+      );
+      if (audioManager) {
+        const hitSound = Math.random() < 0.5 ? 'zombieHit1' : 'zombieHit2';
+        audioManager.play(hitSound, 1.0, true);
+      }
     }
+
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
     if (anim?.isReady()) {
       anim.setParameter('state', 'hit');
@@ -706,6 +717,12 @@ export class NewZombieActor extends ENGINE.Actor {
       const world = this.getWorld();
       if (world) {
         GoreExplosionActor.spawnAt(world, deathPos);
+
+        // Play zombie death sound when smoke starts and grave appears
+        const audioManager = world.getActors().find(
+          (a): a is GameAudioManager => a instanceof GameAudioManager
+        );
+        audioManager?.play('zombieDeath', 1.0, true);
       }
 
       this.spawnDeathObjects(deathPos);

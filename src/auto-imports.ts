@@ -2,6 +2,7 @@ import './actors/BackgroundMusicActor.ts';
 import './actors/ComboMeterTracker.ts';
 import './actors/DeadGraveActor.ts';
 import './actors/FistOfAnnoyanceActor.ts';
+import './actors/GameAudioManager.ts';
 import './actors/GoreExplosionActor.ts';
 import './actors/IsometricPlayerPawn.ts';
 import './actors/KillStreakTracker.ts';

@@ -4,7 +4,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 const PARTICLE_LIFETIME = 0.55;
 const SPLATTER_COUNT    = 12;
 
-const DROP_GEO = new THREE.PlaneGeometry(0.32, 0.45);
+// Circle geometry for round blood drops (not flat squares)
+const DROP_GEO = new THREE.CircleGeometry(0.18, 10);
 
 /** Bright red chunky blood — no dark tones, fully opaque. */
 const BLOOD_COLORS = [
@@ -19,7 +20,7 @@ const _dir  = new THREE.Vector3();
 const _axis = new THREE.Vector3();
 
 interface BloodDrop {
-  mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  mesh: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>;
   elapsed: number;
   velocity: THREE.Vector3;
 }

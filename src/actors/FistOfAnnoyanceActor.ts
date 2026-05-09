@@ -22,7 +22,7 @@ const FIST_START_Y = -3.5;
 const FIST_PEAK_Y = -0.1;
 
 const RISE_DURATION     = 0.26;  // fast punch up
-const PAUSE_DURATION    = 0.18;  // brief hold at top (reduced by 0.2s)
+const PAUSE_DURATION    = 0.01;  // minimal hold at top (reduced by ~0.37s total)
 const RETRACT_DURATION  = 0.20;  // very quick pull-back
 
 const FIST_HIT_RADIUS   = 2.4;

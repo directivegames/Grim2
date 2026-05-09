@@ -13,8 +13,8 @@ export class BackgroundMusicActor extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'backgroundMusic';
-    soundResource.audioPath = '@project/assets/sounds/Porchlight Synapse.mp3';
-    soundResource.volume = 0;
+    soundResource.audioPath = '@project/assets/sounds/gravedusttango.wav';
+    soundResource.volume = 0.5;
 
     this.soundComponent = ENGINE.SoundComponent.create({
       loop: true,

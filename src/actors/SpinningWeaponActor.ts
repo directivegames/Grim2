@@ -24,6 +24,7 @@ import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { SoulActor } from './SoulActor.js';
+import { GameAudioManager } from './GameAudioManager.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
 
@@ -266,6 +267,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Pre-warm weapon summon/dismiss VFX materials (additive blending, double-side).
     this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 3);
 
+    // Ensure audio manager exists (pre-loads all SFX)
+    GameAudioManager.ensureExists(world);
+
     world.inputManager.addInputHandler(this._inputHandler);
 
     this._slashComponent = WeaponSlashComponent.create();
@@ -414,6 +418,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     FistOfAnnoyanceActor.spawnAt(world, targetPos);
     this._lastFistTime = currentTime; // cooldown starts only now
 
+    // Play fist impact sound with distance attenuation (always audible, even at range)
+    const audioManager = world.getActors().find(
+      (a): a is GameAudioManager => a instanceof GameAudioManager
+    );
+    if (audioManager) {
+      const playerPos = new THREE.Vector3();
+      player.rootComponent.getWorldPosition(playerPos);
+      audioManager.playAtDistance('fistImpact', targetPos, playerPos, FIST_MAX_RANGE, 0.15);
+    }
+
     // Heavy camera shake on fist impact
     if (player instanceof IsometricPlayerPawn) {
       player.triggerScreenShake(0.45, 0.6);
@@ -497,6 +511,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._queuedMelee      = false;    // Clear any buffered input
     this._setWeaponVisible(true);
     this._slashComponent?.startTrail();
+
+    // Play blade swing sound — alternate for 2nd combo attack
+    if (world) {
+      const audioManager = world.getActors().find(
+        (a): a is GameAudioManager => a instanceof GameAudioManager
+      );
+      // Attack 2 (combo index 1) uses bladeSwing2, others use bladeSwing
+      const soundKey = this._comboIndex === AttackIndex.Two ? 'bladeSwing2' : 'bladeSwing';
+      audioManager?.play(soundKey, 1.0, true);
+    }
   }
 
   private _setWeaponVisible(visible: boolean): void {
