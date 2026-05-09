@@ -12,13 +12,14 @@
       "$uuid": "35606545-2e86-4169-99b2-5ef3865789cd",
       "url": "@project/assets/textures/Grasstexturewithshadow.png"
     },
+    "metalness": 0.1,
     "name": "Grass",
     "normalMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "ebb00ada-7075-4cda-aec5-020d109e312b",
       "url": "@project/assets/textures/grassnormalmap.png"
     },
-    "roughness": 0.92,
+    "roughness": 0.52,
     "userData": {
       "colorSpaceFixed": true
     },
