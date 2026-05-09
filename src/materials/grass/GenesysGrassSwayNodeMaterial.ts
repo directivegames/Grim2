@@ -42,6 +42,10 @@ export class GenesysGrassSwayNodeMaterial extends MeshBasicNodeMaterial {
   // A tiny "heartbeat" uniform used to sync non-TSL properties every frame.
   readonly uSync = uniform(float(0));
 
+  // Cache the fallback texture to avoid creating new GPU objects every frame
+  private readonly _fallbackTexture = new THREE.Texture();
+  private _lastSrcMap: THREE.Texture | null = null;
+
   constructor(source: GrassSwayShaderMaterial) {
     super();
     this.userData.genesysGrassSource = source;
@@ -61,9 +65,17 @@ export class GenesysGrassSwayNodeMaterial extends MeshBasicNodeMaterial {
     this.uAlphaTest.onObjectUpdate(() => (this.uAlphaTest.value = source.uniforms.uAlphaTest.value as number));
 
     // Keep map/opacity/alphaTest in sync even in editor (when uTime may not advance).
+    // FIX: Cache textures to avoid creating new GPU objects every frame (leak fix).
     this.uSync.onObjectUpdate(() => {
       const srcMap = (source as unknown as { map?: unknown }).map;
-      this.map = srcMap instanceof THREE.Texture ? srcMap : new THREE.Texture();
+      const newMap = srcMap instanceof THREE.Texture ? srcMap : this._fallbackTexture;
+
+      // Only update map reference if it actually changed — prevents constant GPU re-uploads
+      if (newMap !== this._lastSrcMap) {
+        this.map = newMap;
+        this._lastSrcMap = newMap === this._fallbackTexture ? null : newMap;
+      }
+
       this.opacity = source.uniforms.uOpacity.value as number;
       this.alphaTest = source.uniforms.uAlphaTest.value as number;
       this.transparent = true;

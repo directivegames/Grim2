@@ -14,6 +14,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { ISO_YAW, IsometricMovementComponent } from '../components/movement/IsometricMovementComponent.js';
 import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
+import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -155,6 +156,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
     const dustTrail = DustTrailComponent.create();
     this.rootComponent.add(dustTrail);
+
+    const shadow = BlobShadowComponent.create({ radius: 0.55, opacity: 0.35 });
+    this.rootComponent.add(shadow);
 
     return meshComponent;
   }

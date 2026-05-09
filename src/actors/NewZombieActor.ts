@@ -18,6 +18,7 @@ import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { SoulActor } from './SoulActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
+import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -334,8 +335,11 @@ export class NewZombieActor extends ENGINE.Actor {
     (npc as unknown as { pathFollowingAccuracy: number }).pathFollowingAccuracy = NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY;
     (npc as unknown as { actorFollowingDistance: number }).actorFollowingDistance = NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE;
 
+    const shadow = BlobShadowComponent.create({ radius: 0.45, opacity: 0.3 });
+
     root.add(visual);
     root.add(anim);
+    root.add(shadow);
 
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
   }
