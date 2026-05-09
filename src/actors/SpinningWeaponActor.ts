@@ -260,12 +260,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     world.addActor(warmupSoul);
     setTimeout(() => warmupSoul.destroy(), 2000);
 
-    // Pre-warm blood splatter materials (MeshBasicMaterial with transparency/double-side).
-    // Burst at y=-1000 creates drops that auto-cleanup via their own lifecycle.
-    this._bloodSplatter?.burst(new THREE.Vector3(0, -1000, 0));
-
     // Pre-warm weapon summon/dismiss VFX materials (additive blending, double-side).
     this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 3);
+
+    // Note: Blood splatter is warmed up after component creation below
 
     // Ensure audio manager exists (pre-loads all SFX)
     GameAudioManager.ensureExists(world);
@@ -280,6 +278,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     this._bloodSplatter = BloodSplatterComponent.create();
     this.rootComponent.add(this._bloodSplatter);
+
+    // Pre-warm blood splatter: burst pool to force mesh creation and GPU upload
+    this._bloodSplatter?.burst(new THREE.Vector3(0, -1000, 0));
 
     this._boomerangTrail = BoomerangTrailComponent.create();
     this.rootComponent.add(this._boomerangTrail);

@@ -3702,6 +3702,14 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "74da2ebb-a8c9-40f6-b435-194f76066c9c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "15a1fe02-70d6-44a6-93ee-14eee7938501"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c9fd3b37-5e71-44a1-b199-67f555b99bc0"
                 }
               ],
               "light": {
@@ -7388,6 +7396,14 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "24131b22-4a32-4220-9379-8bf473e76d13"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "82a88293-16fa-45b6-af5d-77da46edcdc0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7350983d-2393-4b16-9c1d-79ec7e664495"
                 }
               ],
               "light": {
@@ -12132,6 +12148,14 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "30eb0442-ac77-4a5d-8765-25b8f62ceede"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a19e6fb5-82a3-4afd-b6bd-d8499c2c469a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "911ae4a1-a863-490e-94b5-55c1aacad0dc"
                 }
               ],
               "light": {
@@ -21646,6 +21670,14 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "d4750f92-23e2-483e-93c8-a2e24be26586"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "67ff9d12-ab7a-46e3-a1b1-1de8565404a9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c87234f7-eefb-4894-9785-0eedb1f27633"
                 }
               ],
               "light": {
@@ -21787,6 +21819,14 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "3aaf9ce5-e31b-4775-b907-388886f2cece"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3b7b346f-f91e-44dc-a49b-7e23330b35f5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "a3e4e811-5973-42ed-b7c5-05fbaf2c6da5"
                 }
               ],
               "light": {
