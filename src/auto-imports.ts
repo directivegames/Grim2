@@ -14,6 +14,7 @@ import './actors/ZombieSpatialManager.ts';
 import './apply-grass-shader-engine-patch.ts';
 import './apply-npc-follow-offset-engine-patch.ts';
 import './components/movement/IsometricMovementComponent.ts';
+import './components/vfx/BlobShadowComponent.ts';
 import './components/vfx/BloodSplatterComponent.ts';
 import './components/vfx/BoomerangTrailComponent.ts';
 import './components/vfx/DustTrailComponent.ts';

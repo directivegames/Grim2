@@ -369,7 +369,7 @@
               1
             ]
           },
-          6.5
+          0.8
         ]
       }
     },
@@ -3606,6 +3606,38 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "4047b0b3-afd6-49a7-a705-afc7dd571931"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "83fd69cb-6c1f-451e-9f69-2aa3dac11f9b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "25cdf507-4545-4560-8e72-8a50178b7f3c"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "8850adb6-4186-4801-8d9d-9cbfb40c66e3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0c93bd98-a265-4892-a8dc-bf7cb9db7b0e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3f92f2be-2cc7-4950-b50a-1a793d0b148b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "63339c45-0623-4145-9d25-5ed1c18cd708"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5206247d-7ede-4575-92f8-6422c30aa08f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "c1d9cf86-5295-4a29-bcb8-4effef869d5d"
                 }
               ],
               "light": {
@@ -7259,6 +7291,38 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "7c6137c7-2877-4750-a741-c9d4c86a9bef"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "582d9138-3721-4ccd-ade3-8d27fc9fd250"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "0c56116e-2e88-4579-8803-e8a6064954b1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "3cf56a9d-8e8f-4b4e-ac96-dfd6c591f732"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "476353ba-3610-43b3-9562-ae43049e6e8f"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "f8b41ff1-40cc-41ea-ad43-6d82c50e533d"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "d150e5ab-3a9c-4bd2-90ad-6fb935dc5c7a"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "19d8f23d-9597-46ed-8820-bf13d3e9f243"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5283cd53-364e-4178-808b-0284a4a217a1"
                 }
               ],
               "light": {
@@ -7594,44 +7658,6 @@
       },
       "55": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor_441",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Halfgrass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              26.164775,
-              -1.039706,
-              10.320044
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.553343,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              10
-            ]
-          },
-          "uuid": "f920303ea117a521"
-        },
-        "uuid": "9c11618007f9859e"
-      },
-      "56": {
-        "$bc": "ENGINE.Actor",
         "name": "Actor_552",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -7668,45 +7694,7 @@
         },
         "uuid": "d4c98e72df5af8ad"
       },
-      "57": {
-        "$bc": "ENGINE.Actor",
-        "name": "Actor_449",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Halfgrass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -13.063701,
-              -1.021973,
-              10.207247
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.553343,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              10
-            ]
-          },
-          "uuid": "697934e5109d0815"
-        },
-        "uuid": "5a468a6ec793f8cf"
-      },
-      "58": {
+      "56": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_413",
         "rootComponent": {
@@ -7736,7 +7724,7 @@
         },
         "uuid": "254bf4b2d09a5d90"
       },
-      "59": {
+      "57": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block",
         "rootComponent": {
@@ -7764,7 +7752,7 @@
         },
         "uuid": "21f6ac7a236f5f28"
       },
-      "60": {
+      "58": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block_02",
         "rootComponent": {
@@ -7792,7 +7780,7 @@
         },
         "uuid": "070596465b083370"
       },
-      "61": {
+      "59": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block_03",
         "rootComponent": {
@@ -7820,7 +7808,7 @@
         },
         "uuid": "17820e4df415faad"
       },
-      "62": {
+      "60": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_553",
         "rootComponent": {
@@ -7850,7 +7838,7 @@
         },
         "uuid": "ddda7acd2e26bef5"
       },
-      "63": {
+      "61": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_554",
         "rootComponent": {
@@ -7880,7 +7868,7 @@
         },
         "uuid": "56a11cc85c3e9717"
       },
-      "64": {
+      "62": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_555",
         "rootComponent": {
@@ -7910,7 +7898,7 @@
         },
         "uuid": "a891f71406b18c32"
       },
-      "65": {
+      "63": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_556",
         "rootComponent": {
@@ -7940,7 +7928,7 @@
         },
         "uuid": "ae6b1fbd81035e3a"
       },
-      "66": {
+      "64": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_557",
         "rootComponent": {
@@ -7970,7 +7958,7 @@
         },
         "uuid": "f573fd94046818c6"
       },
-      "67": {
+      "65": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_559",
         "rootComponent": {
@@ -7983,7 +7971,7 @@
           "position": {
             "$bc": "v3",
             "_": [
-              48.56523,
+              48.554239,
               -1.025748,
               -2.477879
             ]
@@ -8000,7 +7988,7 @@
         },
         "uuid": "78c027fbc9bd6303"
       },
-      "68": {
+      "66": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_558",
         "rootComponent": {
@@ -8030,7 +8018,7 @@
         },
         "uuid": "d7302c54952a3a36"
       },
-      "69": {
+      "67": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_560",
         "rootComponent": {
@@ -8068,7 +8056,7 @@
         },
         "uuid": "9109612befcaf1f2"
       },
-      "70": {
+      "68": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_561",
         "rootComponent": {
@@ -8098,7 +8086,7 @@
         },
         "uuid": "69a84a40fd2841ba"
       },
-      "71": {
+      "69": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_562",
         "rootComponent": {
@@ -8136,7 +8124,7 @@
         },
         "uuid": "9d2110c0eb6b4495"
       },
-      "72": {
+      "70": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_563",
         "rootComponent": {
@@ -8174,7 +8162,7 @@
         },
         "uuid": "cef2062048ab78e0"
       },
-      "73": {
+      "71": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_427",
         "rootComponent": {
@@ -8204,7 +8192,7 @@
         },
         "uuid": "1c9c733a2b7ee64e"
       },
-      "74": {
+      "72": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_428",
         "rootComponent": {
@@ -8234,7 +8222,7 @@
         },
         "uuid": "dbfdaaf330f548cc"
       },
-      "75": {
+      "73": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_564",
         "rootComponent": {
@@ -8272,7 +8260,7 @@
         },
         "uuid": "ab31d4ea63508513"
       },
-      "76": {
+      "74": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_565",
         "rootComponent": {
@@ -8310,7 +8298,7 @@
         },
         "uuid": "5a39cc00d9164ab8"
       },
-      "77": {
+      "75": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_566",
         "rootComponent": {
@@ -8348,7 +8336,7 @@
         },
         "uuid": "da684fd97e8609f6"
       },
-      "78": {
+      "76": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_568",
         "rootComponent": {
@@ -8386,7 +8374,7 @@
         },
         "uuid": "9944820b9818f4d7"
       },
-      "79": {
+      "77": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_569",
         "rootComponent": {
@@ -8424,7 +8412,7 @@
         },
         "uuid": "36b50d5268ca8520"
       },
-      "80": {
+      "78": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block_04",
         "rootComponent": {
@@ -8435,9 +8423,9 @@
           "position": {
             "$bc": "v3",
             "_": [
-              33.577269,
+              43.570831,
               -0.208174,
-              -1.794411
+              -6.871634
             ]
           },
           "rotation": {
@@ -8452,7 +8440,7 @@
         },
         "uuid": "1c9adbe13331cae3"
       },
-      "81": {
+      "79": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block_05",
         "rootComponent": {
@@ -8480,7 +8468,7 @@
         },
         "uuid": "0b43c5d909ef2a5d"
       },
-      "82": {
+      "80": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block_06",
         "rootComponent": {
@@ -8508,7 +8496,7 @@
         },
         "uuid": "2865d6a5a8512957"
       },
-      "83": {
+      "81": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_430",
         "rootComponent": {
@@ -8538,7 +8526,7 @@
         },
         "uuid": "0bbfd8d60fb22fe9"
       },
-      "84": {
+      "82": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_431",
         "rootComponent": {
@@ -8568,7 +8556,7 @@
         },
         "uuid": "5fc6ef330442e183"
       },
-      "85": {
+      "83": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_571",
         "rootComponent": {
@@ -8606,7 +8594,7 @@
         },
         "uuid": "922c81375bae2e4b"
       },
-      "86": {
+      "84": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_572",
         "rootComponent": {
@@ -8644,7 +8632,7 @@
         },
         "uuid": "595e24ea5567074e"
       },
-      "87": {
+      "85": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_573",
         "rootComponent": {
@@ -8682,7 +8670,7 @@
         },
         "uuid": "b1279c0c5996af61"
       },
-      "88": {
+      "86": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_574",
         "rootComponent": {
@@ -8720,7 +8708,7 @@
         },
         "uuid": "fec1024ee40dfb3a"
       },
-      "89": {
+      "87": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_575",
         "rootComponent": {
@@ -8758,7 +8746,7 @@
         },
         "uuid": "4414a45c6b1ffeb9"
       },
-      "90": {
+      "88": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_576",
         "rootComponent": {
@@ -8796,7 +8784,7 @@
         },
         "uuid": "f94103f561fb9363"
       },
-      "91": {
+      "89": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_577",
         "rootComponent": {
@@ -8834,7 +8822,7 @@
         },
         "uuid": "d776bd51befd1cbe"
       },
-      "92": {
+      "90": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_578",
         "rootComponent": {
@@ -8872,7 +8860,7 @@
         },
         "uuid": "fa8e0f55b83cc412"
       },
-      "93": {
+      "91": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_585",
         "rootComponent": {
@@ -8902,7 +8890,7 @@
         },
         "uuid": "87fa57fff05955ee"
       },
-      "94": {
+      "92": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_434",
         "rootComponent": {
@@ -8932,7 +8920,7 @@
         },
         "uuid": "73da60faeb936ce6"
       },
-      "95": {
+      "93": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_438",
         "rootComponent": {
@@ -8962,7 +8950,7 @@
         },
         "uuid": "dfef4a5ecb92fdb9"
       },
-      "96": {
+      "94": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_458",
         "rootComponent": {
@@ -9000,7 +8988,7 @@
         },
         "uuid": "d28194b783498756"
       },
-      "97": {
+      "95": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_602",
         "rootComponent": {
@@ -9038,7 +9026,7 @@
         },
         "uuid": "44c6b214e6579109"
       },
-      "98": {
+      "96": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_603",
         "rootComponent": {
@@ -9053,7 +9041,7 @@
             "_": [
               48.552383,
               -0.979964,
-              17.580284
+              17.48997
             ]
           },
           "rotation": {
@@ -9076,7 +9064,7 @@
         },
         "uuid": "259a5ea9d03717b3"
       },
-      "99": {
+      "97": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_604",
         "rootComponent": {
@@ -9114,7 +9102,7 @@
         },
         "uuid": "e597205d190af77d"
       },
-      "100": {
+      "98": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_605",
         "rootComponent": {
@@ -9152,7 +9140,7 @@
         },
         "uuid": "4302f98d92b06faa"
       },
-      "101": {
+      "99": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_619",
         "rootComponent": {
@@ -9190,7 +9178,7 @@
         },
         "uuid": "b76453089d12aadb"
       },
-      "102": {
+      "100": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_620",
         "rootComponent": {
@@ -9228,7 +9216,7 @@
         },
         "uuid": "65e4a5e5d05e8a2d"
       },
-      "103": {
+      "101": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_621",
         "rootComponent": {
@@ -9266,7 +9254,7 @@
         },
         "uuid": "ecc993d8defd6790"
       },
-      "104": {
+      "102": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_622",
         "rootComponent": {
@@ -9296,7 +9284,7 @@
         },
         "uuid": "0dfed4b424083c5b"
       },
-      "105": {
+      "103": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_587",
         "rootComponent": {
@@ -9334,7 +9322,7 @@
         },
         "uuid": "94460665097b6307"
       },
-      "106": {
+      "104": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_588",
         "rootComponent": {
@@ -9372,7 +9360,7 @@
         },
         "uuid": "5f0d658e82233597"
       },
-      "107": {
+      "105": {
         "$bc": "ENGINE.Actor",
         "name": "Actor_464",
         "rootComponent": {
@@ -9402,7 +9390,7 @@
         },
         "uuid": "7a392bff97c64557"
       },
-      "108": {
+      "106": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Lampost_04",
         "rootComponent": {
@@ -12013,6 +12001,38 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "a0fc2d9b-925b-4805-be6f-05cad661e1c0"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1b0558da-6548-46f8-a4bf-0b309e3289c7"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "61d9aba1-d423-4885-8867-092719e3e426"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "09c371d8-e216-48a9-b1bf-3ecace5c6bc5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "76056b90-2be9-47c9-b52c-65528844bdc3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "58a4198c-9040-44a3-b410-643df658e3a2"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "26d88275-37ba-430c-af8b-211f56202027"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "fdd55b5d-c396-45ce-b683-544d5e66a12e"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "ebb93b0e-f717-4a70-8621-5ba6e364c5c3"
                 }
               ],
               "light": {
@@ -12062,7 +12082,7 @@
         },
         "uuid": "1551dcb0c5f38cc4"
       },
-      "109": {
+      "107": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Sign post",
         "rootComponent": {
@@ -12097,7 +12117,7 @@
         },
         "uuid": "509422cc3a807b62"
       },
-      "110": {
+      "108": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 468",
         "rootComponent": {
@@ -12135,45 +12155,7 @@
         },
         "uuid": "9287c64d843de8f0"
       },
-      "111": {
-        "$bc": "ENGINE.Actor",
-        "name": "Actor 469",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Grass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              38.789794,
-              -1.046201,
-              17.539978
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              10
-            ]
-          },
-          "uuid": "1bac6bc8e9124854"
-        },
-        "uuid": "e06a0bb2ccdcb1e1"
-      },
-      "112": {
+      "109": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Mailbox",
         "rootComponent": {
@@ -12208,7 +12190,7 @@
         },
         "uuid": "b71b108e8b51d87d"
       },
-      "113": {
+      "110": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Mailbox 02",
         "rootComponent": {
@@ -12243,7 +12225,7 @@
         },
         "uuid": "d6aedbb137159a43"
       },
-      "114": {
+      "111": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "shopping cart",
         "rootComponent": {
@@ -12270,7 +12252,7 @@
         },
         "uuid": "b532978a06071226"
       },
-      "115": {
+      "112": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 591",
         "rootComponent": {
@@ -12308,7 +12290,7 @@
         },
         "uuid": "ccf40b76a590abeb"
       },
-      "116": {
+      "113": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 593",
         "rootComponent": {
@@ -12346,7 +12328,7 @@
         },
         "uuid": "f336d8365030b287"
       },
-      "117": {
+      "114": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 591",
         "rootComponent": {
@@ -12384,7 +12366,7 @@
         },
         "uuid": "13a3f5ddbb1c346e"
       },
-      "118": {
+      "115": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "broken sign",
         "rootComponent": {
@@ -12419,7 +12401,7 @@
         },
         "uuid": "6befae44ed5f05e1"
       },
-      "119": {
+      "116": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 516",
         "rootComponent": {
@@ -12449,7 +12431,7 @@
         },
         "uuid": "1935ccb322f77c83"
       },
-      "120": {
+      "117": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 488",
         "rootComponent": {
@@ -12487,7 +12469,7 @@
         },
         "uuid": "64e35057e281585d"
       },
-      "121": {
+      "118": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 489",
         "rootComponent": {
@@ -12525,7 +12507,7 @@
         },
         "uuid": "c3d7034a5233a7bc"
       },
-      "122": {
+      "119": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 490",
         "rootComponent": {
@@ -12563,7 +12545,7 @@
         },
         "uuid": "3b4d26f2d4e21e76"
       },
-      "123": {
+      "120": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 491",
         "rootComponent": {
@@ -12601,7 +12583,7 @@
         },
         "uuid": "22a147b020b2cd93"
       },
-      "124": {
+      "121": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 492",
         "rootComponent": {
@@ -12639,7 +12621,7 @@
         },
         "uuid": "f32a1098c444de5a"
       },
-      "125": {
+      "122": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 586",
         "rootComponent": {
@@ -12677,7 +12659,7 @@
         },
         "uuid": "de125e7c02dd2af3"
       },
-      "126": {
+      "123": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 587",
         "rootComponent": {
@@ -12715,7 +12697,7 @@
         },
         "uuid": "2104fe1640217ba8"
       },
-      "127": {
+      "124": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 588",
         "rootComponent": {
@@ -12753,7 +12735,7 @@
         },
         "uuid": "0228fda76f9ec2cd"
       },
-      "128": {
+      "125": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 589",
         "rootComponent": {
@@ -12791,7 +12773,7 @@
         },
         "uuid": "6e4231919bcf9766"
       },
-      "129": {
+      "126": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 590",
         "rootComponent": {
@@ -12829,7 +12811,7 @@
         },
         "uuid": "fc4a047e568d1e66"
       },
-      "130": {
+      "127": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 601",
         "rootComponent": {
@@ -12844,7 +12826,7 @@
             "_": [
               54.891829,
               -1.010023,
-              7.371347
+              6.938933
             ]
           },
           "rotation": {
@@ -12867,7 +12849,7 @@
         },
         "uuid": "a8a949175cef2435"
       },
-      "131": {
+      "128": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 602",
         "rootComponent": {
@@ -12905,7 +12887,7 @@
         },
         "uuid": "615e91e21d146bea"
       },
-      "132": {
+      "129": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 603",
         "rootComponent": {
@@ -12943,7 +12925,7 @@
         },
         "uuid": "356bc25f0199f0ca"
       },
-      "133": {
+      "130": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 604",
         "rootComponent": {
@@ -12981,83 +12963,7 @@
         },
         "uuid": "d6ee3e761570efec"
       },
-      "134": {
-        "$bc": "ENGINE.Actor",
-        "name": "Actor 465",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Halfgrass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -22.959517,
-              -1.118276,
-              10.358874
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.553343,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              10
-            ]
-          },
-          "uuid": "9575f74d1b0be416"
-        },
-        "uuid": "b17ea71514e6ea81"
-      },
-      "135": {
-        "$bc": "ENGINE.Actor",
-        "name": "Actor 497",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Halfgrass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -29.765939,
-              -1.095944,
-              10.249533
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.553343,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              4.501276
-            ]
-          },
-          "uuid": "4c24f4927950e561"
-        },
-        "uuid": "470d25cb3e5224d9"
-      },
-      "136": {
+      "131": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "tombs",
         "rootComponent": {
@@ -13084,7 +12990,7 @@
         },
         "uuid": "af23e556920da57c"
       },
-      "137": {
+      "132": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "tombs 02",
         "rootComponent": {
@@ -13111,7 +13017,7 @@
         },
         "uuid": "236e308ba778b74b"
       },
-      "138": {
+      "133": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "tombs 03",
         "rootComponent": {
@@ -13138,7 +13044,7 @@
         },
         "uuid": "2d122b6c13878758"
       },
-      "139": {
+      "134": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "weapon",
         "rootComponent": {
@@ -13173,7 +13079,7 @@
         },
         "uuid": "99c1b23c0198918a"
       },
-      "140": {
+      "135": {
         "$bc": "GAME.BackgroundMusicActor",
         "$initOptions": {},
         "name": "BackgroundMusicActor_1",
@@ -13195,7 +13101,7 @@
         },
         "uuid": "b40e9ecadc99cfab"
       },
-      "141": {
+      "136": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grim.glb",
@@ -13269,7 +13175,7 @@
         },
         "uuid": "1c8b7e3c32ce99ed"
       },
-      "142": {
+      "137": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb",
@@ -13307,7 +13213,7 @@
         },
         "uuid": "499635f4f3f7010e"
       },
-      "143": {
+      "138": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/soul.glb",
@@ -13368,7 +13274,7 @@
         },
         "uuid": "36921ded804f6910"
       },
-      "144": {
+      "139": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 586",
         "rootComponent": {
@@ -13398,7 +13304,7 @@
         },
         "uuid": "27acb577c1574ad2"
       },
-      "145": {
+      "140": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 07",
         "rootComponent": {
@@ -13409,16 +13315,16 @@
           "position": {
             "$bc": "v3",
             "_": [
-              44.750343,
+              43.630773,
               -0.208174,
-              2.793494
+              0.524219
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
               0,
-              -0.209439,
+              1.012291,
               0
             ]
           },
@@ -13426,7 +13332,7 @@
         },
         "uuid": "edce5243c5f24db9"
       },
-      "146": {
+      "141": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 07",
         "rootComponent": {
@@ -13437,9 +13343,9 @@
           "position": {
             "$bc": "v3",
             "_": [
-              50.060786,
+              53.453848,
               -0.771897,
-              2.970027
+              0.277885
             ]
           },
           "rotation": {
@@ -13454,7 +13360,7 @@
         },
         "uuid": "66805a7b355dcaa9"
       },
-      "147": {
+      "142": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 494",
         "rootComponent": {
@@ -13492,7 +13398,7 @@
         },
         "uuid": "ac83cb60e6e0d379"
       },
-      "148": {
+      "143": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 614",
         "rootComponent": {
@@ -13522,7 +13428,7 @@
         },
         "uuid": "5c38bce6e180fcef"
       },
-      "149": {
+      "144": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 26",
@@ -13566,6 +13472,63 @@
               "uuid": "bd6b3e63e448b4ee"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "6b68d177-0c19-4f5c-b2c5-a1848d942bf1"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "82bcfc14-2489-4524-871d-de33a1cf21e6"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -13575,9 +13538,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "b1a4d40c083dcd6a"
+              "uuid": "ca4f53de-6da8-4aed-af3c-47d75737534d"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -13598,9 +13561,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "47ad3ae8f1c70965"
+              "uuid": "22a17e07-fbbd-43bc-b113-996b2441b83d"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -13652,7 +13615,7 @@
         },
         "uuid": "b0fd3e89390aa9f9"
       },
-      "150": {
+      "145": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 27",
@@ -13696,6 +13659,63 @@
               "uuid": "77b019141f0d038e"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "8ce29e44-f3bb-4c52-ad7e-8283d4d249c7"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "0a69e6de-9b4f-4534-9915-4c2032212f92"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -13705,9 +13725,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "4496a5c24f92939b"
+              "uuid": "eb1391c8-d3f6-432f-a9e9-df31a83c7324"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -13728,9 +13748,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "f00446d8780ba6ed"
+              "uuid": "0227335c-bd17-4016-94c6-89fd138fce60"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -13782,7 +13802,7 @@
         },
         "uuid": "362bd2b3984dcc45"
       },
-      "151": {
+      "146": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 28",
@@ -13826,6 +13846,63 @@
               "uuid": "e43544d93b4242ad"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "69da75d1-d5be-4685-8c27-542e55c77b76"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "6a7c2869-ca46-400e-a616-f4d0e5fd98b5"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -13835,9 +13912,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "d6a2b1aaff026a9c"
+              "uuid": "7f49b860-9a39-49bf-a8a9-07877d02a686"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -13858,9 +13935,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "eacfc0ee8bdea743"
+              "uuid": "30156677-df58-4a60-8e4c-fd5ffe1d70ff"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -13912,7 +13989,7 @@
         },
         "uuid": "7d61fdb77b787adb"
       },
-      "152": {
+      "147": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 33",
@@ -13956,6 +14033,63 @@
               "uuid": "0005926f43df1462"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "af769af5-4366-43ba-b006-b43ea63562af"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "dd325649-1d66-4861-b583-3d63668b6515"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -13965,9 +14099,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "9f5f9d42b23c5a4e"
+              "uuid": "734c16f8-1033-4b2e-ba79-4f1b3a3bbc4e"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -13988,9 +14122,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "0a250189cef2805c"
+              "uuid": "201ae4a3-fd60-4cd4-8ebf-0cf9a15c1fd5"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -14042,7 +14176,7 @@
         },
         "uuid": "9941672b897b5ed6"
       },
-      "153": {
+      "148": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 34",
@@ -14086,6 +14220,63 @@
               "uuid": "eadf3f43d79be0f9"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "894e5be9-4b95-43a1-b4ed-35c255efb179"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "b2c7a21e-ec6a-4c7d-b77d-0d7bae36d797"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -14095,9 +14286,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "cda2ecf5c1d0ed9f"
+              "uuid": "70d142da-54ab-4b40-a45c-9c8b1eb0a25b"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -14118,9 +14309,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "d6b80d9ab1285bb2"
+              "uuid": "a04cae7e-0298-4225-bb72-c560c6757618"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -14172,7 +14363,7 @@
         },
         "uuid": "32b81020807153be"
       },
-      "154": {
+      "149": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 35",
@@ -14216,6 +14407,63 @@
               "uuid": "e75c8e833d6df24e"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "af9fb041-4cb7-4cdd-b8e7-a2f8a273526a"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "a3c40cef-cb31-4bf0-b09a-e3c8cfd48540"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -14225,9 +14473,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "fbe4c4a72320151f"
+              "uuid": "f44785b0-1940-4146-9ac2-8201e7801947"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -14248,9 +14496,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "2ebe4393912087f1"
+              "uuid": "b0736dda-e5bb-44e6-9f40-40dc906e801c"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -14302,7 +14550,7 @@
         },
         "uuid": "7126e031c8f23eb9"
       },
-      "155": {
+      "150": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 36",
@@ -14346,6 +14594,63 @@
               "uuid": "6a811dec1b196fa3"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "593621d0-b3cf-4122-a8f1-e30546dd0e01"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "fabd3b40-b066-4908-8ed4-64b16562bba4"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -14355,9 +14660,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "c785dd39139967cb"
+              "uuid": "3a825c82-d746-4038-8059-16182661a87b"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -14378,9 +14683,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "25f94dc60a7fa034"
+              "uuid": "e5f97156-15bd-4e6f-ab87-04249a53885e"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -14432,7 +14737,7 @@
         },
         "uuid": "e004e35e6ccd2c47"
       },
-      "156": {
+      "151": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 37",
@@ -14476,6 +14781,63 @@
               "uuid": "b332823b48e0a6e6"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "53e99d47-41ef-41f9-b7c0-39e6e90a097c"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "64af88c7-fd92-444b-b2b3-795d6f81c3ca"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -14485,9 +14847,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "381fb6673dff6b3e"
+              "uuid": "19b014e1-462d-4ff3-8a57-e888a5b6c542"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -14508,9 +14870,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "ddf416154fda5a8e"
+              "uuid": "a90bec70-c079-414b-9ad6-0c85804f27fa"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -14562,7 +14924,7 @@
         },
         "uuid": "6a37fcb4efbc8062"
       },
-      "157": {
+      "152": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 600",
         "rootComponent": {
@@ -14575,7 +14937,7 @@
           "position": {
             "$bc": "v3",
             "_": [
-              61.25051,
+              61.36225,
               -1.010023,
               -8.81153
             ]
@@ -14592,7 +14954,7 @@
         },
         "uuid": "b1ad1400e69b2006"
       },
-      "158": {
+      "153": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 613",
         "rootComponent": {
@@ -14622,7 +14984,7 @@
         },
         "uuid": "f5f474c6237bcf10"
       },
-      "159": {
+      "154": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 615",
         "rootComponent": {
@@ -14652,7 +15014,7 @@
         },
         "uuid": "cf8b2568dd0c075e"
       },
-      "160": {
+      "155": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 616",
         "rootComponent": {
@@ -14682,7 +15044,7 @@
         },
         "uuid": "ecfdff83aaf8cd6c"
       },
-      "161": {
+      "156": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 621",
         "rootComponent": {
@@ -14712,7 +15074,7 @@
         },
         "uuid": "e9ea1b700ed49a03"
       },
-      "162": {
+      "157": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 623",
         "rootComponent": {
@@ -14742,7 +15104,7 @@
         },
         "uuid": "68780379de46dd95"
       },
-      "163": {
+      "158": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grim2.glb",
@@ -14823,7 +15185,7 @@
         },
         "uuid": "7e97a710b8d5f00b"
       },
-      "164": {
+      "159": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 79",
@@ -14867,6 +15229,63 @@
               "uuid": "3fc493fa2d229779"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "5d8f73be-c668-4c77-ab31-f50350d80b34"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "678079cc-e6a1-4082-8554-5b7939a6c3db"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -14876,9 +15295,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "01e75846830efd81"
+              "uuid": "f6133514-8680-4f1f-99fc-8c7ee8870274"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -14899,9 +15318,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "11c33d0d7286c1e2"
+              "uuid": "3cf9d696-eb64-4f9b-8521-2da7dd72493d"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -14953,7 +15372,7 @@
         },
         "uuid": "7eedccca9b92443a"
       },
-      "165": {
+      "160": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 80",
@@ -14997,6 +15416,63 @@
               "uuid": "81c813cc611fcd13"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "82ebd6a5-cd17-48ca-9c05-ac17bbe55d6f"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "047b57ae-0c3f-495f-be8f-c3b143a4d533"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15006,9 +15482,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "1f4c46829eae3f63"
+              "uuid": "aa98a85a-fb38-476c-8023-f705c72a75e9"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15029,9 +15505,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "3e606bdb5032876d"
+              "uuid": "65ac8136-9656-4025-96a1-10ac516348d5"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15083,7 +15559,7 @@
         },
         "uuid": "8fc8de6795c2e20d"
       },
-      "166": {
+      "161": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 81",
@@ -15127,6 +15603,63 @@
               "uuid": "de1701b0bae18ec9"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "feff4937-5e5a-44e1-a54f-b6af10ae8cc4"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "54445ee5-8185-44c0-96ae-d506636e56f4"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15136,9 +15669,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "7fe64ea16b9fbb7a"
+              "uuid": "db4d4980-784b-4422-a21b-fece3e36c1ca"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15159,9 +15692,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "3e89837ba6e8cb77"
+              "uuid": "e3b86b72-82d7-46e0-90da-e8233deaf463"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15213,7 +15746,7 @@
         },
         "uuid": "588a647c74272381"
       },
-      "167": {
+      "162": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 82",
@@ -15257,6 +15790,63 @@
               "uuid": "e5c73702595181be"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "8a41949c-0d0d-4743-a1bc-43fb6e4468f0"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "1d0183fa-c560-4604-acfa-e991c3d181a7"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15266,9 +15856,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "69d9ffd39e9dc932"
+              "uuid": "cd01cc74-0477-44fc-a60a-f36aa498e3b3"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15289,9 +15879,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "bd5bc185e5ca17e7"
+              "uuid": "93a30b77-3263-461c-a963-6a106ac3ef9d"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15343,7 +15933,7 @@
         },
         "uuid": "f108ecbde587c933"
       },
-      "168": {
+      "163": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 83",
@@ -15387,6 +15977,63 @@
               "uuid": "d4707e7509f88a6a"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "3ace18a6-f49a-4bd1-aff2-d632a377902b"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "fe5c094d-2810-4cf9-b2c9-59bf154d4f3c"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15396,9 +16043,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "b461bc6303b53389"
+              "uuid": "e37177c0-f896-4fcd-9e7a-3e5ccfc285db"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15419,9 +16066,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "3e94ebe12e9b413c"
+              "uuid": "1d7b13f0-b224-46db-8972-d1af724d357c"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15473,7 +16120,7 @@
         },
         "uuid": "2fa24c1e949f8374"
       },
-      "169": {
+      "164": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 84",
@@ -15517,6 +16164,63 @@
               "uuid": "5db0dc9822714d3a"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "a2f1c2a1-1482-42a4-94e9-f8ac58f09cf3"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "0a10f1b6-5047-4cc2-978a-1db7ace756cd"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15526,9 +16230,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "400d15077a4891e0"
+              "uuid": "8fa6ada8-c281-414c-9218-2e3d96da109f"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15549,9 +16253,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "95b3eb9fd1563c27"
+              "uuid": "66d23524-c6bd-44e9-807a-662742b7d9db"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15603,7 +16307,7 @@
         },
         "uuid": "dd9e65b23a6ac700"
       },
-      "170": {
+      "165": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 85",
@@ -15647,6 +16351,63 @@
               "uuid": "f4d44663d19e7b70"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "b06c71ea-6b83-4eb7-8f84-d2d48db4eae6"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "6a2de8b8-aa1f-4554-b327-919a0d101e4b"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15656,9 +16417,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "6de7ab14e0d388c3"
+              "uuid": "90aaf585-e5c8-44c7-a481-524fa690ab93"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15679,9 +16440,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "97487db996b7e5ba"
+              "uuid": "9a26bbb5-bb0f-42c0-996e-22fd7a51b27f"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15733,7 +16494,7 @@
         },
         "uuid": "9308636aec1efb65"
       },
-      "171": {
+      "166": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 86",
@@ -15777,6 +16538,63 @@
               "uuid": "af31691bbd6c8976"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "134979d2-9ca1-48a6-b7f6-08519c69a53d"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "eaaf00bb-48ea-4385-915b-8911357ea5a6"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15786,9 +16604,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "a83d16ad52e1eb58"
+              "uuid": "514db428-20b6-43bb-a378-9fa8a07cd319"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15809,9 +16627,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "a361dfd934ca7f50"
+              "uuid": "f3a94e63-3dc2-44ec-b436-d84570c6a451"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15863,7 +16681,7 @@
         },
         "uuid": "093963fdae29772a"
       },
-      "172": {
+      "167": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 87",
@@ -15907,6 +16725,63 @@
               "uuid": "a24249e16f9449a2"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "b441eead-4e6f-454b-86b5-72422257f85f"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "f5d4dacd-ff70-411f-8439-e0cb6037e85b"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -15916,9 +16791,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "e51d7838181a2abd"
+              "uuid": "76eca09e-5502-4dcf-b09e-12597aaab0c9"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -15939,9 +16814,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "462dc33a4dd4f0e7"
+              "uuid": "b1b3a943-30d8-4874-9a27-d6e769e49e2e"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -15993,7 +16868,7 @@
         },
         "uuid": "6644dba12537d187"
       },
-      "173": {
+      "168": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 432",
         "rootComponent": {
@@ -16031,7 +16906,7 @@
         },
         "uuid": "00733f97343c9d16"
       },
-      "174": {
+      "169": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/fistofannoyance.glb",
@@ -16100,7 +16975,7 @@
         },
         "uuid": "6fb8ba2f2685715f"
       },
-      "175": {
+      "170": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 10",
         "rootComponent": {
@@ -16113,7 +16988,7 @@
             "_": [
               45.118251,
               -0.208174,
-              9.691016
+              6.160818
             ]
           },
           "rotation": {
@@ -16128,7 +17003,7 @@
         },
         "uuid": "0d440ee87c2d2e39"
       },
-      "176": {
+      "171": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 11",
         "rootComponent": {
@@ -16141,7 +17016,7 @@
             "_": [
               40.620551,
               -0.208174,
-              9.839602
+              6.309404
             ]
           },
           "rotation": {
@@ -16156,7 +17031,7 @@
         },
         "uuid": "65bcf9b30bb50813"
       },
-      "177": {
+      "172": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 12",
         "rootComponent": {
@@ -16169,7 +17044,7 @@
             "_": [
               50.683365,
               -0.208174,
-              8.425356
+              4.895158
             ]
           },
           "rotation": {
@@ -16184,7 +17059,7 @@
         },
         "uuid": "5d8b746a278ac9af"
       },
-      "178": {
+      "173": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 13",
         "rootComponent": {
@@ -16197,7 +17072,7 @@
             "_": [
               53.62105,
               -0.208174,
-              8.012489
+              4.482291
             ]
           },
           "rotation": {
@@ -16212,7 +17087,7 @@
         },
         "uuid": "87328e76cbb66acc"
       },
-      "179": {
+      "174": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 06",
         "rootComponent": {
@@ -16255,7 +17130,7 @@
         },
         "uuid": "79fd225480471068"
       },
-      "180": {
+      "175": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -16285,7 +17160,7 @@
         },
         "uuid": "edfa214aa5e9b0fc"
       },
-      "181": {
+      "176": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -16323,7 +17198,7 @@
         },
         "uuid": "fc9185f5b0921ea0"
       },
-      "182": {
+      "177": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -16361,7 +17236,7 @@
         },
         "uuid": "21900ebfc8b1b199"
       },
-      "183": {
+      "178": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -16391,7 +17266,7 @@
         },
         "uuid": "19f8ce6a6cfb1878"
       },
-      "184": {
+      "179": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/tunnelredone.glb"
@@ -16429,7 +17304,7 @@
         },
         "uuid": "04b63349915b5ccd"
       },
-      "185": {
+      "180": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Spookyhousemoody.glb"
@@ -16451,7 +17326,7 @@
         },
         "uuid": "65fc2560960fe444"
       },
-      "186": {
+      "181": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/storemoody.glb"
@@ -16526,7 +17401,7 @@
         },
         "uuid": "1cc8678572c62bb1"
       },
-      "187": {
+      "182": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -16556,7 +17431,7 @@
         },
         "uuid": "e8cc1b51fa6b8940"
       },
-      "188": {
+      "183": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -16594,7 +17469,7 @@
         },
         "uuid": "ffa442f470033f2c"
       },
-      "189": {
+      "184": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 470",
         "rootComponent": {
@@ -16632,7 +17507,7 @@
         },
         "uuid": "67e0bb456d378deb"
       },
-      "190": {
+      "185": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 472",
         "rootComponent": {
@@ -16670,7 +17545,7 @@
         },
         "uuid": "72c818f35fa5445f"
       },
-      "191": {
+      "186": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/churchmoody.glb"
@@ -16700,7 +17575,7 @@
         },
         "uuid": "582aaa06b36185af"
       },
-      "192": {
+      "187": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/moodyhouse4.glb"
@@ -16730,7 +17605,7 @@
         },
         "uuid": "76ffbb96f1c7f6ca"
       },
-      "193": {
+      "188": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Spookyhousemoody.glb"
@@ -16752,7 +17627,7 @@
         },
         "uuid": "47834ad3756d71fc"
       },
-      "194": {
+      "189": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/tunnelredone.glb"
@@ -16782,7 +17657,7 @@
         },
         "uuid": "641151a6273430cf"
       },
-      "195": {
+      "190": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -16812,7 +17687,7 @@
         },
         "uuid": "0e76f2dc4959c9d8"
       },
-      "196": {
+      "191": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -16842,7 +17717,7 @@
         },
         "uuid": "c52a589f811852f9"
       },
-      "197": {
+      "192": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -16872,7 +17747,7 @@
         },
         "uuid": "c2049c83c78bcd69"
       },
-      "198": {
+      "193": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 567",
         "rootComponent": {
@@ -16910,7 +17785,7 @@
         },
         "uuid": "2cebcbc6afe93d90"
       },
-      "199": {
+      "194": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 570",
         "rootComponent": {
@@ -16948,7 +17823,7 @@
         },
         "uuid": "2e6e381b4e7cf49e"
       },
-      "200": {
+      "195": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 571",
         "rootComponent": {
@@ -16986,7 +17861,7 @@
         },
         "uuid": "4e6e1f572f156187"
       },
-      "201": {
+      "196": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 459",
         "rootComponent": {
@@ -17024,7 +17899,7 @@
         },
         "uuid": "337c0d4ca98c8495"
       },
-      "202": {
+      "197": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 460",
         "rootComponent": {
@@ -17062,7 +17937,7 @@
         },
         "uuid": "0dd8c8fecc6686ca"
       },
-      "203": {
+      "198": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 459",
         "rootComponent": {
@@ -17100,7 +17975,7 @@
         },
         "uuid": "a7f722c64789d681"
       },
-      "204": {
+      "199": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 461",
         "rootComponent": {
@@ -17138,7 +18013,7 @@
         },
         "uuid": "8828e5d3868bec51"
       },
-      "205": {
+      "200": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 459",
         "rootComponent": {
@@ -17176,7 +18051,7 @@
         },
         "uuid": "38f7c5082bbe9931"
       },
-      "206": {
+      "201": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 462",
         "rootComponent": {
@@ -17214,7 +18089,7 @@
         },
         "uuid": "ed8fcbfab3ed9e57"
       },
-      "207": {
+      "202": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17252,7 +18127,7 @@
         },
         "uuid": "8f905553d10755ee"
       },
-      "208": {
+      "203": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17290,7 +18165,7 @@
         },
         "uuid": "1f87d9a386b9e25b"
       },
-      "209": {
+      "204": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17328,7 +18203,7 @@
         },
         "uuid": "cb68394bdf9f622c"
       },
-      "210": {
+      "205": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 474",
         "rootComponent": {
@@ -17366,7 +18241,7 @@
         },
         "uuid": "3cd1dc6dfd1572d1"
       },
-      "211": {
+      "206": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 25",
         "rootComponent": {
@@ -17392,7 +18267,7 @@
         },
         "uuid": "860ee2d8e3d3f1c0"
       },
-      "212": {
+      "207": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17430,7 +18305,7 @@
         },
         "uuid": "a4c73763f5770a0e"
       },
-      "213": {
+      "208": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17468,7 +18343,7 @@
         },
         "uuid": "6097f7531d3ea517"
       },
-      "214": {
+      "209": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -17506,7 +18381,7 @@
         },
         "uuid": "6ccedc3e1bc19edf"
       },
-      "215": {
+      "210": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -17544,7 +18419,7 @@
         },
         "uuid": "644b86fd18b189c9"
       },
-      "216": {
+      "211": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -17582,7 +18457,7 @@
         },
         "uuid": "7f6d2b1696c9e807"
       },
-      "217": {
+      "212": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -17620,7 +18495,7 @@
         },
         "uuid": "c527ae5a81f6df65"
       },
-      "218": {
+      "213": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -17658,7 +18533,7 @@
         },
         "uuid": "571f1ff430a768c8"
       },
-      "219": {
+      "214": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -17696,7 +18571,7 @@
         },
         "uuid": "d3b8d25e17fcec86"
       },
-      "220": {
+      "215": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "name": "Hemisphere Light",
@@ -17732,7 +18607,7 @@
         },
         "uuid": "e85a2da907fc1400"
       },
-      "221": {
+      "216": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 417",
         "rootComponent": {
@@ -17762,7 +18637,7 @@
         },
         "uuid": "daf070d828b63491"
       },
-      "222": {
+      "217": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 418",
         "rootComponent": {
@@ -17792,7 +18667,7 @@
         },
         "uuid": "29fc8ad0542abd91"
       },
-      "223": {
+      "218": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 420",
         "rootComponent": {
@@ -17822,7 +18697,7 @@
         },
         "uuid": "96950216de8bfec4"
       },
-      "224": {
+      "219": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 421",
         "rootComponent": {
@@ -17852,7 +18727,7 @@
         },
         "uuid": "1cc962651be90e0c"
       },
-      "225": {
+      "220": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17890,7 +18765,7 @@
         },
         "uuid": "b0cc5cca31a83019"
       },
-      "226": {
+      "221": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17928,7 +18803,7 @@
         },
         "uuid": "40d21709126b5ad5"
       },
-      "227": {
+      "222": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -17966,7 +18841,7 @@
         },
         "uuid": "871d3cccdf64dc5b"
       },
-      "228": {
+      "223": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18004,7 +18879,7 @@
         },
         "uuid": "6d0ad8b949b3060b"
       },
-      "229": {
+      "224": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18042,7 +18917,7 @@
         },
         "uuid": "bbbcc2524f43c0d2"
       },
-      "230": {
+      "225": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18080,7 +18955,7 @@
         },
         "uuid": "fde98a2d7bf24d59"
       },
-      "231": {
+      "226": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 422",
         "rootComponent": {
@@ -18118,7 +18993,7 @@
         },
         "uuid": "9c4eda0caf5594c2"
       },
-      "232": {
+      "227": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -18156,7 +19031,7 @@
         },
         "uuid": "b4a5440cef842c1a"
       },
-      "233": {
+      "228": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -18194,7 +19069,7 @@
         },
         "uuid": "35b9620aad696a58"
       },
-      "234": {
+      "229": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18232,7 +19107,7 @@
         },
         "uuid": "96b6349584e9b960"
       },
-      "235": {
+      "230": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18270,7 +19145,7 @@
         },
         "uuid": "c521ae8a9c9aa051"
       },
-      "236": {
+      "231": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18308,7 +19183,7 @@
         },
         "uuid": "65794843010ae241"
       },
-      "237": {
+      "232": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -18346,7 +19221,7 @@
         },
         "uuid": "a53848fd5774e89b"
       },
-      "238": {
+      "233": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18376,7 +19251,7 @@
         },
         "uuid": "2d416c151eb19594"
       },
-      "239": {
+      "234": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18406,7 +19281,7 @@
         },
         "uuid": "d6ad8194974ff700"
       },
-      "240": {
+      "235": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18436,7 +19311,7 @@
         },
         "uuid": "4fbc8694ab9b1e6a"
       },
-      "241": {
+      "236": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18466,7 +19341,7 @@
         },
         "uuid": "47c576bb3375bfd2"
       },
-      "242": {
+      "237": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18496,7 +19371,7 @@
         },
         "uuid": "3c2c0155f5807361"
       },
-      "243": {
+      "238": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18526,7 +19401,7 @@
         },
         "uuid": "26ce096267c8f9ee"
       },
-      "244": {
+      "239": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18556,7 +19431,7 @@
         },
         "uuid": "94435cdd83faaeb6"
       },
-      "245": {
+      "240": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18586,7 +19461,7 @@
         },
         "uuid": "55a23a4cb4741bc1"
       },
-      "246": {
+      "241": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18624,7 +19499,7 @@
         },
         "uuid": "8a65ae8d5ed0468b"
       },
-      "247": {
+      "242": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18662,7 +19537,7 @@
         },
         "uuid": "b15280232a40ff1b"
       },
-      "248": {
+      "243": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 495",
         "rootComponent": {
@@ -18675,17 +19550,9 @@
           "position": {
             "$bc": "v3",
             "_": [
-              70.913659,
+              71.27334,
               -1.046201,
-              -11.066813
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -1.570796,
-              0
+              -15.230379
             ]
           },
           "scale": {
@@ -18700,7 +19567,7 @@
         },
         "uuid": "940b63b26f4d6266"
       },
-      "249": {
+      "244": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 496",
         "rootComponent": {
@@ -18715,7 +19582,7 @@
             "_": [
               70.853075,
               -1.04772,
-              -20.462058
+              -25.155226
             ]
           },
           "rotation": {
@@ -18738,7 +19605,7 @@
         },
         "uuid": "09d524dd4a28c078"
       },
-      "250": {
+      "245": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/moodyhouse5.glb"
@@ -18783,7 +19650,7 @@
         },
         "uuid": "60b89e66d203ceed"
       },
-      "251": {
+      "246": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 424",
         "rootComponent": {
@@ -18821,7 +19688,7 @@
         },
         "uuid": "e694bba47178d268"
       },
-      "252": {
+      "247": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 425",
         "rootComponent": {
@@ -18859,7 +19726,7 @@
         },
         "uuid": "1a26743ba5510760"
       },
-      "253": {
+      "248": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18889,7 +19756,7 @@
         },
         "uuid": "f724cd8855bb3eb0"
       },
-      "254": {
+      "249": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18919,7 +19786,7 @@
         },
         "uuid": "ba7e4d8b797947a2"
       },
-      "255": {
+      "250": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18949,7 +19816,7 @@
         },
         "uuid": "ef84857aa42f5a45"
       },
-      "256": {
+      "251": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -18979,7 +19846,7 @@
         },
         "uuid": "dde15289a16118a9"
       },
-      "257": {
+      "252": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -19009,7 +19876,7 @@
         },
         "uuid": "c581af1d475b5fb2"
       },
-      "258": {
+      "253": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -19039,7 +19906,7 @@
         },
         "uuid": "7b0a804230df6000"
       },
-      "259": {
+      "254": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -19069,121 +19936,7 @@
         },
         "uuid": "2dac1f97e98792d3"
       },
-      "260": {
-        "$bc": "ENGINE.Actor",
-        "name": "Actor 442",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Halfgrass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              16.171329,
-              -1.039706,
-              10.320044
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.553343,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              10
-            ]
-          },
-          "uuid": "3948850bca667b84"
-        },
-        "uuid": "d94d391d2616ec1b"
-      },
-      "261": {
-        "$bc": "ENGINE.Actor",
-        "name": "Actor 443",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Halfgrass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              6.38213,
-              -1.039706,
-              10.320044
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.553343,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              10
-            ]
-          },
-          "uuid": "616b687faa5922ea"
-        },
-        "uuid": "af1f37b6c39d1cd2"
-      },
-      "262": {
-        "$bc": "ENGINE.Actor",
-        "name": "Actor 444",
-        "rootComponent": {
-          "$bc": "ENGINE.MeshComponent",
-          "children": {
-            "$length": 1
-          },
-          "material": "@project/assets/textures/Halfgrass.material.json",
-          "name": "MeshComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -3.610137,
-              -1.039706,
-              10.320044
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.553343,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              10,
-              0.2,
-              10
-            ]
-          },
-          "uuid": "bb6f8c5061f3dfab"
-        },
-        "uuid": "a944ccd2535d353c"
-      },
-      "263": {
+      "255": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 426",
         "rootComponent": {
@@ -19213,7 +19966,7 @@
         },
         "uuid": "2c7179558b1a733e"
       },
-      "264": {
+      "256": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -19251,7 +20004,7 @@
         },
         "uuid": "a161a148bf3c9c60"
       },
-      "265": {
+      "257": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -19281,7 +20034,7 @@
         },
         "uuid": "bdb0a2de1f0f4cea"
       },
-      "266": {
+      "258": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 538",
         "rootComponent": {
@@ -19319,7 +20072,7 @@
         },
         "uuid": "caad6be66f9e6a83"
       },
-      "267": {
+      "259": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 539",
         "rootComponent": {
@@ -19357,7 +20110,7 @@
         },
         "uuid": "a67dfa4d61082398"
       },
-      "268": {
+      "260": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -19387,7 +20140,7 @@
         },
         "uuid": "5790f3d177f8e3df"
       },
-      "269": {
+      "261": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -19457,7 +20210,7 @@
         },
         "uuid": "68a252f281d4640d"
       },
-      "270": {
+      "262": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19495,7 +20248,7 @@
         },
         "uuid": "40b04bbcc0a553f2"
       },
-      "271": {
+      "263": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19533,7 +20286,7 @@
         },
         "uuid": "60e10b122e2109b3"
       },
-      "272": {
+      "264": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19571,7 +20324,7 @@
         },
         "uuid": "18ecc1a159dc4bdf"
       },
-      "273": {
+      "265": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19609,7 +20362,7 @@
         },
         "uuid": "6252e3fb1b598011"
       },
-      "274": {
+      "266": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19647,7 +20400,7 @@
         },
         "uuid": "eeb1495e60a3e100"
       },
-      "275": {
+      "267": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19685,7 +20438,7 @@
         },
         "uuid": "7846aa8042f9c10f"
       },
-      "276": {
+      "268": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19723,7 +20476,7 @@
         },
         "uuid": "c934923396ce7854"
       },
-      "277": {
+      "269": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19761,7 +20514,7 @@
         },
         "uuid": "4bf60e99be72a243"
       },
-      "278": {
+      "270": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19799,7 +20552,7 @@
         },
         "uuid": "650f1a9179725026"
       },
-      "279": {
+      "271": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19837,7 +20590,7 @@
         },
         "uuid": "10653a9ff73db47e"
       },
-      "280": {
+      "272": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19875,7 +20628,7 @@
         },
         "uuid": "853909da15d131ba"
       },
-      "281": {
+      "273": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19913,7 +20666,7 @@
         },
         "uuid": "bdc68b4c8ba0f6ff"
       },
-      "282": {
+      "274": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19951,7 +20704,7 @@
         },
         "uuid": "72becaf5ae7f69b8"
       },
-      "283": {
+      "275": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -19989,7 +20742,7 @@
         },
         "uuid": "cc8a0b0888486f3d"
       },
-      "284": {
+      "276": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -20027,7 +20780,7 @@
         },
         "uuid": "e044a6be3b81a7cd"
       },
-      "285": {
+      "277": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 07",
         "rootComponent": {
@@ -20070,7 +20823,7 @@
         },
         "uuid": "a3edbec673673a9d"
       },
-      "286": {
+      "278": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 08",
         "rootComponent": {
@@ -20113,7 +20866,7 @@
         },
         "uuid": "4267c36e13419971"
       },
-      "287": {
+      "279": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -20143,7 +20896,7 @@
         },
         "uuid": "335601ea9f2466c5"
       },
-      "288": {
+      "280": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -20173,7 +20926,7 @@
         },
         "uuid": "7f54473a55b300b8"
       },
-      "289": {
+      "281": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -20211,7 +20964,7 @@
         },
         "uuid": "b6dc456adc0d3512"
       },
-      "290": {
+      "282": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/hedgeredon.glb"
@@ -20249,7 +21002,7 @@
         },
         "uuid": "6178ece24eea81af"
       },
-      "291": {
+      "283": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -20287,7 +21040,7 @@
         },
         "uuid": "86cf7cfa501d3f6f"
       },
-      "292": {
+      "284": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -20325,7 +21078,7 @@
         },
         "uuid": "10aa0db24c19a17b"
       },
-      "293": {
+      "285": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -20363,7 +21116,7 @@
         },
         "uuid": "055c8894d0faaf93"
       },
-      "294": {
+      "286": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -20401,7 +21154,7 @@
         },
         "uuid": "a1b442b737f873c1"
       },
-      "295": {
+      "287": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 09",
         "rootComponent": {
@@ -20444,7 +21197,7 @@
         },
         "uuid": "6f6ff6e403c725e0"
       },
-      "296": {
+      "288": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 424",
         "rootComponent": {
@@ -20482,7 +21235,7 @@
         },
         "uuid": "65c694f17d1136e5"
       },
-      "297": {
+      "289": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 427",
         "rootComponent": {
@@ -20520,7 +21273,7 @@
         },
         "uuid": "b03b6ad8423456ac"
       },
-      "298": {
+      "290": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 428",
         "rootComponent": {
@@ -20558,7 +21311,7 @@
         },
         "uuid": "2097c5caa3f9e0ac"
       },
-      "299": {
+      "291": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -20596,7 +21349,7 @@
         },
         "uuid": "b2e4efa286e535f4"
       },
-      "300": {
+      "292": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 414",
         "rootComponent": {
@@ -20634,7 +21387,7 @@
         },
         "uuid": "a7ce0447a39938e2"
       },
-      "301": {
+      "293": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 415",
         "rootComponent": {
@@ -20672,7 +21425,7 @@
         },
         "uuid": "6ccec93102ee1489"
       },
-      "302": {
+      "294": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -20698,6 +21451,38 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "0f56b813-89d1-4ff3-ad04-8ab7586ce007"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "1a23c4bd-3d33-4688-a82a-b2a719a2f551"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "79b7970e-37b9-4d84-a9e9-648980a61e46"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7a290230-4d88-4729-8602-d0153656620b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "7fce7f25-cc3c-4a77-b4ab-a1a86a84fbda"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "355a4291-45d5-4b30-9de3-a14ff95bb4c1"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "86002efd-2f6d-4dbd-a6c0-5c7c1bc1ecb9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "05471ab0-0ee1-4c54-b4d9-819a169c5941"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "45586d5f-d9dd-4526-ab47-9104cb5702ef"
                 }
               ],
               "light": {
@@ -20743,6 +21528,38 @@
                 {
                   "$bc": "THREE.Object3D",
                   "uuid": "89c04408-1b31-40f1-84f5-0b24676be4e5"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "880f8f19-a708-4299-acb4-276c503e180b"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "71c9d7a1-6680-4e62-9928-d52c24c0b3d9"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "dee41208-d893-4d26-8161-969f6b9815c3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "2ed7737c-a553-4189-a3a9-3c1d0a283b99"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "89dabcc0-14a0-4eca-89f5-232e1fb75393"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "00a9c213-27f7-4a33-9259-b6edf05bd9b4"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "60bca209-3294-4b70-8105-20a807cf3bc3"
+                },
+                {
+                  "$bc": "THREE.Object3D",
+                  "uuid": "5532c459-70d1-449b-ab38-a79a043f7289"
                 }
               ],
               "light": {
@@ -20798,7 +21615,7 @@
         },
         "uuid": "c7526853ec84563c"
       },
-      "303": {
+      "295": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 88",
@@ -20842,6 +21659,63 @@
               "uuid": "11ef69c04c7cee7e"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "fa40d1f5-674b-464d-aea3-c5c0f04d7a79"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "aaaff44e-c9a6-492c-94e0-854b42c0ac88"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -20851,9 +21725,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "50fd1adc75bdb1b7"
+              "uuid": "04bd92c8-17fa-49b3-8eaf-4283657d4b23"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -20874,9 +21748,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "d43daaf28bbe3b51"
+              "uuid": "a38f69d2-dc99-46a0-a576-0b9b8950debf"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -20928,7 +21802,7 @@
         },
         "uuid": "1fe146c61c5eee42"
       },
-      "304": {
+      "296": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 89",
@@ -20972,6 +21846,63 @@
               "uuid": "48012b884bb93f25"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "f6c1a2f2-628c-4726-a3f1-4b46edfb1728"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "ece35ec3-1d7a-4f95-8fa2-8b6ab71a9730"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -20981,9 +21912,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "ea436510c7d1f0ff"
+              "uuid": "2aa52389-81fc-4266-8627-823971a1a79e"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21004,9 +21935,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "4cb640a0d997588b"
+              "uuid": "53a276f7-d47a-47fd-b87a-dfe463199d9d"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21058,7 +21989,7 @@
         },
         "uuid": "f354cdf2236bad95"
       },
-      "305": {
+      "297": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 90",
@@ -21102,6 +22033,63 @@
               "uuid": "2a3c88ff25ac292c"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "eb74e591-e760-4b25-8b73-9259a479b006"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "fe5a3720-8155-454b-bbdd-b82dbab18680"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -21111,9 +22099,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "4e6ba9cef66bb44e"
+              "uuid": "d204a6b9-5059-4256-a47d-a6956012f04f"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21134,9 +22122,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "41ee1892bd30a9cb"
+              "uuid": "5deeb4ea-38a5-423e-82a5-74f392fdf992"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21188,7 +22176,7 @@
         },
         "uuid": "cb2a117222b83288"
       },
-      "306": {
+      "298": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 91",
@@ -21232,6 +22220,63 @@
               "uuid": "3912392b5ba35546"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "8d73b15f-b090-4eef-a2df-b2fe1e4e82fd"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "317d62b4-1270-42d4-8c4b-5bb12d592944"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -21241,9 +22286,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "737c46fc7fb24e52"
+              "uuid": "617fcb96-1b2b-48fe-b209-cdcd3fcb076f"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21264,9 +22309,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "522b18692f8b2e3d"
+              "uuid": "78adbfde-4467-430b-a017-f65cb9bf0caa"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21318,7 +22363,7 @@
         },
         "uuid": "61e87872d86e8c8a"
       },
-      "307": {
+      "299": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 92",
@@ -21362,6 +22407,63 @@
               "uuid": "698e24d3df7ca084"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "7c2ea92b-b039-4439-aa26-7843a7ecba2d"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "5984c0ba-ee1d-4a8a-8c06-3098b8607bf0"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -21371,9 +22473,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "0b0b7bc5d3db73b0"
+              "uuid": "51cb946c-5640-4fdb-864d-1a9c495f2903"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21394,9 +22496,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "38b61643b80c6fbf"
+              "uuid": "c6407f03-2b63-436e-a63f-61a011e6d128"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21448,7 +22550,7 @@
         },
         "uuid": "3410c1c1366dff67"
       },
-      "308": {
+      "300": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 93",
@@ -21492,6 +22594,63 @@
               "uuid": "604b3c0986746685"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "47dbca19-b4fd-4904-91f5-79527a310807"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "3966ea5d-53f4-46d4-a415-e7c869a529b1"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -21501,9 +22660,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "18ddf8a50977d6fe"
+              "uuid": "18aa98d0-4cdf-46fd-9f71-105d54d130f2"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21524,9 +22683,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "36ed510b86ba794d"
+              "uuid": "68c08d68-4138-4f55-9905-013a0a480ab3"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21578,7 +22737,7 @@
         },
         "uuid": "03f9cdda652818a1"
       },
-      "309": {
+      "301": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 94",
@@ -21622,6 +22781,63 @@
               "uuid": "268b5ec2e0d884b8"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "06f908d2-42a4-4e01-8591-60905f5907bf"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "d7046288-1896-4702-b189-5033985543dd"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -21631,9 +22847,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "80527e276535bb95"
+              "uuid": "3ae5efd1-8d3b-4000-a374-20bc05c33d3f"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21654,9 +22870,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "563215979560d940"
+              "uuid": "424c93e0-2cb7-4207-8233-ca62577bde87"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21708,7 +22924,7 @@
         },
         "uuid": "05c4d40bf8e979a6"
       },
-      "310": {
+      "302": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 95",
@@ -21752,6 +22968,63 @@
               "uuid": "8bf6f5bc7ce0c48f"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "615f73a0-f78a-446b-b1df-aa3280df7389"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "0869a6e0-59ee-40dd-965d-2609f2a17432"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -21761,9 +23034,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "d010f56c504d08e8"
+              "uuid": "6b68bd7a-2c3d-4a23-9efb-e578cb59d12e"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21784,9 +23057,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "29f7bd4467062101"
+              "uuid": "52bf276f-2669-4f6a-8ccd-86017cc80155"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21838,7 +23111,7 @@
         },
         "uuid": "2f2e8e8523be2d6a"
       },
-      "311": {
+      "303": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 96",
@@ -21882,6 +23155,63 @@
               "uuid": "c714d8ec4bc39daf"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "6cc54763-4e03-48b4-96d5-2fbe2352b5ee"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "6f8f87f3-ea28-4358-a3e0-817241e2f7f3"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -21891,9 +23221,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "0a67cbec3accb0f9"
+              "uuid": "9e74e46f-f516-49b7-a6c1-0d1caccf554e"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -21914,9 +23244,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "0e91f1c9ec960fbb"
+              "uuid": "d49c13a7-904c-4d80-8085-6959880cff14"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -21968,7 +23298,7 @@
         },
         "uuid": "5fdcf75b599599f6"
       },
-      "312": {
+      "304": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 97",
@@ -22012,6 +23342,63 @@
               "uuid": "6ba8436943ab905c"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "07bc74ad-834b-4767-b042-1be289f9e439"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "835d32c2-d624-4009-8c82-85f146957e87"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -22021,9 +23408,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "5bb7851a4389f05a"
+              "uuid": "11deb6c2-fe3b-45c6-8e0c-a52b9913712f"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -22044,9 +23431,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "cce8f1dae77f2699"
+              "uuid": "5d527034-4a2b-45b2-9e53-ac4de99ff54d"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -22098,7 +23485,7 @@
         },
         "uuid": "23ece0b578572963"
       },
-      "313": {
+      "305": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 98",
@@ -22142,6 +23529,63 @@
               "uuid": "7b5f908e4a95bf81"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "2eeb33af-35c4-4a0c-b236-ce26a499a047"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "db180e1f-d72a-48ea-9572-7560134b91ab"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -22151,9 +23595,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "4f656871220d3228"
+              "uuid": "1dca4cf4-f510-4d8e-9c7c-3728c25ca6f7"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -22174,9 +23618,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "d7cf2a35d3ceda07"
+              "uuid": "5c323ac0-b669-47ec-9507-231998cb0ea2"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -22228,7 +23672,7 @@
         },
         "uuid": "996f40c971d6a85d"
       },
-      "314": {
+      "306": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 99",
@@ -22272,6 +23716,63 @@
               "uuid": "3cb5dc9bbe0d7d26"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "dabf26cf-e48a-4759-9044-98b61ebff6cb"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "80d871a3-3737-4b8b-80d3-f327a5b4df29"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -22281,9 +23782,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "b7eb8414a952e8ad"
+              "uuid": "2f89f112-e757-48fd-8376-932914cf57b6"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -22304,9 +23805,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "fa655c266cf46ec8"
+              "uuid": "696b6e83-f9f3-48a5-923f-6dd0f0c253b3"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -22358,7 +23859,7 @@
         },
         "uuid": "bed1271f0eb9eabc"
       },
-      "315": {
+      "307": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 100",
@@ -22402,6 +23903,63 @@
               "uuid": "149f12121ed83c91"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "94dd147a-fc69-4250-8f1b-dd0d94d93117"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "7f15ba24-b58f-4b18-904e-f8bae61c251d"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -22411,9 +23969,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "220f36580c205ac1"
+              "uuid": "7f4a0fdf-ac66-42f9-b015-31325f556228"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -22434,9 +23992,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "809474d319029f72"
+              "uuid": "d642c849-316e-4e18-a568-0f01febc2167"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -22488,7 +24046,7 @@
         },
         "uuid": "db681eaaa5785088"
       },
-      "316": {
+      "308": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 101",
@@ -22532,6 +24090,63 @@
               "uuid": "d959b5676918882f"
             },
             "3": {
+              "$bc": "GAME.BlobShadowComponent",
+              "children": {
+                "$length": 1
+              },
+              "geometry": {
+                "$bc": "THREE.CircleGeometry",
+                "_": [
+                  0.45,
+                  32,
+                  0,
+                  6.283185
+                ]
+              },
+              "material": {
+                "$bc": "THREE.MeshBasicMaterial",
+                "color": {
+                  "$bc": "c",
+                  "_": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "depthWrite": false,
+                "opacity": 0.3,
+                "transparent": true,
+                "userData": {
+                  "colorSpaceFixed": true
+                },
+                "uuid": "d5bf1585-a2f4-4234-82d5-bc347380633a"
+              },
+              "name": "BlobShadowComponent",
+              "physicsOptions": {
+                "enabled": false
+              },
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.02,
+                  0
+                ]
+              },
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "userData": {
+                "objectFlags": 1
+              },
+              "uuid": "72a88f6b-45c2-4b83-b104-9e10854111ca"
+            },
+            "4": {
               "$bc": "ENGINE.CharacterStatsComponent",
               "attackCooldown": 0.65,
               "attackRange": 1.05,
@@ -22541,9 +24156,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "ab4e810e0279890e"
+              "uuid": "c225b3e2-0aa3-40bb-9581-31f8c1a1601c"
             },
-            "4": {
+            "5": {
               "$bc": "ENGINE.NpcMovementComponent",
               "characterControllerOptions": {
                 "applyImpulsesToDynamicBodies": false,
@@ -22564,9 +24179,9 @@
               "userData": {
                 "objectFlags": 1
               },
-              "uuid": "db33a308f121509f"
+              "uuid": "1cfca52d-af6a-4379-bcd5-ee49512a1dfb"
             },
-            "$length": 5
+            "$length": 6
           },
           "geometry": {
             "$bc": "THREE.CapsuleGeometry",
@@ -22618,7 +24233,7 @@
         },
         "uuid": "d134bfe79836fbb0"
       },
-      "317": {
+      "309": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -22700,7 +24315,7 @@
         },
         "uuid": "039dff2fbdec726a"
       },
-      "318": {
+      "310": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -22782,7 +24397,7 @@
         },
         "uuid": "254a8f66e037328d"
       },
-      "319": {
+      "311": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -22864,9 +24479,153 @@
         },
         "uuid": "4103a7420bc8567b"
       },
-      "320": {
+      "312": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/treemoody.glb"
+        },
+        "name": "Treemoody 19",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/treemoody.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              59.227931,
+              -1.07026,
+              -19.856456
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.7,
+              0.7,
+              0.7
+            ]
+          },
+          "uuid": "17fc7a8d9e0f52fa"
+        },
+        "uuid": "01855606fdbf5280"
+      },
+      "313": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/treemoody.glb"
+        },
+        "name": "Treemoody 20",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/treemoody.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              62.025833,
+              -1.07026,
+              -23.394668
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              0.872665,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.7,
+              0.7,
+              0.7
+            ]
+          },
+          "uuid": "029900b1633e6f28"
+        },
+        "uuid": "bc8a067027099761"
+      },
+      "314": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/treemoody.glb"
+        },
+        "name": "Treemoody 21",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/treemoody.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              59.527551,
+              -1.07026,
+              -28.791706
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              0.872665,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.7,
+              0.7,
+              0.7
+            ]
+          },
+          "uuid": "996d13c1bcdcbe60"
+        },
+        "uuid": "651d2c0fe46be98b"
+      },
+      "315": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/treemoody.glb"
+        },
+        "name": "Treemoody 22",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/treemoody.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              64.56721,
+              -1.07026,
+              -16.61992
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              0.872665,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.7,
+              0.7,
+              0.7
+            ]
+          },
+          "uuid": "fe46530c4270c70e"
+        },
+        "uuid": "bbbdb592ae4c4ecb"
+      },
+      "316": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor 442",
+        "name": "Actor 477",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
           "children": {
@@ -22877,17 +24636,17 @@
           "position": {
             "$bc": "v3",
             "_": [
-              26.164775,
-              -1.039706,
-              20.196924
+              6.112825,
+              -1.046201,
+              10.321357
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
-              -3.141593,
-              -1.553343,
-              -3.141593
+              0,
+              1.570796,
+              0
             ]
           },
           "scale": {
@@ -22898,13 +24657,165 @@
               10
             ]
           },
-          "uuid": "87c226c419883660"
+          "uuid": "5574d5f8f1abadbb"
         },
-        "uuid": "ff8efbfd3028db97"
+        "uuid": "5c58f3753977ec9f"
+      },
+      "317": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 476",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Halfgrass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              16.095603,
+              -1.046201,
+              10.321357
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "5ea8ffd9cc9ff23b"
+        },
+        "uuid": "27cf3c8ce437a948"
+      },
+      "318": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 471",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Halfgrass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              26.093929,
+              -1.046201,
+              10.351007
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "3171e35bb5a369f8"
+        },
+        "uuid": "e3f0e31544a4e428"
+      },
+      "319": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 475",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Halfgrass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              25.987889,
+              -1.046201,
+              20.263771
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              -1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "8c0726cef767c4e3"
+        },
+        "uuid": "6f1ef79b05c70363"
+      },
+      "320": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 482",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Halfgrass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              16.005714,
+              -1.046201,
+              20.263771
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              -1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "240f860a279219bf"
+        },
+        "uuid": "2f07eb642c15ccf9"
       },
       "321": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor 445",
+        "name": "Actor 483",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
           "children": {
@@ -22915,17 +24826,17 @@
           "position": {
             "$bc": "v3",
             "_": [
-              16.257349,
-              -1.039706,
-              20.196924
+              6.042979,
+              -1.046201,
+              20.263771
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
-              3.141593,
-              -1.553343,
-              3.141593
+              0,
+              -1.570796,
+              0
             ]
           },
           "scale": {
@@ -22936,13 +24847,13 @@
               10
             ]
           },
-          "uuid": "a950136c1e1ff865"
+          "uuid": "47882dcaf589efb9"
         },
-        "uuid": "9d3a831d3ba10eaf"
+        "uuid": "71c354b404e2eb36"
       },
       "322": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor 446",
+        "name": "Actor 484",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
           "children": {
@@ -22953,17 +24864,17 @@
           "position": {
             "$bc": "v3",
             "_": [
-              6.280825,
-              -1.039706,
-              20.196924
+              -3.929967,
+              -1.046201,
+              20.263771
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
-              3.141593,
-              -1.553343,
-              3.141593
+              0,
+              -1.570796,
+              0
             ]
           },
           "scale": {
@@ -22974,13 +24885,13 @@
               10
             ]
           },
-          "uuid": "37f83a536a792944"
+          "uuid": "ef7d706e560d3156"
         },
-        "uuid": "522a9301ec1f660d"
+        "uuid": "07c3c76fa59e4947"
       },
       "323": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor 447",
+        "name": "Actor 485",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
           "children": {
@@ -22991,17 +24902,17 @@
           "position": {
             "$bc": "v3",
             "_": [
-              -3.701374,
-              -1.039706,
-              20.196924
+              -13.890406,
+              -1.046201,
+              20.263771
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
-              3.141593,
-              -1.553343,
-              3.141593
+              0,
+              -1.570796,
+              0
             ]
           },
           "scale": {
@@ -23012,13 +24923,13 @@
               10
             ]
           },
-          "uuid": "feaf5ba53c2b191b"
+          "uuid": "17a2308a01b50cbb"
         },
-        "uuid": "8dba867765dcd13f"
+        "uuid": "37d23b66f224ce84"
       },
       "324": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor 448",
+        "name": "Actor 486",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
           "children": {
@@ -23029,17 +24940,17 @@
           "position": {
             "$bc": "v3",
             "_": [
-              -13.652817,
-              -1.039706,
-              20.196924
+              -23.767817,
+              -1.046201,
+              20.263771
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
-              3.141593,
-              -1.553343,
-              3.141593
+              0,
+              -1.570796,
+              0
             ]
           },
           "scale": {
@@ -23050,13 +24961,13 @@
               10
             ]
           },
-          "uuid": "842d6b51b669786d"
+          "uuid": "9d7680aa7554ed7d"
         },
-        "uuid": "883d02d0e088e9e5"
+        "uuid": "0e91c5259c32dc6c"
       },
       "325": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor 449",
+        "name": "Actor 487",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
           "children": {
@@ -23067,17 +24978,55 @@
           "position": {
             "$bc": "v3",
             "_": [
-              -23.652568,
-              -1.039706,
-              20.196924
+              -31.78068,
+              -1.046201,
+              20.263771
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
-              3.141593,
-              -1.553343,
-              3.141593
+              0,
+              -1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              6.08107
+            ]
+          },
+          "uuid": "38a905942b65bc70"
+        },
+        "uuid": "a7c60ed613a10496"
+      },
+      "326": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 478",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Halfgrass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -3.864852,
+              -1.046201,
+              10.321357
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
             ]
           },
           "scale": {
@@ -23088,13 +25037,291 @@
               10
             ]
           },
-          "uuid": "b7a8440b543a0346"
+          "uuid": "8f0eaf5cd63ab523"
         },
-        "uuid": "43981c2dc70a5cc1"
+        "uuid": "f762cd4ee7775987"
       },
-      "326": {
+      "327": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 41",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -27.395331,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "6c51743ac5aab12f"
+        },
+        "uuid": "f172d0d926faaa20"
+      },
+      "328": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 42",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -19.372661,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "834569ff09da27ef"
+        },
+        "uuid": "c9d9803427ffe0e1"
+      },
+      "329": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 43",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -11.427596,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "6791aad4961d7f47"
+        },
+        "uuid": "1c64a0ea74ae334e"
+      },
+      "330": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 44",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -3.13267,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "18f35b1b229a1b1b"
+        },
+        "uuid": "0c1393190f9b212d"
+      },
+      "331": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 45",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              4.915409,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "86ad9e9e9deece0d"
+        },
+        "uuid": "36123af8257103bc"
+      },
+      "332": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 46",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              12.889223,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "2d3fc9edd2b23b3b"
+        },
+        "uuid": "d2c677cd9b257f4a"
+      },
+      "333": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 47",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              20.996642,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "effc171454d6daeb"
+        },
+        "uuid": "4f3bfb9b5f6daa9f"
+      },
+      "334": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/hedgeredon.glb"
+        },
+        "name": "Hedgeredon 48",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/hedgeredon.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              26.683061,
+              -1.019639,
+              20.64995
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "ef90207efc2218e9"
+        },
+        "uuid": "8cf07d14366ff386"
+      },
+      "335": {
         "$bc": "ENGINE.Actor",
-        "name": "Actor 450",
+        "name": "Actor 469",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Grass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              38.789794,
+              -1.046201,
+              17.622739
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "3a3cb17e5f978a24"
+        },
+        "uuid": "b73bc5a6d00ec0da"
+      },
+      "336": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 493",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
           "children": {
@@ -23105,17 +25332,17 @@
           "position": {
             "$bc": "v3",
             "_": [
-              -31.54359,
-              -1.039706,
-              20.196924
+              -25.596037,
+              -1.046201,
+              10.307065
             ]
           },
           "rotation": {
             "$bc": "e",
             "_": [
-              3.141593,
-              -1.553343,
-              3.141593
+              0,
+              1.570796,
+              0
             ]
           },
           "scale": {
@@ -23123,14 +25350,90 @@
             "_": [
               10,
               0.2,
-              5.999602
+              10
             ]
           },
-          "uuid": "ea22007b47e4f8e6"
+          "uuid": "bc46e99a24c8e6b6"
         },
-        "uuid": "b6558a1a3659c59f"
+        "uuid": "fbc585b2484c472f"
       },
-      "$length": 327
+      "337": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 497",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Halfgrass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -15.731651,
+              -1.046201,
+              10.307065
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "08888db4bac93266"
+        },
+        "uuid": "730563a884808ebb"
+      },
+      "338": {
+        "$bc": "ENGINE.Actor",
+        "name": "Actor 498",
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "material": "@project/assets/textures/Halfgrass.material.json",
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -13.812329,
+              -1.046201,
+              10.307065
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              10,
+              0.2,
+              10
+            ]
+          },
+          "uuid": "892849a02760283c"
+        },
+        "uuid": "5739e29a382435e8"
+      },
+      "$length": 339
     },
     "editorData": {
       "sceneTree": {
@@ -23815,76 +26118,6 @@
                     "nodeType": "actor"
                   },
                   {
-                    "id": "5a468a6ec793f8cf",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "b17ea71514e6ea81",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "470d25cb3e5224d9",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "9c11618007f9859e",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "ff8efbfd3028db97",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "9d3a831d3ba10eaf",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "522a9301ec1f660d",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "8dba867765dcd13f",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "883d02d0e088e9e5",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "43981c2dc70a5cc1",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "b6558a1a3659c59f",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "d94d391d2616ec1b",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "af1f37b6c39d1cd2",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
-                    "id": "a944ccd2535d353c",
-                    "isExpanded": false,
-                    "nodeType": "actor"
-                  },
-                  {
                     "id": "00733f97343c9d16",
                     "isExpanded": false,
                     "nodeType": "actor"
@@ -23900,12 +26133,62 @@
                     "nodeType": "actor"
                   },
                   {
-                    "id": "e06a0bb2ccdcb1e1",
+                    "id": "b73bc5a6d00ec0da",
                     "isExpanded": false,
                     "nodeType": "actor"
                   },
                   {
                     "id": "3cd1dc6dfd1572d1",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "6f1ef79b05c70363",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "2f07eb642c15ccf9",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "71c354b404e2eb36",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "07c3c76fa59e4947",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "37d23b66f224ce84",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "0e91c5259c32dc6c",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "fbc585b2484c472f",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "730563a884808ebb",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "5739e29a382435e8",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "a7c60ed613a10496",
                     "isExpanded": false,
                     "nodeType": "actor"
                   },
@@ -24046,6 +26329,46 @@
                   },
                   {
                     "id": "6178ece24eea81af",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "f172d0d926faaa20",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "c9d9803427ffe0e1",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "1c64a0ea74ae334e",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "0c1393190f9b212d",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "36123af8257103bc",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "d2c677cd9b257f4a",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "4f3bfb9b5f6daa9f",
+                    "isExpanded": false,
+                    "nodeType": "actor"
+                  },
+                  {
+                    "id": "8cf07d14366ff386",
                     "isExpanded": false,
                     "nodeType": "actor"
                   },
@@ -24637,6 +26960,26 @@
             "nodeType": "actor"
           },
           {
+            "id": "01855606fdbf5280",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "bc8a067027099761",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "651d2c0fe46be98b",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "bbbdb592ae4c4ecb",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
             "id": "335601ea9f2466c5",
             "isExpanded": false,
             "nodeType": "actor"
@@ -24808,6 +27151,26 @@
           },
           {
             "id": "f3b6edce5a651ad2",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "5c58f3753977ec9f",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "f762cd4ee7775987",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "27cf3c8ce437a948",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "e3f0e31544a4e428",
             "isExpanded": false,
             "nodeType": "actor"
           }

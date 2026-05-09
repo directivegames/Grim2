@@ -1,20 +1,20 @@
 {
-  "$version": 2,
   "$root": {
-    "uuid": "5e790333-d204-4f84-95d9-48ae3987c345",
+    "$bc": "THREE.MeshStandardMaterial",
+    "aoMapIntensity": 0.83,
+    "bumpScale": 0.84,
+    "envMapIntensity": 0.97,
+    "lightMapIntensity": 0.48,
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "46008b20-1826-4257-9f31-bb0664112e62",
+      "url": "@project/assets/textures/intersectionredone.png"
+    },
     "name": "Intersection",
     "userData": {
       "colorSpaceFixed": true
     },
-    "map": {
-      "$uuid": "ac4e9336-848a-4a93-83d2-cdbaac8dc8cd",
-      "url": "@project/assets/textures/intersection.png",
-      "$bc": "ENGINE.UrlTexture"
-    },
-    "lightMapIntensity": 0.48,
-    "aoMapIntensity": 0.83,
-    "bumpScale": 0.84,
-    "envMapIntensity": 0.97,
-    "$bc": "THREE.MeshStandardMaterial"
-  }
+    "uuid": "5e790333-d204-4f84-95d9-48ae3987c345"
+  },
+  "$version": 2
 }
