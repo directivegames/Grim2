@@ -22,7 +22,7 @@ const FIST_START_Y = -3.5;
 const FIST_PEAK_Y = -0.1;
 
 const RISE_DURATION     = 0.26;  // fast punch up
-const PAUSE_DURATION    = 0.38;  // brief hold at top
+const PAUSE_DURATION    = 0.18;  // brief hold at top (reduced by 0.2s)
 const RETRACT_DURATION  = 0.20;  // very quick pull-back
 
 const FIST_HIT_RADIUS   = 2.4;
@@ -200,9 +200,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
           this._phaseElapsed = 0;
           // Park the fist far underground (stays rendered so shader stays warm)
           this._setFistPosition(-1000);
-          // Restore normal speed - VFX will continue at normal time
-          const w = this.getWorld();
-          if (w) slomoManager.resetIfPriority(w, FIST_SLOMO_PRIORITY);
+          // NOTE: slomo now stays active until actor is destroyed (doEndPlay)
         }
         break;
       }
@@ -409,7 +407,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
   protected override doEndPlay(): void {
     this._cleanupVFX();
-    // Safety: restore slomo if we're the current priority
+    // Restore slomo when fist is truly gone (after all VFX finishes)
     const world = this.getWorld();
     if (world) slomoManager.resetIfPriority(world, FIST_SLOMO_PRIORITY);
     super.doEndPlay();

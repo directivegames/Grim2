@@ -1,16 +1,16 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-const PARTICLE_LIFETIME = 0.35;
-const SPLATTER_COUNT    = 4;
+const PARTICLE_LIFETIME = 0.55;
+const SPLATTER_COUNT    = 12;
 
-const DROP_GEO = new THREE.PlaneGeometry(0.08, 0.12);
+const DROP_GEO = new THREE.PlaneGeometry(0.32, 0.45);
 
-/** Pre-baked blood color palette — avoids per-burst Color allocations. */
+/** Bright red chunky blood — no dark tones, fully opaque. */
 const BLOOD_COLORS = [
-  new THREE.Color(0x8a0a0a),
-  new THREE.Color(0xb51515),
-  new THREE.Color(0x5c0808),
+  new THREE.Color(0xff0000),
+  new THREE.Color(0xff1111),
+  new THREE.Color(0xff2222),
 ];
 
 /** Shared scratch vectors for orientation math in burst(). */
@@ -43,9 +43,9 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
 
       const material = new THREE.MeshBasicMaterial({
         color,
-        transparent: true,
-        opacity: 0.9,
-        depthWrite: false,
+        transparent: false,
+        opacity: 1.0,
+        depthWrite: true,
         side: THREE.DoubleSide,
       });
 
@@ -53,14 +53,18 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
       mesh.position.copy(worldPos);
       mesh.position.y += randomBetween(0.2, 0.7);
 
+      // Random angle with upward/outward bias (flies off from zombie)
       const angle  = randomBetween(0, Math.PI * 2);
-      const upBias = randomBetween(0.3, 1.0);
-      const speed  = randomBetween(3, 7);
+      const upBias = randomBetween(0.6, 1.2);
+      const speed  = randomBetween(5, 11);
+
+      // Add outward bias away from center
+      const outwardBias = 1.3;
 
       const velocity = new THREE.Vector3(
-        Math.cos(angle) * speed * randomBetween(0.5, 1.0),
+        Math.cos(angle) * speed * outwardBias,
         upBias * speed,
-        Math.sin(angle) * speed * randomBetween(0.5, 1.0),
+        Math.sin(angle) * speed * outwardBias,
       );
 
       // Orient drop along velocity using shared scratch vectors
@@ -95,7 +99,8 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
 
       drop.velocity.y -= 12 * deltaTime;
       drop.mesh.position.addScaledVector(drop.velocity, deltaTime);
-      drop.mesh.material.opacity = 0.9 * Math.max(0, 1 - progress);
+      // Snap off at end instead of fading — keeps blood fully opaque
+      drop.mesh.visible = progress < 1;
 
       if (progress >= 1) {
         drop.mesh.material.dispose();

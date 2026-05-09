@@ -4,7 +4,7 @@ import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 const KILL_WINDOW_MS           = 2000;  // kills within this real-time window count toward streak
 const STREAK_THRESHOLD         = 5;     // kills needed to trigger slow-mo
 const SLOMO_VALUE              = 0.12;  // 12% speed - more dramatic bullet time
-const SLOMO_DURATION_MS        = 2800;  // 2.8 seconds - longer epic moment
+const SLOMO_DURATION_MS        = 4500;  // 4.5 seconds - longer epic moment
 const SHAKE_INTENSITY          = 1.2;   // stronger camera rumble
 const SHAKE_DURATION           = 1.0;   // shake lasts full duration
 const POST_STREAK_COOLDOWN_MS  = 2000;  // real-time ms before streak can fire again (shorter for more fun)

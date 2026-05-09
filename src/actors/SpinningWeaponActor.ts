@@ -24,7 +24,6 @@ import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { SoulActor } from './SoulActor.js';
-import { requestHitStopSlomo, endHitStopSlomo } from './KillStreakTracker.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
 
@@ -72,7 +71,7 @@ const WEAPON_DAMAGE    = 25;
 const HIT_COOLDOWN     = 0.4;
 
 /** Duration (seconds) of each attack. */
-const ATTACK_DURATIONS = [0.38, 0.38, 0.60] as const;
+const ATTACK_DURATIONS = [0.22, 0.22, 0.38] as const;
 
 // ─── Boomerang constants ─────────────────────────────────────────────────────
 
@@ -292,9 +291,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
 
-    // Watchdog: restore slomo after 110ms and accumulate pause time.
-    this._tickHitStop();
-
     const player = this.getWorld()?.getFirstPlayerPawn();
 
     // Boomerang takes priority — runs independently of melee
@@ -316,10 +312,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._baseQuatCaptured = true;
     }
 
-    // Real elapsed time minus hit-stop pause = actual attack progress
+    // Attack progress based on real elapsed time
     const nowMs = performance.now();
     const realElapsedMs = nowMs - this._attackStartMs;
-    const attackElapsedSec = Math.max(0, (realElapsedMs - this._hitStopPausedMs) / 1000);
+    const attackElapsedSec = realElapsedMs / 1000;
 
     const duration = ATTACK_DURATIONS[this._comboIndex];
     const rawProgress = Math.min(attackElapsedSec / duration, 1);
@@ -364,7 +360,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     if (rawProgress >= 1) {
       this._comboIndex = ((this._comboIndex + 1) % 3) as AttackIndex;
       this._isAttacking = false;
-      this._hitStopPausedMs = 0; // Reset pause accumulator for next attack
       this._setWeaponVisible(false);
       this._slashComponent?.stopTrail();
 
@@ -498,8 +493,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._orbitAngle       = this._attackStartAngle;
     this._attackStartMs    = performance.now();
     this._isAttacking      = true;
-    this._hitStopPausedMs  = 0;        // Reset pause accumulator
-    this._hitStopTriggeredThisAttack = false; // Reset hit stop for new attack
     this._hasPrevWeaponPos = false;    // Reset swept detection
     this._queuedMelee      = false;    // Clear any buffered input
     this._setWeaponVisible(true);
@@ -647,12 +640,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       // Blood splatter at hit location
       this._bloodSplatter?.burst(this._scratchZombiePos);
 
-      // Floating damage number + hit stop
+      // Floating damage number
       this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE);
-      this._triggerHitStop();
 
+      // Camera shake — increased for better feedback
       if (player instanceof IsometricPlayerPawn) {
-        player.triggerScreenShake(0.1, 0.2);
+        player.triggerScreenShake(0.25, 0.35);
       }
     }
   }
@@ -781,56 +774,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Floating damage number
     this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE);
 
-    // Hit stop — brief global pause for impact weight
-    this._triggerHitStop();
-
+    // Camera shake — increased for better feedback
     if (player instanceof IsometricPlayerPawn) {
-      player.triggerScreenShake(0.15, 0.25);
+      player.triggerScreenShake(0.35, 0.4);
     }
-  }
-
-  // ── Hit stop ──────────────────────────────────────────────────────────────
-
-  /** Real-time ms when the current hit stop was started (0 = none active). */
-  private _hitStopStartMs   = 0;
-  private _hitStopActive    = false;
-  /** Total ms of hit-stop pause accumulated during current attack. */
-  private _hitStopPausedMs  = 0;
-  /** Track when we entered hit stop to accumulate pause time. */
-  private _hitStopPauseStartMs = 0;
-  /** Track if we've triggered hit stop for the current attack (one per swing). */
-  private _hitStopTriggeredThisAttack = false;
-
-  private _tickHitStop(): void {
-    if (!this._hitStopActive) return;
-
-    const now = performance.now();
-    if (now - this._hitStopStartMs < 110) return;
-
-    // Hit stop ended - accumulate pause time
-    this._hitStopPausedMs += now - this._hitStopPauseStartMs;
-    this._hitStopActive = false;
-
-    const world = this.getWorld();
-    if (world) endHitStopSlomo(world);
-  }
-
-  private _triggerHitStop(): void {
-    // Only one hit-stop per attack swing - consistent feel, prevents multi-hit spam
-    if (this._hitStopTriggeredThisAttack) return;
-    if (this._hitStopActive) return; // Don't stack if watchdog hasn't fired yet
-
-    const world = this.getWorld();
-    if (!world) return;
-
-    // Use priority system - will fail if kill streak or fist is active
-    if (!requestHitStopSlomo(world)) return;
-
-    const now = performance.now();
-    this._hitStopTriggeredThisAttack = true;
-    this._hitStopStartMs    = now;
-    this._hitStopPauseStartMs = now;
-    this._hitStopActive     = true;
   }
 
   // ── Floating damage numbers ───────────────────────────────────────────────
