@@ -659,14 +659,20 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         hitLocation: this._scratchZombiePos.clone(),
         hitNormal: new THREE.Vector3(0, 1, 0),
       };
-      zombie.getComponent(ENGINE.CharacterStatsComponent)?.takeDamage(WEAPON_DAMAGE, hitInfo);
+      const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
+      let isFatal = false;
+      if (stats) {
+        const healthBefore = stats.getCurrentHealth();
+        stats.takeDamage(WEAPON_DAMAGE, hitInfo);
+        isFatal = healthBefore > 0 && stats.getCurrentHealth() <= 0;
+      }
       (zombie as unknown as { flashYellow(): void }).flashYellow();
 
       // Blood splatter at hit location
       this._bloodSplatter?.burst(this._scratchZombiePos);
 
-      // Floating damage number
-      this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE);
+      // Floating damage number (white + larger for killing blows)
+      this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE, isFatal);
 
       // Camera shake — increased for better feedback
       if (player instanceof IsometricPlayerPawn) {
@@ -787,8 +793,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     };
 
     const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
+    let isFatal = false;
     if (stats) {
+      const healthBefore = stats.getCurrentHealth();
       stats.takeDamage(WEAPON_DAMAGE, hitInfo);
+      isFatal = healthBefore > 0 && stats.getCurrentHealth() <= 0;
     }
 
     (zombie as unknown as { flashYellow(): void }).flashYellow();
@@ -796,8 +805,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Blood splatter at hit location
     this._bloodSplatter?.burst(this._scratchZombiePos);
 
-    // Floating damage number
-    this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE);
+    // Floating damage number (white + larger for killing blows)
+    this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE, isFatal);
 
     // Camera shake — increased for better feedback
     if (player instanceof IsometricPlayerPawn) {
@@ -809,9 +818,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   /** Pool of reused DOM elements for damage numbers - eliminates per-hit GC. */
   private _damageNumberPool: HTMLDivElement[] = [];
-  private _activeDamageNumbers: Map<HTMLDivElement, { startTime: number; baseX: number; baseY: number }> = new Map();
+  private _activeDamageNumbers: Map<HTMLDivElement, { startTime: number; baseX: number; baseY: number; fatal: boolean }> = new Map();
 
-  private _spawnDamageNumber(worldPos: THREE.Vector3, damage: number): void {
+  private _spawnDamageNumber(worldPos: THREE.Vector3, damage: number, isFatal = false): void {
     const world = this.getWorld();
     if (!world) return;
 
@@ -832,17 +841,24 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
 
     el.textContent = String(damage);
+    // Fatal hits: white, larger, brighter glow | Normal hits: yellow
+    const color = isFatal ? '#ffffff' : '#ffdd44';
+    const fontSize = isFatal ? '24px' : '17px';
+    const textShadow = isFatal
+      ? '1px 1px 2px #000,0 0 12px #ffcc00,0 0 24px #ffaa00'
+      : '1px 1px 2px #000,0 0 8px #ff6600';
+
     // Use transform for GPU-accelerated animation (no layout thrashing)
     el.style.cssText = [
       'position:absolute',
       'left:0',
       'top:0',
       `transform:translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translateX(-50%)`,
-      'color:#ffdd44',
+      `color:${color}`,
       'font-family:"Arial Black",Arial,sans-serif',
-      'font-size:17px',
+      `font-size:${fontSize}`,
       'font-weight:bold',
-      'text-shadow:1px 1px 2px #000,0 0 8px #ff6600',
+      `text-shadow:${textShadow}`,
       'pointer-events:none',
       'will-change:transform,opacity',
     ].join(';');
@@ -850,7 +866,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     container.appendChild(el);
 
     const startTime = performance.now();
-    this._activeDamageNumbers.set(el, { startTime, baseX: x, baseY: y });
+    this._activeDamageNumbers.set(el, { startTime, baseX: x, baseY: y, fatal: isFatal });
 
     // Single RAF loop for all damage numbers (more efficient than per-number)
     if (this._activeDamageNumbers.size === 1) {
@@ -870,14 +886,18 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const toRemove: HTMLDivElement[] = [];
 
     for (const [el, data] of this._activeDamageNumbers) {
-      const t = Math.min((now - data.startTime) / 700, 1);
+      // Fatal hits last longer and float higher
+      const duration = data.fatal ? 1000 : 700;
+      const riseDistance = data.fatal ? 80 : 55;
+
+      const t = Math.min((now - data.startTime) / duration, 1);
 
       if (t >= 1) {
         toRemove.push(el);
         continue;
       }
 
-      const newY = data.baseY - 55 * t;
+      const newY = data.baseY - riseDistance * t;
       const opacity = 1 - t * t;
 
       // Update transform directly (GPU-accelerated, no layout)

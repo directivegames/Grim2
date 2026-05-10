@@ -8,17 +8,18 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 @ENGINE.GameClass()
 export class GameAudioManager extends ENGINE.Actor {
-  private _sounds = new Map<string, ENGINE.SoundComponent>();
+  private _soundPools = new Map<string, ENGINE.SoundComponent[]>();
+  private _poolCursors = new Map<string, number>();
 
   // Sound file paths — all WAV files are in assets/sounds/
-  private static readonly SOUND_PATHS: Record<string, { path: string; volume: number }> = {
-    bladeSwing:      { path: '@project/assets/sounds/bladesing.wav', volume: 0.1 },
-    bladeSwing2:     { path: '@project/assets/sounds/bladeswing2.wav', volume: 0.1 },
-    spinBlade:       { path: '@project/assets/sounds/spinblade.wav', volume: 0.12 },
-    fistImpact:      { path: '@project/assets/sounds/fistsoundeffect.wav', volume: 0.18 },
-    zombieHit1:      { path: '@project/assets/sounds/zombiehit1.wav', volume: 0.12 },
-    zombieHit2:      { path: '@project/assets/sounds/zombiehit2.wav', volume: 0.12 },
-    zombieDeath:     { path: '@project/assets/sounds/zombiedeath.wav', volume: 0.18 },
+  private static readonly SOUND_PATHS: Record<string, { path: string; volume: number; poolSize: number }> = {
+    bladeSwing:      { path: '@project/assets/sounds/bladesing.wav', volume: 0.1, poolSize: 2 },
+    bladeSwing2:     { path: '@project/assets/sounds/bladeswing2.wav', volume: 0.1, poolSize: 2 },
+    spinBlade:       { path: '@project/assets/sounds/spinblade.wav', volume: 0.12, poolSize: 2 },
+    fistImpact:      { path: '@project/assets/sounds/fistsoundeffect.wav', volume: 0.18, poolSize: 2 },
+    zombieHit1:      { path: '@project/assets/sounds/zombiehit1.wav', volume: 0.12, poolSize: 5 },
+    zombieHit2:      { path: '@project/assets/sounds/zombiehit2.wav', volume: 0.12, poolSize: 5 },
+    zombieDeath:     { path: '@project/assets/sounds/zombiedeath.wav', volume: 0.18, poolSize: 4 },
   };
 
   public override initialize(options?: ENGINE.ActorOptions): void {
@@ -28,21 +29,26 @@ export class GameAudioManager extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     super.doBeginPlay();
 
-    // Pre-load all sounds at startup — each gets its own SoundComponent
+    // Pre-load small pools so rapid combat SFX can overlap instead of cutting off.
     for (const [key, config] of Object.entries(GameAudioManager.SOUND_PATHS)) {
-      const soundResource = new ENGINE.SoundResource();
-      soundResource.name = key;
-      soundResource.audioPath = config.path;
-      soundResource.volume = config.volume;
+      const pool: ENGINE.SoundComponent[] = [];
+      for (let i = 0; i < config.poolSize; i++) {
+        const soundResource = new ENGINE.SoundResource();
+        soundResource.name = key;
+        soundResource.audioPath = config.path;
+        soundResource.volume = config.volume;
 
-      const soundComponent = ENGINE.SoundComponent.create({
-        sounds: [soundResource],
-        positional: false,
-        loop: false,
-      });
+        const soundComponent = ENGINE.SoundComponent.create({
+          sounds: [soundResource],
+          positional: false,
+          loop: false,
+        });
 
-      this._sounds.set(key, soundComponent);
-      this.addComponent(soundComponent);
+        pool.push(soundComponent);
+        this.addComponent(soundComponent);
+      }
+      this._soundPools.set(key, pool);
+      this._poolCursors.set(key, 0);
     }
   }
 
@@ -53,7 +59,7 @@ export class GameAudioManager extends ENGINE.Actor {
    * @param forceRestart — restart even if already playing
    */
   public play(key: string, volumeScale = 1.0, forceRestart = false): void {
-    const sound = this._sounds.get(key);
+    const sound = this.getNextSound(key);
     if (!sound) {
       console.warn(`[GameAudioManager] Sound not found: ${key}`);
       return;
@@ -106,6 +112,16 @@ export class GameAudioManager extends ENGINE.Actor {
   private getDefaultVolume(key: string): number {
     const config = GameAudioManager.SOUND_PATHS[key];
     return config?.volume ?? 1.0;
+  }
+
+  private getNextSound(key: string): ENGINE.SoundComponent | null {
+    const pool = this._soundPools.get(key);
+    if (!pool || pool.length === 0) return null;
+
+    const cursor = this._poolCursors.get(key) ?? 0;
+    const sound = pool[cursor];
+    this._poolCursors.set(key, (cursor + 1) % pool.length);
+    return sound;
   }
 
   /**

@@ -57,15 +57,37 @@ class ComboMeterTracker {
     const el = this._el;
     if (!el || this._count < 2) return;
 
+    const label = this._getComboLabel();
+    const labelColor = this._count >= 10 ? '#ffffff' : '#ffcc44';
+    const labelGlow = this._count >= 10 ? 'text-shadow:0 0 10px #ffcc44,0 0 22px #ff6600;' : '';
+
     el.innerHTML = [
-      `<div style="color:#ff6a00;font-size:32px;line-height:1;`,
+      `<div id="combo-num" style="color:#ff6a00;font-size:32px;line-height:1;`,
       `text-shadow:0 0 8px #ff3300,0 0 18px #ff6600;`,
-      `letter-spacing:1px;">${this._count}x</div>`,
-      `<div style="color:#ffcc44;font-size:13px;letter-spacing:5px;`,
-      `text-transform:uppercase;margin-top:2px;">COMBO</div>`,
+      `letter-spacing:1px;display:inline-block;">${this._count}x</div>`,
+      `<div style="color:${labelColor};font-size:13px;letter-spacing:5px;`,
+      `text-transform:uppercase;margin-top:2px;${labelGlow}">${label}</div>`,
     ].join('');
 
     el.style.opacity = '1';
+
+    // Spring punch animation on the number
+    const numEl = el.querySelector('#combo-num') as HTMLElement | null;
+    if (numEl) {
+      numEl.style.transition = 'none';
+      numEl.style.transform = 'scale(1.6)';
+      requestAnimationFrame(() => {
+        numEl.style.transition = 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        numEl.style.transform = 'scale(1)';
+      });
+    }
+  }
+
+  private _getComboLabel(): string {
+    if (this._count >= 15) return 'GRIM REAPER';
+    if (this._count >= 10) return 'SOUL STORM';
+    if (this._count >= 5) return 'RAMPAGE';
+    return 'COMBO';
   }
 
   private _scheduleReset(): void {

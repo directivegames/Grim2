@@ -14,6 +14,7 @@ let activeCount = 0;
 
 const SMOKE_GEOMETRY = new THREE.SphereGeometry(1, 12, 8);
 const CHUNK_GEOMETRY = new THREE.BoxGeometry(1, 1, 1);
+const SHOCKWAVE_GEOMETRY = new THREE.TorusGeometry(1, 0.035, 6, 32);
 
 interface SmokePiece {
   mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
@@ -46,6 +47,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
   private readonly smokePieces: SmokePiece[] = [];
   private readonly chunkPieces: ChunkPiece[] = [];
   private flash: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null = null;
+  private shockwave: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
   private elapsed = 0;
 
   public override initialize(options?: ActorOptions): void {
@@ -55,6 +57,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
     this.createSmoke(root);
     this.createChunks(root);
     this.createFlash(root);
+    this.createShockwave(root);
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -85,6 +88,12 @@ export class GoreExplosionActor extends ENGINE.Actor {
       const flashProgress = Math.min(this.elapsed / 0.28, 1);
       this.flash.scale.setScalar(THREE.MathUtils.lerp(0.2, 2.1, easeOutCubic(flashProgress)));
       this.flash.material.opacity = Math.max(0, 0.65 * (1 - flashProgress));
+    }
+
+    if (this.shockwave) {
+      const shockProgress = Math.min(this.elapsed / 0.38, 1);
+      this.shockwave.scale.setScalar(THREE.MathUtils.lerp(0.15, 1.9, easeOutCubic(shockProgress)));
+      this.shockwave.material.opacity = Math.max(0, 0.5 * (1 - shockProgress));
     }
 
     if (this.elapsed >= LIFETIME) {
@@ -154,6 +163,21 @@ export class GoreExplosionActor extends ENGINE.Actor {
     this.flash = new THREE.Mesh(SMOKE_GEOMETRY, material);
     this.flash.scale.setScalar(0.2);
     root.add(this.flash);
+  }
+
+  private createShockwave(root: ENGINE.SceneComponent): void {
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xffc15a,
+      transparent: true,
+      opacity: 0.5,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    this.shockwave = new THREE.Mesh(SHOCKWAVE_GEOMETRY, material);
+    this.shockwave.rotation.x = Math.PI / 2;
+    this.shockwave.position.y = 0.04;
+    this.shockwave.scale.setScalar(0.15);
+    root.add(this.shockwave);
   }
 }
 

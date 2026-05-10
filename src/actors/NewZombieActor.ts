@@ -45,6 +45,9 @@ const STEER_SEPARATION_WEIGHT = 2.0;
 const NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY = 0.25;
 const STEER_GOAL_MIN_XY_FROM_AGENT = NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY + 0.1;
 
+const SHARED_ROOT_GEOMETRY = new THREE.CapsuleGeometry(CAPSULE_RADIUS, CAPSULE_HEIGHT - CAPSULE_RADIUS * 2);
+const SHARED_ROOT_MATERIAL = new THREE.MeshStandardMaterial({ visible: false });
+
 // ─── Collision profile ────────────────────────────────────────────────────────
 
 type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
@@ -293,8 +296,8 @@ export class NewZombieActor extends ENGINE.Actor {
     ensureNewZombieNpcCollisionProfile();
 
     const root = ENGINE.MeshComponent.create({
-      geometry: new THREE.CapsuleGeometry(CAPSULE_RADIUS, CAPSULE_HEIGHT - CAPSULE_RADIUS * 2),
-      material: new THREE.MeshStandardMaterial({ visible: false }),
+      geometry: SHARED_ROOT_GEOMETRY,
+      material: SHARED_ROOT_MATERIAL,
       physicsOptions: {
         enabled: true,
         motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
