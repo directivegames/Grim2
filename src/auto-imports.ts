@@ -10,6 +10,7 @@ import './actors/NewZombieActor.ts';
 import './actors/SoulActor.ts';
 import './actors/SpinningWeaponActor.ts';
 import './actors/TallGrassActor.ts';
+import './actors/WarmupActor.ts';
 import './actors/ZombieActor.ts';
 import './actors/ZombieSpatialManager.ts';
 import './apply-grass-shader-engine-patch.ts';

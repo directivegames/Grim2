@@ -690,6 +690,12 @@ export class NewZombieActor extends ENGINE.Actor {
     if (world) {
       killStreakTracker.recordKill(world);
       comboMeterTracker.recordKill(world);
+
+      // Camera FOV punch on individual kill for visceral feedback
+      const player = world.getFirstPlayerPawn();
+      if (player && 'triggerFOVPunch' in player) {
+        (player as unknown as { triggerFOVPunch(intensity: number): void }).triggerFOVPunch(0.5);
+      }
     }
 
     const npc = this.getComponent(ENGINE.NpcMovementComponent);
@@ -703,10 +709,13 @@ export class NewZombieActor extends ENGINE.Actor {
       (npc as unknown as { enabled: boolean }).enabled = false;
     }
 
-    // Capture and freeze position so the zombie doesn't drift during death anim
+    // Capture position and facing at death moment (before animation changes them)
     const deathPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(deathPos);
     this._deathPosition = deathPos.clone();
+
+    // Capture facing direction — death animation falls backward from this facing
+    const facingY = this.rootComponent.rotation.y;
 
     // Play death animation
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
@@ -718,8 +727,17 @@ export class NewZombieActor extends ENGINE.Actor {
     // Cut short before root motion slide starts.
     globalThis.setTimeout(() => {
       const world = this.getWorld();
+
+      // Death animation is "inplace" (no root motion), but visually falls backward.
+      // Offset spawn position backward from facing direction to match where body lands.
+      const FALL_BACK_DISTANCE = 0.75; // approximate visual fall-back distance
+      const finalPos = deathPos.clone();
+      // Backward = facing + PI (180 degrees)
+      finalPos.x += Math.sin(facingY + Math.PI) * FALL_BACK_DISTANCE;
+      finalPos.z += Math.cos(facingY + Math.PI) * FALL_BACK_DISTANCE;
+
       if (world) {
-        GoreExplosionActor.spawnAt(world, deathPos);
+        GoreExplosionActor.spawnAt(world, finalPos);
 
         // Play zombie death sound when smoke starts and grave appears
         const audioManager = world.getActors().find(
@@ -728,7 +746,7 @@ export class NewZombieActor extends ENGINE.Actor {
         audioManager?.play('zombieDeath', 1.0, true);
       }
 
-      this.spawnDeathObjects(deathPos);
+      this.spawnDeathObjects(finalPos);
       this.destroy();
     }, HIT_REACTION_HOLD_SEC * 1000);
   }

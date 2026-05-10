@@ -10,9 +10,10 @@ import './apply-grass-shader-engine-patch.js';
 import './auto-imports.js';
 // PERFORMANCE: Import grass uniform manager to enable batched uniform updates
 import './materials/grass/GrassUniformManager.js';
-import { BackgroundMusicActor } from './actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { SpinningWeaponActor } from './actors/SpinningWeaponActor.js';
+import { WarmupActor } from './actors/WarmupActor.js';
+import { GameAudioManager } from './actors/GameAudioManager.js';
 
 /** Spring-arm length (world units). */
 const ISO_CAMERA_DISTANCE = 20;
@@ -35,33 +36,45 @@ class MyGameMode extends ENGINE.GameMode {
   }
 }
 
-/** Custom loading screen that stays visible until shader warmups complete.
+/** Custom loading screen that stays visible until all warmups complete.
  *  Ensures no stutter from first-time material compilation during gameplay.
  */
 class GrimLoadingScreen implements ENGINE.ILoadingScreen {
   private _default = new ENGINE.DefaultLoadingScreen();
-  private _startTime = 0;
-  private _minDurationMs = 2500; // 2.5s covers navmesh + 2s shader warmup
+  private _warmupComplete = false;
+  private _engineRequestedStop = false;
 
   public start(world: ENGINE.World): void {
-    this._startTime = performance.now();
     this._default.start(world);
   }
 
+  /** Called by engine when it's ready to hide the loading screen. */
   public stop(): void {
-    const elapsed = performance.now() - this._startTime;
-    const remaining = Math.max(0, this._minDurationMs - elapsed);
+    // Don't hide yet - wait for warmup to complete
+    this._engineRequestedStop = true;
+    this._tryHide();
+  }
 
-    // Delay stop until minimum duration has passed (shader warmups still running)
-    setTimeout(() => {
+  /** Called when WarmupActor signals all assets are loaded and shaders compiled. */
+  public markWarmupComplete(): void {
+    this._warmupComplete = true;
+    this._tryHide();
+  }
+
+  private _tryHide(): void {
+    // Only hide when BOTH engine is ready AND warmup is complete
+    if (this._engineRequestedStop && this._warmupComplete) {
       this._default.stop();
-    }, remaining);
+    }
   }
 }
 
 class MyGame extends ENGINE.BaseGameLoop {
+  private _loadingScreen: GrimLoadingScreen | null = null;
+
   protected override createLoadingScreen(): ENGINE.ILoadingScreen | null {
-    return new GrimLoadingScreen();
+    this._loadingScreen = new GrimLoadingScreen();
+    return this._loadingScreen;
   }
 
   public override getWorldConfiguration(): ENGINE.WorldOptions {
@@ -116,37 +129,41 @@ class MyGame extends ENGINE.BaseGameLoop {
   /**
    * Scene cameras using {@link ENGINE.ViewTargetCameraComponent} sit on a stack and
    * override the pawn camera. Turn them all off so only the pawn isometric camera renders.
+   * Then spawn warmup actor to pre-load all assets before showing gameplay.
    */
   protected override postStart(): void {
     super.postStart();
     const world = this.getWorld();
     if (!world) return;
+
+    // Disable scene cameras
     for (const actor of world.getActors()) {
       for (const vtc of actor.getComponents(ENGINE.ViewTargetCameraComponent)) {
         vtc.setActive(false);
       }
     }
 
-    // Spawn background music actor
-    void this.spawnBackgroundMusic();
-
-    // Spawn spinning weapon actor
-    void this.spawnSpinningWeapon();
+    // Spawn warmup actor - it handles all asset preloading and signals when ready
+    this._startWarmupSequence(world);
   }
 
+  private _startWarmupSequence(world: ENGINE.World): void {
+    // Get reference to loading screen so we can hide it when done
+    const loadingScreen = this._loadingScreen as GrimLoadingScreen | null;
 
-  private async spawnBackgroundMusic(): Promise<void> {
-    const world = this.getWorld();
-    if (!world) return;
-    const musicActor = await BackgroundMusicActor.create();
-    world.addActor(musicActor);
-  }
-
-  private async spawnSpinningWeapon(): Promise<void> {
-    const world = this.getWorld();
-    if (!world) return;
-    const weaponActor = await SpinningWeaponActor.create();
+    // Spawn weapon actor first (it has no async init, so this is instant)
+    const weaponActor = SpinningWeaponActor.create();
     world.addActor(weaponActor);
+
+    // Spawn audio manager (preloads all sounds)
+    GameAudioManager.ensureExists(world);
+
+    // Start warmup - this preloads graves, gore, souls, compiles shaders
+    WarmupActor.spawnAndWarmup(world, () => {
+      // Warmup complete - signal loading screen to hide
+      // Background music is already in the scene, no need to spawn it
+      loadingScreen?.markWarmupComplete();
+    });
   }
 }
 

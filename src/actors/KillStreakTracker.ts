@@ -111,6 +111,7 @@ class KillStreakTracker {
     const player = world.getFirstPlayerPawn();
     if (player instanceof IsometricPlayerPawn) {
       player.triggerScreenShake(SHAKE_INTENSITY, SHAKE_DURATION);
+      player.triggerFOVPunch(1.0); // Full FOV punch on streak trigger
     }
 
     // Screen flash - epic kill streak flash

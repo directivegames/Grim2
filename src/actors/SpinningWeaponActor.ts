@@ -21,9 +21,6 @@ import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../compon
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
-import { DeadGraveActor } from './DeadGraveActor.js';
-import { GoreExplosionActor } from './GoreExplosionActor.js';
-import { SoulActor } from './SoulActor.js';
 import { GameAudioManager } from './GameAudioManager.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
@@ -231,45 +228,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       console.warn(`[SpinningWeaponActor] No scene actor named "${WEAPON_ACTOR_NAME}" found.`);
     }
 
-    // Park the fist far underground so its shader is compiled by the GPU immediately
-    // but the mesh is never visible to the player.
-    for (const actor of world.getActors()) {
-      if (actor.name.toLowerCase() === 'fistofannoyance') {
-        actor.rootComponent.position.y = -1000;
-        break;
-      }
-    }
-
-    // Pre-warm a grave actor off-screen so its GLB loads and shaders compile at startup,
-    // preventing stutter when the first zombie dies and spawns a visible tombstone.
-    // Kept alive for 2 seconds to ensure GPU has actually compiled the shader programs.
-    const warmupGrave = DeadGraveActor.create({
-      position: new THREE.Vector3(0, -1000, 0),
-    });
-    world.addActor(warmupGrave);
-    setTimeout(() => warmupGrave.destroy(), 2000);
-
-    // Pre-warm gore explosion materials so first kill doesn't stall on shader compile.
-    // Smoke and chunks each use unique material parameters that trigger separate shader compiles.
-    const warmupGore = GoreExplosionActor.create({ position: new THREE.Vector3(0, -1000, 0) });
-    world.addActor(warmupGore);
-    setTimeout(() => warmupGore.destroy(), 2000);
-
-    // Pre-warm soul actor so the soul.glb model and its materials compile at startup.
-    const warmupSoul = SoulActor.create({ position: new THREE.Vector3(0, -1000, 0) });
-    world.addActor(warmupSoul);
-    setTimeout(() => warmupSoul.destroy(), 2000);
-
-    // Pre-warm weapon summon/dismiss VFX materials (additive blending, double-side).
-    this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 3);
-
-    // Note: Blood splatter is warmed up after component creation below
-
-    // Ensure audio manager exists (pre-loads all SFX)
-    GameAudioManager.ensureExists(world);
-
+    // Input handler
     world.inputManager.addInputHandler(this._inputHandler);
 
+    // Create components in order - warmup happens AFTER all components exist
     this._slashComponent = WeaponSlashComponent.create();
     this.rootComponent.add(this._slashComponent);
 
@@ -279,11 +241,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._bloodSplatter = BloodSplatterComponent.create();
     this.rootComponent.add(this._bloodSplatter);
 
-    // Pre-warm blood splatter: burst pool to force mesh creation and GPU upload
-    this._bloodSplatter?.burst(new THREE.Vector3(0, -1000, 0));
-
     this._boomerangTrail = BoomerangTrailComponent.create();
     this.rootComponent.add(this._boomerangTrail);
+
+    // Post-creation warmups (now components actually exist)
+    // Blood splatter pool is already warmed in its beginPlay
+    // Summon VFX warmup: burst some particles off-screen to compile shaders
+    this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 6);
   }
 
   protected override doEndPlay(): void {

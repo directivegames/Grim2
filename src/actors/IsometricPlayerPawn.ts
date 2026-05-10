@@ -90,6 +90,20 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private _shakeDurationMs = 0;   // real-time ms
   private _shakeStartMs    = 0;   // performance.now() when shake began
   private readonly _shakeOffset = new THREE.Vector3();
+  private _shakeRoll = 0;        // Camera roll during shake (radians)
+
+  // ── Camera FOV / zoom state ───────────────────────────────────────────────
+
+  private static readonly BASE_FOV = 50;
+  private static readonly SPRINT_FOV_BOOST = 4;      // +4 FOV when moving
+  private static readonly KILL_FOV_PUNCH = 3;        // +3 FOV on kill
+  private static readonly STREAK_FOV_BOOST = 12;     // +12 FOV during slomo
+  private static readonly DEATH_ZOOM_START = 20;       // Starting zoom distance
+  private static readonly DEATH_ZOOM_END = 12;       // Target zoom when low health
+
+  private _currentFOV = IsometricPlayerPawn.BASE_FOV;
+  private _targetFOV = IsometricPlayerPawn.BASE_FOV;
+  private _fovPunchDecay = 0;
 
   // ── Cinematic focus state ────────────────────────────────────────────────
 
@@ -223,6 +237,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   // ── Tick ─────────────────────────────────────────────────────────────────
 
   public override tickPrePhysics(deltaTime: number): void {
+    // Dynamic camera distance with zoom during slomo and death proximity
+    const targetDistance = this._calculateTargetCameraDistance();
+    this.cameraDistance = THREE.MathUtils.lerp(this.cameraDistance, targetDistance, 2.0 * deltaTime);
+
     if (this.springArm && this.springArm.armLength !== this.cameraDistance) {
       this.springArm.armLength = this.cameraDistance;
     }
@@ -234,6 +252,75 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._updateCinematicCamera(deltaTime);
     this._updateScreenShake(deltaTime);
     this._updateDamageVignette(deltaTime);
+    this._updateCameraFOV(deltaTime);
+  }
+
+  // ── Dynamic camera FOV & zoom ─────────────────────────────────────────────
+
+  private _calculateTargetCameraDistance(): number {
+    const world = this.getWorld();
+    if (!world) return IsometricPlayerPawn.DEATH_ZOOM_START;
+
+    const slomo = (world as unknown as { slomo: number }).slomo ?? 1.0;
+    const baseDistance = IsometricPlayerPawn.DEATH_ZOOM_START;
+
+    // Zoom in during slomo (cinematic feel)
+    const slomoZoomFactor = slomo < 0.5 ? (1.0 - slomo) * 0.3 : 0;
+
+    // Zoom in slightly when health is low (death tension)
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const healthPercent = stats ? stats.getCurrentHealth() / stats.getMaxHealth() : 1.0;
+    const deathZoomFactor = healthPercent < 0.25 ? (0.25 - healthPercent) * 0.5 : 0;
+
+    return baseDistance * (1 - slomoZoomFactor - deathZoomFactor);
+  }
+
+  private _updateCameraFOV(deltaTime: number): void {
+    const world = this.getWorld();
+    if (!world) return;
+
+    // Base FOV
+    let target = IsometricPlayerPawn.BASE_FOV;
+
+    // Speed boost: FOV increases when moving fast
+    const mc = this.movementComponent;
+    if (mc instanceof IsometricMovementComponent) {
+      const speed = mc.getWorldVelocity().length();
+      if (speed > 3) {
+        target += IsometricPlayerPawn.SPRINT_FOV_BOOST * Math.min((speed - 3) / 2, 1);
+      }
+    }
+
+    // Slomo boost: dramatic wide FOV during kill streaks
+    const slomo = (world as unknown as { slomo: number }).slomo ?? 1.0;
+    if (slomo < 0.5) {
+      target += IsometricPlayerPawn.STREAK_FOV_BOOST * (1.0 - slomo);
+    }
+
+    // Punch decay: gradually return from kill FOV punch
+    if (this._fovPunchDecay > 0) {
+      target += this._fovPunchDecay;
+      this._fovPunchDecay = THREE.MathUtils.lerp(this._fovPunchDecay, 0, 4.0 * deltaTime);
+      if (this._fovPunchDecay < 0.1) this._fovPunchDecay = 0;
+    }
+
+    this._targetFOV = target;
+    this._currentFOV = THREE.MathUtils.lerp(this._currentFOV, this._targetFOV, 5.0 * deltaTime);
+
+    // Apply to camera
+    const camera = world.getActiveCamera();
+    if (camera instanceof THREE.PerspectiveCamera && Math.abs(camera.fov - this._currentFOV) > 0.1) {
+      camera.fov = this._currentFOV;
+      camera.updateProjectionMatrix();
+    }
+  }
+
+  /**
+   * Trigger a brief FOV "punch" on kill for visceral feedback.
+   * @param intensity - Scale of the punch (1.0 = full KILL_FOV_PUNCH)
+   */
+  public triggerFOVPunch(intensity = 1.0): void {
+    this._fovPunchDecay = IsometricPlayerPawn.KILL_FOV_PUNCH * intensity;
   }
 
   // ── Visual facing ─────────────────────────────────────────────────────────
@@ -320,6 +407,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
         const z = this._shakeNoise(this._shakePhase + 100) * currentIntensity;
 
         this._shakeOffset.set(x, 0, z);
+
+        // Camera roll during shake for more physical impact feel
+        const rollIntensity = currentIntensity * 0.04; // ±0.04 radians max roll
+        this._shakeRoll = this._shakeNoiseRoll(this._shakePhase * 0.5) * rollIntensity;
       }
     } else {
       this._shakeOffset.set(0, 0, 0);
@@ -332,6 +423,13 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       this._cinematicOffset.y + this._shakeOffset.y,
       this._cinematicOffset.z + this._shakeOffset.z,
     );
+
+    // Apply camera roll during shake for more physical feel
+    if (this._shakeDurationMs > 0) {
+      this.cameraPivot.rotation.z = this._shakeRoll;
+    } else {
+      this.cameraPivot.rotation.z = THREE.MathUtils.lerp(this.cameraPivot.rotation.z, 0, 5.0 * deltaTime);
+    }
   }
 
   /**
@@ -345,6 +443,15 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     const c = Math.sin(phase * 2.1 + 2) * 0.125;
     const d = Math.sin(phase * 3.7 + 3) * 0.0625;
     return a + b + c + d; // Range roughly [-0.9, 0.9], normalized feel
+  }
+
+  /**
+   * Separate noise function for camera roll (different frequency for variety).
+   */
+  private _shakeNoiseRoll(phase: number): number {
+    const a = Math.sin(phase * 0.7) * 0.5;
+    const b = Math.sin(phase * 1.1 + 2) * 0.3;
+    return a + b;
   }
 
   // ── Cinematic focus ───────────────────────────────────────────────────────

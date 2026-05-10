@@ -17,10 +17,14 @@ export class GameAudioManager extends ENGINE.Actor {
     bladeSwing2:     { path: '@project/assets/sounds/bladeswing2.wav', volume: 0.1, poolSize: 2 },
     spinBlade:       { path: '@project/assets/sounds/spinblade.wav', volume: 0.12, poolSize: 2 },
     fistImpact:      { path: '@project/assets/sounds/fistsoundeffect.wav', volume: 0.18, poolSize: 2 },
-    zombieHit1:      { path: '@project/assets/sounds/zombiehit1.wav', volume: 0.12, poolSize: 5 },
-    zombieHit2:      { path: '@project/assets/sounds/zombiehit2.wav', volume: 0.12, poolSize: 5 },
+    zombieHit1:      { path: '@project/assets/sounds/zombiehit1.wav', volume: 0.12, poolSize: 2 },
+    zombieHit2:      { path: '@project/assets/sounds/zombiehit2.wav', volume: 0.12, poolSize: 2 },
     zombieDeath:     { path: '@project/assets/sounds/zombiedeath.wav', volume: 0.18, poolSize: 4 },
   };
+
+  // Global cooldown for hit sounds to prevent audio spam when hitting zombie hordes
+  private static readonly HIT_SOUND_COOLDOWN_MS = 80;
+  private _lastHitSoundTime = 0;
 
   public override initialize(options?: ENGINE.ActorOptions): void {
     super.initialize(options);
@@ -59,6 +63,15 @@ export class GameAudioManager extends ENGINE.Actor {
    * @param forceRestart — restart even if already playing
    */
   public play(key: string, volumeScale = 1.0, forceRestart = false): void {
+    // Throttle hit sounds to prevent audio spam during horde combat
+    if (key === 'zombieHit1' || key === 'zombieHit2') {
+      const now = performance.now();
+      if (now - this._lastHitSoundTime < GameAudioManager.HIT_SOUND_COOLDOWN_MS) {
+        return; // Skip this hit sound - too soon since last one
+      }
+      this._lastHitSoundTime = now;
+    }
+
     const sound = this.getNextSound(key);
     if (!sound) {
       console.warn(`[GameAudioManager] Sound not found: ${key}`);

@@ -16,7 +16,7 @@
   "type": "module",
   "dependencies": {
     "@gnsx/genesys.harness": "latest",
-    "@gnsx/genesys.js": "10.6.1",
+    "@gnsx/genesys.js": "10.6.2",
     "three": "0.184.0"
   },
   "pnpm": {
@@ -28,7 +28,7 @@
     "@modelcontextprotocol/sdk": "1.22.0",
     "@types/jsdom": "21.1.7",
     "@types/node": "24.12.0",
-    "@types/three": "0.184.0",
+    "@types/three": "0.184.1",
     "@types/ws": "8.18.1",
     "@typescript-eslint/parser": "8.29.1",
     "@typescript-eslint/utils": "8.38.0",
@@ -48,7 +48,7 @@
     "vite-plugin-node-polyfills": "0.24.0",
     "ws": "8.18.2",
     "zod": "3.25.76",
-    "zod-to-json-schema": "3.25.1"
+    "zod-to-json-schema": "3.25.2"
   },
   "name": "Grim",
   "version": "0.0.1"

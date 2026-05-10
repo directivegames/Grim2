@@ -12,8 +12,8 @@ importers:
         specifier: latest
         version: 0.0.6
       '@gnsx/genesys.js':
-        specifier: 10.6.1
-        version: 10.6.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.0)
+        specifier: 10.6.2
+        version: 10.6.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)
       three:
         specifier: 0.184.0
         version: 0.184.0
@@ -28,17 +28,17 @@ importers:
         specifier: 24.12.0
         version: 24.12.0
       '@types/three':
-        specifier: 0.184.0
-        version: 0.184.0
+        specifier: 0.184.1
+        version: 0.184.1
       '@types/ws':
         specifier: 8.18.1
         version: 8.18.1
       '@typescript-eslint/parser':
         specifier: 8.29.1
-        version: 8.29.1(eslint@9.24.0(jiti@2.6.1))(typescript@5.8.3)
+        version: 8.29.1(eslint@9.24.0(jiti@2.7.0))(typescript@5.8.3)
       '@typescript-eslint/utils':
         specifier: 8.38.0
-        version: 8.38.0(eslint@9.24.0(jiti@2.6.1))(typescript@5.8.3)
+        version: 8.38.0(eslint@9.24.0(jiti@2.7.0))(typescript@5.8.3)
       ajv:
         specifier: 8.20.0
         version: 8.20.0
@@ -50,7 +50,7 @@ importers:
         version: 0.28.0
       eslint:
         specifier: 9.24.0
-        version: 9.24.0(jiti@2.6.1)
+        version: 9.24.0(jiti@2.7.0)
       get-port:
         specifier: 7.1.0
         version: 7.1.0
@@ -74,13 +74,13 @@ importers:
         version: 5.8.3
       vite:
         specifier: 7.1.7
-        version: 7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4)
+        version: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)
       vite-plugin-mkcert:
         specifier: 1.17.8
-        version: 1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4))
+        version: 1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4))
       vite-plugin-node-polyfills:
         specifier: 0.24.0
-        version: 0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4))
+        version: 0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4))
       ws:
         specifier: 8.18.2
         version: 8.18.2
@@ -88,8 +88,8 @@ importers:
         specifier: 3.25.76
         version: 3.25.76
       zod-to-json-schema:
-        specifier: 3.25.1
-        version: 3.25.1(zod@3.25.76)
+        specifier: 3.25.2
+        version: 3.25.2(zod@3.25.76)
 
 packages:
 
@@ -499,8 +499,8 @@ packages:
   '@gnsx/genesys.harness@0.0.6':
     resolution: {integrity: sha512-Y2+3BL8AR0xDVp1oZ0M7hZACJ69t5Ncel5P5EwYGrZcvxDPDqnEbjgDyrssHQKYmp5J6osy+8dWlIALV1LoZhA==}
 
-  '@gnsx/genesys.js@10.6.1':
-    resolution: {integrity: sha512-ZaEMhSG/Ej0fFDPOTIFIbXXvdkJN7wWmMxsQKJ/MwfbIaub20juqcrMopstYrj2oQwG6PfA1LtkUvflMBseEAw==}
+  '@gnsx/genesys.js@10.6.2':
+    resolution: {integrity: sha512-rIxhkad3L4bO5D7h2TVvvNRu5yfVrEMI8S6HegPtOPlVU8XV8mI/KtnI1Vtcp7nkIDM+CHDRRtjNG7hHc26UMQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -884,8 +884,8 @@ packages:
   '@types/stats.js@0.17.4':
     resolution: {integrity: sha512-jIBvWWShCvlBqBNIZt0KAshWpvSjhkwkEu4ZUcASoAvhmrgAUI2t1dXrjSL4xXVLB4FznPrIsX3nKXFl/Dt4vA==}
 
-  '@types/three@0.184.0':
-    resolution: {integrity: sha512-4mY2tZAu0y0B0567w7013BBXSpsP0+Z48NJvmNo4Y/Pf76yCyz6Jw4P3tUVs10WuYNXXZ+wmHyGWpCek3amJxA==}
+  '@types/three@0.184.1':
+    resolution: {integrity: sha512-6q4VdiqVsrTRqmk62/BnlcAvIrnDM0zf2ZDVKI5kZiniWrSaOHaQzmbp+BNzoggc/8tgW412pL//wZIxu2PPTA==}
 
   '@types/tough-cookie@4.0.5':
     resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
@@ -1682,8 +1682,8 @@ packages:
     resolution: {integrity: sha512-u4sej9B1LPSxTGKB/HiuzvEQnXH0ECYkSVQU39koSwmFAxhlEAFl9RdTvLv4TOTQUgBS5O3O5fwUxk6byBZ+IQ==}
     engines: {node: '>=10'}
 
-  jiti@2.6.1:
-    resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
+  jiti@2.7.0:
+    resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
   js-yaml@4.1.1:
@@ -2514,16 +2514,16 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod-to-json-schema@3.25.1:
-    resolution: {integrity: sha512-pM/SU9d3YAggzi6MtR4h7ruuQlqKtad8e9S0fmxcMi+ueAK5Korys/aWcV9LIIHTVbj01NdzxcnXSN+O74ZIVA==}
+  zod-to-json-schema@3.25.2:
+    resolution: {integrity: sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==}
     peerDependencies:
-      zod: ^3.25 || ^4
+      zod: ^3.25.28 || ^4
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zustand@5.0.12:
-    resolution: {integrity: sha512-i77ae3aZq4dhMlRhJVCYgMLKuSiZAaUPAct2AksxQ+gOtimhGMdXljRT21P5BNpeT4kXlLIckvkPM029OljD7g==}
+  zustand@5.0.13:
+    resolution: {integrity: sha512-efI2tVaVQPqtOh114loML/Z80Y4NP3yc+Ff0fYiZJPauNeWZeIp/bRFD7I9bfmCOYBh/PHxlglQ9+wvlwnPikQ==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=18.0.0'
@@ -2735,9 +2735,9 @@ snapshots:
   '@esbuild/win32-x64@0.28.0':
     optional: true
 
-  '@eslint-community/eslint-utils@4.9.1(eslint@9.24.0(jiti@2.6.1))':
+  '@eslint-community/eslint-utils@4.9.1(eslint@9.24.0(jiti@2.7.0))':
     dependencies:
-      eslint: 9.24.0(jiti@2.6.1)
+      eslint: 9.24.0(jiti@2.7.0)
       eslint-visitor-keys: 3.4.3
 
   '@eslint-community/regexpp@4.12.2': {}
@@ -2803,14 +2803,14 @@ snapshots:
 
   '@gnsx/genesys.harness@0.0.6': {}
 
-  '@gnsx/genesys.js@10.6.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.0)':
+  '@gnsx/genesys.js@10.6.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
-      '@recast-navigation/three': 0.39.0(@types/three@0.184.0)(three@0.184.0)
+      '@recast-navigation/three': 0.39.0(@types/three@0.184.1)(three@0.184.0)
       '@tweenjs/tween.js': 25.0.0
       dat.gui: 0.7.9
       esbuild-wasm: 0.28.0
-      jiti: 2.6.1
+      jiti: 2.7.0
       manifold-3d: 3.4.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(esbuild-wasm@0.28.0)
       nanoid: 5.1.11
       nipplejs: 0.10.2
@@ -2825,7 +2825,7 @@ snapshots:
       xatlas-three: 0.2.1
       yaml: 2.8.4
       zod: 3.25.76
-      zustand: 5.0.12
+      zustand: 5.0.13
     transitivePeerDependencies:
       - '@gltf-transform/core'
       - '@gltf-transform/extensions'
@@ -2973,7 +2973,7 @@ snapshots:
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
       zod: 3.25.76
-      zod-to-json-schema: 3.25.1(zod@3.25.76)
+      zod-to-json-schema: 3.25.2(zod@3.25.76)
     transitivePeerDependencies:
       - supports-color
 
@@ -3000,11 +3000,11 @@ snapshots:
       '@recast-navigation/core': 0.39.0
       '@recast-navigation/wasm': 0.39.0
 
-  '@recast-navigation/three@0.39.0(@types/three@0.184.0)(three@0.184.0)':
+  '@recast-navigation/three@0.39.0(@types/three@0.184.1)(three@0.184.0)':
     dependencies:
       '@recast-navigation/core': 0.39.0
       '@recast-navigation/generators': 0.39.0
-      '@types/three': 0.184.0
+      '@types/three': 0.184.1
       three: 0.184.0
 
   '@recast-navigation/wasm@0.39.0': {}
@@ -3134,7 +3134,7 @@ snapshots:
 
   '@types/stats.js@0.17.4': {}
 
-  '@types/three@0.184.0':
+  '@types/three@0.184.1':
     dependencies:
       '@dimforge/rapier3d-compat': 0.12.0
       '@tweenjs/tween.js': 23.1.3
@@ -3151,14 +3151,14 @@ snapshots:
     dependencies:
       '@types/node': 24.12.0
 
-  '@typescript-eslint/parser@8.29.1(eslint@9.24.0(jiti@2.6.1))(typescript@5.8.3)':
+  '@typescript-eslint/parser@8.29.1(eslint@9.24.0(jiti@2.7.0))(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.29.1
       '@typescript-eslint/types': 8.29.1
       '@typescript-eslint/typescript-estree': 8.29.1(typescript@5.8.3)
       '@typescript-eslint/visitor-keys': 8.29.1
       debug: 4.4.3
-      eslint: 9.24.0(jiti@2.6.1)
+      eslint: 9.24.0(jiti@2.7.0)
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -3220,13 +3220,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.38.0(eslint@9.24.0(jiti@2.6.1))(typescript@5.8.3)':
+  '@typescript-eslint/utils@8.38.0(eslint@9.24.0(jiti@2.7.0))(typescript@5.8.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@9.24.0(jiti@2.6.1))
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.24.0(jiti@2.7.0))
       '@typescript-eslint/scope-manager': 8.38.0
       '@typescript-eslint/types': 8.38.0
       '@typescript-eslint/typescript-estree': 8.38.0(typescript@5.8.3)
-      eslint: 9.24.0(jiti@2.6.1)
+      eslint: 9.24.0(jiti@2.7.0)
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -3708,9 +3708,9 @@ snapshots:
 
   eslint-visitor-keys@4.2.1: {}
 
-  eslint@9.24.0(jiti@2.6.1):
+  eslint@9.24.0(jiti@2.7.0):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@9.24.0(jiti@2.6.1))
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.24.0(jiti@2.7.0))
       '@eslint-community/regexpp': 4.12.2
       '@eslint/config-array': 0.20.1
       '@eslint/config-helpers': 0.2.3
@@ -3746,7 +3746,7 @@ snapshots:
       natural-compare: 1.4.0
       optionator: 0.9.4
     optionalDependencies:
-      jiti: 2.6.1
+      jiti: 2.7.0
     transitivePeerDependencies:
       - supports-color
 
@@ -4110,7 +4110,7 @@ snapshots:
 
   isomorphic-timers-promises@1.0.1: {}
 
-  jiti@2.6.1: {}
+  jiti@2.7.0: {}
 
   js-yaml@4.1.1:
     dependencies:
@@ -4942,24 +4942,24 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-plugin-mkcert@1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4)):
+  vite-plugin-mkcert@1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)):
     dependencies:
       axios: 1.15.2(debug@4.4.3)
       debug: 4.4.3
       picocolors: 1.1.1
-      vite: 7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4)
+      vite: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-node-polyfills@0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4)):
+  vite-plugin-node-polyfills@0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.60.2)
       node-stdlib-browser: 1.3.1
-      vite: 7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4)
+      vite: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)
     transitivePeerDependencies:
       - rollup
 
-  vite@7.1.7(@types/node@24.12.0)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.4):
+  vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.4)
@@ -4970,7 +4970,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.12.0
       fsevents: 2.3.3
-      jiti: 2.6.1
+      jiti: 2.7.0
       tsx: 4.20.3
       yaml: 2.8.4
 
@@ -5025,10 +5025,10 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-to-json-schema@3.25.1(zod@3.25.76):
+  zod-to-json-schema@3.25.2(zod@3.25.76):
     dependencies:
       zod: 3.25.76
 
   zod@3.25.76: {}
 
-  zustand@5.0.12: {}
+  zustand@5.0.13: {}

@@ -19,6 +19,17 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
   private readonly _free:   PooledDisc[] = [];
   private _active_flag = false;
 
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
+  public override beginPlay(): void {
+    super.beginPlay();
+    // Pre-build pool immediately so first boomerang throw doesn't hitch
+    const world = this.getWorld();
+    if (world) {
+      this._buildPool(world);
+    }
+  }
+
   // ── Public API ──────────────────────────────────────────────────────────────
 
   public start(): void  { this._active_flag = true; }
@@ -29,10 +40,7 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
     const world = this.getWorld();
     if (!world) return;
 
-    // Lazily build the pool on first use
-    if (this._pool.length === 0) {
-      this._buildPool(world);
-    }
+    // Pool is already built in beginPlay, but check just in case
 
     let disc: PooledDisc;
     if (this._free.length > 0) {
