@@ -1,0 +1,39 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.412543,
+        0.181164,
+        0.109462
+      ]
+    },
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "26a6c362-190e-4054-8aa5-591589da4ffe",
+      "url": "@project/assets/textures/Newhousecolour.webp"
+    },
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "95e368b8-8ee4-4a61-a9f7-defe810b57dc",
+      "url": "@project/assets/textures/newhousemetal.webp"
+    },
+    "name": "Newhouse",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "a501932c-21dd-4b00-bc07-9af2fd4a1071",
+      "url": "@project/assets/textures/newhousenormal.webp"
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "6ca35887-07fe-4be0-8755-4ed52a088105",
+      "url": "@project/assets/textures/newhouserough.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "a0df75fd-4c8a-45b0-85fa-c5129baddd2f"
+  },
+  "$version": 2
+}

@@ -6,13 +6,20 @@
       "$uuid": "a4ed6ff5-4e3a-4775-b89f-1284452e84eb",
       "url": "@project/assets/textures/grassbumpmap.png"
     },
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
     "emissiveIntensity": 0,
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "35606545-2e86-4169-99b2-5ef3865789cd",
       "url": "@project/assets/textures/Grasstexturewithshadow.png"
     },
-    "metalness": 0.05,
     "name": "Grass",
     "normalMap": {
       "$bc": "ENGINE.UrlTexture",

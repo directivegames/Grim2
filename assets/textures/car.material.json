@@ -1,0 +1,41 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "cd485411-8e6f-4997-b304-0b609dc2dfb9",
+      "url": "@project/assets/textures/carcolour.webp"
+    },
+    "metalness": 0.56,
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "914137e4-1006-4478-91d5-67da599d56ef",
+      "url": "@project/assets/textures/carmetal.webp"
+    },
+    "name": "car",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "5f1434c6-0c6c-4027-985a-96b6ef840307",
+      "url": "@project/assets/textures/carnormal.webp"
+    },
+    "roughness": 0.65,
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "4cce56d1-4d54-4abf-83a1-b66c1f7fe53c",
+      "url": "@project/assets/textures/carrough.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "c6ffd748-256c-4d73-aced-45331174f2b6"
+  },
+  "$version": 2
+}

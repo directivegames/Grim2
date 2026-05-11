@@ -1,0 +1,31 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "f62a4505-13be-4ec7-8891-7faeceacbd43",
+      "url": "@project/assets/textures/House2colour.webp"
+    },
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "5858b871-0c42-4706-8311-e5e20c3c58d5",
+      "url": "@project/assets/textures/house2matalic.webp"
+    },
+    "name": "House2",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "2d1231a8-b855-48e2-ac9c-0e6f6ba0a476",
+      "url": "@project/assets/textures/house2normal.webp"
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "d0428cb7-84f4-4935-995f-4dcd36224dfb",
+      "url": "@project/assets/textures/house2roughness.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "c59bdd33-4f01-4cd7-b805-ba765f71914f"
+  },
+  "$version": 2
+}

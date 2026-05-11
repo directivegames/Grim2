@@ -7,7 +7,13 @@
       "$uuid": "b3ed39c5-ff82-4c65-8843-7ee563b3508e",
       "url": "@project/assets/textures/roadwithshadow.png"
     },
+    "metalness": 0.77,
     "name": "Road",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "48d11fb3-03c4-4ba6-8d15-a6bb0c98ce77",
+      "url": "@project/assets/textures/Roadnormalmap.png"
+    },
     "userData": {
       "colorSpaceFixed": true
     },

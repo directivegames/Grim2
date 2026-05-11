@@ -1,17 +1,30 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
-    "flatShading": true,
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
-      "$uuid": "c32b2095-bbe0-43e6-8ea5-47791059c40a",
-      "url": "@project/assets/textures/colour map.webp"
+      "$uuid": "40a35aea-2909-4096-8cca-c972c0fb7db8",
+      "url": "@project/assets/textures/zombiecolourredone.webp"
     },
     "name": "Zombie2",
     "normalMap": {
       "$bc": "ENGINE.UrlTexture",
-      "$uuid": "5fc43529-3827-463a-9905-538edbb099c1",
-      "url": "@project/assets/textures/normal map zombie.webp"
+      "$uuid": "aa890fde-9cc2-492b-9a08-68bf6fc3675c",
+      "url": "@project/assets/textures/zombienormalredone.webp"
+    },
+    "roughness": 0.83,
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "d9ed69cf-967d-44d5-b140-e77e2085c919",
+      "url": "@project/assets/textures/zombieroughredone.webp"
     },
     "userData": {
       "colorSpaceFixed": true

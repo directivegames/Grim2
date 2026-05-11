@@ -1,0 +1,31 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "c9ffb9ef-d07a-4df2-8d22-69abd6ad2da4",
+      "url": "@project/assets/textures/churchmoodycolour.webp"
+    },
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "5464b36d-fbf7-48e9-a473-747ac7e2dffc",
+      "url": "@project/assets/textures/churchmoodymetal.webp"
+    },
+    "name": "moodychurch",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "f75d1875-f55f-4255-983e-b4cce76b4863",
+      "url": "@project/assets/textures/churchmoodynormal.webp"
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "32909ba8-8d9f-4d16-ae06-58e515cd4c5a",
+      "url": "@project/assets/textures/churchmoodyrough.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "8bd15703-e3e4-45b9-a757-ab22406ac708"
+  },
+  "$version": 2
+}

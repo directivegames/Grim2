@@ -1,0 +1,10 @@
+
+
+
+ pnpm import-mesh-comb @project/assets/layouts/NewTemplate_13.genesys-mesh-comb default                           
+                                                                                       
+
+What actually participates in the pipeline
+
+Blender — Genesys exporter addon writes NewTemplate_13.genesys-mesh-comb (and you pointed paths at your project).
+Terminal — pnpm import-mesh-comb @project/assets/layouts/....genesys-mesh-comb default — runs the import script and updates the .genesys-scene for that scene name.                            

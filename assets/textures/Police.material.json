@@ -1,0 +1,41 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "5e2b588e-cf7d-47d2-95e1-886fccda1333",
+      "url": "@project/assets/textures/Policecolour.webp"
+    },
+    "metalness": 0.82,
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "d34ca0f2-b478-472e-b1ca-b07280ae8d04",
+      "url": "@project/assets/textures/policemetal.webp"
+    },
+    "name": "Police",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "de046c5c-9a38-4382-9fa9-3516fea14e93",
+      "url": "@project/assets/textures/policenormal.webp"
+    },
+    "roughness": 0.61,
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "6017c132-c024-4504-8b25-41f4d718cacc",
+      "url": "@project/assets/textures/policerough.webp"
+    },
+    "userData": {
+      "colorSpaceFixed": true
+    },
+    "uuid": "6c738b3e-1bb0-478f-a837-44fcf7cf4c68"
+  },
+  "$version": 2
+}

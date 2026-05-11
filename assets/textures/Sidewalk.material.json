@@ -1,6 +1,14 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
     "flatShading": true,
     "map": {
       "$bc": "ENGINE.UrlTexture",
@@ -8,6 +16,11 @@
       "url": "@project/assets/textures/sidewalkwithshadow.png"
     },
     "name": "Sidewalk",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "f6767f71-253f-4668-8fbc-525e653c3947",
+      "url": "@project/assets/textures/normalsidewalk.png"
+    },
     "userData": {
       "colorSpaceFixed": true
     },

@@ -1,6 +1,11 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
+    "emissiveMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "0898fb40-f208-4d2e-9c6a-913b43af01e3",
+      "url": "@project/assets/textures/storeemirrison.webp"
+    },
     "flatShading": true,
     "map": {
       "$bc": "ENGINE.UrlTexture",
