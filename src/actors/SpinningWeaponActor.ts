@@ -607,6 +607,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const nearbyZombies = zombieSpatialManager.getNearbyZombies(this._boomerangPos, BOOMERANG_HIT_RADIUS + 1);
 
     for (const zombie of nearbyZombies) {
+      // Skip hidden (recycled/pooled) zombies
+      if ((zombie as unknown as { isHiddenInGame(): boolean }).isHiddenInGame()) {
+        continue;
+      }
+
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
       const lastHit = this._hitCooldowns.get(zombie);
@@ -691,6 +696,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
       for (const zombie of nearbyZombies) {
         if (hitZombies.has(zombie)) continue; // Already hit this frame
+
+        // Skip hidden (recycled/pooled) zombies
+        if ((zombie as unknown as { isHiddenInGame(): boolean }).isHiddenInGame()) {
+          continue;
+        }
 
         if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) {
           continue;

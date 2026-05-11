@@ -793,6 +793,9 @@ export class NewZombieActor extends ENGINE.Actor {
     // Reset death state flags so it can be reused
     this._deathSequenceStarted = false;
     this._deathPosition = null;
+
+    // Unregister from spatial manager while hidden (prevents weapon hit detection)
+    zombieSpatialManager.unregisterZombie(this);
   }
 
   /**
