@@ -33119,6 +33119,14 @@
         "rootComponent": {
           "$bc": "ENGINE.SceneComponent",
           "name": "SceneComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              0,
+              8.892099,
+              0
+            ]
+          },
           "userData": {
             "objectFlags": 1
           },

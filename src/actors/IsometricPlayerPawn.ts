@@ -15,6 +15,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { ISO_YAW, IsometricMovementComponent } from '../components/movement/IsometricMovementComponent.js';
 import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
+import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcComponent.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -81,8 +82,18 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   private _sceneGrim2PlaceholderRemoved: boolean = false;
 
+  /** Weapon swing arc indicator component. */
+  private _weaponArcComponent: WeaponSwingArcComponent | null = null;
+
   /** Souls collected from defeated zombies. */
   public soulsCollected: number = 0;
+
+  // ── Mouse tracking for weapon arc ─────────────────────────────────────────
+
+  private readonly _raycaster = new THREE.Raycaster();
+  private readonly _groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  private readonly _mouseHitPoint = new THREE.Vector3();
+  private readonly _playerPosScratch = new THREE.Vector3();
 
   // ── Screen shake state ──────────────────────────────────────────────────
 
@@ -174,6 +185,11 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     const shadow = BlobShadowComponent.create({ radius: 0.55, opacity: 0.35 });
     this.rootComponent.add(shadow);
 
+    // Weapon swing arc indicator - shows 180° attack area on floor
+    const weaponArc = WeaponSwingArcComponent.create();
+    this.rootComponent.add(weaponArc);
+    this._weaponArcComponent = weaponArc;
+
     return meshComponent;
   }
 
@@ -249,6 +265,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
     super.tickPrePhysics(deltaTime); // handles animation parameters
     this._updateVisualFacing(deltaTime);
+    this._updateWeaponArcFromMouse(); // Always update arc, even when standing still
     this._updateCinematicCamera(deltaTime);
     this._updateScreenShake(deltaTime);
     this._updateDamageVignette(deltaTime);
@@ -340,6 +357,33 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._facingYaw += Math.sign(diff) * Math.min(Math.abs(diff), ROTATE_SPEED * deltaTime);
 
     this.visualComponent.rotation.y = this._facingYaw;
+  }
+
+  /**
+   * Update weapon arc to point toward mouse cursor (where the weapon will swing).
+   */
+  private _updateWeaponArcFromMouse(): void {
+    if (!this._weaponArcComponent) return;
+
+    const world = this.getWorld();
+    if (!world) return;
+
+    const camera = world.getActiveCamera();
+    if (!camera) return;
+
+    // Get mouse position and raycast to ground plane
+    const ndcMouse = world.inputManager.getMousePosition();
+    this._raycaster.setFromCamera(ndcMouse, camera);
+
+    if (this._raycaster.ray.intersectPlane(this._groundPlane, this._mouseHitPoint)) {
+      // Calculate angle from player to mouse hit point
+      this.rootComponent.getWorldPosition(this._playerPosScratch);
+      const dx = this._mouseHitPoint.x - this._playerPosScratch.x;
+      const dz = this._mouseHitPoint.z - this._playerPosScratch.z;
+      const aimAngle = Math.atan2(dx, dz);
+
+      this._weaponArcComponent.setAimDirection(aimAngle);
+    }
   }
 
   /** Drop the level-authoring Grim2 instance so only the pawn copy exists at runtime. */

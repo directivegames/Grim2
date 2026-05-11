@@ -26,6 +26,7 @@ import './components/vfx/BoomerangTrailComponent.ts';
 import './components/vfx/DustTrailComponent.ts';
 import './components/vfx/WeaponSlashComponent.ts';
 import './components/vfx/WeaponSummonVFXComponent.ts';
+import './components/vfx/WeaponSwingArcComponent.ts';
 import './game-data.ts';
 import './materials/grass/GenesysGrassSwayNodeMaterial.ts';
 import './materials/grass/grassDualBackend.ts';
