@@ -29,6 +29,8 @@ const NEW_ZOMBIE_MODEL_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb` as ENGINE.ModelPath;
 const NEW_ZOMBIE_ANIM_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.anim.json`;
+const NEW_ZOMBIE_MATERIAL_URL =
+  `${ENGINE.PROJECT_PATH_PREFIX}/assets/textures/Zombie2.material.json` as ENGINE.MaterialPath;
 
 const CAPSULE_RADIUS = 0.35;
 const CAPSULE_HEIGHT = 1.75;
@@ -224,6 +226,10 @@ export class NewZombieActor extends ENGINE.Actor {
   // Frozen position during death animation - prevents any residual movement
   private _deathPosition: THREE.Vector3 | null = null;
 
+  // Pooling support
+  public isPooled = false;
+  public onDied: (() => void) | null = null;
+
   private _tickOffset = 0;
   private static readonly TICK_INTERVAL = 2;
   private static readonly TICK_INTERVAL_LOW = 4;
@@ -307,6 +313,7 @@ export class NewZombieActor extends ENGINE.Actor {
 
     const visual = ENGINE.GLTFMeshComponent.create({
       modelUrl: NEW_ZOMBIE_MODEL_URL,
+      material: NEW_ZOMBIE_MATERIAL_URL,
       rotation: new THREE.Euler(0, Math.PI, 0),
       physicsOptions: { enabled: false },
       castShadow: false,
@@ -361,6 +368,13 @@ export class NewZombieActor extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     super.doBeginPlay();
 
+    // Ensure shadows are disabled (overrides scene file castShadow=true for placed zombies)
+    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    if (visual) {
+      visual.castShadow = false;
+      visual.receiveShadow = false;
+    }
+
     this._tickOffset = Math.floor(Math.random() * 100);
 
     this._jitteredSpeed = this.moveSpeed + (Math.random() - 0.5) * SPEED_JITTER_RANGE;
@@ -414,6 +428,12 @@ export class NewZombieActor extends ENGINE.Actor {
   }
 
   public override tickPrePhysics(deltaTime: number): void {
+    // PERFORMANCE: Skip all processing for hidden (pooled) zombies
+    if (this.isHiddenInGame()) {
+      super.tickPrePhysics(deltaTime);
+      return;
+    }
+
     if (this._deathSequenceStarted) {
       // Lock physics capsule position to death spot
       if (this._deathPosition) {
@@ -700,11 +720,10 @@ export class NewZombieActor extends ENGINE.Actor {
 
     const npc = this.getComponent(ENGINE.NpcMovementComponent);
     npc?.stop();
-    const physics = this.getPhysicsEngine();
-    if (npc && physics) physics.removeCharacterController(npc);
 
     // Disable the NPC component entirely so its internal tick can't apply
     // any further velocity to the physics body after death
+    // For pooled zombies, we keep the character controller alive (don't remove it)
     if (npc) {
       (npc as unknown as { enabled: boolean }).enabled = false;
     }
@@ -747,8 +766,107 @@ export class NewZombieActor extends ENGINE.Actor {
       }
 
       this.spawnDeathObjects(finalPos);
-      this.destroy();
-    }, HIT_REACTION_HOLD_SEC * 1000);
+
+      // Notify listener (HordeManager) that this zombie died
+      this.onDied?.();
+
+      // Pooled zombies recycle instead of destroy
+      if (this.isPooled) {
+        this.recycle();
+      } else {
+        this.destroy();
+      }
+    }, HIT_REACTION_HOLD_SEC * 1000 + Math.random() * 200);
+  }
+
+  /**
+   * Recycle this pooled zombie — hide it and park it off-screen.
+   * The HordeManager will later call softReset() to respawn it.
+   */
+  private recycle(): void {
+    // Hide the zombie
+    this.setHiddenInGame(true);
+
+    // Move it far off-screen (won't be visible until respawned)
+    this.rootComponent.position.set(0, -1000, 0);
+
+    // Reset death state flags so it can be reused
+    this._deathSequenceStarted = false;
+    this._deathPosition = null;
+  }
+
+  /**
+   * Soft reset for pooled zombies — respawn at a new position with full health.
+   * Immediately enters chase mode (aggro = true).
+   */
+  public softReset(position: THREE.Vector3): void {
+    // Unhide
+    this.setHiddenInGame(false);
+
+    // Move to spawn position
+    this.rootComponent.position.copy(position);
+    this.rootComponent.updateMatrixWorld();
+
+    // Reset all death/aggro state
+    this._deathSequenceStarted = false;
+    this._hasAggro = true;
+    this._attackZoneLatched = false;
+    this._btBranch = 'chase';
+    this._hitAnimEndTime = -Infinity;
+    this._deathPosition = null;
+    this._consecutiveStuckChecks = 0;
+    this._stuckCheckPosition.copy(position);
+    this._animStateChangeTimer = 0;
+    this._pendingAnimState = null;
+    this._idleWalkDebounceTimer = 0;
+
+    // Reset blackboard for immediate chase
+    // Use actual spawn distance (12-15) so attackZoneLatched stays false until close
+    if (this.blackboard) {
+      this.blackboard.clear();
+      this.blackboard.setValue('HasAggro', true);
+      this.blackboard.setValue('DistanceToPlayer', 15); // Spawned 12-15 units away
+    }
+
+    // Reset behavior tree
+    if (this.behaviorRoot) {
+      this.behaviorRoot.reset();
+    }
+
+    // Reset health
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (stats) {
+      // Reset max health property which updates current health
+      stats.setMaxHealth(this.maxHealth);
+      this._lastTrackedHealth = this.maxHealth;
+    }
+
+    // Re-enable NPC component - let applyDirectSteerChase handle movement
+    const npc = this.getComponent(ENGINE.NpcMovementComponent) as unknown as {
+      enabled: boolean;
+      maxSpeed: number;
+      useNavigationServer: boolean;
+    } | null;
+    if (npc) {
+      npc.enabled = true;
+      npc.maxSpeed = this._jitteredSpeed;
+      npc.useNavigationServer = false; // Direct steer chase
+      // Do NOT call followActor or stop - applyDirectSteerChase runs every tick
+    }
+
+    // Update spatial manager
+    zombieSpatialManager.unregisterZombie(this);
+    zombieSpatialManager.registerZombie(this);
+
+    // Start in walk animation (chase mode)
+    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    if (anim?.isReady()) {
+      anim.setParameter('state', 'walk');
+    }
+
+    // Animation is ready now
+    this._animationInitialized = true;
+    this._startupComplete = true;
   }
 
   /**
@@ -758,24 +876,16 @@ export class NewZombieActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
+    // Spawn pooled grave with random outward velocity
     const gravePos = deathPos.clone().add(new THREE.Vector3(0, 0.5, 0));
-    const grave = DeadGraveActor.create({ position: gravePos });
-    world.addActor(grave);
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1.5 + Math.random() * 2.5; // 1.5-4.0 m/s outward
+    const graveVelocity = new THREE.Vector3(Math.cos(angle) * speed, 0.3, Math.sin(angle) * speed);
+    DeadGraveActor.spawnAt(world, gravePos, graveVelocity);
 
-    // Apply random outward velocity so graves don't stack
-    const physics = world.getPhysicsEngine();
-    const graveRoot = grave.rootComponent as ENGINE.MeshComponent;
-    if (physics && graveRoot) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 1.5 + Math.random() * 2.5; // 1.5-4.0 m/s outward
-      const velocity = new THREE.Vector3(Math.cos(angle) * speed, 0.3, Math.sin(angle) * speed);
-      type VectorParam = 'linearVelocity' | 'angularVelocity';
-      physics.setVectorParam(graveRoot, 'linearVelocity' as VectorParam as any, velocity.toArray() as [number, number, number]);
-    }
-
+    // Spawn soul (pooled with soft cap)
     const soulPos = deathPos.clone().add(new THREE.Vector3(0, 0.8, 0));
-    const soul = SoulActor.create({ position: soulPos });
-    world.addActor(soul);
+    SoulActor.spawnAt(world, soulPos);
   }
 
   // ─── Internal helpers ──────────────────────────────────────────────────────

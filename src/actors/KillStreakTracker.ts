@@ -2,7 +2,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 
 const KILL_WINDOW_MS           = 2000;  // kills within this real-time window count toward streak
-const STREAK_THRESHOLD         = 5;     // kills needed to trigger slow-mo
+const STREAK_THRESHOLD         = 10;    // kills needed to trigger slow-mo
 const SLOMO_VALUE              = 0.12;  // 12% speed - more dramatic bullet time
 const SLOMO_DURATION_MS        = 4500;  // 4.5 seconds - longer epic moment
 const SHAKE_INTENSITY          = 1.2;   // stronger camera rumble
@@ -46,6 +46,38 @@ class SlomoManager {
       (world as unknown as { slomo: number }).slomo = prev.value;
     } else {
       // Nothing to restore to
+      this._priority = SLOMO_PRIORITY.normal;
+      (world as unknown as { slomo: number }).slomo = 1;
+    }
+  }
+
+  /**
+   * Remove all stack entries for a specific priority and restore to the state
+   * before those entries were pushed. This prevents stuck slowmo when higher
+   * priority effects fire during a lower priority effect's duration.
+   */
+  removePriorityAndRestore(world: ENGINE.World, priorityToRemove: number): void {
+    // Find the first entry before our priority entries were pushed
+    let targetEntry: { priority: number; value: number } | null = null;
+
+    // Work backwards through stack to find state before our entries
+    for (let i = this._stack.length - 1; i >= 0; i--) {
+      if (this._stack[i]!.priority !== priorityToRemove) {
+        // This is the state we want to restore to
+        targetEntry = this._stack[i]!;
+        break;
+      }
+    }
+
+    // Remove all entries with the target priority
+    this._stack = this._stack.filter(entry => entry.priority !== priorityToRemove);
+
+    // Restore to the found state, or normal if nothing found
+    if (targetEntry) {
+      this._priority = targetEntry.priority;
+      (world as unknown as { slomo: number }).slomo = targetEntry.value;
+    } else if (this._priority === priorityToRemove) {
+      // Current priority is the one being removed, reset to normal
       this._priority = SLOMO_PRIORITY.normal;
       (world as unknown as { slomo: number }).slomo = 1;
     }
@@ -149,7 +181,9 @@ class KillStreakTracker {
     this._killTimestampsMs.length = 0;
 
     this._restoreTimeoutId = globalThis.setTimeout(() => {
-      slomoManager.resetIfPriority(world, SLOMO_PRIORITY.killStreak);
+      // Use removePriorityAndRestore to properly clean up even if higher
+      // priority effects fired during the streak (prevents stuck slowmo)
+      slomoManager.removePriorityAndRestore(world, SLOMO_PRIORITY.killStreak);
       this._isInStreak = false;
       this._restoreTimeoutId = null;
       this._lastStreakEndTimeMs = performance.now();

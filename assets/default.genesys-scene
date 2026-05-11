@@ -3905,6 +3905,9 @@
       },
       "18": {
         "$bc": "ENGINE.Actor",
+        "editorData": {
+          "hidden": false
+        },
         "name": "Actor_524",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -13150,6 +13153,7 @@
         "name": "tombs",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
           "position": {
@@ -13177,6 +13181,7 @@
         "name": "tombs 02",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
           "position": {
@@ -17318,6 +17323,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -17356,6 +17364,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -17392,6 +17403,7 @@
         "name": "Car 1 Redon",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
           "position": {
@@ -17460,6 +17472,7 @@
         "name": "Spookyhousemoody",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Spookyhousemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -17526,6 +17539,7 @@
               "uuid": "7abcbe1212b9c066"
             }
           ],
+          "excludeFromNavigation": true,
           "modelMaterial": "",
           "modelUrl": "@project/assets/models/storemoody.glb",
           "name": "RootComponent",
@@ -17701,6 +17715,7 @@
         "name": "Churchmoody",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/churchmoody.glb",
           "name": "RootComponent",
           "position": {
@@ -17731,6 +17746,7 @@
         "name": "Moodyhouse 4",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/moodyhouse4.glb",
           "name": "RootComponent",
           "position": {
@@ -17761,6 +17777,7 @@
         "name": "Spookyhousemoody 02",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Spookyhousemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -18245,6 +18262,7 @@
         "name": "Hedgeredon 06",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -18321,6 +18339,7 @@
         "name": "Hedgeredon 08",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -18425,6 +18444,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -18463,6 +18485,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -18923,6 +18948,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -18961,6 +18989,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -18999,6 +19030,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19037,6 +19071,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19075,6 +19112,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19225,8 +19265,12 @@
         "name": "Hedgeredon 22",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19265,6 +19309,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19303,6 +19350,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19339,6 +19389,7 @@
         "name": "Car 1 Redon 02",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
           "position": {
@@ -19379,6 +19430,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19409,6 +19463,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19439,6 +19496,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19469,6 +19529,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19499,6 +19562,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19527,8 +19593,12 @@
         "name": "Hedgeredon 30",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19559,6 +19629,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19589,6 +19662,9 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
@@ -19617,6 +19693,7 @@
         "name": "Hedgeredon 33",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -19655,6 +19732,7 @@
         "name": "Hedgeredon 34",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -19784,6 +19862,7 @@
               "uuid": "2d18e171c870501d"
             }
           ],
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/moodyhouse5.glb",
           "name": "RootComponent",
           "position": {
@@ -19912,6 +19991,7 @@
         "name": "Hedgeredon 13",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -19942,6 +20022,7 @@
         "name": "Hedgeredon 20",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -20328,6 +20409,7 @@
               "vfxPath": "@project/assets/VFX/fire.vfx.json"
             }
           ],
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
           "position": {
@@ -21022,6 +21104,7 @@
         "name": "Treemoody 13",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -21052,6 +21135,7 @@
         "name": "Treemoody 14",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -21084,12 +21168,15 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
-              29.811762,
-              -1.019639,
-              11.136453
+              29.775965,
+              -1.777216,
+              16.460872
             ]
           },
           "rotation": {
@@ -21122,12 +21209,15 @@
           "$bc": "ENGINE.GLTFMeshComponent",
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
+          "physicsOptions": {
+            "enabled": false
+          },
           "position": {
             "$bc": "v3",
             "_": [
-              29.811762,
-              -1.019639,
-              18.749672
+              29.777382,
+              -1.036232,
+              10.688143
             ]
           },
           "rotation": {
@@ -21158,6 +21248,7 @@
         "name": "Treemoody 15",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -21196,6 +21287,7 @@
         "name": "Treemoody 16",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -21234,6 +21326,7 @@
         "name": "Treemoody 17",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -21272,6 +21365,7 @@
         "name": "Treemoody 18",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -21911,6 +22005,7 @@
               "uuid": "ae52607cc8bf3ce2"
             }
           ],
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
           "position": {
@@ -24583,6 +24678,7 @@
               "uuid": "668cf0bfaf983948"
             }
           ],
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/policerdone.glb",
           "name": "RootComponent",
           "position": {
@@ -24665,6 +24761,7 @@
               "uuid": "dd09636ae334f89e"
             }
           ],
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/policerdone.glb",
           "name": "RootComponent",
           "position": {
@@ -24747,6 +24844,7 @@
               "uuid": "a64272c657931222"
             }
           ],
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/policerdone.glb",
           "name": "RootComponent",
           "position": {
@@ -25347,6 +25445,7 @@
         "name": "Hedgeredon 41",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -25377,6 +25476,7 @@
         "name": "Hedgeredon 42",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -25407,6 +25507,7 @@
         "name": "Hedgeredon 43",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -25437,6 +25538,7 @@
         "name": "Hedgeredon 44",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -25467,6 +25569,7 @@
         "name": "Hedgeredon 45",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -25497,6 +25600,7 @@
         "name": "Hedgeredon 46",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -25527,6 +25631,7 @@
         "name": "Hedgeredon 47",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -25557,6 +25662,7 @@
         "name": "Hedgeredon 48",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/hedgeredon.glb",
           "name": "RootComponent",
           "position": {
@@ -33006,7 +33112,43 @@
         },
         "uuid": "30de31aad3635e94"
       },
-      "$length": 377
+      "377": {
+        "$bc": "GAME.ZombieHordeManager",
+        "$initOptions": {},
+        "name": "Zombie Horde Manager 4",
+        "rootComponent": {
+          "$bc": "ENGINE.SceneComponent",
+          "name": "SceneComponent",
+          "userData": {
+            "objectFlags": 1
+          },
+          "uuid": "f4154319-2f0a-4908-bdf5-310eee1fb01e"
+        },
+        "uuid": "230c0321dfdda7d6"
+      },
+      "378": {
+        "$bc": "GAME.HedgeCollisionDisabler",
+        "$initOptions": {},
+        "name": "Hedge Collision Disabler 1",
+        "rootComponent": {
+          "$bc": "ENGINE.SceneComponent",
+          "name": "SceneComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              0,
+              9.895583,
+              0
+            ]
+          },
+          "userData": {
+            "objectFlags": 1
+          },
+          "uuid": "c4df4d45-8ae0-47e1-9977-df8b83b350e8"
+        },
+        "uuid": "82bbf3516ae6379e"
+      },
+      "$length": 379
     },
     "editorData": {
       "sceneTree": {
@@ -34934,6 +35076,16 @@
           },
           {
             "id": "e3f0e31544a4e428",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "230c0321dfdda7d6",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "82bbf3516ae6379e",
             "isExpanded": false,
             "nodeType": "actor"
           }

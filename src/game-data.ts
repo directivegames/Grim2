@@ -3,13 +3,25 @@
 
 import { registerGeneratedClassMetadata, registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
+import { HedgeActor } from './actors/HedgeActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { NewZombieActor } from './actors/NewZombieActor.js';
 import { TallGrassActor } from './actors/TallGrassActor.js';
 import { ZombieActor } from './actors/ZombieActor.js';
+import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
 import { IsometricMovementComponent } from './components/movement/IsometricMovementComponent.js';
 
 export function registerMetadata(): void {
+  registerGeneratedPropertyMetadata(HedgeActor, {
+      "scale": {
+        "type": "number",
+        "min": 0.1,
+        "max": 5,
+        "step": 0.1,
+        "category": "Hedge"
+      }
+    });
+
   registerGeneratedPropertyMetadata(IsometricPlayerPawn, {
       "cameraDistance": {
         "type": "number",
@@ -234,6 +246,23 @@ export function registerMetadata(): void {
         "max": 30,
         "step": 0.5,
         "category": "Zombie"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(ZombieHordeManager, {
+      "killsToActivate": {
+        "type": "number",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "category": "Horde"
+      },
+      "waveInterval": {
+        "type": "number",
+        "min": 5,
+        "max": 60,
+        "step": 1,
+        "category": "Horde"
       }
     });
 

@@ -25,6 +25,17 @@ const BOB_SPEED = 1.5;
 /** Rotation speed in rad/s. */
 const ROTATION_SPEED = 2.0;
 
+/** Max simultaneous souls — oldest gets teleported when cap hit. */
+const MAX_SOULS = 30;
+
+// Soul pool management at module level for static access
+interface PooledSoul {
+  actor: SoulActor;
+  spawnTime: number;
+}
+
+let soulPool: PooledSoul[] = [];
+
 
 @ENGINE.GameClass()
 export class SoulActor extends ENGINE.Actor {
@@ -36,6 +47,9 @@ export class SoulActor extends ENGINE.Actor {
   // Scratch vectors to avoid per-frame allocations
   private readonly _scratchPos = new THREE.Vector3();
   private readonly _playerPos = new THREE.Vector3();
+
+  // Pool tracking
+  private _spawnTime = 0;
 
   public override initialize(options?: ActorOptions): void {
     const visual = ENGINE.GLTFMeshComponent.create({
@@ -61,6 +75,7 @@ export class SoulActor extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+    this._spawnTime = performance.now();
     // Ensure UI exists on first soul spawn
     SoulCounterUI.getInstance(this.getWorld());
   }
@@ -131,5 +146,59 @@ export class SoulActor extends ENGINE.Actor {
 
   public override getEditorClassIcon(): string | null {
     return 'Icon_Light';
+  }
+
+  /**
+   * Spawn a soul at the given position.
+   * Uses pooling — teleports oldest soul if at cap.
+   */
+  public static spawnAt(world: ENGINE.World, position: THREE.Vector3): SoulActor {
+    // Clean up destroyed souls from pool (check if actor is still in world)
+    soulPool = soulPool.filter(s => s.actor.getWorld() !== null);
+
+    // If at cap, recycle the oldest uncollected soul
+    if (soulPool.length >= MAX_SOULS) {
+      // Sort by spawn time, oldest first
+      soulPool.sort((a, b) => a.spawnTime - b.spawnTime);
+
+      // Find first uncollected soul to recycle
+      for (const entry of soulPool) {
+        if (!entry.actor._isCollected) {
+          entry.actor.recycle(position);
+          entry.spawnTime = performance.now();
+          return entry.actor;
+        }
+      }
+    }
+
+    // Create new soul
+    const soul = SoulActor.create({ position: position.clone() });
+    world.addActor(soul);
+
+    const now = performance.now();
+    soul._spawnTime = now;
+    soulPool.push({ actor: soul, spawnTime: now });
+
+    return soul;
+  }
+
+  /**
+   * Recycle this soul to a new position.
+   */
+  private recycle(position: THREE.Vector3): void {
+    // Reset position
+    this.rootComponent.position.copy(position);
+    this._baseY = position.y;
+    this.rootComponent.updateMatrixWorld();
+
+    // Reset state
+    this._isCollected = false;
+    this._bobPhase = 0;
+
+    // Random rotation for variety
+    this.rootComponent.rotation.y = Math.random() * Math.PI * 2;
+
+    // Update spawn time
+    this._spawnTime = performance.now();
   }
 }
