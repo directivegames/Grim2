@@ -1,191 +1,240 @@
 ---
 name: enemy-spawner
-description: 'Configurable enemy wave spawner system for Genesys.js games. Supports pressure modes, enemy type selection, and full spawn control. Triggers on: spawner, enemy waves, zombie horde, spawn system.'
+description: 'Configurable enemy wave spawner system for Genesys.js games. Supports wave-based spawning, kill thresholds, respawn queues and pooling. Triggers on: spawner, enemy waves, zombie horde, spawn system, horde manager.'
 user-invocable: false
 ---
 
 # Enemy Spawner System
 
-A flexible wave-based enemy spawning system for Genesys.js games. Place a `ZombieHordeManager` actor in your scene to enable dynamic enemy spawning with full control over spawn behavior, enemy types, and difficulty pressure.
+A wave-based enemy spawning system built on top of `ZombieHordeManager`. Place the actor in your scene and it will automatically hook into placed enemies, count kills, and begin dynamic spawning once the threshold is reached.
 
-## Core Concepts
+---
 
-- **Wave-based spawning**: Enemies spawn in groups (waves) at timed intervals
-- **Activation threshold**: Spawning can be delayed until the player kills a set number of initial enemies
-- **Pressure modes**: Control spawn intensity (constant, low, high, or escalating)
-- **Enemy types**: Configure which enemy class to spawn (e.g., `NewZombieActor`)
-- **Caps and limits**: Set maximum simultaneous enemies and total kill limits
+## Current State (What Is Actually Implemented)
+
+### Two Real Editor Properties
+
+Only **two** properties are currently exposed in the scene editor via `@ENGINE.property()`:
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `killsToActivate` | number | 10 | Kills needed before first wave spawns |
+| `waveInterval` | number | 8 | Seconds between waves |
+
+Everything else is a **hardcoded constant** at the top of `ZombieHordeManager.ts`:
+
+| Constant | Value | What it controls |
+|----------|-------|-----------------|
+| `MAX_ACTIVE_ZOMBIES` | 35 | Hard cap on simultaneous enemies |
+| `RESUME_SPAWN_THRESHOLD` | 25 | Resume spawning when active count drops here |
+| `KILLS_TO_ACTIVATE_HORDE` | 10 | Default kill threshold (mirrors `killsToActivate`) |
+| `MAX_TOTAL_KILLS` | 500 | Stop spawning after this many total kills |
+| `WAVE_SIZE` | 10 | Enemies per wave |
+| `RESPAWN_DELAY_SEC` | 5 | Seconds before a dead enemy re-enters the spawn queue |
+| `SPAWN_MIN_DISTANCE` | 12 | Minimum spawn ring radius from player (units) |
+| `SPAWN_MAX_DISTANCE` | 15 | Maximum spawn ring radius from player (units) |
+| `SPAWN_HEIGHT` | 0.9 | Zombie capsule center Y — puts feet on ground |
+
+To change any of these, edit the constants directly in `src/actors/ZombieHordeManager.ts`.
+
+---
 
 ## How to Use
 
 ### Basic Setup
 
-1. Place `ZombieHordeManager` in your scene
-2. Configure properties in the editor
-3. The spawner automatically hooks into existing placed enemies
+1. Place `ZombieHordeManager` in the scene
+2. Optionally tweak `killsToActivate` and `waveInterval` in the editor
+3. The spawner auto-hooks all placed `NewZombieActor` instances on `doBeginPlay`
+4. Once `killsToActivate` kills are registered, the first wave spawns
 
-### Editor Properties
+### Placed Enemy Hook
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `killsToActivate` | number | 10 | Kills needed before first wave spawns |
-| `maxActiveEnemies` | number | 35 | Hard cap on simultaneous enemies |
-| `resumeThreshold` | number | 25 | Resume spawning when count drops to this |
-| `totalKillLimit` | number | 500 | Stop spawning entirely after this many kills |
-| `waveSize` | number | 10 | Enemies per wave |
-| `waveInterval` | number | 8 | Seconds between waves |
-| `spawnMinDistance` | number | 12 | Minimum spawn distance from player |
-| `spawnMaxDistance` | number | 15 | Maximum spawn distance from player |
-| `pressureMode` | enum | "escalating" | Spawn intensity pattern |
-| `enemyClassName` | string | "NewZombieActor" | Enemy class to spawn |
-| `spawnDelayMinutes` | number | 0 | Minutes of gameplay before first wave spawns |
-| `triggerEnemyClass` | string | "" | Enemy type that triggers boss spawn when killed |
-| `triggerKillCount` | number | 50 | Kills of trigger enemy type needed to spawn boss |
-| `bossClassName` | string | "" | Boss/elite enemy class to spawn on trigger |
-| `bossSpawnMessage` | string | "" | UI message shown when boss spawns |
+On startup the manager scans `world.getActors()` for any `NewZombieActor` where `isPooled === false`. These are the manually placed enemies. It assigns their `onDied` callback to count toward the activation threshold. Spawned (pooled) enemies count toward the total kill limit but trigger respawn queue logic instead.
 
-### Pressure Modes
+---
 
-- **constant**: Fixed wave size and interval throughout
-- **low**: Slower spawns, smaller waves (relaxed combat)
-- **high**: Fast spawns, large waves (intense from start)
-- **escalating**: Starts low, ramps up intensity over time/kills
+## Pooling Contract
 
-### Enemy Types
+Any enemy class used with this spawner must follow this interface:
 
-The spawner can spawn any actor class that:
-1. Extends `ENGINE.Actor`
-2. Has `isPooled` property settable to `true`
-3. Has `onDied` callback property
-4. Implements `softReset(position)` method for respawning
-5. Has matching collision profile in the game
-
-To use a different enemy:
-1. Create your enemy actor class (e.g., `FastZombieActor`)
-2. Set `enemyClassName` to `"GAME.FastZombieActor"`
-3. Ensure the class follows the pooling contract above
-
-## Architecture
-
-### Spawning Flow
-
-```
-Player kills placed enemies (killsToActivate threshold)
-         ↓
-   First wave spawns
-         ↓
-   waveInterval seconds pass
-         ↓
-   Next wave spawns (if under maxActiveEnemies)
-         ↓
-   At maxActiveEnemies → pause spawning
-         ↓
-   10 kills drop count to resumeThreshold → resume
-```
-
-### Key Methods
-
-- `spawnWave()`: Triggers a wave of enemies
-- `spawnSingleZombie()`: Spawns one enemy with VFX
-- `getSpawnPosition()`: Finds valid navmesh position near player
-- `onPoolZombieDied()`: Handles death, adds to respawn queue
-
-### Pooled Enemy Lifecycle
-
-1. **Create**: Enemy instantiated at spawn position, hidden
-2. **VFX**: Smoke effect plays at spawn location
-3. **Reveal**: After 300ms, enemy unhidden and `softReset()` called
-4. **Chase**: Enemy immediately targets player via steering
-5. **Death**: Death effects play, enemy recycled to pool
-6. **Respawn**: After delay, enemy reused for next spawn
-
-## Troubleshooting
-
-### Enemies not spawning
-- Check `killsToActivate` — have enough initial enemies been killed?
-- Verify navmesh is generated and ready
-- Check console for "No valid spawn position found"
-
-### Enemies spawning in one spot
-- Navmesh may not cover intended spawn area
-- Player Y-height vs navmesh height mismatch
-- Check `spawnMinDistance` / `spawnMaxDistance` aren't too tight
-
-### Enemies running on spot
-- Check enemy's `softReset()` properly enables NPC component
-- Verify `DistanceToPlayer` blackboard value isn't 0
-- Ensure steering system isn't fighting with `followActor()`
-
-### Performance issues
-- Reduce `maxActiveEnemies` (try 25-30)
-- Lower `waveSize` for fewer simultaneous spawns
-- Enable enemy LOD in the enemy actor class
-
-## Advanced Features
-
-### Time-Based Spawning
-
-Set `spawnDelayMinutes` to delay the first wave by a specific amount of gameplay time:
-
-- **0**: Spawning starts immediately (or after `killsToActivate` kills)
-- **10**: First wave spawns after 10 minutes of gameplay
-- Useful for tutorial sections, exploration phases, or story pacing
-
-The timer counts actual gameplay time (not paused during menus). When combined with `killsToActivate`, both conditions must be met: time elapsed AND enough kills.
-
-### Boss/Elite Spawn Triggers
-
-Spawn special enemies when players reach milestones:
-
-```
-kill 50 NewZombieActor → spawn BossZombieActor
-```
-
-Configure with:
-- `triggerEnemyClass`: Which enemy type to track (e.g., "NewZombieActor")
-- `triggerKillCount`: How many must be killed (e.g., 50)
-- `bossClassName`: Boss class to spawn (e.g., "BossZombieActor")
-- `bossSpawnMessage`: Optional UI message (e.g., "A powerful enemy approaches!")
-
-**Implementation approach**:
 ```typescript
-private _killCountsByType = new Map<string, number>();
+class MyEnemy extends ENGINE.Actor {
+  // Required by spawner
+  public isPooled: boolean = false;
+  public onDied: (() => void) | null = null;
 
-onEnemyDied(enemyType: string): void {
-  const count = (this._killCountsByType.get(enemyType) ?? 0) + 1;
-  this._killCountsByType.set(enemyType, count);
-  
-  if (enemyType === this.triggerEnemyClass && 
-      count >= this.triggerKillCount &&
-      !this._bossSpawned) {
-    this.spawnBoss();
-    this._bossSpawned = true;
+  /**
+   * Called after the 300ms smoke VFX reveal delay.
+   * Must: unhide the enemy, set position, reset all state,
+   * restore health, re-enable NPC, set aggro to true.
+   */
+  public softReset(position: THREE.Vector3): void {
+    this.setHiddenInGame(false);
+    this.rootComponent.position.copy(position);
+    // reset health, aggro, animation, NPC component...
+  }
+
+  // Must call this.onDied?.() from within handleDeath
+  public override handleDeath(): void {
+    // ... death effects ...
+    this.onDied?.();
+    if (this.isPooled) {
+      this.recycle(); // hide + park off-screen
+    } else {
+      this.destroy();
+    }
+  }
+
+  private recycle(): void {
+    this.setHiddenInGame(true);
+    this.rootComponent.position.set(0, -1000, 0);
+    this._deathSequenceStarted = false;
   }
 }
 ```
 
-Use cases:
-- Spawn a boss every 100 zombies killed
-- Unlock new enemy types after killing X of basic types
-- Create escalation events at kill milestones
+**Key rules:**
+- `handleDeath` must call `this.onDied?.()` — this is how the manager counts kills
+- `softReset` must set `_hasAggro = true` and `DistanceToPlayer = 15` on the blackboard (NOT 0 — setting 0 causes `attackZoneLatched` to immediately trigger, making the enemy stand still)
+- `recycle()` parks the enemy at `(0, -1000, 0)` so the physics body doesn't simulate off-screen
+- Skip all `tickPrePhysics` logic when `isHiddenInGame()` returns true for performance
 
-## Future Enhancements
+---
 
-Potential additions for more complex spawn behavior:
+## Spawning Flow
 
-1. **Multiple enemy types per spawner**: Spawn table with weighted random selection
-2. **Spawn zones**: Restrict spawning to specific scene areas
-3. **Event triggers**: Spawn waves on game events (player enters area, etc.)
-4. **Boss waves**: Multiple boss spawn points with different triggers
-5. **Difficulty scaling**: Automatic adjustment based on player performance
-6. **Spawn patterns**: Spawn enemies in formations or from specific directions
+```
+Scene loads
+    ↓
+hookPlacedZombies() — finds all placed enemies, assigns onDied callbacks
+    ↓
+Player kills N enemies (killsToActivate threshold met)
+    ↓
+activateHorde() — first wave spawns immediately
+    ↓
+Every waveInterval seconds → spawnWave()
+    ↓
+At MAX_ACTIVE_ZOMBIES → _spawningPaused = true (waves skip)
+    ↓
+Enemy dies → added to _respawnQueue with RESPAWN_DELAY_SEC delay
+    ↓
+Active count drops to RESUME_SPAWN_THRESHOLD → _spawningPaused = false
+    ↓
+processRespawnQueue() respawns queued enemies each tick
+    ↓
+Total kills reach MAX_TOTAL_KILLS → spawning stops permanently
+```
+
+---
+
+## Spawn Position Logic
+
+`getSpawnPosition()` places enemies in a ring around the player:
+
+1. Pick random angle and distance (`SPAWN_MIN_DISTANCE` to `SPAWN_MAX_DISTANCE`)
+2. Use `playerPos.y` for the navmesh query (not a hardcoded height — avoids false misses)
+3. Snap candidate to navmesh via `getClosestPointOnNavigationMesh()`
+4. Reject if snap moved the point more than 5 units (likely inside geometry)
+5. After a valid snap, override Y to `SPAWN_HEIGHT` (capsule center height)
+6. Try up to 5 times before giving up and skipping the spawn
+
+If the navmesh is not ready, raw position is used as fallback.
+
+---
+
+## Spawn VFX
+
+`ZombieRiseVFXActor.spawnAt()` is called at each spawn point. This plays a dark smoke/particle effect. The enemy is hidden for 300ms while the VFX runs, then revealed and `softReset()` is called.
+
+The VFX class is hardcoded — to use a different effect, change the import and call in `spawnSingleZombie()`.
+
+---
+
+## Scale Matching
+
+Placed enemies may have non-uniform scale set in the scene editor. Spawned enemies default to scale `(1, 1, 1)`. To match, the spawner explicitly sets the scale after creation:
+
+```typescript
+zombie.rootComponent.scale.set(1.224317, 1.157981, 1.410963);
+```
+
+When adding a new enemy type, check the placed version's scale in the scene file and apply the same values here.
+
+---
+
+## Death Object Collision
+
+`DeadGraveActor` uses a custom collision profile (`DeadGraveNoPawnBlock`) that ignores the `Pawn` channel. This lets enemies walk through graves without being blocked. The profile is registered on first `initialize()` call.
+
+If other death objects (e.g., bones, debris) are added, apply the same profile pattern so they don't block NPC movement.
+
+---
+
+## Troubleshooting
+
+### Enemies not spawning
+- Has `killsToActivate` been reached? Check console for `[ZombieHordeManager] Kill!` logs
+- Navmesh not ready — check for `No valid spawn position found` in console
+- Player pawn is null — `getFirstPlayerPawn()` returns null until player spawns in scene
+
+### Enemies spawning in one cluster
+- Navmesh height mismatch — the spawn query uses `playerPos.y` now, but verify the navmesh is built on the correct geometry
+- `SPAWN_MIN_DISTANCE` / `SPAWN_MAX_DISTANCE` too tight or navmesh doesn't cover the area
+
+### Enemies running on the spot
+- `DistanceToPlayer` set to 0 in `softReset` — must be set to ~15 (spawn distance)
+- `followActor()` called in `softReset` — conflicts with `applyDirectSteerChase()`, do not call it
+- NPC component not re-enabled — check `npc.enabled = true` in `softReset`
+
+### Enemies floating above ground
+- `SPAWN_HEIGHT` should be half the capsule height (~0.9 for a 1.75-tall capsule)
+- Confirm navmesh Y snap is working by checking if enemies land at the same height as placed ones
+
+### Performance issues
+- Lower `MAX_ACTIVE_ZOMBIES` (25-30 recommended for smooth performance)
+- Ensure enemies skip all `tickPrePhysics` logic when `isHiddenInGame()` is true
+- Death effects (GoreExplosionActor etc.) use `MAX_ACTIVE` caps — verify these are set
+
+---
+
+## Planned Features (Not Yet Implemented)
+
+These features are designed but not in the codebase yet:
+
+### Pressure Modes
+Control spawn intensity over time:
+- **constant** — fixed interval and wave size throughout
+- **low** — longer intervals, smaller waves
+- **high** — short intervals, large waves
+- **escalating** — starts slow, ramps up as kill count increases
+
+### Time-Based Activation
+`spawnDelayMinutes` — delay first wave until N minutes of gameplay have passed. Useful for tutorial phases or time-gated content.
+
+### Boss/Elite Triggers
+```typescript
+// Track kills by enemy type
+private _killCountsByType = new Map<string, number>();
+
+// When kill count of a specific type hits threshold, spawn a boss
+if (enemyType === this.triggerEnemyClass && count >= this.triggerKillCount) {
+  this.spawnBoss();
+}
+```
+Properties needed: `triggerEnemyClass`, `triggerKillCount`, `bossClassName`, `bossSpawnMessage`.
+
+To implement any of these: add `@ENGINE.property()` fields to `ZombieHordeManager`, then wire up the logic in `tickPrePhysics` and `spawnWave`.
+
+---
 
 ## Code References
 
-- `src/actors/ZombieHordeManager.ts` — Main spawner logic
-- `src/actors/NewZombieActor.ts` — Example pooled enemy implementation
-- `src/actors/DeadGraveActor.ts` — Death effect with custom collision
-- `src/actors/ZombieRiseVFXActor.ts` — Spawn smoke effect
+- `src/actors/ZombieHordeManager.ts` — Main spawner logic (all constants at top)
+- `src/actors/NewZombieActor.ts` — Reference pooled enemy implementation
+- `src/actors/DeadGraveActor.ts` — Death object with pawn-ignoring collision profile
+- `src/actors/ZombieRiseVFXActor.ts` — Spawn smoke VFX
+- `src/actors/KillStreakTracker.ts` — Kill streak/slowmo system (separate from spawner)
 
 ## Related Skills
 
