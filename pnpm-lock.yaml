@@ -12,8 +12,8 @@ importers:
         specifier: latest
         version: 0.0.6
       '@gnsx/genesys.js':
-        specifier: 10.7.1
-        version: 10.7.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)
+        specifier: 10.7.2
+        version: 10.7.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)
       three:
         specifier: 0.184.0
         version: 0.184.0
@@ -83,13 +83,13 @@ importers:
         version: 5.8.3
       vite:
         specifier: 7.1.7
-        version: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)
+        version: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0)
       vite-plugin-mkcert:
         specifier: 1.17.8
-        version: 1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4))
+        version: 1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0))
       vite-plugin-node-polyfills:
         specifier: 0.24.0
-        version: 0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4))
+        version: 0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0))
       ws:
         specifier: 8.18.2
         version: 8.18.2
@@ -508,8 +508,8 @@ packages:
   '@gnsx/genesys.harness@0.0.6':
     resolution: {integrity: sha512-Y2+3BL8AR0xDVp1oZ0M7hZACJ69t5Ncel5P5EwYGrZcvxDPDqnEbjgDyrssHQKYmp5J6osy+8dWlIALV1LoZhA==}
 
-  '@gnsx/genesys.js@10.7.1':
-    resolution: {integrity: sha512-BBTkjg/7g8jsxvs7fSn+AqZxwzphYkiHdpiwWLiopiVhfBZUy0TOyz58wiSMY21yOpax4hQhLIuKxHp6zLG6Dw==}
+  '@gnsx/genesys.js@10.7.2':
+    resolution: {integrity: sha512-e4hUjVYLWiYWJ5LJ6NdkC/m/0mwWPqxGvxFh3w2iyHvl8IPzJwXae2pJBGhrV6huUlP+ufH9NHc17lYmDVuzBg==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2514,8 +2514,8 @@ packages:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
 
-  yaml@2.8.4:
-    resolution: {integrity: sha512-ml/JPOj9fOQK8RNnWojA67GbZ0ApXAUlN2UQclwv2eVgTgn7O9gg9o7paZWKMp4g0H3nTLtS9LVzhkpOFIKzog==}
+  yaml@2.9.0:
+    resolution: {integrity: sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==}
     engines: {node: '>= 14.6'}
     hasBin: true
 
@@ -2812,7 +2812,7 @@ snapshots:
 
   '@gnsx/genesys.harness@0.0.6': {}
 
-  '@gnsx/genesys.js@10.7.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)':
+  '@gnsx/genesys.js@10.7.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@recast-navigation/three': 0.39.0(@types/three@0.184.1)(three@0.184.0)
@@ -2832,7 +2832,7 @@ snapshots:
       ts-morph: 27.0.2
       tweakpane: 4.0.5
       xatlas-three: 0.2.1
-      yaml: 2.8.4
+      yaml: 2.9.0
       zod: 3.25.76
       zustand: 5.0.13
     transitivePeerDependencies:
@@ -4951,24 +4951,24 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-plugin-mkcert@1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)):
+  vite-plugin-mkcert@1.17.8(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0)):
     dependencies:
       axios: 1.15.2(debug@4.4.3)
       debug: 4.4.3
       picocolors: 1.1.1
-      vite: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)
+      vite: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0)
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-node-polyfills@0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)):
+  vite-plugin-node-polyfills@0.24.0(rollup@4.60.2)(vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.60.2)
       node-stdlib-browser: 1.3.1
-      vite: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4)
+      vite: 7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0)
     transitivePeerDependencies:
       - rollup
 
-  vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.8.4):
+  vite@7.1.7(@types/node@24.12.0)(jiti@2.7.0)(tsx@4.20.3)(yaml@2.9.0):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.4)
@@ -4981,7 +4981,7 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.7.0
       tsx: 4.20.3
-      yaml: 2.8.4
+      yaml: 2.9.0
 
   vm-browserify@1.1.2: {}
 
@@ -5030,7 +5030,7 @@ snapshots:
 
   xtend@4.0.2: {}
 
-  yaml@2.8.4: {}
+  yaml@2.9.0: {}
 
   yocto-queue@0.1.0: {}
 
