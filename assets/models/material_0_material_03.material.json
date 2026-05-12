@@ -1,0 +1,62 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "emissive": {
+      "$bc": "c",
+      "_": [
+        1,
+        1,
+        1
+      ]
+    },
+    "emissiveMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "c38f7fd3-6f3b-4a8d-a501-005d1e650b40",
+      "colorSpace": "srgb",
+      "url": "@project/assets/models/material_0_emissivemap_03.webp",
+      "wrapS": 1000,
+      "wrapT": 1000
+    },
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "a2c6d51d-d5cc-4b38-b58b-eecd57f542e9",
+      "colorSpace": "srgb",
+      "url": "@project/assets/models/material_0_map_03.webp",
+      "wrapS": 1000,
+      "wrapT": 1000
+    },
+    "metalness": 1,
+    "metalnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "cc8f6a19-8e52-4c26-b578-ce32ace74a95",
+      "url": "@project/assets/models/material_0_roughnessmap_03.webp",
+      "wrapS": 1000,
+      "wrapT": 1000
+    },
+    "name": "Material_0",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "4b645cc9-ce37-4c14-8046-6d0bcb611619",
+      "url": "@project/assets/models/material_0_normalmap_03.webp",
+      "wrapS": 1000,
+      "wrapT": 1000
+    },
+    "normalScale": {
+      "$bc": "v2",
+      "_": [
+        1,
+        -1
+      ]
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "47dbaa37-605c-4223-bbe0-a227a76d8ce0",
+      "url": "@project/assets/models/material_0_roughnessmap_03.webp",
+      "wrapS": 1000,
+      "wrapT": 1000
+    },
+    "side": 2,
+    "uuid": "b9223d0f-9342-4e72-99f9-98b03da7da9e"
+  },
+  "$version": 2
+}

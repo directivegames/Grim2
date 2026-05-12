@@ -749,6 +749,25 @@
           0.6
         ]
       }
+    },
+    {
+      "$bc": "THREE.PointLight",
+      "$id": 40,
+      "$value": {
+        "_": [
+          {
+            "$bc": "c",
+            "_": [
+              1,
+              1,
+              0.155926
+            ]
+          },
+          6.5,
+          0,
+          2
+        ]
+      }
     }
   ],
   "$root": {
@@ -981,6 +1000,7 @@
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
           "castShadow": true,
+          "modelMaterial": "@project/assets/models/material_0_005_material.material.json",
           "modelUrl": "@project/assets/models/Bin.glb",
           "name": "GLTFMeshComponent",
           "position": {
@@ -1047,14 +1067,23 @@
         "name": "GLTFMeshActor_344",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
+          "modelMaterial": "@project/assets/models/material_0_005_material.material.json",
           "modelUrl": "@project/assets/models/Bin.glb",
           "name": "GLTFMeshComponent",
           "position": {
             "$bc": "v3",
             "_": [
               7.85046,
-              -0.599501,
+              -0.722304,
               -15.083127
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              1.570796,
+              0,
+              0
             ]
           },
           "scale": {
@@ -10446,6 +10475,7 @@
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
           "excludeFromNavigation": true,
+          "modelMaterial": "@project/assets/models/material_0_002_material_02.material.json",
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
           "position": {
@@ -10470,10 +10500,11 @@
       },
       "126": {
         "$bc": "ENGINE.GLTFMeshActor",
-        "name": "tombs 02",
+        "name": "tombs_04",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
           "excludeFromNavigation": true,
+          "modelMaterial": "@project/assets/models/material_0_002_material_02.material.json",
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
           "position": {
@@ -14873,9 +14904,9 @@
           "rotation": {
             "$bc": "e",
             "_": [
-              0,
-              -0.523599,
-              0
+              3.141593,
+              -0.349066,
+              3.141593
             ]
           },
           "scale": {
@@ -17515,6 +17546,14 @@
               -15.345953
             ]
           },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.22173,
+              0
+            ]
+          },
           "scale": {
             "$bc": "v3",
             "_": [
@@ -18279,6 +18318,7 @@
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
           "excludeFromNavigation": true,
+          "modelMaterial": "@project/assets/models/material_0_013_material.material.json",
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -18310,6 +18350,7 @@
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
           "excludeFromNavigation": true,
+          "modelMaterial": "@project/assets/models/material_0_013_material.material.json",
           "modelUrl": "@project/assets/models/treemoody.glb",
           "name": "RootComponent",
           "position": {
@@ -33376,7 +33417,7 @@
             "$bc": "e",
             "_": [
               0,
-              -0.523599,
+              1.22173,
               0
             ]
           },
@@ -33507,7 +33548,50 @@
         },
         "uuid": "9fc1339b0b73403c"
       },
-      "$length": 376
+      "376": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "name": "lamp for chrcu 10",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "children": [
+            {
+              "$bc": "ENGINE.PointLightComponent",
+              "children": [
+                {
+                  "$ref": 40
+                }
+              ],
+              "light": {
+                "$ref": 40
+              },
+              "name": "Point Light",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0.28396,
+                  -0.064938,
+                  -0.051729
+                ]
+              },
+              "uuid": "69926095b8da4e07"
+            }
+          ],
+          "excludeFromNavigation": true,
+          "modelUrl": "@project/assets/models/lamp for chrcu.glb",
+          "name": "GLTFMeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -26.328981,
+              1.7964,
+              14.888513
+            ]
+          },
+          "uuid": "bb5ede9a0673f5f2"
+        },
+        "uuid": "11564661fc62146a"
+      },
+      "$length": 377
     },
     "editorData": {
       "sceneTree": {
@@ -34661,6 +34745,11 @@
               },
               {
                 "id": "6f6ff6e403c725e0",
+                "isExpanded": false,
+                "nodeType": "actor"
+              },
+              {
+                "id": "11564661fc62146a",
                 "isExpanded": false,
                 "nodeType": "actor"
               },
