@@ -18,6 +18,7 @@ import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { SoulActor } from './SoulActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
+import { KOSignUI } from '../ui/KOSignUI.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { GameAudioManager } from './GameAudioManager.js';
 
@@ -732,6 +733,11 @@ export class NewZombieActor extends ENGINE.Actor {
     const deathPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(deathPos);
     this._deathPosition = deathPos.clone();
+
+    // Show KO sign at death position
+    if (world) {
+      KOSignUI.getInstance(world).showKO(deathPos);
+    }
 
     // Capture facing direction — death animation falls backward from this facing
     const facingY = this.rootComponent.rotation.y;

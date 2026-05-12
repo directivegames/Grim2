@@ -274,10 +274,18 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         hitNormal: new THREE.Vector3(0, 1, 0),
       });
 
+      // Show hit number
+      void this._showHitNumber(world, zPos);
+
       (zombie as unknown as { flashYellow(): void }).flashYellow?.();
       GoreExplosionActor.spawnAt(world, zPos);
       this._hasHit = true;
     }
+  }
+
+  private async _showHitNumber(world: ENGINE.World, pos: THREE.Vector3): Promise<void> {
+    const { HitNumberUI } = await import('../ui/HitNumberUI.js');
+    HitNumberUI.getInstance(world).showDamage(ONE_HIT_DAMAGE, pos);
   }
 
   // ── VFX ──────────────────────────────────────────────────────────────────────

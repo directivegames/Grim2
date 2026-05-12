@@ -19,6 +19,7 @@ import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { SoulActor } from './SoulActor.js';
+import { KOSignUI } from '../ui/KOSignUI.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -746,6 +747,11 @@ export class ZombieActor extends ENGINE.Actor {
     // Capture death position
     const deathPos = new THREE.Vector3();
     this.rootComponent.getWorldPosition(deathPos);
+
+    // Show KO sign at death position
+    if (world) {
+      KOSignUI.getInstance(world).showKO(deathPos);
+    }
 
     // Play death animation
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);

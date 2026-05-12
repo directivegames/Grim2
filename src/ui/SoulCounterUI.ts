@@ -70,22 +70,26 @@ export class SoulCounterUI {
       pointer-events: none;
       user-select: none;
       z-index: 1000;
-      display: none; /* Hidden until assets loaded */
+      display: none;
       background-size: 100% 100%;
       background-repeat: no-repeat;
+      transition: transform 0.15s ease, opacity 0.3s ease;
+      will-change: transform, opacity;
     `;
 
-    // Count display - positioned over the background
+    // Count display - positioned inside the frame
     this._countDisplay = document.createElement('span');
     this._countDisplay.style.cssText = `
       position: absolute;
-      right: 15%;
-      top: 50%;
+      right: 80px;
+      top: 52%;
       transform: translateY(-50%);
       font-family: 'BreeSerif', serif;
-      font-size: ${48 * UI_SCALE}px;
+      font-size: ${90 * UI_SCALE}px;
+      font-weight: bold;
       color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 255, 255, 0.3);
+      will-change: transform;
     `;
     this._countDisplay.textContent = '0';
 
@@ -118,17 +122,50 @@ export class SoulCounterUI {
       }
     }
 
-    // Show the container
+    // Show the container with fade
+    this._container.style.opacity = '0';
     this._container.style.display = 'block';
+    requestAnimationFrame(() => {
+      if (this._container) {
+        this._container.style.transition = 'opacity 0.3s ease, transform 0.15s ease';
+        this._container.style.opacity = '1';
+      }
+    });
     this._initialized = true;
   }
 
   /**
-   * Increment the soul counter and update the display.
+   * Increment the soul counter and update the display with bounce animation.
    */
   public increment(): void {
     this._count++;
     this._updateDisplay();
+    this._bounceAnimation();
+  }
+
+  private _bounceAnimation(): void {
+    if (!this._countDisplay) return;
+
+    // Number pop up
+    this._countDisplay.style.transition = 'none';
+    this._countDisplay.style.transform = 'translateY(-50%) scale(1.3)';
+
+    // Spring back down
+    requestAnimationFrame(() => {
+      if (!this._countDisplay) return;
+      this._countDisplay.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      this._countDisplay.style.transform = 'translateY(-50%) scale(1)';
+    });
+
+    // Container subtle shake
+    if (this._container) {
+      this._container.style.transform = 'scale(1.02)';
+      setTimeout(() => {
+        if (this._container) {
+          this._container.style.transform = 'scale(1)';
+        }
+      }, 100);
+    }
   }
 
   /**

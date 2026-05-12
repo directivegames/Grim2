@@ -640,14 +640,19 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       // Blood splatter at hit location
       this._bloodSplatter?.burst(this._scratchZombiePos);
 
-      // Floating damage number (white + larger for killing blows)
-      this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE, isFatal);
+      // Show hit number with background
+      this._showHitNumber(world, this._scratchZombiePos);
 
       // Camera shake — increased for better feedback
       if (player instanceof IsometricPlayerPawn) {
         player.triggerScreenShake(0.25, 0.35);
       }
     }
+  }
+
+  private async _showHitNumber(world: ENGINE.World, pos: THREE.Vector3): Promise<void> {
+    const { HitNumberUI } = await import('../ui/HitNumberUI.js');
+    HitNumberUI.getInstance(world).showDamage(WEAPON_DAMAGE, pos);
   }
 
   /** Previous frame weapon positions for swept hit detection. */
@@ -779,8 +784,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Blood splatter at hit location
     this._bloodSplatter?.burst(this._scratchZombiePos);
 
-    // Floating damage number (white + larger for killing blows)
-    this._spawnDamageNumber(this._scratchZombiePos, WEAPON_DAMAGE, isFatal);
+    // Show hit number with background
+    const world = this.getWorld();
+    if (world) {
+      void this._showHitNumber(world, this._scratchZombiePos);
+    }
 
     // Camera shake — increased for better feedback
     if (player instanceof IsometricPlayerPawn) {
@@ -788,112 +796,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
   }
 
-  // ── Floating damage numbers ───────────────────────────────────────────────
-
-  /** Pool of reused DOM elements for damage numbers - eliminates per-hit GC. */
-  private _damageNumberPool: HTMLDivElement[] = [];
-  private _activeDamageNumbers: Map<HTMLDivElement, { startTime: number; baseX: number; baseY: number; fatal: boolean }> = new Map();
-
-  private _spawnDamageNumber(worldPos: THREE.Vector3, damage: number, isFatal = false): void {
-    const world = this.getWorld();
-    if (!world) return;
-
-    const camera    = world.getActiveCamera();
-    const container = world.gameContainer;
-    if (!camera || !container) return;
-
-    const ndc = this._ndcScratch.copy(worldPos).project(camera);
-    const x   = (ndc.x * 0.5 + 0.5)  * container.clientWidth;
-    const y   = (-ndc.y * 0.5 + 0.5) * container.clientHeight;
-
-    // Get or create pooled element
-    let el: HTMLDivElement;
-    if (this._damageNumberPool.length > 0) {
-      el = this._damageNumberPool.pop()!;
-    } else {
-      el = document.createElement('div');
-    }
-
-    el.textContent = String(damage);
-    // Fatal hits: white, larger, brighter glow | Normal hits: yellow
-    const color = isFatal ? '#ffffff' : '#ffdd44';
-    const fontSize = isFatal ? '24px' : '17px';
-    const textShadow = isFatal
-      ? '1px 1px 2px #000,0 0 12px #ffcc00,0 0 24px #ffaa00'
-      : '1px 1px 2px #000,0 0 8px #ff6600';
-
-    // Use transform for GPU-accelerated animation (no layout thrashing)
-    el.style.cssText = [
-      'position:absolute',
-      'left:0',
-      'top:0',
-      `transform:translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translateX(-50%)`,
-      `color:${color}`,
-      'font-family:"Arial Black",Arial,sans-serif',
-      `font-size:${fontSize}`,
-      'font-weight:bold',
-      `text-shadow:${textShadow}`,
-      'pointer-events:none',
-      'will-change:transform,opacity',
-    ].join(';');
-
-    container.appendChild(el);
-
-    const startTime = performance.now();
-    this._activeDamageNumbers.set(el, { startTime, baseX: x, baseY: y, fatal: isFatal });
-
-    // Single RAF loop for all damage numbers (more efficient than per-number)
-    if (this._activeDamageNumbers.size === 1) {
-      this._scheduleDamageNumberUpdate();
-    }
-  }
-
-  /** Batch update all active damage numbers in one frame. */
-  private _scheduleDamageNumberUpdate(): void {
-    requestAnimationFrame(() => this._updateDamageNumbers());
-  }
-
-  private _updateDamageNumbers(): void {
-    if (this._activeDamageNumbers.size === 0) return;
-
-    const now = performance.now();
-    const toRemove: HTMLDivElement[] = [];
-
-    for (const [el, data] of this._activeDamageNumbers) {
-      // Fatal hits last longer and float higher
-      const duration = data.fatal ? 1000 : 700;
-      const riseDistance = data.fatal ? 80 : 55;
-
-      const t = Math.min((now - data.startTime) / duration, 1);
-
-      if (t >= 1) {
-        toRemove.push(el);
-        continue;
-      }
-
-      const newY = data.baseY - riseDistance * t;
-      const opacity = 1 - t * t;
-
-      // Update transform directly (GPU-accelerated, no layout)
-      el.style.transform = `translate3d(${data.baseX.toFixed(1)}px, ${newY.toFixed(1)}px, 0) translateX(-50%)`;
-      el.style.opacity = String(opacity);
-    }
-
-    // Remove finished numbers back to pool
-    for (const el of toRemove) {
-      this._activeDamageNumbers.delete(el);
-      el.remove();
-      // Reset for reuse
-      el.style.opacity = '1';
-      el.style.transform = '';
-      this._damageNumberPool.push(el);
-    }
-
-    // Schedule next frame if still active
-    if (this._activeDamageNumbers.size > 0) {
-      this._scheduleDamageNumberUpdate();
-    }
-  }
+  // ── Cleanup ────────────────────────────────────────────────────────────────
 
   private _cleanupCooldowns(): void {
     const world = this.getWorld();

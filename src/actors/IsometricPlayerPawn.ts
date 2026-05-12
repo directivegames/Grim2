@@ -92,6 +92,12 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   /** Health bar UI reference. */
   private _healthBarUI: HealthBarUI | null = null;
 
+  /** Hit number UI reference. */
+  private _hitNumberUI: import('../ui/HitNumberUI.js').HitNumberUI | null = null;
+
+  /** KO sign UI reference. */
+  private _koSignUI: import('../ui/KOSignUI.js').KOSignUI | null = null;
+
   // ── Mouse tracking for weapon arc ─────────────────────────────────────────
 
   private readonly _raycaster = new THREE.Raycaster();
@@ -242,12 +248,26 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       stats.onHealthChanged.add(this._onHealthChanged);
       // Initialize health bar UI asynchronously
       void this._initHealthBarUI(stats);
+      // Initialize hit number UI
+      void this._initHitNumberUI();
+      // Initialize KO sign UI
+      void this._initKOSignUI();
     }
   }
 
   private async _initHealthBarUI(stats: ENGINE.CharacterStatsComponent): Promise<void> {
     this._healthBarUI = await HealthBarUI.getInstance(this.getWorld());
     this._healthBarUI.updateHealth(stats.getCurrentHealth(), stats.getMaxHealth());
+  }
+
+  private async _initHitNumberUI(): Promise<void> {
+    const { HitNumberUI } = await import('../ui/HitNumberUI.js');
+    this._hitNumberUI = HitNumberUI.getInstance(this.getWorld());
+  }
+
+  private async _initKOSignUI(): Promise<void> {
+    const { KOSignUI } = await import('../ui/KOSignUI.js');
+    this._koSignUI = KOSignUI.getInstance(this.getWorld());
   }
 
   /** Current visual facing angle (radians, Y-axis). Used by the weapon for sweep directions. */
@@ -285,6 +305,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._updateCameraFOV(deltaTime);
     // Update health bar animation
     this._healthBarUI?.tick(deltaTime);
+    // Update hit number animations
+    this._hitNumberUI?.tick();
+    // Update KO sign animations
+    this._koSignUI?.tick();
   }
 
   // ── Dynamic camera FOV & zoom ─────────────────────────────────────────────
@@ -608,6 +632,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     // Clean up health bar UI
     this._healthBarUI?.destroy();
     this._healthBarUI = null;
+    // Clean up KO sign UI
+    this._koSignUI?.destroy();
+    this._koSignUI = null;
     super.doEndPlay();
   }
 }

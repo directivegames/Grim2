@@ -17,6 +17,9 @@ const BAR_HEIGHT = 235;
 // Scale factor to fit on screen (adjust as needed)
 const UI_SCALE = 0.35;
 
+// Low health threshold for pulse warning
+const LOW_HEALTH_THRESHOLD = 0.25;
+
 export class HealthBarUI {
   private static instances: Map<ENGINE.World, HealthBarUI> = new Map();
 
@@ -27,7 +30,9 @@ export class HealthBarUI {
   private _maxHealth = 100;
   private _targetHealthPercent = 1;
   private _displayedHealthPercent = 1;
+  private _lastClipRight = -1;
   private _initialized = false;
+  private _isLowHealth = false;
 
   /**
    * Get or create the HealthBarUI singleton for the given world.
@@ -52,6 +57,19 @@ export class HealthBarUI {
     const gameContainer = (world as unknown as { gameContainer?: HTMLElement }).gameContainer;
     if (!gameContainer) return;
 
+    // Inject low health pulse animation style
+    const pulseStyle = document.createElement('style');
+    pulseStyle.textContent = `
+      @keyframes health-pulse {
+        0%, 100% { filter: brightness(1) drop-shadow(0 0 0 rgba(255, 50, 50, 0)); }
+        50% { filter: brightness(1.25) drop-shadow(0 0 8px rgba(255, 50, 50, 0.6)); }
+      }
+      .health-low-pulse {
+        animation: health-pulse 0.5s ease-in-out infinite;
+      }
+    `;
+    document.head.appendChild(pulseStyle);
+
     // Main container - positioned bottom-left
     this._container = document.createElement('div');
     this._container.style.cssText = `
@@ -63,7 +81,8 @@ export class HealthBarUI {
       pointer-events: none;
       user-select: none;
       z-index: 1001;
-      display: none; /* Hidden until assets loaded */
+      display: none;
+      will-change: transform, filter;
     `;
 
     // Background layer (empty bar)
@@ -76,6 +95,7 @@ export class HealthBarUI {
       height: 100%;
       background-size: 100% 100%;
       background-repeat: no-repeat;
+      will-change: transform;
     `;
 
     // Fill layer (current health) - clipped with clip-path
@@ -89,6 +109,7 @@ export class HealthBarUI {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       clip-path: inset(0 0 0 0);
+      will-change: clip-path;
     `;
 
     this._container.appendChild(this._bgElement);
@@ -118,9 +139,16 @@ export class HealthBarUI {
     if (bgMatch) this._bgElement.style.backgroundImage = `url("${bgMatch[1]}")`;
     if (fillMatch) this._fillElement.style.backgroundImage = `url("${fillMatch[1]}")`;
 
-    // Show the container
+    // Show the container with fade
     if (this._container) {
+      this._container.style.opacity = '0';
       this._container.style.display = 'block';
+      requestAnimationFrame(() => {
+        if (this._container) {
+          this._container.style.transition = 'opacity 0.3s ease';
+          this._container.style.opacity = '1';
+        }
+      });
     }
     this._initialized = true;
   }
@@ -136,13 +164,15 @@ export class HealthBarUI {
   }
 
   /**
-   * Called every frame to animate the health bar fill.
+   * Called every frame to animate the health bar fill and low health pulse.
+   * Only updates DOM when values actually change.
    */
   public tick(deltaTime: number): void {
-    if (!this._fillElement || !this._initialized) return;
+    if (!this._fillElement || !this._initialized || !this._container) return;
 
     // Smooth lerp toward target health percentage
-    const lerpSpeed = 8; // Adjust for faster/slower animation
+    const lerpSpeed = 8;
+    const prevPercent = this._displayedHealthPercent;
     this._displayedHealthPercent = THREE.MathUtils.lerp(
       this._displayedHealthPercent,
       this._targetHealthPercent,
@@ -154,10 +184,23 @@ export class HealthBarUI {
       this._displayedHealthPercent = this._targetHealthPercent;
     }
 
-    // Update clip-path: inset(right, top, left, bottom)
-    // Health drains from right, so we clip from the right
+    // Only update clip-path if value changed significantly (avoid DOM thrashing)
     const clipRight = (1 - this._displayedHealthPercent) * 100;
-    this._fillElement.style.clipPath = `inset(0 ${clipRight}% 0 0)`;
+    if (Math.abs(clipRight - this._lastClipRight) > 0.1) {
+      this._fillElement.style.clipPath = `inset(0 ${clipRight.toFixed(1)}% 0 0)`;
+      this._lastClipRight = clipRight;
+    }
+
+    // Low health pulse - toggle CSS class instead of per-frame JS updates
+    const isNowLowHealth = this._displayedHealthPercent <= LOW_HEALTH_THRESHOLD;
+    if (isNowLowHealth !== this._isLowHealth) {
+      this._isLowHealth = isNowLowHealth;
+      if (isNowLowHealth) {
+        this._container.classList.add('health-low-pulse');
+      } else {
+        this._container.classList.remove('health-low-pulse');
+      }
+    }
   }
 
   /**
