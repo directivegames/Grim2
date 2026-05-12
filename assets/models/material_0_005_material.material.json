@@ -1,6 +1,14 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
     "emissive": {
       "$bc": "c",
       "_": [
