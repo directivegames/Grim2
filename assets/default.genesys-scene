@@ -14523,9 +14523,9 @@
           "position": {
             "$bc": "v3",
             "_": [
-              -6.96482,
-              0.631999,
-              11.108652
+              -7.572326,
+              0.271751,
+              10.530651
             ]
           },
           "uuid": "d023eaf05c379d70"
@@ -17538,8 +17538,8 @@
           "children": [
             {
               "$bc": "ENGINE.VFXComponent",
-              "children": [
-                {
+              "children": {
+                "0": {
                   "$bc": "ENGINE.PointLightComponent",
                   "children": [
                     {
@@ -17551,8 +17551,9 @@
                   },
                   "name": "Point Light",
                   "uuid": "5b9e7d6e659aa2dd"
-                }
-              ],
+                },
+                "$length": 2
+              },
               "name": "VFX",
               "position": {
                 "$bc": "v3",
@@ -30103,45 +30104,6 @@
       },
       "369": {
         "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/churchmoody2.glb"
-        },
-        "name": "Churchmoody 2",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelMaterial": "",
-          "modelUrl": "@project/assets/models/churchmoody2.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -12.340153,
-              -0.446201,
-              13.570106
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              1.2,
-              1.2,
-              1.2
-            ]
-          },
-          "uuid": "b67b583a-34b2-45dd-a51e-3c6d7256711e"
-        },
-        "uuid": "1965ce966657f130"
-      },
-      "370": {
-        "$bc": "ENGINE.GLTFMeshActor",
         "name": "Lampost 05",
         "rootComponent": {
           "$bc": "ENGINE.GLTFMeshComponent",
@@ -32932,7 +32894,7 @@
         },
         "uuid": "e1a9965ca52eb958"
       },
-      "371": {
+      "370": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/moodyhouse4.glb"
@@ -32955,7 +32917,7 @@
         },
         "uuid": "3e5e5f745368ac3e"
       },
-      "372": {
+      "371": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Spookyhousemoody.glb"
@@ -33024,7 +32986,7 @@
         },
         "uuid": "a223eaf784cf7ef6"
       },
-      "373": {
+      "372": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -33392,7 +33354,7 @@
         },
         "uuid": "7ee07b0bfd1d0b09"
       },
-      "374": {
+      "373": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/treemoody.glb"
@@ -33430,7 +33392,7 @@
         },
         "uuid": "7242eab45e5d182d"
       },
-      "375": {
+      "374": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -33514,6 +33476,37 @@
         },
         "uuid": "d0ed3a64e07fa386"
       },
+      "375": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/churchmoody2.glb"
+        },
+        "name": "Churchmoody 03",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelMaterial": "@project/assets/models/material_0_material.material.json",
+          "modelUrl": "@project/assets/models/churchmoody2.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -12.390223,
+              -0.828987,
+              10.879888
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "uuid": "e549e6e9-8e00-4ce0-aba5-fdc03b760a42"
+        },
+        "uuid": "9fc1339b0b73403c"
+      },
       "$length": 376
     },
     "editorData": {
@@ -33565,12 +33558,12 @@
             "nodeType": "actor"
           },
           {
-            "id": "1965ce966657f130",
+            "id": "3e5e5f745368ac3e",
             "isExpanded": false,
             "nodeType": "actor"
           },
           {
-            "id": "3e5e5f745368ac3e",
+            "id": "9fc1339b0b73403c",
             "isExpanded": false,
             "nodeType": "actor"
           },
