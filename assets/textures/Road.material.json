@@ -2,9 +2,15 @@
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
     "flatShading": true,
+    "lightMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "38e812f5-8dff-46c7-b4a3-7038114c2666",
+      "url": "@project/assets/textures/baked/TLM-Actor 516.png"
+    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "b3ed39c5-ff82-4c65-8843-7ee563b3508e",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/roadwithshadow.png"
     },
     "metalness": 0.77,
@@ -13,9 +19,6 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "48d11fb3-03c4-4ba6-8d15-a6bb0c98ce77",
       "url": "@project/assets/textures/Roadnormalmap.png"
-    },
-    "userData": {
-      "colorSpaceFixed": true
     },
     "uuid": "4ee7e35d-0fb1-42a5-bf27-e347d2116947"
   },

@@ -13,11 +13,18 @@
     "emissiveMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "64dfb1ee-6662-4e34-b9fd-71e1925d47e6",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/spookyhouseemrit.webp"
+    },
+    "lightMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "589d0836-e9c7-478c-baad-189c13f86245",
+      "url": "@project/assets/textures/baked/TLM-Mesh_0.132.png"
     },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "4435be51-2a55-4d3c-92c9-d09f2d63b38b",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/Spookyhouseredone.webp"
     },
     "metalness": 1,
@@ -36,9 +43,6 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "89c0d489-9cec-43ef-b488-e2ebe4e72fea",
       "url": "@project/assets/textures/spookyhouseredonrough.webp"
-    },
-    "userData": {
-      "colorSpaceFixed": true
     },
     "uuid": "e52aa929-8cd8-4bc8-9d5c-7eed277a1210"
   },

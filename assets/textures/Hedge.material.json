@@ -1,0 +1,32 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
+    "map": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "98d9a642-248d-4770-8763-e469ffab32f6",
+      "colorSpace": "srgb",
+      "url": "@project/assets/textures/Hedgecolour.webp"
+    },
+    "name": "Hedge",
+    "normalMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "9f4de463-88de-4b0d-adce-7850b886e765",
+      "url": "@project/assets/textures/hedgenormal.webp"
+    },
+    "roughnessMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "cd88ff18-9c76-4cda-8430-9972b2d32e72",
+      "url": "@project/assets/textures/headgrough.webp"
+    },
+    "uuid": "0eb4b804-85c4-4aa9-9e48-7342de3b5410"
+  },
+  "$version": 2
+}

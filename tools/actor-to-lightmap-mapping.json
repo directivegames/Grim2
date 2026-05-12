@@ -1,0 +1,34 @@
+{
+  "_comment": "Maps Genesys actor names to TLM lightmap names. Auto-matched entries have direct names. Manual entries map Mesh_0.xxx to actor names.",
+  "_directMatches": [
+    "Actor 414", "Actor 415", "Actor 417", "Actor 418", "Actor 420", "Actor 421", "Actor 422",
+    "Actor 424", "Actor 424.001", "Actor 425", "Actor 426", "Actor 427", "Actor 428", "Actor 432",
+    "Actor 459", "Actor 459.001", "Actor 459.002", "Actor 460", "Actor 461", "Actor 462", "Actor 468",
+    "Actor 469", "Actor 470", "Actor 471", "Actor 472", "Actor 474", "Actor 475", "Actor 476",
+    "Actor 477", "Actor 478", "Actor 482", "Actor 483", "Actor 484", "Actor 485", "Actor 486",
+    "Actor 487", "Actor 488", "Actor 489", "Actor 490", "Actor 491", "Actor 492", "Actor 493",
+    "Actor 494", "Actor 495", "Actor 496", "Actor 497", "Actor 498", "Actor 516", "Actor 531",
+    "Actor 538", "Actor 539", "Actor 549", "Actor 567", "Actor 570", "Actor 571", "Actor 586",
+    "Actor 586.001", "Actor 587", "Actor 588", "Actor 589", "Actor 590", "Actor 591", "Actor 591.001",
+    "Actor 593", "Actor 600", "Actor 601", "Actor 602", "Actor 603", "Actor 604", "Actor 613",
+    "Actor 614", "Actor 615", "Actor 616", "Actor 621", "Actor 623",
+    "Actor_412", "Actor_413", "Actor_416", "Actor_418", "Actor_421", "Actor_422", "Actor_423",
+    "Actor_425", "Actor_427", "Actor_428", "Actor_430", "Actor_431", "Actor_433", "Actor_434",
+    "Actor_438", "Actor_458", "Actor_464", "Actor_515", "Actor_518", "Actor_519", "Actor_520",
+    "Actor_521", "Actor_522", "Actor_523", "Actor_524", "Actor_526", "Actor_527", "Actor_528",
+    "Actor_529", "Actor_530", "Actor_533", "Actor_534", "Actor_536", "Actor_537", "Actor_540",
+    "Actor_541", "Actor_542", "Actor_543", "Actor_544", "Actor_545", "Actor_546", "Actor_547",
+    "Actor_548", "Actor_550", "Actor_551", "Actor_552", "Actor_554", "Actor_555", "Actor_556",
+    "Actor_557", "Actor_558", "Actor_559", "Actor_560", "Actor_561", "Actor_562", "Actor_563",
+    "Actor_564", "Actor_565", "Actor_566", "Actor_568", "Actor_569", "Actor_571", "Actor_572",
+    "Actor_573", "Actor_574", "Actor_575", "Actor_576", "Actor_577", "Actor_578", "Actor_585",
+    "Actor_587", "Actor_588", "Actor_602", "Actor_603", "Actor_604", "Actor_605", "Actor_619",
+    "Actor_620", "Actor_621", "Actor_622",
+    "Ground", "ROAD AND GRASS", "char1"
+  ],
+  "manualMappings": {
+    "Spookyhousemoody": "Mesh_0.132",
+    "Spookyhousemoody 02": "Mesh_0.132",
+    "Spookyhousemoody 03": "Mesh_0.132"
+  }
+}

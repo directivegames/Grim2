@@ -15,9 +15,15 @@
       ]
     },
     "emissiveIntensity": 0,
+    "lightMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "38027ff4-9ac2-465f-be09-d8aaf0512a41",
+      "url": "@project/assets/textures/baked/TLM-ROAD AND GRASS.png"
+    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "35606545-2e86-4169-99b2-5ef3865789cd",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/Grasstexturewithshadow.png"
     },
     "name": "Grass",
@@ -25,9 +31,6 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "ebb00ada-7075-4cda-aec5-020d109e312b",
       "url": "@project/assets/textures/grassnormalmap.png"
-    },
-    "userData": {
-      "colorSpaceFixed": true
     },
     "uuid": "4e505642-bbc5-48ab-b121-eda13b7bc794"
   },

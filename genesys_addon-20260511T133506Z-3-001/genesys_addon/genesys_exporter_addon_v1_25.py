@@ -7,7 +7,7 @@
 bl_info = {
     "name": "Genesys Exporter",
     "author": "Directive Games - Matthew Squires - Senior Tech Artist",
-    "version": (1, 25, 0),
+    "version": (1, 26, 0),
     "blender": (4, 5, 0),
     "location": "View3D > Sidebar > Genesys",
     "description": "Export models and layouts to Genesys game engine format",
@@ -15,7 +15,7 @@ bl_info = {
 }
 
 # Exporter version for material export tracking
-EXPORTER_VERSION = "1.25.0"
+EXPORTER_VERSION = "1.26.0"
 
 import bpy
 import os
@@ -349,6 +349,12 @@ class GenesysExporterProperties(PropertyGroup):
         max=1.0
     )
     
+    generate_uv2: BoolProperty(
+        name="Generate UV2 for Lightmapping",
+        description="Auto-generate a second UV channel (UVMap-Lightmap) on each mesh before export. Required for lightmaps. Skips meshes that already have UV2.",
+        default=False
+    )
+
     # Advanced Export Options
     show_advanced_export: BoolProperty(
         name="Show Advanced Export Options",
@@ -2530,6 +2536,26 @@ class GENESYS_OT_export_models(Operator):
                     texture_custom_path=texture_custom_path
                 )
             
+            # Generate UV2 for lightmapping if requested
+            if props.generate_uv2:
+                meshes_to_process = [obj] if obj.type == 'MESH' else []
+                meshes_to_process += [child for child in obj.children_recursive if child.type == 'MESH']
+                for mesh_obj in meshes_to_process:
+                    if "UVMap-Lightmap" not in mesh_obj.data.uv_layers:
+                        prev_active = bpy.context.view_layer.objects.active
+                        prev_mode = bpy.context.object.mode if bpy.context.object else 'OBJECT'
+                        bpy.context.view_layer.objects.active = mesh_obj
+                        bpy.ops.object.mode_set(mode='EDIT')
+                        bpy.ops.mesh.select_all(action='SELECT')
+                        uv_layer = mesh_obj.data.uv_layers.new(name="UVMap-Lightmap")
+                        mesh_obj.data.uv_layers.active = uv_layer
+                        bpy.ops.uv.smart_project(island_margin=0.02)
+                        bpy.ops.object.mode_set(mode='OBJECT')
+                        bpy.context.view_layer.objects.active = prev_active
+                        print(f"  [UV2] Generated UVMap-Lightmap for: {mesh_obj.name}")
+                    else:
+                        print(f"  [UV2] UVMap-Lightmap already exists on: {mesh_obj.name}, skipping")
+
             # Export GLB (with embedded gltf_extras from material export above)
             full_export_path = os.path.join(out_path, model_name + '.glb')
             
@@ -2542,6 +2568,7 @@ class GENESYS_OT_export_models(Operator):
                 'export_image_format': export_image_format,
                 'export_normals': True,
                 'export_tangents': True,
+                'export_texcoords': True,
                 'export_animations': props.export_animations,
                 'export_apply': props.apply_modifiers,
                 'export_yup': True
@@ -3390,6 +3417,7 @@ class GENESYS_PT_exporter_panel(Panel):
             adv_box.prop(props, "convert_for_threejs")
             adv_box.prop(props, "invert_emissive")
             adv_box.prop(props, "apply_modifiers")
+            adv_box.prop(props, "generate_uv2")
         
         row = box.row()
         row.scale_y = 1.5

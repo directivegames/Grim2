@@ -1,0 +1,305 @@
+﻿Warning: GLTF exporter not available, material extensions will not be embedded
+[EXR->HDR] Found 298 EXR files
+[1/298] SKIP: TLM-Actor 414.exr
+[2/298] SKIP: TLM-Actor 415.exr
+[3/298] SKIP: TLM-Actor 417.exr
+[4/298] SKIP: TLM-Actor 418.exr
+[5/298] SKIP: TLM-Actor 420.exr
+[6/298] SKIP: TLM-Actor 421.exr
+[7/298] SKIP: TLM-Actor 422.exr
+[8/298] SKIP: TLM-Actor 424.001.exr
+[9/298] SKIP: TLM-Actor 424.exr
+[10/298] SKIP: TLM-Actor 425.exr
+[11/298] SKIP: TLM-Actor 426.exr
+[12/298] SKIP: TLM-Actor 427.exr
+[13/298] SKIP: TLM-Actor 428.exr
+[14/298] SKIP: TLM-Actor 432.exr
+[15/298] SKIP: TLM-Actor 459.001.exr
+[16/298] SKIP: TLM-Actor 459.002.exr
+[17/298] SKIP: TLM-Actor 459.exr
+[18/298] SKIP: TLM-Actor 460.exr
+[19/298] SKIP: TLM-Actor 461.exr
+[20/298] SKIP: TLM-Actor 462.exr
+[21/298] SKIP: TLM-Actor 468.exr
+[22/298] OK: TLM-Actor 469.exr
+[23/298] OK: TLM-Actor 470.exr
+[24/298] OK: TLM-Actor 471.exr
+[25/298] OK: TLM-Actor 472.exr
+[26/298] OK: TLM-Actor 474.exr
+[27/298] OK: TLM-Actor 475.exr
+[28/298] OK: TLM-Actor 476.exr
+[29/298] OK: TLM-Actor 477.exr
+[30/298] OK: TLM-Actor 478.exr
+[31/298] OK: TLM-Actor 482.exr
+[32/298] OK: TLM-Actor 483.exr
+[33/298] OK: TLM-Actor 484.exr
+[34/298] OK: TLM-Actor 485.exr
+[35/298] OK: TLM-Actor 486.exr
+[36/298] OK: TLM-Actor 487.exr
+[37/298] OK: TLM-Actor 488.exr
+[38/298] OK: TLM-Actor 489.exr
+[39/298] OK: TLM-Actor 490.exr
+[40/298] SKIP: TLM-Actor 491.exr
+[41/298] OK: TLM-Actor 492.exr
+[42/298] OK: TLM-Actor 493.exr
+[43/298] OK: TLM-Actor 494.exr
+[44/298] OK: TLM-Actor 495.exr
+[45/298] OK: TLM-Actor 496.exr
+[46/298] OK: TLM-Actor 497.exr
+[47/298] OK: TLM-Actor 498.exr
+[48/298] OK: TLM-Actor 516.exr
+[49/298] OK: TLM-Actor 531.exr
+[50/298] OK: TLM-Actor 538.exr
+[51/298] OK: TLM-Actor 539.exr
+[52/298] OK: TLM-Actor 549.exr
+[53/298] OK: TLM-Actor 567.exr
+[54/298] OK: TLM-Actor 570.exr
+[55/298] OK: TLM-Actor 571.exr
+[56/298] OK: TLM-Actor 586.001.exr
+[57/298] OK: TLM-Actor 586.exr
+[58/298] OK: TLM-Actor 587.exr
+[59/298] SKIP: TLM-Actor 588.exr
+[60/298] OK: TLM-Actor 589.exr
+[61/298] SKIP: TLM-Actor 590.exr
+[62/298] OK: TLM-Actor 591.001.exr
+[63/298] OK: TLM-Actor 591.exr
+[64/298] OK: TLM-Actor 593.exr
+[65/298] SKIP: TLM-Actor 600.exr
+[66/298] SKIP: TLM-Actor 601.exr
+[67/298] OK: TLM-Actor 602.exr
+[68/298] OK: TLM-Actor 603.exr
+[69/298] OK: TLM-Actor 604.exr
+[70/298] OK: TLM-Actor 613.exr
+[71/298] OK: TLM-Actor 614.exr
+[72/298] OK: TLM-Actor 615.exr
+[73/298] OK: TLM-Actor 616.exr
+[74/298] OK: TLM-Actor 621.exr
+[75/298] OK: TLM-Actor 623.exr
+[76/298] OK: TLM-Actor_412.exr
+[77/298] OK: TLM-Actor_413.exr
+[78/298] OK: TLM-Actor_416.exr
+[79/298] OK: TLM-Actor_418.exr
+[80/298] OK: TLM-Actor_421.exr
+[81/298] SKIP: TLM-Actor_422.exr
+[82/298] OK: TLM-Actor_423.exr
+[83/298] OK: TLM-Actor_425.exr
+[84/298] OK: TLM-Actor_427.exr
+[85/298] OK: TLM-Actor_428.exr
+[86/298] OK: TLM-Actor_430.exr
+[87/298] OK: TLM-Actor_431.exr
+[88/298] OK: TLM-Actor_433.exr
+[89/298] OK: TLM-Actor_434.exr
+[90/298] SKIP: TLM-Actor_438.exr
+[91/298] SKIP: TLM-Actor_458.exr
+[92/298] OK: TLM-Actor_464.exr
+[93/298] OK: TLM-Actor_515.exr
+[94/298] OK: TLM-Actor_518.exr
+[95/298] OK: TLM-Actor_519.exr
+[96/298] OK: TLM-Actor_520.exr
+[97/298] SKIP: TLM-Actor_521.exr
+[98/298] OK: TLM-Actor_522.exr
+[99/298] OK: TLM-Actor_523.exr
+[100/298] OK: TLM-Actor_524.exr
+[101/298] OK: TLM-Actor_526.exr
+[102/298] OK: TLM-Actor_527.exr
+[103/298] OK: TLM-Actor_528.exr
+[104/298] OK: TLM-Actor_529.exr
+[105/298] OK: TLM-Actor_530.exr
+[106/298] OK: TLM-Actor_533.exr
+[107/298] OK: TLM-Actor_534.exr
+[108/298] OK: TLM-Actor_536.exr
+[109/298] OK: TLM-Actor_537.exr
+[110/298] OK: TLM-Actor_540.exr
+[111/298] OK: TLM-Actor_541.exr
+[112/298] SKIP: TLM-Actor_542.exr
+[113/298] OK: TLM-Actor_543.exr
+[114/298] OK: TLM-Actor_544.exr
+[115/298] SKIP: TLM-Actor_545.exr
+[116/298] OK: TLM-Actor_546.exr
+[117/298] OK: TLM-Actor_547.exr
+[118/298] OK: TLM-Actor_548.exr
+[119/298] OK: TLM-Actor_550.exr
+[120/298] OK: TLM-Actor_551.exr
+[121/298] OK: TLM-Actor_552.exr
+[122/298] OK: TLM-Actor_554.exr
+[123/298] OK: TLM-Actor_555.exr
+[124/298] OK: TLM-Actor_556.exr
+[125/298] OK: TLM-Actor_557.exr
+[126/298] OK: TLM-Actor_558.exr
+[127/298] OK: TLM-Actor_559.exr
+[128/298] OK: TLM-Actor_560.exr
+[129/298] OK: TLM-Actor_561.exr
+[130/298] OK: TLM-Actor_562.exr
+[131/298] OK: TLM-Actor_563.exr
+[132/298] OK: TLM-Actor_564.exr
+[133/298] OK: TLM-Actor_565.exr
+[134/298] OK: TLM-Actor_566.exr
+[135/298] SKIP: TLM-Actor_568.exr
+[136/298] OK: TLM-Actor_569.exr
+[137/298] OK: TLM-Actor_571.exr
+[138/298] SKIP: TLM-Actor_572.exr
+[139/298] OK: TLM-Actor_573.exr
+[140/298] OK: TLM-Actor_574.exr
+[141/298] SKIP: TLM-Actor_575.exr
+[142/298] OK: TLM-Actor_576.exr
+[143/298] OK: TLM-Actor_577.exr
+[144/298] OK: TLM-Actor_578.exr
+[145/298] OK: TLM-Actor_585.exr
+[146/298] OK: TLM-Actor_587.exr
+[147/298] OK: TLM-Actor_588.exr
+[148/298] OK: TLM-Actor_602.exr
+[149/298] OK: TLM-Actor_603.exr
+[150/298] OK: TLM-Actor_604.exr
+[151/298] OK: TLM-Actor_605.exr
+[152/298] OK: TLM-Actor_619.exr
+[153/298] OK: TLM-Actor_620.exr
+[154/298] OK: TLM-Actor_621.exr
+[155/298] OK: TLM-Actor_622.exr
+[156/298] OK: TLM-char1.exr
+[157/298] OK: TLM-Ground.exr
+[158/298] SKIP: TLM-Mesh_0.001.exr
+[159/298] OK: TLM-Mesh_0.002.exr
+[160/298] OK: TLM-Mesh_0.003.exr
+[161/298] OK: TLM-Mesh_0.004.exr
+[162/298] OK: TLM-Mesh_0.005.exr
+[163/298] OK: TLM-Mesh_0.006.exr
+[164/298] OK: TLM-Mesh_0.007.exr
+[165/298] OK: TLM-Mesh_0.008.exr
+[166/298] OK: TLM-Mesh_0.009.exr
+[167/298] SKIP: TLM-Mesh_0.010.exr
+[168/298] OK: TLM-Mesh_0.011.exr
+[169/298] OK: TLM-Mesh_0.012.exr
+[170/298] OK: TLM-Mesh_0.013.exr
+[171/298] OK: TLM-Mesh_0.014.exr
+[172/298] OK: TLM-Mesh_0.015.exr
+[173/298] OK: TLM-Mesh_0.016.exr
+[174/298] OK: TLM-Mesh_0.017.exr
+[175/298] OK: TLM-Mesh_0.018.exr
+[176/298] OK: TLM-Mesh_0.019.exr
+[177/298] OK: TLM-Mesh_0.020.exr
+[178/298] OK: TLM-Mesh_0.021.exr
+[179/298] OK: TLM-Mesh_0.022.exr
+[180/298] OK: TLM-Mesh_0.023.exr
+[181/298] OK: TLM-Mesh_0.024.exr
+[182/298] OK: TLM-Mesh_0.025.exr
+[183/298] SKIP: TLM-Mesh_0.026.exr
+[184/298] SKIP: TLM-Mesh_0.027.exr
+[185/298] OK: TLM-Mesh_0.028.exr
+[186/298] OK: TLM-Mesh_0.029.exr
+[187/298] OK: TLM-Mesh_0.030.exr
+[188/298] OK: TLM-Mesh_0.031.exr
+[189/298] OK: TLM-Mesh_0.032.exr
+[190/298] OK: TLM-Mesh_0.033.exr
+[191/298] OK: TLM-Mesh_0.034.exr
+[192/298] OK: TLM-Mesh_0.035.exr
+[193/298] OK: TLM-Mesh_0.036.exr
+[194/298] OK: TLM-Mesh_0.037.exr
+[195/298] OK: TLM-Mesh_0.038.exr
+[196/298] OK: TLM-Mesh_0.039.exr
+[197/298] OK: TLM-Mesh_0.040.exr
+[198/298] OK: TLM-Mesh_0.041.exr
+[199/298] OK: TLM-Mesh_0.042.exr
+[200/298] OK: TLM-Mesh_0.043.exr
+[201/298] OK: TLM-Mesh_0.044.exr
+[202/298] OK: TLM-Mesh_0.045.exr
+[203/298] OK: TLM-Mesh_0.046.exr
+[204/298] OK: TLM-Mesh_0.047.exr
+[205/298] OK: TLM-Mesh_0.048.exr
+[206/298] OK: TLM-Mesh_0.049.exr
+[207/298] OK: TLM-Mesh_0.050.exr
+[208/298] OK: TLM-Mesh_0.051.exr
+[209/298] OK: TLM-Mesh_0.052.exr
+[210/298] OK: TLM-Mesh_0.053.exr
+[211/298] OK: TLM-Mesh_0.054.exr
+[212/298] SKIP: TLM-Mesh_0.055.exr
+[213/298] OK: TLM-Mesh_0.056.exr
+[214/298] OK: TLM-Mesh_0.057.exr
+[215/298] OK: TLM-Mesh_0.058.exr
+[216/298] OK: TLM-Mesh_0.059.exr
+[217/298] OK: TLM-Mesh_0.060.exr
+[218/298] OK: TLM-Mesh_0.061.exr
+[219/298] OK: TLM-Mesh_0.062.exr
+[220/298] OK: TLM-Mesh_0.063.exr
+[221/298] OK: TLM-Mesh_0.064.exr
+[222/298] OK: TLM-Mesh_0.065.exr
+[223/298] SKIP: TLM-Mesh_0.066.exr
+[224/298] OK: TLM-Mesh_0.067.exr
+[225/298] OK: TLM-Mesh_0.068.exr
+[226/298] OK: TLM-Mesh_0.069.exr
+[227/298] SKIP: TLM-Mesh_0.070.exr
+[228/298] OK: TLM-Mesh_0.071.exr
+[229/298] OK: TLM-Mesh_0.072.exr
+[230/298] OK: TLM-Mesh_0.073.exr
+[231/298] OK: TLM-Mesh_0.074.exr
+[232/298] OK: TLM-Mesh_0.075.exr
+[233/298] SKIP: TLM-Mesh_0.076.exr
+[234/298] OK: TLM-Mesh_0.077.exr
+[235/298] OK: TLM-Mesh_0.078.exr
+[236/298] OK: TLM-Mesh_0.079.exr
+[237/298] OK: TLM-Mesh_0.080.exr
+[238/298] SKIP: TLM-Mesh_0.081.exr
+[239/298] OK: TLM-Mesh_0.082.exr
+[240/298] OK: TLM-Mesh_0.083.exr
+[241/298] OK: TLM-Mesh_0.084.exr
+[242/298] OK: TLM-Mesh_0.085.exr
+[243/298] OK: TLM-Mesh_0.086.exr
+[244/298] OK: TLM-Mesh_0.087.exr
+[245/298] OK: TLM-Mesh_0.088.exr
+[246/298] OK: TLM-Mesh_0.089.exr
+[247/298] SKIP: TLM-Mesh_0.090.exr
+[248/298] OK: TLM-Mesh_0.091.exr
+[249/298] OK: TLM-Mesh_0.092.exr
+[250/298] OK: TLM-Mesh_0.093.exr
+[251/298] OK: TLM-Mesh_0.094.exr
+[252/298] OK: TLM-Mesh_0.095.exr
+[253/298] OK: TLM-Mesh_0.096.exr
+[254/298] SKIP: TLM-Mesh_0.097.exr
+[255/298] OK: TLM-Mesh_0.098.exr
+[256/298] OK: TLM-Mesh_0.099.exr
+[257/298] SKIP: TLM-Mesh_0.100.exr
+[258/298] SKIP: TLM-Mesh_0.101.exr
+[259/298] OK: TLM-Mesh_0.102.exr
+[260/298] OK: TLM-Mesh_0.103.exr
+[261/298] OK: TLM-Mesh_0.104.exr
+[262/298] OK: TLM-Mesh_0.105.exr
+[263/298] OK: TLM-Mesh_0.106.exr
+[264/298] OK: TLM-Mesh_0.107.exr
+[265/298] SKIP: TLM-Mesh_0.108.exr
+[266/298] OK: TLM-Mesh_0.109.exr
+[267/298] OK: TLM-Mesh_0.110.exr
+[268/298] OK: TLM-Mesh_0.111.exr
+[269/298] OK: TLM-Mesh_0.112.exr
+[270/298] OK: TLM-Mesh_0.113.exr
+[271/298] OK: TLM-Mesh_0.114.exr
+[272/298] OK: TLM-Mesh_0.115.exr
+[273/298] OK: TLM-Mesh_0.116.exr
+[274/298] OK: TLM-Mesh_0.117.exr
+[275/298] OK: TLM-Mesh_0.118.exr
+[276/298] OK: TLM-Mesh_0.119.exr
+[277/298] OK: TLM-Mesh_0.120.exr
+[278/298] OK: TLM-Mesh_0.121.exr
+[279/298] OK: TLM-Mesh_0.122.exr
+[280/298] OK: TLM-Mesh_0.123.exr
+[281/298] OK: TLM-Mesh_0.124.exr
+[282/298] OK: TLM-Mesh_0.125.exr
+[283/298] OK: TLM-Mesh_0.126.exr
+[284/298] OK: TLM-Mesh_0.127.exr
+[285/298] OK: TLM-Mesh_0.128.exr
+[286/298] OK: TLM-Mesh_0.129.exr
+[287/298] OK: TLM-Mesh_0.130.exr
+[288/298] OK: TLM-Mesh_0.131.exr
+[289/298] OK: TLM-Mesh_0.132.exr
+[290/298] OK: TLM-Mesh_0.133.exr
+[291/298] OK: TLM-Mesh_0.134.exr
+[292/298] OK: TLM-Mesh_0.135.exr
+[293/298] OK: TLM-Mesh_0.136.exr
+[294/298] OK: TLM-Mesh_0.137.exr
+[295/298] OK: TLM-Mesh_0.138.exr
+[296/298] OK: TLM-Mesh_0.139.exr
+[297/298] OK: TLM-Mesh_0.exr
+[298/298] OK: TLM-ROAD AND GRASS.exr
+
+[EXR->HDR] Done: 298 converted, 0 failed
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:37:22)
+
+Blender quit

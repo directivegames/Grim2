@@ -10,9 +10,15 @@
       ]
     },
     "flatShading": true,
+    "lightMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "7ceae17b-4851-45b3-917f-efff9d5c01fe",
+      "url": "@project/assets/textures/baked/TLM-Actor 538.png"
+    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "5e276c05-91b0-4704-a100-2696706a4c39",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/sidewalkwithshadow.png"
     },
     "name": "Sidewalk",
@@ -20,9 +26,6 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "f6767f71-253f-4668-8fbc-525e653c3947",
       "url": "@project/assets/textures/normalsidewalk.png"
-    },
-    "userData": {
-      "colorSpaceFixed": true
     },
     "uuid": "ae6c8eea-dcef-4ffc-b76c-c28da21554a3"
   },
