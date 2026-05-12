@@ -32,4 +32,5 @@ import './materials/grass/GenesysGrassSwayNodeMaterial.ts';
 import './materials/grass/grassDualBackend.ts';
 import './materials/grass/GrassSwayShaderMaterial.ts';
 import './materials/grass/GrassUniformManager.ts';
+import './ui/HealthBarUI.ts';
 import './ui/SoulCounterUI.ts';

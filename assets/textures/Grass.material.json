@@ -15,11 +15,6 @@
       ]
     },
     "emissiveIntensity": 0,
-    "lightMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "38027ff4-9ac2-465f-be09-d8aaf0512a41",
-      "url": "@project/assets/textures/baked/TLM-ROAD AND GRASS.png"
-    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "35606545-2e86-4169-99b2-5ef3865789cd",

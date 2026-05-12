@@ -77,7 +77,7 @@ export class SoulActor extends ENGINE.Actor {
     super.doBeginPlay();
     this._spawnTime = performance.now();
     // Ensure UI exists on first soul spawn
-    SoulCounterUI.getInstance(this.getWorld());
+    void SoulCounterUI.getInstance(this.getWorld());
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -121,14 +121,14 @@ export class SoulActor extends ENGINE.Actor {
     const distSq = dx * dx + dz * dz;
 
     if (distSq <= COLLECTION_RADIUS * COLLECTION_RADIUS) {
-      this._collectSoul(player);
+      void this._collectSoul(player);
     }
   }
 
   /**
    * Collect this soul - increment counter and destroy immediately.
    */
-  private _collectSoul(player: IsometricPlayerPawn): void {
+  private async _collectSoul(player: IsometricPlayerPawn): Promise<void> {
     if (this._isCollected) return;
     this._isCollected = true;
 
@@ -136,7 +136,7 @@ export class SoulActor extends ENGINE.Actor {
     player.soulsCollected++;
 
     // Update UI
-    const ui = SoulCounterUI.getInstance(this.getWorld());
+    const ui = await SoulCounterUI.getInstance(this.getWorld());
     ui.increment();
 
     // Defer destroy to after the current tick completes — calling destroy()

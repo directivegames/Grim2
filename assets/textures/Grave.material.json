@@ -1,11 +1,6 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
-    "lightMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "f0ac3125-352c-4262-98e4-ca8914a8882d",
-      "url": "@project/assets/textures/baked/TLM-Mesh_0.091.png"
-    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "21182e80-0fb1-47f7-aebb-5a8f7513b8db",

@@ -16,6 +16,7 @@ import { ISO_YAW, IsometricMovementComponent } from '../components/movement/Isom
 import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcComponent.js';
+import { HealthBarUI } from '../ui/HealthBarUI.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -88,6 +89,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   /** Souls collected from defeated zombies. */
   public soulsCollected: number = 0;
 
+  /** Health bar UI reference. */
+  private _healthBarUI: HealthBarUI | null = null;
+
   // ── Mouse tracking for weapon arc ─────────────────────────────────────────
 
   private readonly _raycaster = new THREE.Raycaster();
@@ -134,11 +138,13 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private _vignetteActive    = false;
   private _lastKnownHealth   = -1;
 
-  private readonly _onHealthChanged = (current: number): void => {
+  private readonly _onHealthChanged = (current: number, max: number): void => {
     if (this._lastKnownHealth >= 0 && current < this._lastKnownHealth) {
       this._showDamageVignette();
     }
     this._lastKnownHealth = current;
+    // Update health bar UI
+    this._healthBarUI?.updateHealth(current, max);
   };
 
   // ── Component factory overrides ───────────────────────────────────────────
@@ -234,7 +240,14 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     if (stats) {
       this._lastKnownHealth = stats.getCurrentHealth();
       stats.onHealthChanged.add(this._onHealthChanged);
+      // Initialize health bar UI asynchronously
+      void this._initHealthBarUI(stats);
     }
+  }
+
+  private async _initHealthBarUI(stats: ENGINE.CharacterStatsComponent): Promise<void> {
+    this._healthBarUI = await HealthBarUI.getInstance(this.getWorld());
+    this._healthBarUI.updateHealth(stats.getCurrentHealth(), stats.getMaxHealth());
   }
 
   /** Current visual facing angle (radians, Y-axis). Used by the weapon for sweep directions. */
@@ -270,6 +283,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._updateScreenShake(deltaTime);
     this._updateDamageVignette(deltaTime);
     this._updateCameraFOV(deltaTime);
+    // Update health bar animation
+    this._healthBarUI?.tick(deltaTime);
   }
 
   // ── Dynamic camera FOV & zoom ─────────────────────────────────────────────
@@ -590,6 +605,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     stats?.onHealthChanged.remove(this._onHealthChanged);
     this._vignetteEl?.remove();
     this._vignetteEl = null;
+    // Clean up health bar UI
+    this._healthBarUI?.destroy();
+    this._healthBarUI = null;
     super.doEndPlay();
   }
 }

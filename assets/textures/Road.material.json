@@ -2,11 +2,6 @@
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
     "flatShading": true,
-    "lightMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "38e812f5-8dff-46c7-b4a3-7038114c2666",
-      "url": "@project/assets/textures/baked/TLM-Actor 516.png"
-    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "b3ed39c5-ff82-4c65-8843-7ee563b3508e",

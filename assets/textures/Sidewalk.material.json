@@ -10,11 +10,6 @@
       ]
     },
     "flatShading": true,
-    "lightMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "7ceae17b-4851-45b3-917f-efff9d5c01fe",
-      "url": "@project/assets/textures/baked/TLM-Actor 538.png"
-    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "5e276c05-91b0-4704-a100-2696706a4c39",
