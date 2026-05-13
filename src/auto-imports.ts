@@ -38,3 +38,4 @@ import './ui/HealthBarUI.ts';
 import './ui/HitNumberUI.ts';
 import './ui/KOSignUI.ts';
 import './ui/SoulCounterUI.ts';
+import './ui/StartMenuUI.ts';

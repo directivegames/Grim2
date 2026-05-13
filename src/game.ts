@@ -14,9 +14,37 @@ import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { SpinningWeaponActor } from './actors/SpinningWeaponActor.js';
 import { WarmupActor } from './actors/WarmupActor.js';
 import { GameAudioManager } from './actors/GameAudioManager.js';
+import { StartMenuUI } from './ui/StartMenuUI.js';
 
 /** Spring-arm length (world units). */
 const ISO_CAMERA_DISTANCE = 20;
+
+/**
+ * Cap device pixel ratio to 1. Genesys exposes {@link ENGINE.Renderer} with `.renderer` (IGenesysRenderer);
+ * some hosts pass a different shape, so probe safely and never throw.
+ */
+function trySetPixelRatioOne(wrapper: unknown): void {
+  if (wrapper == null || typeof wrapper !== 'object') {
+    return;
+  }
+  const w = wrapper as Record<string, unknown>;
+  const inner = w.renderer;
+  if (inner != null && typeof inner === 'object' && typeof (inner as { setPixelRatio?: (n: number) => void }).setPixelRatio === 'function') {
+    (inner as { setPixelRatio: (n: number) => void }).setPixelRatio(1);
+    return;
+  }
+  if (typeof (w as { setPixelRatio?: (n: number) => void }).setPixelRatio === 'function') {
+    (w as { setPixelRatio: (n: number) => void }).setPixelRatio(1);
+    return;
+  }
+  const getNative = (w as { getNativeRenderer?: () => unknown }).getNativeRenderer;
+  if (typeof getNative === 'function') {
+    const native = getNative.call(wrapper);
+    if (native != null && typeof native === 'object' && typeof (native as { setPixelRatio?: (n: number) => void }).setPixelRatio === 'function') {
+      (native as { setPixelRatio: (n: number) => void }).setPixelRatio(1);
+    }
+  }
+}
 
 @ENGINE.GameClass()
 class MyGameMode extends ENGINE.GameMode {
@@ -36,46 +64,7 @@ class MyGameMode extends ENGINE.GameMode {
   }
 }
 
-/** Custom loading screen that stays visible until all warmups complete.
- *  Ensures no stutter from first-time material compilation during gameplay.
- */
-class GrimLoadingScreen implements ENGINE.ILoadingScreen {
-  private _default = new ENGINE.DefaultLoadingScreen();
-  private _warmupComplete = false;
-  private _engineRequestedStop = false;
-
-  public start(world: ENGINE.World): void {
-    this._default.start(world);
-  }
-
-  /** Called by engine when it's ready to hide the loading screen. */
-  public stop(): void {
-    // Don't hide yet - wait for warmup to complete
-    this._engineRequestedStop = true;
-    this._tryHide();
-  }
-
-  /** Called when WarmupActor signals all assets are loaded and shaders compiled. */
-  public markWarmupComplete(): void {
-    this._warmupComplete = true;
-    this._tryHide();
-  }
-
-  private _tryHide(): void {
-    // Only hide when BOTH engine is ready AND warmup is complete
-    if (this._engineRequestedStop && this._warmupComplete) {
-      this._default.stop();
-    }
-  }
-}
-
 class MyGame extends ENGINE.BaseGameLoop {
-  private _loadingScreen: GrimLoadingScreen | null = null;
-
-  protected override createLoadingScreen(): ENGINE.ILoadingScreen | null {
-    this._loadingScreen = new GrimLoadingScreen();
-    return this._loadingScreen;
-  }
 
   public override getWorldConfiguration(): ENGINE.WorldOptions {
     const base = super.getWorldConfiguration();
@@ -121,20 +110,28 @@ class MyGame extends ENGINE.BaseGameLoop {
    */
   public override async start(): Promise<void> {
     await super.start();
-    if (this.renderer) {
-      this.renderer.renderer.setPixelRatio(1);
-    }
+    trySetPixelRatioOne(this.renderer);
+  }
+
+  /**
+   * Cover the canvas as early as possible (before beginPlay / first ticks).
+   */
+  protected override async preStart(): Promise<void> {
+    await super.preStart();
+    StartMenuUI.preflightCover(this.getWorld());
   }
 
   /**
    * Scene cameras using {@link ENGINE.ViewTargetCameraComponent} sit on a stack and
    * override the pawn camera. Turn them all off so only the pawn isometric camera renders.
-   * Then spawn warmup actor to pre-load all assets before showing gameplay.
+   * Start menu + warmup: menu stays until PLAY after shaders/assets are warmed.
    */
   protected override postStart(): void {
     super.postStart();
     const world = this.getWorld();
     if (!world) return;
+
+    const startMenu = StartMenuUI.attach(world);
 
     // Disable scene cameras
     for (const actor of world.getActors()) {
@@ -143,26 +140,17 @@ class MyGame extends ENGINE.BaseGameLoop {
       }
     }
 
-    // Spawn warmup actor - it handles all asset preloading and signals when ready
-    this._startWarmupSequence(world);
+    this._startWarmupSequence(world, startMenu);
   }
 
-  private _startWarmupSequence(world: ENGINE.World): void {
-    // Get reference to loading screen so we can hide it when done
-    const loadingScreen = this._loadingScreen as GrimLoadingScreen | null;
-
-    // Spawn weapon actor first (it has no async init, so this is instant)
+  private _startWarmupSequence(world: ENGINE.World, startMenu: StartMenuUI): void {
     const weaponActor = SpinningWeaponActor.create();
     world.addActor(weaponActor);
 
-    // Spawn audio manager (preloads all sounds)
     GameAudioManager.ensureExists(world);
 
-    // Start warmup - this preloads graves, gore, souls, compiles shaders
     WarmupActor.spawnAndWarmup(world, () => {
-      // Warmup complete - signal loading screen to hide
-      // Background music is already in the scene, no need to spawn it
-      loadingScreen?.markWarmupComplete();
+      startMenu.markWarmupComplete();
     });
   }
 }

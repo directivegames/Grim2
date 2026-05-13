@@ -1,5 +1,6 @@
 {
   "defaultScene": "./assets/default.genesys-scene",
   "engineVersion": "10.7.2",
-  "rendererType": "webgl"
+  "rendererType": "webgl",
+  "gameId": "5fa10acb-a7ba-42ff-b0a1-32a8a26e2929"
 }
