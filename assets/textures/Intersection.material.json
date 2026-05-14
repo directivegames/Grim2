@@ -5,11 +5,12 @@
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "519e717c-48f6-4482-a2e3-bf190a443e90",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/intersectionnew.png"
     },
-    "metalness": 0.88,
+    "metalness": 0.74,
     "name": "Intersection",
-    "roughness": 0.95,
+    "roughness": 0.61,
     "uuid": "5e790333-d204-4f84-95d9-48ae3987c345"
   },
   "$version": 2
