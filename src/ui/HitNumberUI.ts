@@ -74,8 +74,10 @@ export class HitNumberUI {
       document.head.appendChild(fontFace);
     }
 
-    // Pre-resolve background URL
-    void this._resolveUrl();
+    // Pre-resolve background URL and wait for it before marking ready
+    this._resolveUrl().then(() => {
+      // URL resolved - early hits will now get the background
+    });
 
     // Initialize object pool
     this._initializePool();

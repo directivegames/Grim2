@@ -1,20 +1,19 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
+    "bumpMap": {
+      "$bc": "ENGINE.UrlTexture",
+      "$uuid": "d68db716-c0f3-4037-aff2-9a386cf6ead7",
+      "url": "@project/assets/textures/newroadbump.png"
+    },
     "flatShading": true,
     "map": {
       "$bc": "ENGINE.UrlTexture",
-      "$uuid": "b3ed39c5-ff82-4c65-8843-7ee563b3508e",
-      "colorSpace": "srgb",
-      "url": "@project/assets/textures/roadwithshadow.png"
+      "$uuid": "d3c11168-15e0-4625-b5ae-18b82b61312d",
+      "url": "@project/assets/textures/newroad.png"
     },
     "metalness": 0.77,
     "name": "Road",
-    "normalMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "48d11fb3-03c4-4ba6-8d15-a6bb0c98ce77",
-      "url": "@project/assets/textures/Roadnormalmap.png"
-    },
     "uuid": "4ee7e35d-0fb1-42a5-bf27-e347d2116947"
   },
   "$version": 2

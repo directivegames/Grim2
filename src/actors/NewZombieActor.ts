@@ -710,7 +710,7 @@ export class NewZombieActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (world) {
       killStreakTracker.recordKill(world);
-      comboMeterTracker.recordKill(world);
+      void comboMeterTracker.recordKill(world);
 
       // Camera FOV punch on individual kill for visceral feedback
       const player = world.getFirstPlayerPawn();

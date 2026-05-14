@@ -12,9 +12,10 @@
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "cd485411-8e6f-4997-b304-0b609dc2dfb9",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/carcolour.webp"
     },
-    "metalness": 0.56,
+    "metalness": 0.49,
     "metalnessMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "914137e4-1006-4478-91d5-67da599d56ef",
@@ -31,9 +32,6 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "4cce56d1-4d54-4abf-83a1-b66c1f7fe53c",
       "url": "@project/assets/textures/carrough.webp"
-    },
-    "userData": {
-      "colorSpaceFixed": true
     },
     "uuid": "c6ffd748-256c-4d73-aced-45331174f2b6"
   },

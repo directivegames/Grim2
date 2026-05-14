@@ -731,7 +731,7 @@ export class ZombieActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (world) {
       killStreakTracker.recordKill(world);
-      comboMeterTracker.recordKill(world);
+      void comboMeterTracker.recordKill(world);
     }
 
     const npc = this.getComponent(ENGINE.NpcMovementComponent);

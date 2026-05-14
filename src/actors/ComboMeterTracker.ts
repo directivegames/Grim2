@@ -16,9 +16,9 @@ class ComboMeterTracker {
 
   // ── Public API ──────────────────────────────────────────────────────────────
 
-  public recordKill(world: ENGINE.World): void {
+  public async recordKill(world: ENGINE.World): Promise<void> {
     this._count++;
-    void this._ensureUI(world);
+    await this._ensureUI(world);
     this._updateDisplay();
     this._scheduleReset();
 

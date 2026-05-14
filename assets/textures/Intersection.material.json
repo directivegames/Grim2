@@ -4,20 +4,12 @@
     "envMapIntensity": 0.97,
     "map": {
       "$bc": "ENGINE.UrlTexture",
-      "$uuid": "46008b20-1826-4257-9f31-bb0664112e62",
-      "url": "@project/assets/textures/intersectionredone.png"
+      "$uuid": "519e717c-48f6-4482-a2e3-bf190a443e90",
+      "url": "@project/assets/textures/intersectionnew.png"
     },
     "metalness": 0.88,
     "name": "Intersection",
-    "normalMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "c1825e77-2feb-491d-8383-7df02e128fbe",
-      "url": "@project/assets/textures/intersectionnormal.png"
-    },
     "roughness": 0.95,
-    "userData": {
-      "colorSpaceFixed": true
-    },
     "uuid": "5e790333-d204-4f84-95d9-48ae3987c345"
   },
   "$version": 2

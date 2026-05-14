@@ -1,25 +1,12 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
-    "color": {
-      "$bc": "c",
-      "_": [
-        0.337164,
-        0.250158,
-        0.215861
-      ]
-    },
     "emissiveIntensity": 3000,
     "emissiveMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "64dfb1ee-6662-4e34-b9fd-71e1925d47e6",
       "colorSpace": "srgb",
       "url": "@project/assets/textures/spookyhouseemrit.webp"
-    },
-    "lightMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "589d0836-e9c7-478c-baad-189c13f86245",
-      "url": "@project/assets/textures/baked/TLM-Mesh_0.132.png"
     },
     "map": {
       "$bc": "ENGINE.UrlTexture",
@@ -34,11 +21,6 @@
       "url": "@project/assets/textures/spookyhouseredonmetal.webp"
     },
     "name": "spookyhouse",
-    "normalMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "7f2ebc3c-4b78-43b5-bd78-acf5be2c86e0",
-      "url": "@project/assets/textures/spookyhousenormalredone.webp"
-    },
     "roughnessMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "89c0d489-9cec-43ef-b488-e2ebe4e72fea",
