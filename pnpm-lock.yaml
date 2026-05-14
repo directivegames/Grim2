@@ -12,8 +12,8 @@ importers:
         specifier: latest
         version: 0.0.6
       '@gnsx/genesys.js':
-        specifier: 10.7.2
-        version: 10.7.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)
+        specifier: 10.9.0
+        version: 10.9.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)
       three:
         specifier: 0.184.0
         version: 0.184.0
@@ -508,8 +508,8 @@ packages:
   '@gnsx/genesys.harness@0.0.6':
     resolution: {integrity: sha512-Y2+3BL8AR0xDVp1oZ0M7hZACJ69t5Ncel5P5EwYGrZcvxDPDqnEbjgDyrssHQKYmp5J6osy+8dWlIALV1LoZhA==}
 
-  '@gnsx/genesys.js@10.7.2':
-    resolution: {integrity: sha512-e4hUjVYLWiYWJ5LJ6NdkC/m/0mwWPqxGvxFh3w2iyHvl8IPzJwXae2pJBGhrV6huUlP+ufH9NHc17lYmDVuzBg==}
+  '@gnsx/genesys.js@10.9.0':
+    resolution: {integrity: sha512-6vxDK0ohxS//ud2jBCdY/S6aSQkAGoM3W++999EuG7CnvF0AnYqMnI6rLY8Di+Fq4fQ33Ay5Sdxu40K7+3Q3kA==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -690,6 +690,10 @@ packages:
       '@cfworker/json-schema':
         optional: true
 
+  '@msgpack/msgpack@3.1.3':
+    resolution: {integrity: sha512-47XIizs9XZXvuJgoaJUIE2lFoID8ugvc0jzSHP+Ptfk8nTbnR8g788wv48N03Kx0UkAv559HWRQ3yzOgzlRNUA==}
+    engines: {node: '>= 18'}
+
   '@nodable/entities@2.1.0':
     resolution: {integrity: sha512-nyT7T3nbMyBI/lvr6L5TyWbFJAI9FTgVRakNoBqCD+PmID8DzFrrNdLLtHMwMszOtqZa8PAOV24ZqDnQrhQINA==}
 
@@ -705,20 +709,20 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@recast-navigation/core@0.39.0':
-    resolution: {integrity: sha512-l48GHrimIUR+9ugAsjIecdUh5ohHULrFYUn5EqClafV5HJB/cPFBbN4n9HV2jDamCjGRGEhtSpId7NpkhoF0qQ==}
+  '@recast-navigation/core@0.43.1':
+    resolution: {integrity: sha512-4igfPgnoV90O92sDSIA0xHa6tanh3z/udlgGmD0SqGQ6PKV4JS2l9jWO8YnxfZuXP/NV52H4c5FU6pSdZc9WDA==}
 
-  '@recast-navigation/generators@0.39.0':
-    resolution: {integrity: sha512-ymiacmEWK4SGY/FUlr6/n9/FgvA9NikPR57JyCGbteScEG10UYByrPGXJQU/UXuzUhUbmtKlPJAk2KP+MLgxJA==}
+  '@recast-navigation/generators@0.43.1':
+    resolution: {integrity: sha512-w7r6k/A93wWxuSN+Lg+PmlsUVXq06r5bqXmBglolxqDt2O/Y776BIhYtb6P2P6pbYqDWORu9NCZZJzfY4FNpaA==}
 
-  '@recast-navigation/three@0.39.0':
-    resolution: {integrity: sha512-zk2EnZSoMY1P2uYexGFnfoOG92kUD94B1R+7pz4MMOjcryqCKzGhTSalThyY8SbNi9r4MrKe7Xd50W4vS/1k8A==}
+  '@recast-navigation/three@0.43.1':
+    resolution: {integrity: sha512-XNA3z7/8SBzTswD9LBQkJ5+1yn4J6dzx5uI2zRFXu6G7UOkFEN+f1PeugJUOUOXNjyVdkaYVOg9dKqpaXtzUDw==}
     peerDependencies:
       '@types/three': 0.x.x
       three: 0.x.x
 
-  '@recast-navigation/wasm@0.39.0':
-    resolution: {integrity: sha512-1P/8pqXtwJSVseLBtO0AOdqQe1XnhPFTVvG9FMORFVFunYqkKXxULgni8x3fsutkQisyY+X7YQoIMLvZR4lKFA==}
+  '@recast-navigation/wasm@0.43.1':
+    resolution: {integrity: sha512-XFL6PhO8JodwXUHBSAkfaLUdUEweIkJsdP3HTmtJvMs5fkqEWxWJmBskZlACHJepv55NAriqWxOtuLlG3t7+Hg==}
 
   '@rollup/plugin-inject@5.0.5':
     resolution: {integrity: sha512-2+DEJbNBoPROPkgTDNe8/1YXWcqxbN5DTjASVIOx8HS+pITXushyNiBV56RB08zuptzz8gT3YfkqriTBVycepg==}
@@ -2071,8 +2075,8 @@ packages:
     resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}
     engines: {node: '>= 6'}
 
-  recast-navigation@0.39.0:
-    resolution: {integrity: sha512-xh9gYN990nDGs8QXRPXt4gqDCSQhS954lSTukI1i//GHecWonKVBFNxt79mqC+v0Lz2RFz5gKqpQQPHLdFM/iQ==}
+  recast-navigation@0.43.1:
+    resolution: {integrity: sha512-BVBQEHE6uqD36opJomVkI5TxMVZ8bBLdDn90mYtBUYJnNlqEuNFOL8DH8lLOksfVVaC+kjykYuS57P6MrxVB7A==}
 
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
@@ -2812,10 +2816,11 @@ snapshots:
 
   '@gnsx/genesys.harness@0.0.6': {}
 
-  '@gnsx/genesys.js@10.7.2(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)':
+  '@gnsx/genesys.js@10.9.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@types/three@0.184.1)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
-      '@recast-navigation/three': 0.39.0(@types/three@0.184.1)(three@0.184.0)
+      '@msgpack/msgpack': 3.1.3
+      '@recast-navigation/three': 0.43.1(@types/three@0.184.1)(three@0.184.0)
       '@tweenjs/tween.js': 25.0.0
       dat.gui: 0.7.9
       esbuild-wasm: 0.28.0
@@ -2824,7 +2829,7 @@ snapshots:
       nanoid: 5.1.11
       nipplejs: 0.10.2
       postprocessing: 6.39.1(three@0.184.0)
-      recast-navigation: 0.39.0
+      recast-navigation: 0.43.1
       reflect-metadata: 0.2.2
       stats.js: 0.17.0
       three: 0.184.0
@@ -2986,6 +2991,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@msgpack/msgpack@3.1.3': {}
+
   '@nodable/entities@2.1.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
@@ -3000,23 +3007,23 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
 
-  '@recast-navigation/core@0.39.0':
+  '@recast-navigation/core@0.43.1':
     dependencies:
-      '@recast-navigation/wasm': 0.39.0
+      '@recast-navigation/wasm': 0.43.1
 
-  '@recast-navigation/generators@0.39.0':
+  '@recast-navigation/generators@0.43.1':
     dependencies:
-      '@recast-navigation/core': 0.39.0
-      '@recast-navigation/wasm': 0.39.0
+      '@recast-navigation/core': 0.43.1
+      '@recast-navigation/wasm': 0.43.1
 
-  '@recast-navigation/three@0.39.0(@types/three@0.184.1)(three@0.184.0)':
+  '@recast-navigation/three@0.43.1(@types/three@0.184.1)(three@0.184.0)':
     dependencies:
-      '@recast-navigation/core': 0.39.0
-      '@recast-navigation/generators': 0.39.0
+      '@recast-navigation/core': 0.43.1
+      '@recast-navigation/generators': 0.43.1
       '@types/three': 0.184.1
       three: 0.184.0
 
-  '@recast-navigation/wasm@0.39.0': {}
+  '@recast-navigation/wasm@0.43.1': {}
 
   '@rollup/plugin-inject@5.0.5(rollup@4.60.2)':
     dependencies:
@@ -4542,10 +4549,10 @@ snapshots:
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
 
-  recast-navigation@0.39.0:
+  recast-navigation@0.43.1:
     dependencies:
-      '@recast-navigation/core': 0.39.0
-      '@recast-navigation/generators': 0.39.0
+      '@recast-navigation/core': 0.43.1
+      '@recast-navigation/generators': 0.43.1
 
   reflect-metadata@0.2.2: {}
 

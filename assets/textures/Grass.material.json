@@ -3,30 +3,18 @@
     "$bc": "THREE.MeshStandardMaterial",
     "bumpMap": {
       "$bc": "ENGINE.UrlTexture",
-      "$uuid": "a4ed6ff5-4e3a-4775-b89f-1284452e84eb",
-      "url": "@project/assets/textures/grassbumpmap.png"
-    },
-    "color": {
-      "$bc": "c",
-      "_": [
-        0.337164,
-        0.250158,
-        0.215861
-      ]
+      "$uuid": "54315ab8-35fb-43d3-904c-3b54e00928b1",
+      "url": "@project/assets/textures/newgrassbump.png"
     },
     "emissiveIntensity": 0,
     "map": {
       "$bc": "ENGINE.UrlTexture",
-      "$uuid": "35606545-2e86-4169-99b2-5ef3865789cd",
+      "$uuid": "6d89bf57-b683-4278-b81a-de930e983b24",
       "colorSpace": "srgb",
-      "url": "@project/assets/textures/Grasstexturewithshadow.png"
+      "url": "@project/assets/textures/newgrasstexture.png"
     },
+    "metalness": 0.67,
     "name": "Grass",
-    "normalMap": {
-      "$bc": "ENGINE.UrlTexture",
-      "$uuid": "ebb00ada-7075-4cda-aec5-020d109e312b",
-      "url": "@project/assets/textures/grassnormalmap.png"
-    },
     "uuid": "4e505642-bbc5-48ab-b121-eda13b7bc794"
   },
   "$version": 2

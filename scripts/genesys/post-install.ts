@@ -16,11 +16,14 @@ async function main() {
   fs.mkdirSync(copiedEngineFolder, { recursive: true });
 
   const foldersToCopy: string[] = [
-    'games/examples',
+    'demos/examples',
     'src',
   ];
   for (const folder of foldersToCopy) {
     const engineFolderPath = path.join(engineInstallFolder, folder);
+    if (!fs.existsSync(engineFolderPath)) {
+      continue;
+    }
     const localFolderPath = path.join(copiedEngineFolder, folder);
     fs.cpSync(engineFolderPath, localFolderPath, { recursive: true });
   }

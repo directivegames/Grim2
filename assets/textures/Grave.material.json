@@ -1,6 +1,14 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0.337164,
+        0.250158,
+        0.215861
+      ]
+    },
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "21182e80-0fb1-47f7-aebb-5a8f7513b8db",
@@ -15,7 +23,7 @@
     "name": "Grave",
     "normalMap": {
       "$bc": "ENGINE.UrlTexture",
-      "$uuid": "347684b6-e303-4734-b652-2505333d6336",
+      "$uuid": "fcf61932-b5e7-47be-af26-40d4a8f35819",
       "url": "@project/assets/textures/tomebstonenormal.webp"
     },
     "roughnessMap": {
