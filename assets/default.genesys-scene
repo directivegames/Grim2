@@ -4327,9 +4327,9 @@
           "position": {
             "$bc": "v3",
             "_": [
-              28.510726,
+              5.12817,
               0.092009,
-              -17.930091
+              -11.683002
             ]
           },
           "uuid": "6760f6ade45ca065"
@@ -10700,234 +10700,6 @@
         "uuid": "860ee2d8e3d3f1c0"
       },
       "133": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 05",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              33.671735,
-              -0.999395,
-              -30.033453
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -0.523599,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "a283ec315dcb3b2f"
-        },
-        "uuid": "6ccedc3e1bc19edf"
-      },
-      "134": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 06",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              35.383586,
-              -1.617228,
-              -37.263182
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -0.523599,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "c58456defa46551c"
-        },
-        "uuid": "644b86fd18b189c9"
-      },
-      "135": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 07",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              38.883619,
-              -0.959824,
-              -32.700412
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              3.141592,
-              -0.174533,
-              3.141592
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "d916a52bfed2e67a"
-        },
-        "uuid": "7f6d2b1696c9e807"
-      },
-      "136": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 08",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              33.671735,
-              -1.617228,
-              -43.86895
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -0.523599,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "9472110589561ff1"
-        },
-        "uuid": "c527ae5a81f6df65"
-      },
-      "137": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 09",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              35.383586,
-              -1.617228,
-              -51.09868
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -0.523599,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "e8d060e482a3a8c6"
-        },
-        "uuid": "571f1ff430a768c8"
-      },
-      "138": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 10",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              38.883619,
-              -1.009476,
-              -46.535909
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              3.141592,
-              -0.174533,
-              3.141592
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "06a8e587457ca337"
-        },
-        "uuid": "d3b8d25e17fcec86"
-      },
-      "139": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "name": "Hemisphere Light",
@@ -10963,7 +10735,7 @@
         },
         "uuid": "e85a2da907fc1400"
       },
-      "140": {
+      "134": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 417",
         "rootComponent": {
@@ -10993,7 +10765,7 @@
         },
         "uuid": "daf070d828b63491"
       },
-      "141": {
+      "135": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 418",
         "rootComponent": {
@@ -11023,7 +10795,7 @@
         },
         "uuid": "29fc8ad0542abd91"
       },
-      "142": {
+      "136": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 420",
         "rootComponent": {
@@ -11053,7 +10825,7 @@
         },
         "uuid": "96950216de8bfec4"
       },
-      "143": {
+      "137": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 421",
         "rootComponent": {
@@ -11083,133 +10855,7 @@
         },
         "uuid": "1cc962651be90e0c"
       },
-      "144": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/hedgeredon.glb"
-        },
-        "name": "Hedgeredon 17",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelMaterial": "@project/assets/textures/Hedge.material.json",
-          "modelUrl": "@project/assets/models/hedgeredon.glb",
-          "name": "RootComponent",
-          "physicsOptions": {
-            "enabled": false
-          },
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -26.882173,
-              -1.019639,
-              -28.848529
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.15,
-              0.15,
-              0.15
-            ]
-          },
-          "uuid": "603887659aa15ba6"
-        },
-        "uuid": "6d0ad8b949b3060b"
-      },
-      "145": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/hedgeredon.glb"
-        },
-        "name": "Hedgeredon 18",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelMaterial": "@project/assets/textures/Hedge.material.json",
-          "modelUrl": "@project/assets/models/hedgeredon.glb",
-          "name": "RootComponent",
-          "physicsOptions": {
-            "enabled": false
-          },
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -26.882173,
-              -1.019639,
-              -21.683704
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.15,
-              0.15,
-              0.15
-            ]
-          },
-          "uuid": "58d66aca54c3e6bb"
-        },
-        "uuid": "bbbcc2524f43c0d2"
-      },
-      "146": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/hedgeredon.glb"
-        },
-        "name": "Hedgeredon 19",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelMaterial": "@project/assets/textures/Hedge.material.json",
-          "modelUrl": "@project/assets/models/hedgeredon.glb",
-          "name": "RootComponent",
-          "physicsOptions": {
-            "enabled": false
-          },
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -26.882173,
-              -1.019639,
-              -14.594164
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.15,
-              0.15,
-              0.15
-            ]
-          },
-          "uuid": "c42d40940520bd22"
-        },
-        "uuid": "fde98a2d7bf24d59"
-      },
-      "147": {
+      "138": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 422",
         "rootComponent": {
@@ -11247,210 +10893,7 @@
         },
         "uuid": "9c4eda0caf5594c2"
       },
-      "148": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 11",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -32.604716,
-              -1.617228,
-              -29.807036
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -0.523599,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "bfe03837c8b20850"
-        },
-        "uuid": "b4a5440cef842c1a"
-      },
-      "149": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 12",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -28.995424,
-              -1.617228,
-              -30.772712
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              -3.141592,
-              -0.872664,
-              -3.141592
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "f4383255774cd67c"
-        },
-        "uuid": "35b9620aad696a58"
-      },
-      "150": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/hedgeredon.glb"
-        },
-        "name": "Hedgeredon 22",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "excludeFromNavigation": true,
-          "modelMaterial": "@project/assets/textures/Hedge.material.json",
-          "modelUrl": "@project/assets/models/hedgeredon.glb",
-          "name": "RootComponent",
-          "physicsOptions": {
-            "enabled": false
-          },
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -35.063494,
-              -1.019639,
-              -28.812349
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.15,
-              0.15,
-              0.15
-            ]
-          },
-          "uuid": "84c8103d57a914b0"
-        },
-        "uuid": "96b6349584e9b960"
-      },
-      "151": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/hedgeredon.glb"
-        },
-        "name": "Hedgeredon 23",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelMaterial": "@project/assets/textures/Hedge.material.json",
-          "modelUrl": "@project/assets/models/hedgeredon.glb",
-          "name": "RootComponent",
-          "physicsOptions": {
-            "enabled": false
-          },
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -35.063494,
-              -1.019639,
-              -21.961737
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.15,
-              0.15,
-              0.15
-            ]
-          },
-          "uuid": "4d4cff5bc2d77920"
-        },
-        "uuid": "c521ae8a9c9aa051"
-      },
-      "152": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/hedgeredon.glb"
-        },
-        "name": "Hedgeredon 24",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelMaterial": "@project/assets/textures/Hedge.material.json",
-          "modelUrl": "@project/assets/models/hedgeredon.glb",
-          "name": "RootComponent",
-          "physicsOptions": {
-            "enabled": false
-          },
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -35.063494,
-              -1.019639,
-              -14.129698
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -1.570796,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.15,
-              0.15,
-              0.15
-            ]
-          },
-          "uuid": "b0214444352a19c5"
-        },
-        "uuid": "65794843010ae241"
-      },
-      "153": {
+      "139": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -11489,7 +10932,7 @@
         },
         "uuid": "a53848fd5774e89b"
       },
-      "154": {
+      "140": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 495",
         "rootComponent": {
@@ -11519,7 +10962,7 @@
         },
         "uuid": "940b63b26f4d6266"
       },
-      "155": {
+      "141": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 496",
         "rootComponent": {
@@ -11557,7 +11000,7 @@
         },
         "uuid": "09d524dd4a28c078"
       },
-      "156": {
+      "142": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 424",
         "rootComponent": {
@@ -11595,7 +11038,7 @@
         },
         "uuid": "e694bba47178d268"
       },
-      "157": {
+      "143": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 425",
         "rootComponent": {
@@ -11633,38 +11076,7 @@
         },
         "uuid": "1a26743ba5510760"
       },
-      "158": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/hedgeredon.glb"
-        },
-        "name": "Hedgeredon 37",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelMaterial": "@project/assets/textures/Hedge.material.json",
-          "modelUrl": "@project/assets/models/hedgeredon.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              -22.362833,
-              -1.019639,
-              -29.163004
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.15,
-              0.15,
-              0.15
-            ]
-          },
-          "uuid": "f268c6e5f6378c90"
-        },
-        "uuid": "2dac1f97e98792d3"
-      },
-      "159": {
+      "144": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 426",
         "rootComponent": {
@@ -11694,45 +11106,7 @@
         },
         "uuid": "2c7179558b1a733e"
       },
-      "160": {
-        "$bc": "ENGINE.GLTFMeshActor",
-        "$initOptions": {
-          "modelUrl": "@project/assets/models/treemoody.glb"
-        },
-        "name": "Treemoody 03",
-        "rootComponent": {
-          "$bc": "ENGINE.GLTFMeshComponent",
-          "modelUrl": "@project/assets/models/treemoody.glb",
-          "name": "RootComponent",
-          "position": {
-            "$bc": "v3",
-            "_": [
-              24.452501,
-              -0.241854,
-              -31.303058
-            ]
-          },
-          "rotation": {
-            "$bc": "e",
-            "_": [
-              0,
-              -0.523599,
-              0
-            ]
-          },
-          "scale": {
-            "$bc": "v3",
-            "_": [
-              0.7,
-              0.7,
-              0.7
-            ]
-          },
-          "uuid": "8ee406b2f4ce0bec"
-        },
-        "uuid": "a161a148bf3c9c60"
-      },
-      "161": {
+      "145": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -11804,7 +11178,7 @@
         },
         "uuid": "68a252f281d4640d"
       },
-      "162": {
+      "146": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -11843,7 +11217,7 @@
         },
         "uuid": "40b04bbcc0a553f2"
       },
-      "163": {
+      "147": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -11883,7 +11257,7 @@
         },
         "uuid": "60e10b122e2109b3"
       },
-      "164": {
+      "148": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -11922,7 +11296,7 @@
         },
         "uuid": "18ecc1a159dc4bdf"
       },
-      "165": {
+      "149": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -11961,7 +11335,7 @@
         },
         "uuid": "6252e3fb1b598011"
       },
-      "166": {
+      "150": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12000,7 +11374,7 @@
         },
         "uuid": "eeb1495e60a3e100"
       },
-      "167": {
+      "151": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12039,7 +11413,7 @@
         },
         "uuid": "7846aa8042f9c10f"
       },
-      "168": {
+      "152": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12078,7 +11452,7 @@
         },
         "uuid": "c934923396ce7854"
       },
-      "169": {
+      "153": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12117,7 +11491,7 @@
         },
         "uuid": "4bf60e99be72a243"
       },
-      "170": {
+      "154": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12156,7 +11530,7 @@
         },
         "uuid": "650f1a9179725026"
       },
-      "171": {
+      "155": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12195,7 +11569,7 @@
         },
         "uuid": "10653a9ff73db47e"
       },
-      "172": {
+      "156": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12234,7 +11608,7 @@
         },
         "uuid": "bdc68b4c8ba0f6ff"
       },
-      "173": {
+      "157": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12273,7 +11647,7 @@
         },
         "uuid": "72becaf5ae7f69b8"
       },
-      "174": {
+      "158": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12312,7 +11686,7 @@
         },
         "uuid": "cc8a0b0888486f3d"
       },
-      "175": {
+      "159": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grave.glb"
@@ -12351,7 +11725,7 @@
         },
         "uuid": "e044a6be3b81a7cd"
       },
-      "176": {
+      "160": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 07",
         "rootComponent": {
@@ -12394,7 +11768,7 @@
         },
         "uuid": "a3edbec673673a9d"
       },
-      "177": {
+      "161": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 08",
         "rootComponent": {
@@ -12437,7 +11811,7 @@
         },
         "uuid": "4267c36e13419971"
       },
-      "178": {
+      "162": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 09",
         "rootComponent": {
@@ -12480,7 +11854,7 @@
         },
         "uuid": "6f6ff6e403c725e0"
       },
-      "179": {
+      "163": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 424",
         "rootComponent": {
@@ -12518,7 +11892,7 @@
         },
         "uuid": "65c694f17d1136e5"
       },
-      "180": {
+      "164": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 427",
         "rootComponent": {
@@ -12556,7 +11930,7 @@
         },
         "uuid": "b03b6ad8423456ac"
       },
-      "181": {
+      "165": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 428",
         "rootComponent": {
@@ -12594,7 +11968,7 @@
         },
         "uuid": "2097c5caa3f9e0ac"
       },
-      "182": {
+      "166": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -12632,7 +12006,7 @@
         },
         "uuid": "b2e4efa286e535f4"
       },
-      "183": {
+      "167": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 414",
         "rootComponent": {
@@ -12670,7 +12044,7 @@
         },
         "uuid": "a7ce0447a39938e2"
       },
-      "184": {
+      "168": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 415",
         "rootComponent": {
@@ -12708,7 +12082,7 @@
         },
         "uuid": "6ccec93102ee1489"
       },
-      "185": {
+      "169": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -13080,7 +12454,7 @@
         },
         "uuid": "c7526853ec84563c"
       },
-      "186": {
+      "170": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 88",
@@ -13262,7 +12636,7 @@
         },
         "uuid": "1fe146c61c5eee42"
       },
-      "187": {
+      "171": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 89",
@@ -13444,7 +12818,7 @@
         },
         "uuid": "f354cdf2236bad95"
       },
-      "188": {
+      "172": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 90",
@@ -13626,7 +13000,7 @@
         },
         "uuid": "cb2a117222b83288"
       },
-      "189": {
+      "173": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 91",
@@ -13808,7 +13182,7 @@
         },
         "uuid": "61e87872d86e8c8a"
       },
-      "190": {
+      "174": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 92",
@@ -13990,7 +13364,7 @@
         },
         "uuid": "3410c1c1366dff67"
       },
-      "191": {
+      "175": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 93",
@@ -14172,7 +13546,7 @@
         },
         "uuid": "03f9cdda652818a1"
       },
-      "192": {
+      "176": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 94",
@@ -14354,7 +13728,7 @@
         },
         "uuid": "05c4d40bf8e979a6"
       },
-      "193": {
+      "177": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 95",
@@ -14536,7 +13910,7 @@
         },
         "uuid": "2f2e8e8523be2d6a"
       },
-      "194": {
+      "178": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 96",
@@ -14718,7 +14092,7 @@
         },
         "uuid": "5fdcf75b599599f6"
       },
-      "195": {
+      "179": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 97",
@@ -14900,7 +14274,7 @@
         },
         "uuid": "23ece0b578572963"
       },
-      "196": {
+      "180": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 98",
@@ -15082,7 +14456,7 @@
         },
         "uuid": "996f40c971d6a85d"
       },
-      "197": {
+      "181": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 99",
@@ -15264,7 +14638,7 @@
         },
         "uuid": "bed1271f0eb9eabc"
       },
-      "198": {
+      "182": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 100",
@@ -15446,7 +14820,7 @@
         },
         "uuid": "db681eaaa5785088"
       },
-      "199": {
+      "183": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 101",
@@ -15628,7 +15002,7 @@
         },
         "uuid": "d134bfe79836fbb0"
       },
-      "200": {
+      "184": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -15712,7 +15086,7 @@
         },
         "uuid": "254a8f66e037328d"
       },
-      "201": {
+      "185": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 477",
         "rootComponent": {
@@ -15750,7 +15124,7 @@
         },
         "uuid": "5c58f3753977ec9f"
       },
-      "202": {
+      "186": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 476",
         "rootComponent": {
@@ -15788,7 +15162,7 @@
         },
         "uuid": "27cf3c8ce437a948"
       },
-      "203": {
+      "187": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 471",
         "rootComponent": {
@@ -15826,7 +15200,7 @@
         },
         "uuid": "e3f0e31544a4e428"
       },
-      "204": {
+      "188": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 475",
         "rootComponent": {
@@ -15856,7 +15230,7 @@
         },
         "uuid": "6f1ef79b05c70363"
       },
-      "205": {
+      "189": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 482",
         "rootComponent": {
@@ -15886,7 +15260,7 @@
         },
         "uuid": "2f07eb642c15ccf9"
       },
-      "206": {
+      "190": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 483",
         "rootComponent": {
@@ -15916,7 +15290,7 @@
         },
         "uuid": "71c354b404e2eb36"
       },
-      "207": {
+      "191": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 484",
         "rootComponent": {
@@ -15946,7 +15320,7 @@
         },
         "uuid": "07c3c76fa59e4947"
       },
-      "208": {
+      "192": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 485",
         "rootComponent": {
@@ -15984,7 +15358,7 @@
         },
         "uuid": "37d23b66f224ce84"
       },
-      "209": {
+      "193": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 486",
         "rootComponent": {
@@ -16014,7 +15388,7 @@
         },
         "uuid": "0e91c5259c32dc6c"
       },
-      "210": {
+      "194": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 478",
         "rootComponent": {
@@ -16052,7 +15426,7 @@
         },
         "uuid": "f762cd4ee7775987"
       },
-      "211": {
+      "195": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 469",
         "rootComponent": {
@@ -16090,7 +15464,7 @@
         },
         "uuid": "b73bc5a6d00ec0da"
       },
-      "212": {
+      "196": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 531",
         "rootComponent": {
@@ -16120,7 +15494,7 @@
         },
         "uuid": "4d69fec3a4e95407"
       },
-      "213": {
+      "197": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 549",
         "rootComponent": {
@@ -16150,7 +15524,7 @@
         },
         "uuid": "24d05be90e6f9ad2"
       },
-      "214": {
+      "198": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 102",
@@ -16332,7 +15706,7 @@
         },
         "uuid": "3e36ce12a9bbbfef"
       },
-      "215": {
+      "199": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 103",
@@ -16514,7 +15888,7 @@
         },
         "uuid": "98e0809ba30e2004"
       },
-      "216": {
+      "200": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 104",
@@ -16696,7 +16070,7 @@
         },
         "uuid": "aec57e6570cb1496"
       },
-      "217": {
+      "201": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 105",
@@ -16878,7 +16252,7 @@
         },
         "uuid": "fc559b3b997e5e78"
       },
-      "218": {
+      "202": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 106",
@@ -17060,7 +16434,7 @@
         },
         "uuid": "ee1d85ff5e3cc68e"
       },
-      "219": {
+      "203": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 107",
@@ -17242,7 +16616,7 @@
         },
         "uuid": "60ed5b96ce26a7c4"
       },
-      "220": {
+      "204": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 108",
@@ -17424,7 +16798,7 @@
         },
         "uuid": "8ac76df029d7738a"
       },
-      "221": {
+      "205": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 109",
@@ -17606,7 +16980,7 @@
         },
         "uuid": "105815dffe8b49e1"
       },
-      "222": {
+      "206": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 110",
@@ -17788,7 +17162,7 @@
         },
         "uuid": "fc0a2899e6a15145"
       },
-      "223": {
+      "207": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 111",
@@ -17970,7 +17344,7 @@
         },
         "uuid": "1f5e1184efebd21f"
       },
-      "224": {
+      "208": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 112",
@@ -18152,7 +17526,7 @@
         },
         "uuid": "281e0ff52d5a290e"
       },
-      "225": {
+      "209": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 113",
@@ -18334,7 +17708,7 @@
         },
         "uuid": "4b2b178309376b68"
       },
-      "226": {
+      "210": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 114",
@@ -18516,7 +17890,7 @@
         },
         "uuid": "6edd07b53d743d8c"
       },
-      "227": {
+      "211": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 115",
@@ -18698,7 +18072,7 @@
         },
         "uuid": "b127d0b2e70d373f"
       },
-      "228": {
+      "212": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 116",
@@ -18880,7 +18254,7 @@
         },
         "uuid": "407c08d51b335439"
       },
-      "229": {
+      "213": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 117",
@@ -19062,7 +18436,7 @@
         },
         "uuid": "4fb277c14d0ffe1b"
       },
-      "230": {
+      "214": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 118",
@@ -19244,7 +18618,7 @@
         },
         "uuid": "3936949059e068a7"
       },
-      "231": {
+      "215": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 119",
@@ -19426,7 +18800,7 @@
         },
         "uuid": "dea6244672fb214e"
       },
-      "232": {
+      "216": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 120",
@@ -19608,7 +18982,7 @@
         },
         "uuid": "17201eae3e060afa"
       },
-      "233": {
+      "217": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 121",
@@ -19790,7 +19164,7 @@
         },
         "uuid": "7474d3402c8c5e21"
       },
-      "234": {
+      "218": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 122",
@@ -19972,7 +19346,7 @@
         },
         "uuid": "8d7c826471f3729e"
       },
-      "235": {
+      "219": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 123",
@@ -20154,7 +19528,7 @@
         },
         "uuid": "1cdd18c2087f46a8"
       },
-      "236": {
+      "220": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 124",
@@ -20336,7 +19710,7 @@
         },
         "uuid": "12cfda0d42cd9f4d"
       },
-      "237": {
+      "221": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 125",
@@ -20518,7 +19892,7 @@
         },
         "uuid": "322cf4d6d51f47f9"
       },
-      "238": {
+      "222": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 126",
@@ -20700,7 +20074,7 @@
         },
         "uuid": "b9e85a24aa017aae"
       },
-      "239": {
+      "223": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 127",
@@ -20882,7 +20256,7 @@
         },
         "uuid": "bbc53958f400d48e"
       },
-      "240": {
+      "224": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 128",
@@ -21064,7 +20438,7 @@
         },
         "uuid": "f4d88db69d1c7fee"
       },
-      "241": {
+      "225": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 129",
@@ -21246,7 +20620,7 @@
         },
         "uuid": "400e64deb93ece7e"
       },
-      "242": {
+      "226": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 130",
@@ -21428,7 +20802,7 @@
         },
         "uuid": "a93f40a0b976f7c5"
       },
-      "243": {
+      "227": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 131",
@@ -21610,7 +20984,7 @@
         },
         "uuid": "f6725bc3d09961c4"
       },
-      "244": {
+      "228": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 132",
@@ -21792,7 +21166,7 @@
         },
         "uuid": "453165f35b8b66a9"
       },
-      "245": {
+      "229": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 133",
@@ -21974,7 +21348,7 @@
         },
         "uuid": "537986f27711ff35"
       },
-      "246": {
+      "230": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 134",
@@ -22156,7 +21530,7 @@
         },
         "uuid": "78791cf19d62853d"
       },
-      "247": {
+      "231": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 135",
@@ -22338,7 +21712,7 @@
         },
         "uuid": "1835d7b87c349ac4"
       },
-      "248": {
+      "232": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 136",
@@ -22520,7 +21894,7 @@
         },
         "uuid": "8be2112cc12a7d87"
       },
-      "249": {
+      "233": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 137",
@@ -22702,7 +22076,7 @@
         },
         "uuid": "bf2439f3417f408b"
       },
-      "250": {
+      "234": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 138",
@@ -22884,7 +22258,7 @@
         },
         "uuid": "e573005e878fd179"
       },
-      "251": {
+      "235": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 139",
@@ -23066,7 +22440,7 @@
         },
         "uuid": "2b3cbf0b974c50b9"
       },
-      "252": {
+      "236": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 140",
@@ -23248,7 +22622,7 @@
         },
         "uuid": "30de31aad3635e94"
       },
-      "253": {
+      "237": {
         "$bc": "GAME.ZombieHordeManager",
         "$initOptions": {},
         "name": "Zombie Horde Manager 4",
@@ -23270,7 +22644,7 @@
         },
         "uuid": "230c0321dfdda7d6"
       },
-      "254": {
+      "238": {
         "$bc": "GAME.HedgeCollisionDisabler",
         "$initOptions": {},
         "name": "Hedge Collision Disabler 1",
@@ -23292,7 +22666,7 @@
         },
         "uuid": "82bbf3516ae6379e"
       },
-      "255": {
+      "239": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Spookyhousemoody.glb"
@@ -23361,7 +22735,7 @@
         },
         "uuid": "dd80f9e1327c713a"
       },
-      "256": {
+      "240": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Lampost 05",
         "rootComponent": {
@@ -26153,7 +25527,7 @@
         },
         "uuid": "e1a9965ca52eb958"
       },
-      "257": {
+      "241": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/moodyhouse4.glb"
@@ -26176,7 +25550,7 @@
         },
         "uuid": "3e5e5f745368ac3e"
       },
-      "258": {
+      "242": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -26544,7 +25918,7 @@
         },
         "uuid": "7ee07b0bfd1d0b09"
       },
-      "259": {
+      "243": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -26628,7 +26002,7 @@
         },
         "uuid": "d0ed3a64e07fa386"
       },
-      "260": {
+      "244": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 10",
         "rootComponent": {
@@ -26671,7 +26045,7 @@
         },
         "uuid": "11564661fc62146a"
       },
-      "261": {
+      "245": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 588",
         "rootComponent": {
@@ -26709,7 +26083,7 @@
         },
         "uuid": "0228fda76f9ec2cd"
       },
-      "262": {
+      "246": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 537",
         "rootComponent": {
@@ -26739,7 +26113,7 @@
         },
         "uuid": "eb744f607467fd49"
       },
-      "263": {
+      "247": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 538",
         "rootComponent": {
@@ -26769,7 +26143,7 @@
         },
         "uuid": "7c57caaa291f092a"
       },
-      "264": {
+      "248": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 539",
         "rootComponent": {
@@ -26799,7 +26173,7 @@
         },
         "uuid": "16b559531b162819"
       },
-      "265": {
+      "249": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 540",
         "rootComponent": {
@@ -26829,7 +26203,7 @@
         },
         "uuid": "7aec02c487400054"
       },
-      "266": {
+      "250": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 541",
         "rootComponent": {
@@ -26859,7 +26233,7 @@
         },
         "uuid": "6ff4dedae9e6d71d"
       },
-      "267": {
+      "251": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 542",
         "rootComponent": {
@@ -26889,7 +26263,7 @@
         },
         "uuid": "f16c9303cf02460f"
       },
-      "268": {
+      "252": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 543",
         "rootComponent": {
@@ -26919,7 +26293,7 @@
         },
         "uuid": "b56f76aed3a0c2eb"
       },
-      "269": {
+      "253": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 544",
         "rootComponent": {
@@ -26949,7 +26323,7 @@
         },
         "uuid": "a1fa016d883e28fe"
       },
-      "270": {
+      "254": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 545",
         "rootComponent": {
@@ -26979,7 +26353,7 @@
         },
         "uuid": "e0c67a329f5444e7"
       },
-      "271": {
+      "255": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 546",
         "rootComponent": {
@@ -27009,7 +26383,7 @@
         },
         "uuid": "cb859b3f0a71b3fc"
       },
-      "272": {
+      "256": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 547",
         "rootComponent": {
@@ -27039,7 +26413,7 @@
         },
         "uuid": "954b1c5defae8ced"
       },
-      "273": {
+      "257": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 548",
         "rootComponent": {
@@ -27069,7 +26443,7 @@
         },
         "uuid": "17af7ec34a64345a"
       },
-      "274": {
+      "258": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 551",
         "rootComponent": {
@@ -27099,7 +26473,7 @@
         },
         "uuid": "134bbf05aee3eb7e"
       },
-      "275": {
+      "259": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 552",
         "rootComponent": {
@@ -27129,7 +26503,7 @@
         },
         "uuid": "cba5cdcd480cf707"
       },
-      "276": {
+      "260": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 553",
         "rootComponent": {
@@ -27167,7 +26541,7 @@
         },
         "uuid": "0227732fe37dd9b4"
       },
-      "277": {
+      "261": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 554",
         "rootComponent": {
@@ -27205,7 +26579,7 @@
         },
         "uuid": "31bc1f4e67d1cc20"
       },
-      "278": {
+      "262": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 555",
         "rootComponent": {
@@ -27243,7 +26617,7 @@
         },
         "uuid": "f90916386f987c92"
       },
-      "279": {
+      "263": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 556",
         "rootComponent": {
@@ -27281,7 +26655,7 @@
         },
         "uuid": "b89e8f0d29e403ed"
       },
-      "280": {
+      "264": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 557",
         "rootComponent": {
@@ -27319,7 +26693,7 @@
         },
         "uuid": "c72430c389c316b3"
       },
-      "281": {
+      "265": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 558",
         "rootComponent": {
@@ -27357,7 +26731,7 @@
         },
         "uuid": "177a02e29731d22f"
       },
-      "282": {
+      "266": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 559",
         "rootComponent": {
@@ -27395,7 +26769,7 @@
         },
         "uuid": "c7e8f4a6a150811a"
       },
-      "283": {
+      "267": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 560",
         "rootComponent": {
@@ -27433,7 +26807,7 @@
         },
         "uuid": "f0e8b21769aa238b"
       },
-      "284": {
+      "268": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 561",
         "rootComponent": {
@@ -27471,7 +26845,7 @@
         },
         "uuid": "c06822ca7a9f10c7"
       },
-      "285": {
+      "269": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 562",
         "rootComponent": {
@@ -27509,7 +26883,7 @@
         },
         "uuid": "14a86a8590891623"
       },
-      "286": {
+      "270": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 563",
         "rootComponent": {
@@ -27547,7 +26921,7 @@
         },
         "uuid": "91a5bfe6c0ec4b58"
       },
-      "287": {
+      "271": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 564",
         "rootComponent": {
@@ -27585,7 +26959,7 @@
         },
         "uuid": "4501d6c06bc282e0"
       },
-      "288": {
+      "272": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 565",
         "rootComponent": {
@@ -27623,7 +26997,7 @@
         },
         "uuid": "4f516e682da2015f"
       },
-      "289": {
+      "273": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 566",
         "rootComponent": {
@@ -27661,7 +27035,7 @@
         },
         "uuid": "570db6d730699492"
       },
-      "290": {
+      "274": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 568",
         "rootComponent": {
@@ -27699,7 +27073,7 @@
         },
         "uuid": "abdf5ec7d36f8dcf"
       },
-      "291": {
+      "275": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 569",
         "rootComponent": {
@@ -27737,7 +27111,7 @@
         },
         "uuid": "dd11891317cc5839"
       },
-      "292": {
+      "276": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 570",
         "rootComponent": {
@@ -27775,7 +27149,7 @@
         },
         "uuid": "d0653d090faa8d58"
       },
-      "293": {
+      "277": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 571",
         "rootComponent": {
@@ -27813,7 +27187,7 @@
         },
         "uuid": "1a9c34566996982d"
       },
-      "294": {
+      "278": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 572",
         "rootComponent": {
@@ -27851,7 +27225,7 @@
         },
         "uuid": "704fc148a9ecc529"
       },
-      "295": {
+      "279": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 573",
         "rootComponent": {
@@ -27889,7 +27263,7 @@
         },
         "uuid": "53195fa023b78add"
       },
-      "296": {
+      "280": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 574",
         "rootComponent": {
@@ -27927,7 +27301,7 @@
         },
         "uuid": "673fec9c026f3146"
       },
-      "297": {
+      "281": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 575",
         "rootComponent": {
@@ -27965,7 +27339,7 @@
         },
         "uuid": "6d4da6ed680c0647"
       },
-      "298": {
+      "282": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 576",
         "rootComponent": {
@@ -28003,7 +27377,7 @@
         },
         "uuid": "afaf005ed7cca940"
       },
-      "299": {
+      "283": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 592",
         "rootComponent": {
@@ -28041,7 +27415,7 @@
         },
         "uuid": "13e37ee535d027cb"
       },
-      "300": {
+      "284": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 593",
         "rootComponent": {
@@ -28079,7 +27453,7 @@
         },
         "uuid": "237718eb54d632ef"
       },
-      "301": {
+      "285": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 594",
         "rootComponent": {
@@ -28117,7 +27491,7 @@
         },
         "uuid": "417f4c775243a62d"
       },
-      "302": {
+      "286": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 595",
         "rootComponent": {
@@ -28155,7 +27529,7 @@
         },
         "uuid": "bada364a1bb60946"
       },
-      "303": {
+      "287": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 596",
         "rootComponent": {
@@ -28193,7 +27567,7 @@
         },
         "uuid": "885b68e38850d04f"
       },
-      "304": {
+      "288": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 597",
         "rootComponent": {
@@ -28231,7 +27605,7 @@
         },
         "uuid": "3c6b2995cd5c52ac"
       },
-      "305": {
+      "289": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 598",
         "rootComponent": {
@@ -28269,7 +27643,7 @@
         },
         "uuid": "65e03b43b8fc8287"
       },
-      "306": {
+      "290": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 599",
         "rootComponent": {
@@ -28307,7 +27681,7 @@
         },
         "uuid": "ca491624f48bdec6"
       },
-      "307": {
+      "291": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 577",
         "rootComponent": {
@@ -28337,7 +27711,7 @@
         },
         "uuid": "0502fbcd5a424200"
       },
-      "308": {
+      "292": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 578",
         "rootComponent": {
@@ -28367,7 +27741,7 @@
         },
         "uuid": "3069b4e4e74e1829"
       },
-      "309": {
+      "293": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 579",
         "rootComponent": {
@@ -28397,7 +27771,7 @@
         },
         "uuid": "32df2ab53b38b236"
       },
-      "310": {
+      "294": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 580",
         "rootComponent": {
@@ -28427,7 +27801,7 @@
         },
         "uuid": "82814da93b26d151"
       },
-      "311": {
+      "295": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 581",
         "rootComponent": {
@@ -28458,7 +27832,7 @@
         },
         "uuid": "f4c0ac6e087baf09"
       },
-      "312": {
+      "296": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 550",
         "rootComponent": {
@@ -28488,7 +27862,7 @@
         },
         "uuid": "ba04c872d43eeb6f"
       },
-      "313": {
+      "297": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 582",
         "rootComponent": {
@@ -28518,7 +27892,7 @@
         },
         "uuid": "e4c66fc9edbcedec"
       },
-      "314": {
+      "298": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 583",
         "rootComponent": {
@@ -28549,7 +27923,7 @@
         },
         "uuid": "4f0e50288dbbea4f"
       },
-      "315": {
+      "299": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 584",
         "rootComponent": {
@@ -28579,7 +27953,7 @@
         },
         "uuid": "ae84cd300694a3ca"
       },
-      "316": {
+      "300": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 585",
         "rootComponent": {
@@ -28609,7 +27983,7 @@
         },
         "uuid": "f82e265be6bf3cb4"
       },
-      "317": {
+      "301": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 587",
         "rootComponent": {
@@ -28639,7 +28013,7 @@
         },
         "uuid": "56bbfdb68b8b10c9"
       },
-      "318": {
+      "302": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 589",
         "rootComponent": {
@@ -28669,7 +28043,7 @@
         },
         "uuid": "a8252a8a20f17fe9"
       },
-      "319": {
+      "303": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 590",
         "rootComponent": {
@@ -28699,7 +28073,7 @@
         },
         "uuid": "d0facc2cedec5920"
       },
-      "320": {
+      "304": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 591",
         "rootComponent": {
@@ -28729,7 +28103,7 @@
         },
         "uuid": "3e715a9fb8547314"
       },
-      "321": {
+      "305": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -28813,7 +28187,7 @@
         },
         "uuid": "d86b634fd7040ea1"
       },
-      "322": {
+      "306": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 498",
         "rootComponent": {
@@ -28851,7 +28225,7 @@
         },
         "uuid": "312ad938e4193373"
       },
-      "323": {
+      "307": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 414",
         "rootComponent": {
@@ -28881,7 +28255,7 @@
         },
         "uuid": "6cd1cafd8387ec71"
       },
-      "324": {
+      "308": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Lampost 06",
         "rootComponent": {
@@ -31673,7 +31047,7 @@
         },
         "uuid": "8c390c86efad9b3a"
       },
-      "325": {
+      "309": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 479",
         "rootComponent": {
@@ -31711,7 +31085,7 @@
         },
         "uuid": "ad8b0017dd2c33d8"
       },
-      "326": {
+      "310": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 499",
         "rootComponent": {
@@ -31749,7 +31123,7 @@
         },
         "uuid": "681c2e7ea2a85269"
       },
-      "327": {
+      "311": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31779,7 +31153,7 @@
         },
         "uuid": "f8370bae5f933ff3"
       },
-      "328": {
+      "312": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31809,7 +31183,7 @@
         },
         "uuid": "3a75edac8628477b"
       },
-      "329": {
+      "313": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31839,7 +31213,7 @@
         },
         "uuid": "aecc8b55d83b6b59"
       },
-      "330": {
+      "314": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31870,7 +31244,7 @@
         },
         "uuid": "d7fb520e95ba5739"
       },
-      "331": {
+      "315": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31900,7 +31274,7 @@
         },
         "uuid": "561c72295d588d1e"
       },
-      "332": {
+      "316": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31931,7 +31305,7 @@
         },
         "uuid": "fb9b2ae489049e43"
       },
-      "333": {
+      "317": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31961,7 +31335,7 @@
         },
         "uuid": "72d441afba69c0fd"
       },
-      "334": {
+      "318": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -31992,7 +31366,7 @@
         },
         "uuid": "bce1ad1fe303c88f"
       },
-      "335": {
+      "319": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -32023,7 +31397,7 @@
         },
         "uuid": "bb01281a93416228"
       },
-      "336": {
+      "320": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -32061,7 +31435,7 @@
         },
         "uuid": "df3b0d101b73382a"
       },
-      "337": {
+      "321": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -32099,7 +31473,7 @@
         },
         "uuid": "1dcbb1ce1fb1593b"
       },
-      "338": {
+      "322": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -32139,7 +31513,7 @@
         },
         "uuid": "cb2a226f690f5dc5"
       },
-      "339": {
+      "323": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/newhouse.glb"
@@ -32170,7 +31544,7 @@
         },
         "uuid": "9cd988c41f6a5c46"
       },
-      "340": {
+      "324": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -32210,7 +31584,7 @@
         },
         "uuid": "2ef603518035ab45"
       },
-      "341": {
+      "325": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32248,7 +31622,7 @@
         },
         "uuid": "5c2cc104538de503"
       },
-      "342": {
+      "326": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32286,7 +31660,7 @@
         },
         "uuid": "7caacded4c129c03"
       },
-      "343": {
+      "327": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32324,7 +31698,7 @@
         },
         "uuid": "59bd9440204266e1"
       },
-      "344": {
+      "328": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32362,7 +31736,7 @@
         },
         "uuid": "367b6592fb28199b"
       },
-      "345": {
+      "329": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/churchchanged.glb"
@@ -32415,7 +31789,7 @@
         },
         "uuid": "c114c52874a6bacd"
       },
-      "346": {
+      "330": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 487",
         "rootComponent": {
@@ -32453,7 +31827,7 @@
         },
         "uuid": "a7c60ed613a10496"
       },
-      "347": {
+      "331": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32491,7 +31865,7 @@
         },
         "uuid": "f53c4e3cc7cbbc6f"
       },
-      "348": {
+      "332": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32529,7 +31903,7 @@
         },
         "uuid": "2bfdc569fd045cfc"
       },
-      "349": {
+      "333": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32567,7 +31941,7 @@
         },
         "uuid": "7f87a0841c874317"
       },
-      "350": {
+      "334": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32605,7 +31979,7 @@
         },
         "uuid": "9fc3554e44da0fff"
       },
-      "351": {
+      "335": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32643,7 +32017,7 @@
         },
         "uuid": "40217091f22f3a93"
       },
-      "352": {
+      "336": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32681,7 +32055,7 @@
         },
         "uuid": "3fd6e1faa988757e"
       },
-      "353": {
+      "337": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32719,7 +32093,7 @@
         },
         "uuid": "a7468c896f5121ac"
       },
-      "354": {
+      "338": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32757,7 +32131,7 @@
         },
         "uuid": "13869c8d0aed8970"
       },
-      "355": {
+      "339": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -32795,7 +32169,311 @@
         },
         "uuid": "744ff200b4d700bc"
       },
-      "$length": 356
+      "340": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/Wall.glb"
+        },
+        "name": "Wall 12",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/Wall.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -30.566493,
+              -1.339905,
+              8.808973
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.2,
+              0.2,
+              0.2
+            ]
+          },
+          "uuid": "c9a34927fc05cda4"
+        },
+        "uuid": "a3d150575a7fd863"
+      },
+      "341": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/Wall.glb"
+        },
+        "name": "Wall 13",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/Wall.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -30.566493,
+              -1.339905,
+              15.363379
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.2,
+              0.2,
+              0.2
+            ]
+          },
+          "uuid": "6b298eb813509991"
+        },
+        "uuid": "5c3d5d43f6712b37"
+      },
+      "342": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/Wall.glb"
+        },
+        "name": "Wall 14",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/Wall.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -30.566493,
+              -1.339905,
+              21.806633
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.2,
+              0.2,
+              0.2
+            ]
+          },
+          "uuid": "0dcf68d48a6b61f6"
+        },
+        "uuid": "14fb270c19363f71"
+      },
+      "343": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/woodenfence.glb"
+        },
+        "name": "Woodenfence 14",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/woodenfence.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -9.441803,
+              -1.084897,
+              -12.723274
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "f43c27ba4a48714a"
+        },
+        "uuid": "28b75ae02c4debe7"
+      },
+      "344": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/woodenfence.glb"
+        },
+        "name": "Woodenfence 15",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/woodenfence.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -9.441803,
+              -1.084897,
+              -17.383029
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "bae33aea783a0718"
+        },
+        "uuid": "58b59c0aab2158bd"
+      },
+      "345": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/woodenfence.glb"
+        },
+        "name": "Woodenfence 16",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/woodenfence.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -9.441803,
+              -1.084897,
+              -22.048487
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "bb03471fc4f9b102"
+        },
+        "uuid": "2375ad56b8966ba4"
+      },
+      "346": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/woodenfence.glb"
+        },
+        "name": "Woodenfence 17",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/woodenfence.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -9.441803,
+              -1.084897,
+              -26.696813
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "2aad82c04b1b80c2"
+        },
+        "uuid": "5200d53f1da8355e"
+      },
+      "347": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/woodenfence.glb"
+        },
+        "name": "Woodenfence 18",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/woodenfence.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -9.441803,
+              -1.084897,
+              -31.244825
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              0.15,
+              0.15,
+              0.15
+            ]
+          },
+          "uuid": "de350047f5ad3df8"
+        },
+        "uuid": "70fb289ec3b4d5be"
+      },
+      "$length": 348
     },
     "editorData": {
       "sceneTree": {
@@ -33499,51 +33177,6 @@
             "nodeType": "actor"
           },
           {
-            "id": "a161a148bf3c9c60",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "b4a5440cef842c1a",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "35b9620aad696a58",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "6ccedc3e1bc19edf",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "644b86fd18b189c9",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "7f6d2b1696c9e807",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "c527ae5a81f6df65",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "571f1ff430a768c8",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "d3b8d25e17fcec86",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
             "id": "e85a2da907fc1400",
             "isExpanded": false,
             "nodeType": "actor"
@@ -34029,37 +33662,7 @@
             "nodeType": "actor"
           },
           {
-            "id": "6d0ad8b949b3060b",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "bbbcc2524f43c0d2",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "fde98a2d7bf24d59",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
             "id": "9c4eda0caf5594c2",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "96b6349584e9b960",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "c521ae8a9c9aa051",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "65794843010ae241",
             "isExpanded": false,
             "nodeType": "actor"
           },
@@ -34080,11 +33683,6 @@
           },
           {
             "id": "1a26743ba5510760",
-            "isExpanded": false,
-            "nodeType": "actor"
-          },
-          {
-            "id": "2dac1f97e98792d3",
             "isExpanded": false,
             "nodeType": "actor"
           },
@@ -34130,6 +33728,21 @@
           },
           {
             "id": "f8370bae5f933ff3",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "a3d150575a7fd863",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "5c3d5d43f6712b37",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "14fb270c19363f71",
             "isExpanded": false,
             "nodeType": "actor"
           },
@@ -34550,6 +34163,31 @@
           },
           {
             "id": "f53c4e3cc7cbbc6f",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "28b75ae02c4debe7",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "58b59c0aab2158bd",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "2375ad56b8966ba4",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "5200d53f1da8355e",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "70fb289ec3b4d5be",
             "isExpanded": false,
             "nodeType": "actor"
           },
