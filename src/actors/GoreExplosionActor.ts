@@ -1,31 +1,39 @@
+/**
+ * GoreExplosionActor — Blood/gore explosion effect on zombie kill.
+ *
+ * - Blood chunks, drops, flash, shockwave: pure Three.js geometry (no texture needed)
+ * - Blood smoke cloud: ENGINE.VFXComponent via gore-smoke.vfx.json
+ */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
 
-const LIFETIME = 1.8;
+/** Total actor lifetime — must outlive chunk fall + gore-smoke particle life (0.5s emit + 1.6s live). */
+const LIFETIME = 2.5;
 const GRAVITY = 9.5;
-const SMOKE_COUNT = 5;
 const CHUNK_COUNT = 8;
+const BLOOD_DROP_COUNT = 16;
 
 /** Max simultaneous gore explosions — prevents kill-streak lag. */
 const MAX_ACTIVE = 3;
 let activeCount = 0;
 
-const SMOKE_GEOMETRY = new THREE.SphereGeometry(1, 12, 8);
 const CHUNK_GEOMETRY = new THREE.BoxGeometry(1, 1, 1);
 const SHOCKWAVE_GEOMETRY = new THREE.TorusGeometry(1, 0.035, 6, 32);
-
-interface SmokePiece {
-  mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
-  velocity: THREE.Vector3;
-  maxScale: number;
-}
+const FLASH_GEOMETRY = new THREE.SphereGeometry(1, 16, 12);
+const DROP_GEOMETRY = new THREE.PlaneGeometry(0.06, 0.3);
 
 interface ChunkPiece {
   mesh: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>;
   velocity: THREE.Vector3;
   spin: THREE.Vector3;
+}
+
+interface BloodDrop {
+  mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  velocity: THREE.Vector3;
+  elapsed: number;
 }
 
 function randomBetween(min: number, max: number): number {
@@ -42,22 +50,44 @@ function randomDirection(upBias: number): THREE.Vector3 {
   ).normalize();
 }
 
+function easeOutCubic(value: number): number {
+  return 1 - Math.pow(1 - value, 3);
+}
+
 @ENGINE.GameClass()
 export class GoreExplosionActor extends ENGINE.Actor {
-  private readonly smokePieces: SmokePiece[] = [];
   private readonly chunkPieces: ChunkPiece[] = [];
+  private readonly bloodDrops: BloodDrop[] = [];
   private flash: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null = null;
   private shockwave: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
   private elapsed = 0;
+  private _vfx: ENGINE.VFXComponent | null = null;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
     super.initialize({ ...options, rootComponent: root });
 
-    this.createSmoke(root);
-    this.createChunks(root);
-    this.createFlash(root);
-    this.createShockwave(root);
+    this._createChunks(root);
+    this._createFlash(root);
+    this._createShockwave(root);
+
+    this._vfx = ENGINE.VFXComponent.create({
+      vfxPath: '@project/assets/VFX/gore-smoke.vfx.json',
+      autoStart: false,
+    });
+    root.add(this._vfx);
+  }
+
+  protected override doBeginPlay(): void {
+    super.doBeginPlay();
+
+    const world = this.getWorld();
+    if (!world) return;
+
+    const origin = this.rootComponent.position;
+
+    this._vfx?.startEmitting();
+    this._spawnBloodDrops(world, origin);
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -65,16 +95,9 @@ export class GoreExplosionActor extends ENGINE.Actor {
 
     this.elapsed += deltaTime;
     const progress = Math.min(this.elapsed / LIFETIME, 1);
-    const smokeAlpha = Math.max(0, 1 - progress);
     const chunkAlpha = Math.max(0, 1 - progress * 1.35);
 
-    for (const piece of this.smokePieces) {
-      piece.mesh.position.addScaledVector(piece.velocity, deltaTime);
-      const scale = THREE.MathUtils.lerp(0.15, piece.maxScale, easeOutCubic(progress));
-      piece.mesh.scale.setScalar(scale);
-      piece.mesh.material.opacity = 0.42 * smokeAlpha;
-    }
-
+    // Update chunks
     for (const piece of this.chunkPieces) {
       piece.velocity.y -= GRAVITY * deltaTime;
       piece.mesh.position.addScaledVector(piece.velocity, deltaTime);
@@ -84,22 +107,52 @@ export class GoreExplosionActor extends ENGINE.Actor {
       piece.mesh.material.opacity = chunkAlpha;
     }
 
-    if (this.flash) {
-      const flashProgress = Math.min(this.elapsed / 0.28, 1);
-      this.flash.scale.setScalar(THREE.MathUtils.lerp(0.2, 2.1, easeOutCubic(flashProgress)));
-      this.flash.material.opacity = Math.max(0, 0.65 * (1 - flashProgress));
+    // Update blood drops
+    for (let i = this.bloodDrops.length - 1; i >= 0; i--) {
+      const drop = this.bloodDrops[i];
+      drop.elapsed += deltaTime;
+
+      drop.velocity.y -= GRAVITY * 1.5 * deltaTime;
+      drop.mesh.position.addScaledVector(drop.velocity, deltaTime);
+      drop.mesh.rotation.z = Math.atan2(drop.velocity.x, drop.velocity.y);
+
+      const dropProgress = Math.min(drop.elapsed / 0.8, 1);
+      drop.mesh.material.opacity = Math.max(0, 1 - dropProgress);
+
+      if (dropProgress >= 1 || drop.mesh.position.y < -1) {
+        drop.mesh.material.dispose();
+        drop.mesh.removeFromParent();
+        this.bloodDrops.splice(i, 1);
+      }
     }
 
+    // Update flash
+    if (this.flash) {
+      const t = Math.min(this.elapsed / 0.25, 1);
+      this.flash.scale.setScalar(THREE.MathUtils.lerp(0.3, 2.5, easeOutCubic(t)));
+      this.flash.material.opacity = Math.max(0, 0.9 * (1 - t));
+    }
+
+    // Update shockwave
     if (this.shockwave) {
-      const shockProgress = Math.min(this.elapsed / 0.38, 1);
-      this.shockwave.scale.setScalar(THREE.MathUtils.lerp(0.15, 1.9, easeOutCubic(shockProgress)));
-      this.shockwave.material.opacity = Math.max(0, 0.5 * (1 - shockProgress));
+      const t = Math.min(this.elapsed / 0.4, 1);
+      this.shockwave.scale.setScalar(THREE.MathUtils.lerp(0.2, 2.2, easeOutCubic(t)));
+      this.shockwave.material.opacity = Math.max(0, 0.6 * (1 - t));
     }
 
     if (this.elapsed >= LIFETIME) {
       activeCount = Math.max(0, activeCount - 1);
       this.destroy();
     }
+  }
+
+  protected override doEndPlay(): void {
+    for (const drop of this.bloodDrops) {
+      drop.mesh.material.dispose();
+      drop.mesh.removeFromParent();
+    }
+    this.bloodDrops.length = 0;
+    super.doEndPlay();
   }
 
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): GoreExplosionActor | null {
@@ -110,77 +163,91 @@ export class GoreExplosionActor extends ENGINE.Actor {
     return actor;
   }
 
-  private createSmoke(root: ENGINE.SceneComponent): void {
-    for (let i = 0; i < SMOKE_COUNT; i++) {
-      const material = new THREE.MeshBasicMaterial({
-        color: new THREE.Color().setHSL(randomBetween(0.74, 0.8), 0.95, randomBetween(0.32, 0.5)),
-        transparent: true,
-        opacity: 0.42,
-        depthWrite: false,
-      });
-      const mesh = new THREE.Mesh(SMOKE_GEOMETRY, material);
-      mesh.position.set(randomBetween(-0.18, 0.18), randomBetween(0, 0.35), randomBetween(-0.18, 0.18));
-      mesh.scale.setScalar(0.12);
-      root.add(mesh);
+  private _spawnBloodDrops(world: ENGINE.World, origin: THREE.Vector3): void {
+    for (let i = 0; i < BLOOD_DROP_COUNT; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = randomBetween(3.0, 8.0);
 
-      this.smokePieces.push({
+      const material = new THREE.MeshBasicMaterial({
+        color: new THREE.Color().setHSL(randomBetween(0.98, 1.02), 0.9, 0.5),
+        transparent: true,
+        opacity: 0.9,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      });
+
+      const mesh = new THREE.Mesh(DROP_GEOMETRY, material);
+      mesh.position.copy(origin);
+      mesh.position.y += randomBetween(0.05, 0.25);
+      world.scene.add(mesh);
+
+      this.bloodDrops.push({
         mesh,
-        velocity: randomDirection(0.35).multiplyScalar(randomBetween(0.9, 2.4)),
-        maxScale: randomBetween(0.45, 1.15),
+        velocity: new THREE.Vector3(
+          Math.cos(angle) * speed,
+          randomBetween(2.0, 6.0),
+          Math.sin(angle) * speed
+        ),
+        elapsed: 0,
       });
     }
   }
 
-  private createChunks(root: ENGINE.SceneComponent): void {
+  private _createChunks(root: ENGINE.SceneComponent): void {
     for (let i = 0; i < CHUNK_COUNT; i++) {
       const material = new THREE.MeshBasicMaterial({
-        color: new THREE.Color().setHSL(randomBetween(0.98, 1), 0.95, randomBetween(0.22, 0.38)),
+        color: new THREE.Color().setHSL(randomBetween(0.97, 1.02), 0.85, randomBetween(0.35, 0.55)),
         transparent: true,
         opacity: 1,
       });
       const mesh = new THREE.Mesh(CHUNK_GEOMETRY, material);
-      const size = randomBetween(0.05, 0.16);
-      mesh.scale.set(randomBetween(size * 0.6, size * 1.7), randomBetween(size * 0.45, size), randomBetween(size * 0.6, size * 1.5));
-      mesh.position.set(randomBetween(-0.08, 0.08), randomBetween(0.05, 0.25), randomBetween(-0.08, 0.08));
+      const size = randomBetween(0.05, 0.18);
+      mesh.scale.set(
+        randomBetween(size * 0.6, size * 1.7),
+        randomBetween(size * 0.45, size),
+        randomBetween(size * 0.6, size * 1.5)
+      );
+      mesh.position.set(
+        randomBetween(-0.08, 0.08),
+        randomBetween(0.05, 0.25),
+        randomBetween(-0.08, 0.08)
+      );
       root.add(mesh);
 
       this.chunkPieces.push({
         mesh,
-        velocity: randomDirection(0.55).multiplyScalar(randomBetween(3.5, 7.5)),
+        velocity: randomDirection(0.55).multiplyScalar(randomBetween(3.5, 8.0)),
         spin: new THREE.Vector3(randomBetween(-9, 9), randomBetween(-9, 9), randomBetween(-9, 9)),
       });
     }
   }
 
-  private createFlash(root: ENGINE.SceneComponent): void {
+  private _createFlash(root: ENGINE.SceneComponent): void {
     const material = new THREE.MeshBasicMaterial({
-      color: 0xff77ff,
+      color: 0xff1100,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.9,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
-    this.flash = new THREE.Mesh(SMOKE_GEOMETRY, material);
-    this.flash.scale.setScalar(0.2);
+    this.flash = new THREE.Mesh(FLASH_GEOMETRY, material);
+    this.flash.scale.setScalar(0.3);
     root.add(this.flash);
   }
 
-  private createShockwave(root: ENGINE.SceneComponent): void {
+  private _createShockwave(root: ENGINE.SceneComponent): void {
     const material = new THREE.MeshBasicMaterial({
-      color: 0xffc15a,
+      color: 0xff3300,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.6,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
     this.shockwave = new THREE.Mesh(SHOCKWAVE_GEOMETRY, material);
     this.shockwave.rotation.x = Math.PI / 2;
     this.shockwave.position.y = 0.04;
-    this.shockwave.scale.setScalar(0.15);
+    this.shockwave.scale.setScalar(0.2);
     root.add(this.shockwave);
   }
-}
-
-function easeOutCubic(value: number): number {
-  return 1 - Math.pow(1 - value, 3);
 }

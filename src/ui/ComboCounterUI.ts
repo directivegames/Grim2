@@ -6,8 +6,9 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { injectBreeSerifFont, sunsetNumberTextCss } from './uiTypography.js';
+
 const BG_URL = '@project/assets/UI/ComboBG 1.png';
-const FONT_URL = '@project/assets/UI/Bree_Serif/BreeSerif-Regular.ttf';
 
 const UI_SCALE = 0.35;
 const BG_WIDTH = 512;
@@ -42,20 +43,7 @@ export class ComboCounterUI {
   private async _initializeAsync(): Promise<void> {
     if (!this._gameContainer) return;
 
-    // Inject font
-    if (!document.querySelector('style[data-font="BreeSerif"]')) {
-      const fontFace = document.createElement('style');
-      fontFace.setAttribute('data-font', 'BreeSerif');
-      fontFace.textContent = `
-        @font-face {
-          font-family: 'BreeSerif';
-          src: url('${FONT_URL}') format('truetype');
-          font-weight: normal;
-          font-style: normal;
-        }
-      `;
-      document.head.appendChild(fontFace);
-    }
+    injectBreeSerifFont();
 
     // Resolve background URL
     const css = `.bg { background-image: url("${BG_URL}"); }`;
@@ -96,12 +84,7 @@ export class ComboCounterUI {
     this._countDisplay = document.createElement('span');
     this._countDisplay.style.cssText = `
       position: relative;
-      font-family: 'BreeSerif', serif;
-      font-size: ${80 * UI_SCALE}px;
-      font-weight: bold;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0 0 12px rgba(100, 200, 255, 0.5);
-      will-change: transform;
+      ${sunsetNumberTextCss(80 * UI_SCALE)}
       z-index: 1;
     `;
     this._countDisplay.textContent = '0x';
@@ -123,11 +106,12 @@ export class ComboCounterUI {
     this._isVisible = true;
     this._container.style.display = 'flex';
     this._container.animate([
-      { opacity: 0, transform: 'translateY(-50%) scale(0.8)' },
-      { opacity: 1, transform: 'translateY(-50%) scale(1)' },
+      { opacity: 0, transform: 'translateY(-50%) scale(0.5)', filter: 'brightness(1.8)' },
+      { opacity: 1, transform: 'translateY(-50%) scale(1.25)', filter: 'brightness(1.2)', offset: 0.55 },
+      { opacity: 1, transform: 'translateY(-50%) scale(1)', filter: 'brightness(1)' },
     ], {
-      duration: 200,
-      easing: 'ease-out',
+      duration: 320,
+      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       fill: 'forwards',
     });
   }
@@ -154,11 +138,11 @@ export class ComboCounterUI {
 
     // Number scale punch
     this._countDisplay.animate([
-      { transform: 'scale(1)' },
-      { transform: 'scale(1.3)' },
-      { transform: 'scale(1)' },
+      { transform: 'scale(1)', filter: 'brightness(1)' },
+      { transform: 'scale(1.45)', filter: 'brightness(1.4)' },
+      { transform: 'scale(1)', filter: 'brightness(1)' },
     ], {
-      duration: 200,
+      duration: 220,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
     });
 

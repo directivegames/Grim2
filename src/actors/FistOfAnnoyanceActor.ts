@@ -1,3 +1,8 @@
+/**
+ * FistOfAnnoyanceActor — Giant fist impact effect.
+ *
+ * Uses pure Three.js geometry with additive blending (same pattern as DustTrailComponent).
+ */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
@@ -5,38 +10,42 @@ import type { ActorOptions } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
-import { requestHitStopSlomo, endHitStopSlomo, SLOMO_PRIORITY, slomoManager } from './KillStreakTracker.js';
+import { slomoManager } from './KillStreakTracker.js';
+import { HitNumberUI } from '../ui/HitNumberUI.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const FIST_ACTOR_NAME = 'fistofannoyance';
-const SLOMO_VALUE     = 0.30; // Slightly slower for more cinematic feel
-
-/** Priority for fist slomo (higher than kill streak, lower than hit stop). */
+const SLOMO_VALUE = 0.30;
 const FIST_SLOMO_PRIORITY = 2;
 
-/** Y offset below ground level where the fist starts (fully hidden). */
 const FIST_START_Y = -3.5;
-
-/** Y offset above ground level at the peak of the punch. */
 const FIST_PEAK_Y = -0.1;
 
-const RISE_DURATION     = 0.26;  // fast punch up
-const PAUSE_DURATION    = 0.01;  // minimal hold at top (reduced by ~0.37s total)
-const RETRACT_DURATION  = 0.20;  // very quick pull-back
+const RISE_DURATION = 0.26;
+const PAUSE_DURATION = 0.01;
+const RETRACT_DURATION = 0.20;
 
-const FIST_HIT_RADIUS   = 2.4;
-const ONE_HIT_DAMAGE    = 99999;
-const VFX_CHUNK_COUNT   = 20;
-const VFX_DUST_COUNT    = 16;
+const FIST_HIT_RADIUS = 2.4;
+const ONE_HIT_DAMAGE = 99999;
+const VFX_CHUNK_COUNT = 20;
 const VFX_CHUNK_LIFETIME = 1.5;
-const VFX_DUST_LIFETIME  = 1.3;
-const GRAVITY           = 9.5;
+const GRAVITY = 9.5;
 
-// ─── VFX geometry (shared) ────────────────────────────────────────────────────
+const DUST_PUFF_COUNT = 12;
+const DUST_LIFETIME = 1.2;
+
+const FLASH_LIFETIME = 0.35;
+const SHOCKWAVE_LIFETIME = 0.5;
+
+// ─── Geometry ────────────────────────────────────────────────────────────────
 
 const CHUNK_GEO = new THREE.BoxGeometry(1, 1, 1);
-const DUST_GEO  = new THREE.SphereGeometry(1, 8, 6);
+const FLASH_GEO = new THREE.SphereGeometry(1, 16, 12);
+const SHOCKWAVE_GEO = new THREE.TorusGeometry(1, 0.035, 6, 32);
+const PUFF_GEOMETRY = new THREE.PlaneGeometry(1.1, 1.1);
+
+const DUST_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.png';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,11 +58,22 @@ interface Chunk {
   elapsed: number;
 }
 
-interface Dust {
+interface ImpactFlash {
   mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
-  velocity: THREE.Vector3;
-  maxScale: number;
   elapsed: number;
+}
+
+interface Shockwave {
+  mesh: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial>;
+  elapsed: number;
+}
+
+interface DustPuff {
+  mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  velocity: THREE.Vector3;
+  spin: number;
+  elapsed: number;
+  maxScale: number;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -63,7 +83,7 @@ function randomBetween(min: number, max: number): number {
 }
 
 function easeOutQuart(t: number): number { return 1 - Math.pow(1 - t, 4); }
-function easeInQuart(t: number): number  { return t * t * t * t; }
+function easeInQuart(t: number): number { return t * t * t * t; }
 function easeOutCubic(t: number): number { return 1 - Math.pow(1 - t, 3); }
 
 // ─── FistOfAnnoyanceActor ────────────────────────────────────────────────────
@@ -73,24 +93,23 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
   private _sceneFistActor: ENGINE.Actor | null = null;
   private _phase: FistPhase = 'rising';
-  private _phaseElapsed  = 0;
-  private _phaseStartMs  = 0;   // real-time stamp (performance.now) for current phase
-  private _groundY       = 0;
-  private _hasHit        = false;
-  private _vfxSpawned    = false;
+  private _phaseElapsed = 0;
+  private _phaseStartMs = 0;
+  private _groundY = 0;
+  private _hasHit = false;
+  private _vfxSpawned = false;
   private _cinematicReturned = false;
 
   private readonly _chunks: Chunk[] = [];
-  private readonly _dust:   Dust[]  = [];
-
-  // ── Initialize ──────────────────────────────────────────────────────────────
+  private readonly _flashes: ImpactFlash[] = [];
+  private readonly _shockwaves: Shockwave[] = [];
+  private readonly _dustPuffs: DustPuff[] = [];
+  private _dustTexture: THREE.Texture | null = null;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
     super.initialize({ ...options, rootComponent: root });
   }
-
-  // ── Lifecycle ───────────────────────────────────────────────────────────────
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
@@ -98,7 +117,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    // Find editor-placed fist actor
     for (const actor of world.getActors()) {
       if (actor.name.toLowerCase() === FIST_ACTOR_NAME.toLowerCase()) {
         this._sceneFistActor = actor;
@@ -113,24 +131,20 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     }
 
     this._groundY = this.rootComponent.position.y;
-    this._phase         = 'rising';
-    this._phaseElapsed  = 0;
-    this._phaseStartMs  = performance.now();
-    this._hasHit        = false;
-    this._vfxSpawned    = false;
+    this._phase = 'rising';
+    this._phaseElapsed = 0;
+    this._phaseStartMs = performance.now();
+    this._hasHit = false;
+    this._vfxSpawned = false;
     this._cinematicReturned = false;
 
-    // Move fist to attack position (it stays "visible" at all times so the GPU
-    // shader is always compiled – no stall on first use).
     this._setFistPosition(this._groundY + FIST_START_Y);
 
-    // Cinematic: slow motion + camera pan to fist
     const player = world.getFirstPlayerPawn();
     if (player instanceof IsometricPlayerPawn) {
       player.startCinematicFocus(this.rootComponent.position.clone());
     }
 
-    // Apply slomo with priority (will override kill streak but not hit stop)
     slomoManager.setSlomo(world, SLOMO_VALUE, FIST_SLOMO_PRIORITY);
   }
 
@@ -138,7 +152,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     super.tickPrePhysics(deltaTime);
     if (this._phase === 'done' || !this._sceneFistActor) return;
 
-    // Use real elapsed time (ms→s) so phases are immune to slomo scaling.
     this._phaseElapsed = (performance.now() - this._phaseStartMs) / 1000;
 
     switch (this._phase) {
@@ -151,15 +164,14 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         );
         this._setFistPosition(y);
 
-        // Spawn VFX when fist is halfway up (t >= 0.5) - guarantees they always play
         if (!this._vfxSpawned && t >= 0.5) {
-          this._spawnGroundBreakVFX();
+          void this._spawnGroundBreakVFX();
+          this._spawnImpactFlash();
+          this._spawnShockwave();
           this._vfxSpawned = true;
-          // Heavy impact shake - stronger for more cinematic feel
-          const world = this.getWorld();
-          const player = world?.getFirstPlayerPawn();
+          const player = this.getWorld()?.getFirstPlayerPawn();
           if (player && (player as unknown as { triggerScreenShake?: (a: number, d: number) => void }).triggerScreenShake) {
-            (player as unknown as { triggerScreenShake(a: number, d: number): void }).triggerScreenShake(1.0, 1.5);
+            (player as unknown as { triggerScreenShake(a: number, d: number): void }).triggerScreenShake(0.35, 0.7);
           }
         }
 
@@ -175,7 +187,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
           this._phaseElapsed = 0;
           this._phaseStartMs = performance.now();
 
-          // Camera starts returning to player as fist retracts
           const w = this.getWorld();
           if (w) {
             const p = w.getFirstPlayerPawn();
@@ -195,19 +206,14 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         this._setFistPosition(y);
 
         if (t >= 1) {
-          // Transition to finishing phase to let VFX play out fully
           this._phase = 'finishing';
           this._phaseElapsed = 0;
-          // Park the fist far underground (stays rendered so shader stays warm)
           this._setFistPosition(-1000);
-          // NOTE: slomo now stays active until actor is destroyed (doEndPlay)
         }
         break;
       }
 
       case 'finishing': {
-        // Just update VFX - let them complete their natural lifetime
-        // Camera returns to player during this phase
         const w = this.getWorld();
         if (w) {
           const p = w.getFirstPlayerPawn();
@@ -217,8 +223,14 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
           }
         }
 
-        // Wait until all VFX particles have expired
-        if (this._chunks.length === 0 && this._dust.length === 0) {
+        this._updateVFX(deltaTime);
+
+        const vfxFinished = this._chunks.length === 0 &&
+          this._flashes.length === 0 &&
+          this._shockwaves.length === 0 &&
+          this._dustPuffs.length === 0;
+
+        if (vfxFinished) {
           this._phase = 'done';
           this.destroy();
           return;
@@ -226,19 +238,13 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         break;
       }
     }
-
-    this._updateVFX(deltaTime);
   }
-
-  // ── Static factory ──────────────────────────────────────────────────────────
 
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): FistOfAnnoyanceActor {
     const actor = FistOfAnnoyanceActor.create({ position: position.clone() });
     world.addActor(actor);
     return actor;
   }
-
-  // ── Internal helpers ───────────────────────────────────────────────────────
 
   private _setFistPosition(y: number): void {
     if (!this._sceneFistActor) return;
@@ -249,8 +255,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     );
   }
 
-  // ── Hit detection ────────────────────────────────────────────────────────────
-
   private _checkHits(): void {
     const world = this.getWorld();
     if (!world || !this._sceneFistActor) return;
@@ -259,7 +263,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._sceneFistActor.rootComponent.getWorldPosition(fistPos);
 
     const nearby = zombieSpatialManager.getNearbyZombies(fistPos, FIST_HIT_RADIUS);
-    const zPos   = new THREE.Vector3();
+    const zPos = new THREE.Vector3();
 
     for (const zombie of nearby) {
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
@@ -274,8 +278,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         hitNormal: new THREE.Vector3(0, 1, 0),
       });
 
-      // Show hit number
-      void this._showHitNumber(world, zPos);
+      this._showHitNumber(world, zPos);
 
       (zombie as unknown as { flashYellow(): void }).flashYellow?.();
       GoreExplosionActor.spawnAt(world, zPos);
@@ -283,14 +286,62 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     }
   }
 
-  private async _showHitNumber(world: ENGINE.World, pos: THREE.Vector3): Promise<void> {
-    const { HitNumberUI } = await import('../ui/HitNumberUI.js');
+  private _showHitNumber(world: ENGINE.World, pos: THREE.Vector3): void {
     HitNumberUI.getInstance(world).showDamage(ONE_HIT_DAMAGE, pos);
   }
 
-  // ── VFX ──────────────────────────────────────────────────────────────────────
+  private _spawnImpactFlash(): void {
+    const world = this.getWorld();
+    if (!world) return;
 
-  private _spawnGroundBreakVFX(): void {
+    const origin = new THREE.Vector3(
+      this.rootComponent.position.x,
+      this._groundY,
+      this.rootComponent.position.z,
+    );
+
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xffcc66,
+      transparent: true,
+      opacity: 0.8,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const mesh = new THREE.Mesh(FLASH_GEO, material);
+    mesh.scale.setScalar(0.3);
+    mesh.position.copy(origin);
+    world.scene.add(mesh);
+
+    this._flashes.push({ mesh, elapsed: 0 });
+  }
+
+  private _spawnShockwave(): void {
+    const world = this.getWorld();
+    if (!world) return;
+
+    const origin = new THREE.Vector3(
+      this.rootComponent.position.x,
+      this._groundY + 0.04,
+      this.rootComponent.position.z,
+    );
+
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xffaa44,
+      transparent: true,
+      opacity: 0.6,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const mesh = new THREE.Mesh(SHOCKWAVE_GEO, material);
+    mesh.rotation.x = Math.PI / 2;
+    mesh.scale.setScalar(0.2);
+    mesh.position.copy(origin);
+    world.scene.add(mesh);
+
+    this._shockwaves.push({ mesh, elapsed: 0 });
+  }
+
+  private async _spawnGroundBreakVFX(): Promise<void> {
     const world = this.getWorld();
     if (!world) return;
 
@@ -303,7 +354,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     // Rock/earth chunks
     for (let i = 0; i < VFX_CHUNK_COUNT; i++) {
       const size = randomBetween(0.06, 0.26);
-      const mat  = new THREE.MeshBasicMaterial({
+      const mat = new THREE.MeshBasicMaterial({
         color: new THREE.Color().setHSL(
           randomBetween(0.06, 0.12),
           randomBetween(0.35, 0.65),
@@ -340,41 +391,67 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       });
     }
 
-    // Dust/smoke puffs
-    for (let i = 0; i < VFX_DUST_COUNT; i++) {
-      const mat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color().setHSL(
-          randomBetween(0.07, 0.13),
-          randomBetween(0.2, 0.45),
-          randomBetween(0.55, 0.78),
-        ),
+    // Load texture and spawn dust puffs
+    if (!this._dustTexture) {
+      try {
+        const resolvedPath = await ENGINE.resolveAssetPathsInText(DUST_TEXTURE_PATH);
+        this._dustTexture = await new Promise<THREE.Texture>((resolve, reject) => {
+          new THREE.TextureLoader().load(
+            resolvedPath,
+            (texture) => {
+              texture.wrapS = THREE.ClampToEdgeWrapping;
+              texture.wrapT = THREE.ClampToEdgeWrapping;
+              resolve(texture);
+            },
+            undefined,
+            (err) => reject(err)
+          );
+        });
+      } catch (e) {
+        console.warn('[FistOfAnnoyanceActor] Failed to load dust texture:', e);
+      }
+    }
+
+    // Spawn dust puffs
+    for (let i = 0; i < DUST_PUFF_COUNT; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = randomBetween(1.0, 3.0);
+
+      const material = new THREE.MeshBasicMaterial({
+        color: new THREE.Color().setHSL(randomBetween(0.08, 0.12), 0.5, 0.65), // tan/dust
+        map: this._dustTexture || undefined,
+        alphaMap: this._dustTexture || undefined,
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.75,
         depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+        alphaTest: 0.01,
       });
-      const mesh = new THREE.Mesh(DUST_GEO, mat);
-      mesh.scale.setScalar(0.12);
+
+      const mesh = new THREE.Mesh(PUFF_GEOMETRY, material);
       mesh.position.copy(origin);
-      mesh.position.y += randomBetween(-0.15, 0.4);
+      mesh.position.y += randomBetween(-0.05, 0.1);
+      mesh.rotation.set(-Math.PI / 2, 0, randomBetween(0, Math.PI * 2));
+
       world.scene.add(mesh);
 
-      const angle = Math.random() * Math.PI * 2;
-      const speed = randomBetween(0.8, 3.0);
-
-      this._dust.push({
+      this._dustPuffs.push({
         mesh,
         velocity: new THREE.Vector3(
           Math.cos(angle) * speed,
-          randomBetween(0.4, 1.8),
-          Math.sin(angle) * speed,
+          randomBetween(0.2, 0.6),
+          Math.sin(angle) * speed
         ),
-        maxScale: randomBetween(0.5, 1.6),
-        elapsed: 0,
+        spin: randomBetween(-1.5, 1.5),
+        elapsed: randomBetween(0, 0.1),
+        maxScale: randomBetween(1.2, 2.2),
       });
     }
   }
 
   private _updateVFX(deltaTime: number): void {
+    // Update chunks
     for (let i = this._chunks.length - 1; i >= 0; i--) {
       const c = this._chunks[i];
       c.elapsed += deltaTime;
@@ -391,31 +468,76 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       }
     }
 
-    for (let i = this._dust.length - 1; i >= 0; i--) {
-      const d = this._dust[i];
-      d.elapsed += deltaTime;
-      const progress = Math.min(d.elapsed / VFX_DUST_LIFETIME, 1);
-      d.mesh.position.addScaledVector(d.velocity, deltaTime);
-      d.mesh.scale.setScalar(THREE.MathUtils.lerp(0.12, d.maxScale, easeOutCubic(progress)));
-      d.mesh.material.opacity = 0.6 * Math.max(0, 1 - progress);
+    // Update dust puffs
+    for (let i = this._dustPuffs.length - 1; i >= 0; i--) {
+      const puff = this._dustPuffs[i];
+      puff.elapsed += deltaTime;
+
+      const progress = Math.min(puff.elapsed / DUST_LIFETIME, 1);
+      const scale = THREE.MathUtils.lerp(0.5, puff.maxScale, easeOutCubic(progress));
+      puff.mesh.scale.setScalar(scale);
+
+      puff.mesh.position.addScaledVector(puff.velocity, deltaTime);
+      puff.velocity.multiplyScalar(0.97); // drag
+
+      puff.mesh.rotation.z += puff.spin * deltaTime;
+      puff.mesh.material.opacity = 0.75 * Math.max(0, 1 - progress);
+
       if (progress >= 1) {
-        d.mesh.material.dispose();
-        d.mesh.removeFromParent();
-        this._dust.splice(i, 1);
+        puff.mesh.material.dispose();
+        puff.mesh.removeFromParent();
+        this._dustPuffs.splice(i, 1);
+      }
+    }
+
+    // Update flashes
+    for (let i = this._flashes.length - 1; i >= 0; i--) {
+      const f = this._flashes[i];
+      f.elapsed += deltaTime;
+      const progress = Math.min(f.elapsed / FLASH_LIFETIME, 1);
+      const scale = THREE.MathUtils.lerp(0.3, 2.5, easeOutCubic(progress));
+      f.mesh.scale.setScalar(scale);
+      f.mesh.material.opacity = 0.8 * Math.max(0, 1 - progress);
+      if (progress >= 1) {
+        f.mesh.material.dispose();
+        f.mesh.removeFromParent();
+        this._flashes.splice(i, 1);
+      }
+    }
+
+    // Update shockwaves
+    for (let i = this._shockwaves.length - 1; i >= 0; i--) {
+      const s = this._shockwaves[i];
+      s.elapsed += deltaTime;
+      const progress = Math.min(s.elapsed / SHOCKWAVE_LIFETIME, 1);
+      const scale = THREE.MathUtils.lerp(0.2, 3.5, easeOutCubic(progress));
+      s.mesh.scale.setScalar(scale);
+      s.mesh.material.opacity = 0.6 * Math.max(0, 1 - progress);
+      if (progress >= 1) {
+        s.mesh.material.dispose();
+        s.mesh.removeFromParent();
+        this._shockwaves.splice(i, 1);
       }
     }
   }
 
   private _cleanupVFX(): void {
     for (const c of this._chunks) { c.mesh.material.dispose(); c.mesh.removeFromParent(); }
-    for (const d of this._dust)   { d.mesh.material.dispose(); d.mesh.removeFromParent(); }
+    for (const p of this._dustPuffs) { p.mesh.material.dispose(); p.mesh.removeFromParent(); }
+    for (const f of this._flashes) { f.mesh.material.dispose(); f.mesh.removeFromParent(); }
+    for (const s of this._shockwaves) { s.mesh.material.dispose(); s.mesh.removeFromParent(); }
     this._chunks.length = 0;
-    this._dust.length   = 0;
+    this._dustPuffs.length = 0;
+    this._flashes.length = 0;
+    this._shockwaves.length = 0;
+    if (this._dustTexture) {
+      this._dustTexture.dispose();
+      this._dustTexture = null;
+    }
   }
 
   protected override doEndPlay(): void {
     this._cleanupVFX();
-    // Restore slomo when fist is truly gone (after all VFX finishes)
     const world = this.getWorld();
     if (world) slomoManager.resetIfPriority(world, FIST_SLOMO_PRIORITY);
     super.doEndPlay();

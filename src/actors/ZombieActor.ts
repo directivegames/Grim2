@@ -250,6 +250,8 @@ export class ZombieActor extends ENGINE.Actor {
   private _isHighLOD = true;
   private static readonly HIGH_LOD_DISTANCE = 20; // Units - full detail within this range
   private static readonly MEDIUM_LOD_DISTANCE = 35; // Units - reduced detail
+  private static readonly HIGH_LOD_DISTANCE_SQ = 20 * 20;
+  private static readonly MEDIUM_LOD_DISTANCE_SQ = 35 * 35;
   private _lodLevel: 'high' | 'medium' | 'low' = 'high';
 
   // PERFORMANCE: Tick staggering - distribute updates across frames
@@ -450,12 +452,12 @@ export class ZombieActor extends ENGINE.Actor {
       return;
     }
 
-    // PERFORMANCE: Update distance to player for LOD
+    // PERFORMANCE: Update distance to player for LOD (use sqrt-free squared distance)
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
       this.rootComponent.getWorldPosition(this._lodMyPos);
       player.rootComponent.getWorldPosition(this._lodPlayerPos);
-      this._distanceToPlayer = this._lodMyPos.distanceTo(this._lodPlayerPos);
+      this._distanceToPlayer = this._lodMyPos.distanceToSquared(this._lodPlayerPos);
       this._updateLODLevel();
     }
 
@@ -585,10 +587,10 @@ export class ZombieActor extends ENGINE.Actor {
    * PERFORMANCE: Update LOD level based on distance to player.
    */
   private _updateLODLevel(): void {
-    if (this._distanceToPlayer <= ZombieActor.HIGH_LOD_DISTANCE) {
+    if (this._distanceToPlayer <= ZombieActor.HIGH_LOD_DISTANCE_SQ) {
       this._lodLevel = 'high';
       this._isHighLOD = true;
-    } else if (this._distanceToPlayer <= ZombieActor.MEDIUM_LOD_DISTANCE) {
+    } else if (this._distanceToPlayer <= ZombieActor.MEDIUM_LOD_DISTANCE_SQ) {
       this._lodLevel = 'medium';
       this._isHighLOD = false;
     } else {
@@ -607,11 +609,11 @@ export class ZombieActor extends ENGINE.Actor {
     if (!anim?.isReady()) return;
 
     // Keep _isActuallyMoving up to date for low-LOD zombies too
-    const currentPos = new THREE.Vector3();
-    this.rootComponent.getWorldPosition(currentPos);
+    this.rootComponent.getWorldPosition(this._lodMyPos);
     const wasMoving = this._isActuallyMoving;
-    this._isActuallyMoving = currentPos.distanceTo(this._lastAnimPosition) > ZombieActor.MOVEMENT_THRESHOLD;
-    this._lastAnimPosition.copy(currentPos);
+    const moveSq = this._lodMyPos.distanceToSquared(this._lastAnimPosition);
+    this._isActuallyMoving = moveSq > ZombieActor.MOVEMENT_THRESHOLD * ZombieActor.MOVEMENT_THRESHOLD;
+    this._lastAnimPosition.copy(this._lodMyPos);
 
     // CRITICAL FIX: Check _hasAggro FIRST - never idle when chasing
     if (this._hasAggro) {

@@ -22,6 +22,7 @@ import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
 import { GameAudioManager } from './GameAudioManager.js';
+import { HitNumberUI } from '../ui/HitNumberUI.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
 
@@ -393,9 +394,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       audioManager.playAtDistance('fistImpact', targetPos, playerPos, FIST_MAX_RANGE, 0.15);
     }
 
-    // Heavy camera shake on fist impact
+    // Camera shake on fist impact
     if (player instanceof IsometricPlayerPawn) {
-      player.triggerScreenShake(0.45, 0.6);
+      player.triggerScreenShake(0.2, 0.4);
     }
   }
 
@@ -643,15 +644,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       // Show hit number with background
       this._showHitNumber(world, this._scratchZombiePos);
 
-      // Camera shake — increased for better feedback
       if (player instanceof IsometricPlayerPawn) {
-        player.triggerScreenShake(0.25, 0.35);
+        player.triggerScreenShake(0.12, 0.25);
       }
     }
   }
 
-  private async _showHitNumber(world: ENGINE.World, pos: THREE.Vector3): Promise<void> {
-    const { HitNumberUI } = await import('../ui/HitNumberUI.js');
+  private _showHitNumber(world: ENGINE.World, pos: THREE.Vector3): void {
     HitNumberUI.getInstance(world).showDamage(WEAPON_DAMAGE, pos);
   }
 
@@ -787,12 +786,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Show hit number with background
     const world = this.getWorld();
     if (world) {
-      void this._showHitNumber(world, this._scratchZombiePos);
+      this._showHitNumber(world, this._scratchZombiePos);
     }
 
-    // Camera shake — increased for better feedback
     if (player instanceof IsometricPlayerPawn) {
-      player.triggerScreenShake(0.35, 0.4);
+      player.triggerScreenShake(0.18, 0.3);
     }
   }
 

@@ -8,9 +8,8 @@
       "colorSpace": "srgb",
       "url": "@project/assets/textures/intersectionnew.png"
     },
-    "metalness": 0.74,
+    "metalness": 0.71,
     "name": "Intersection",
-    "roughness": 0.61,
     "uuid": "5e790333-d204-4f84-95d9-48ae3987c345"
   },
   "$version": 2

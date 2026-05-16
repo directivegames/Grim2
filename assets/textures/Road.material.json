@@ -7,9 +7,11 @@
       "url": "@project/assets/textures/newroadbump.png"
     },
     "flatShading": true,
+    "lightMapIntensity": 0.85,
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "d3c11168-15e0-4625-b5ae-18b82b61312d",
+      "colorSpace": "srgb",
       "url": "@project/assets/textures/newroad.png"
     },
     "metalness": 0.77,

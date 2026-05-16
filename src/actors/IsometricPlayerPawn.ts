@@ -492,7 +492,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
         this._shakeOffset.set(x, 0, z);
 
         // Camera roll during shake for more physical impact feel
-        const rollIntensity = currentIntensity * 0.04; // ±0.04 radians max roll
+        const rollIntensity = currentIntensity * 0.025; // subtle roll during shake
         this._shakeRoll = this._shakeNoiseRoll(this._shakePhase * 0.5) * rollIntensity;
       }
     } else {

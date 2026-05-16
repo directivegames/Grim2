@@ -5,8 +5,8 @@ const KILL_WINDOW_MS           = 2000;  // kills within this real-time window co
 const STREAK_THRESHOLD         = 10;    // kills needed to trigger slow-mo
 const SLOMO_VALUE              = 0.12;  // 12% speed - more dramatic bullet time
 const SLOMO_DURATION_MS        = 4500;  // 4.5 seconds - longer epic moment
-const SHAKE_INTENSITY          = 1.2;   // stronger camera rumble
-const SHAKE_DURATION           = 1.0;   // shake lasts full duration
+const SHAKE_INTENSITY          = 0.5;   // camera rumble on streak milestone
+const SHAKE_DURATION           = 0.7;   // shake duration (seconds)
 const POST_STREAK_COOLDOWN_MS  = 2000;  // real-time ms before streak can fire again (shorter for more fun)
 
 /** Priority-ordered slomo sources. Higher value = higher priority. */

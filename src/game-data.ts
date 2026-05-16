@@ -3,6 +3,7 @@
 
 import { registerGeneratedClassMetadata, registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
+import { GroundFogActor } from './actors/GroundFogActor.js';
 import { HedgeActor } from './actors/HedgeActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { NewZombieActor } from './actors/NewZombieActor.js';
@@ -12,6 +13,14 @@ import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
 import { IsometricMovementComponent } from './components/movement/IsometricMovementComponent.js';
 
 export function registerMetadata(): void {
+  registerGeneratedPropertyMetadata(GroundFogActor, {
+      "groundVerticalOffset": {
+        "type": "number",
+        "step": 0.01,
+        "category": "Ground Fog"
+      }
+    });
+
   registerGeneratedPropertyMetadata(HedgeActor, {
       "scale": {
         "type": "number",

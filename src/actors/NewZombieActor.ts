@@ -222,6 +222,8 @@ export class NewZombieActor extends ENGINE.Actor {
   private _isHighLOD = true;
   private static readonly HIGH_LOD_DISTANCE = 20;
   private static readonly MEDIUM_LOD_DISTANCE = 35;
+  private static readonly HIGH_LOD_DISTANCE_SQ = 20 * 20;
+  private static readonly MEDIUM_LOD_DISTANCE_SQ = 35 * 35;
   private _lodLevel: 'high' | 'medium' | 'low' = 'high';
 
   // Frozen position during death animation - prevents any residual movement
@@ -230,6 +232,7 @@ export class NewZombieActor extends ENGINE.Actor {
   // Pooling support
   public isPooled = false;
   public onDied: (() => void) | null = null;
+  private _pooledHidden = false;
 
   private _tickOffset = 0;
   private static readonly TICK_INTERVAL = 2;
@@ -458,7 +461,7 @@ export class NewZombieActor extends ENGINE.Actor {
     if (player) {
       this.rootComponent.getWorldPosition(this._lodMyPos);
       player.rootComponent.getWorldPosition(this._lodPlayerPos);
-      this._distanceToPlayer = this._lodMyPos.distanceTo(this._lodPlayerPos);
+      this._distanceToPlayer = this._lodMyPos.distanceToSquared(this._lodPlayerPos);
       this._updateLODLevel();
     }
 
@@ -578,10 +581,10 @@ export class NewZombieActor extends ENGINE.Actor {
   }
 
   private _updateLODLevel(): void {
-    if (this._distanceToPlayer <= NewZombieActor.HIGH_LOD_DISTANCE) {
+    if (this._distanceToPlayer <= NewZombieActor.HIGH_LOD_DISTANCE_SQ) {
       this._lodLevel = 'high';
       this._isHighLOD = true;
-    } else if (this._distanceToPlayer <= NewZombieActor.MEDIUM_LOD_DISTANCE) {
+    } else if (this._distanceToPlayer <= NewZombieActor.MEDIUM_LOD_DISTANCE_SQ) {
       this._lodLevel = 'medium';
       this._isHighLOD = false;
     } else {
@@ -800,6 +803,15 @@ export class NewZombieActor extends ENGINE.Actor {
     this._deathSequenceStarted = false;
     this._deathPosition = null;
 
+    // Reset animation init flags so the tick's wait-for-ready loop runs again on
+    // respawn — same as doBeginPlay() does for a freshly created actor. Without
+    // this, the animation never restarts if isReady() returns false in softReset().
+    this._animationInitialized = false;
+    this._startupComplete = false;
+    this._animInitTimer = 0;
+    this._startupTimer = 0;
+    this._animTimer = 0;
+
     // Unregister from spatial manager while hidden (prevents weapon hit detection)
     zombieSpatialManager.unregisterZombie(this);
   }
@@ -828,6 +840,10 @@ export class NewZombieActor extends ENGINE.Actor {
     this._animStateChangeTimer = 0;
     this._pendingAnimState = null;
     this._idleWalkDebounceTimer = 0;
+    this._animInitTimer = 0;
+    this._startupTimer = 0;
+    this._animTimer = 0;
+    this._animationInitialized = false;
 
     // Reset blackboard for immediate chase
     // Use actual spawn distance (12-15) so attackZoneLatched stays false until close
@@ -845,9 +861,19 @@ export class NewZombieActor extends ENGINE.Actor {
     // Reset health
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     if (stats) {
-      // Reset max health property which updates current health
-      stats.setMaxHealth(this.maxHealth);
+      // Revive the engine stats component. setMaxHealth() clamps health but does
+      // not clear the private isDead flag, so pooled zombies would ignore damage.
+      const mutableStats = stats as unknown as {
+        maxHealth: number;
+        currentHealth: number;
+        isDead: boolean;
+        onHealthChanged: { invoke(current: number, max: number): void };
+      };
+      mutableStats.maxHealth = this.maxHealth;
+      mutableStats.currentHealth = this.maxHealth;
+      mutableStats.isDead = false;
       this._lastTrackedHealth = this.maxHealth;
+      mutableStats.onHealthChanged.invoke(this.maxHealth, this.maxHealth);
     }
 
     // Re-enable NPC component - let applyDirectSteerChase handle movement
@@ -867,15 +893,42 @@ export class NewZombieActor extends ENGINE.Actor {
     zombieSpatialManager.unregisterZombie(this);
     zombieSpatialManager.registerZombie(this);
 
-    // Start in walk animation (chase mode)
+    // Start in walk animation if animation is already ready (likely on 2nd+ respawn).
+    // If not yet ready, _animationInitialized stays false and the tick's wait-for-ready
+    // loop will catch it and set the state once isReady() returns true.
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
     if (anim?.isReady()) {
+      anim.transitionGraphToState('base', 'walk');
       anim.setParameter('state', 'walk');
+      this._animationInitialized = true;
     }
-
-    // Animation is ready now
-    this._animationInitialized = true;
     this._startupComplete = true;
+  }
+
+  /**
+   * Actor-level pooled visibility state.
+   *
+   * The engine's hidden-in-game implementation ultimately lives on
+   * SceneComponent and hides by disabling render layers. Keeping our own flag
+   * plus explicitly applying it to the root hierarchy prevents reused pooled
+   * zombies from staying layer-hidden after a respawn.
+   */
+  public override isHiddenInGame(): boolean {
+    return this._pooledHidden;
+  }
+
+  public override setHiddenInGame(hidden: boolean): void {
+    this._pooledHidden = hidden;
+    this.rootComponent.setHiddenInGame(hidden);
+    this.rootComponent.visible = !hidden;
+    this.rootComponent.traverse(obj => {
+      obj.visible = !hidden;
+      if (hidden) {
+        obj.layers.disableAll();
+      } else {
+        obj.layers.enable(0);
+      }
+    });
   }
 
   /**

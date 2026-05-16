@@ -6,8 +6,9 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { FONT_URL, injectBreeSerifFont, sunsetNumberTextCss } from './uiTypography.js';
+
 const SOULS_BG_URL = '@project/assets/UI/SoulsBG.png';
-const FONT_URL = '@project/assets/UI/Bree_Serif/BreeSerif-Regular.ttf';
 
 // Background dimensions
 const BG_WIDTH = 688;
@@ -47,17 +48,7 @@ export class SoulCounterUI {
     const gameContainer = (world as unknown as { gameContainer?: HTMLElement }).gameContainer;
     if (!gameContainer) return;
 
-    // Inject custom font
-    const fontFace = document.createElement('style');
-    fontFace.textContent = `
-      @font-face {
-        font-family: 'BreeSerif';
-        src: url('${FONT_URL}') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-      }
-    `;
-    document.head.appendChild(fontFace);
+    injectBreeSerifFont();
 
     // Main container - positioned bottom-right
     this._container = document.createElement('div');
@@ -84,12 +75,7 @@ export class SoulCounterUI {
       right: 80px;
       top: 52%;
       transform: translateY(-50%);
-      font-family: 'BreeSerif', serif;
-      font-size: ${90 * UI_SCALE}px;
-      font-weight: bold;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 255, 255, 0.3);
-      will-change: transform;
+      ${sunsetNumberTextCss(90 * UI_SCALE)}
     `;
     this._countDisplay.textContent = '0';
 
@@ -146,25 +132,25 @@ export class SoulCounterUI {
   private _bounceAnimation(): void {
     if (!this._countDisplay) return;
 
-    // Number pop up
-    this._countDisplay.style.transition = 'none';
-    this._countDisplay.style.transform = 'translateY(-50%) scale(1.3)';
-
-    // Spring back down
-    requestAnimationFrame(() => {
-      if (!this._countDisplay) return;
-      this._countDisplay.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      this._countDisplay.style.transform = 'translateY(-50%) scale(1)';
+    this._countDisplay.animate([
+      { transform: 'translateY(-50%) scale(0.7)', filter: 'brightness(1.6)' },
+      { transform: 'translateY(-50%) scale(1.4)', filter: 'brightness(1.25)' },
+      { transform: 'translateY(-50%) scale(1)', filter: 'brightness(1)' },
+    ], {
+      duration: 280,
+      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      fill: 'forwards',
     });
 
-    // Container subtle shake
     if (this._container) {
-      this._container.style.transform = 'scale(1.02)';
-      setTimeout(() => {
-        if (this._container) {
-          this._container.style.transform = 'scale(1)';
-        }
-      }, 100);
+      this._container.animate([
+        { transform: 'scale(1)', filter: 'brightness(1)' },
+        { transform: 'scale(1.06)', filter: 'brightness(1.15)' },
+        { transform: 'scale(1)', filter: 'brightness(1)' },
+      ], {
+        duration: 200,
+        easing: 'ease-out',
+      });
     }
   }
 

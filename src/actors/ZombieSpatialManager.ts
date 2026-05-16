@@ -17,6 +17,10 @@ export class ZombieSpatialManager {
   /** Scratch vector reused for all position queries — avoids per-call GC. */
   private readonly _zPos = new THREE.Vector3();
 
+  /** Scratch results array reused across getNearbyZombies calls — avoids per-call allocation. */
+  private readonly _scratchResults: ENGINE.Actor[] = [];
+  private _scratchResultsLength = 0;
+
   static getInstance(): ZombieSpatialManager {
     if (!ZombieSpatialManager.instance) {
       ZombieSpatialManager.instance = new ZombieSpatialManager();
@@ -89,15 +93,15 @@ export class ZombieSpatialManager {
    * PERFORMANCE: O(1) lookup - only checks 9 cells max.
    */
   getNearbyZombies(position: THREE.Vector3, radius: number): ENGINE.Actor[] {
-    const results: ENGINE.Actor[] = [];
+    // Reuse scratch array — caller must not hold the reference across frames,
+    // and must use it synchronously before the next getNearbyZombies call.
+    this._scratchResultsLength = 0;
     const radiusSq = radius * radius;
 
-    // Calculate cell range to check
     const cellX = Math.floor(position.x / CELL_SIZE);
     const cellZ = Math.floor(position.z / CELL_SIZE);
     const cellRange = Math.ceil(radius / CELL_SIZE);
 
-    // Check neighboring cells (3x3 grid typically, or larger if needed)
     for (let dx = -cellRange; dx <= cellRange; dx++) {
       for (let dz = -cellRange; dz <= cellRange; dz++) {
         const cell = `${cellX + dx},${cellZ + dz}`;
@@ -105,17 +109,17 @@ export class ZombieSpatialManager {
         if (!zombies) continue;
 
         for (const zombie of zombies) {
-          // Verify actual distance
           zombie.rootComponent.getWorldPosition(this._zPos);
-          const distSq = position.distanceToSquared(this._zPos);
-          if (distSq <= radiusSq) {
-            results.push(zombie);
+          if (position.distanceToSquared(this._zPos) <= radiusSq) {
+            this._scratchResults[this._scratchResultsLength++] = zombie;
           }
         }
       }
     }
 
-    return results;
+    // Truncate in-place (O(1), no allocation) so callers get correct .length
+    this._scratchResults.length = this._scratchResultsLength;
+    return this._scratchResults;
   }
 
   /**

@@ -15,10 +15,11 @@ const MAX_POOL_SIZE     = 50; // Maximum pooled meshes
 const DROP_GEO = new THREE.CircleGeometry(0.18, 8); // Reduced segments (10 -> 8)
 
 // PRE-CREATED SHARED MATERIALS — never disposed, never re-created
+// Normal blending = solid opaque red on any background (additive washes out on light surfaces)
 const SHARED_MATERIALS = [
-  new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, depthWrite: true, side: THREE.DoubleSide }),
-  new THREE.MeshBasicMaterial({ color: 0xff1111, transparent: false, depthWrite: true, side: THREE.DoubleSide }),
-  new THREE.MeshBasicMaterial({ color: 0xff2222, transparent: false, depthWrite: true, side: THREE.DoubleSide }),
+  new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1, depthWrite: false, side: THREE.DoubleSide, blending: THREE.NormalBlending }),
+  new THREE.MeshBasicMaterial({ color: 0xff1111, transparent: true, opacity: 1, depthWrite: false, side: THREE.DoubleSide, blending: THREE.NormalBlending }),
+  new THREE.MeshBasicMaterial({ color: 0xff2222, transparent: true, opacity: 1, depthWrite: false, side: THREE.DoubleSide, blending: THREE.NormalBlending }),
 ];
 
 /** Shared scratch vectors for orientation math in burst(). */
@@ -32,10 +33,16 @@ interface BloodDrop {
   elapsed: number;
   velocity: THREE.Vector3;
   active: boolean;
+  startScale: number;
+  maxScale: number;
 }
 
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
+}
+
+function easeOutQuad(t: number): number {
+  return 1 - (1 - t) * (1 - t);
 }
 
 @ENGINE.GameClass()
@@ -86,6 +93,11 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
       mesh.position.y += randomBetween(0.2, 0.7);
       mesh.visible = true;
 
+      // Random start scale — blood drops grow as they splatter outward
+      const startScale = randomBetween(0.3, 0.6);
+      const maxScale = randomBetween(1.0, 1.6);
+      mesh.scale.setScalar(startScale);
+
       // Random velocity with upward/outward bias
       const angle  = randomBetween(0, Math.PI * 2);
       const upBias = randomBetween(0.6, 1.2);
@@ -98,7 +110,7 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
         Math.sin(angle) * speed * outwardBias,
       );
 
-      // Orient drop along velocity
+      // Orient drop along its velocity
       _dir.copy(_scratchPos).normalize();
       _axis.crossVectors(_up, _dir).normalize();
       const ang = Math.acos(Math.min(1, _up.dot(_dir)));
@@ -112,12 +124,16 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
         existing.elapsed = 0;
         existing.velocity.copy(_scratchPos);
         existing.active = true;
+        existing.startScale = startScale;
+        existing.maxScale = maxScale;
       } else {
         this._drops.push({
           mesh,
           elapsed: 0,
           velocity: _scratchPos.clone(),
           active: true,
+          startScale,
+          maxScale,
         });
       }
     }
@@ -155,6 +171,15 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
       drop.mesh.position.x += drop.velocity.x * deltaTime;
       drop.mesh.position.y += drop.velocity.y * deltaTime;
       drop.mesh.position.z += drop.velocity.z * deltaTime;
+
+      // Scale grows from start to max (blood splatters outward)
+      const scaleProgress = easeOutQuad(Math.min(progress * 2, 1)); // grow quickly in first half
+      const currentScale = THREE.MathUtils.lerp(drop.startScale, drop.maxScale, scaleProgress);
+      drop.mesh.scale.setScalar(currentScale);
+
+      // Opacity fades out over lifetime
+      const alpha = Math.max(0, 1 - progress);
+      drop.mesh.material.opacity = alpha;
 
       if (progress >= 1) {
         // Deactivate (hide) instead of destroying

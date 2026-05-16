@@ -3,11 +3,14 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 const MAX_POINTS     = 12;
 const POINT_LIFETIME = 0.22;
-const DISC_GEO       = new THREE.CircleGeometry(0.22, 8);
+const DISC_GEO       = new THREE.PlaneGeometry(0.44, 0.44); // Slightly larger for soft texture
+
+/** Path to soft glow texture for trail discs. */
+const GLOW_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.png';
 
 /** Pre-allocated trail disc — reused from a pool to eliminate per-frame GC. */
 interface PooledDisc {
-  mesh: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>;
+  mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
   mat:  THREE.MeshBasicMaterial;
   elapsed: number;
 }
@@ -19,14 +22,21 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
   private readonly _free:   PooledDisc[] = [];
   private _active_flag = false;
 
+  // Shared texture - loaded once
+  private _glowTexture: THREE.Texture | null = null;
+
   // ── Lifecycle ──────────────────────────────────────────────────────────────
 
-  public override beginPlay(): void {
+  public override initialize(options?: ENGINE.SceneComponentOptions): void {
+    super.initialize(options);
+  }
+
+  public override async beginPlay(): Promise<void> {
     super.beginPlay();
     // Pre-build pool immediately so first boomerang throw doesn't hitch
     const world = this.getWorld();
     if (world) {
-      this._buildPool(world);
+      await this._buildPool(world);
     }
   }
 
@@ -35,12 +45,15 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
   public start(): void  { this._active_flag = true; }
   public stop(): void   { this._active_flag = false; }
 
-  public addPoint(worldPos: THREE.Vector3): void {
+  public async addPoint(worldPos: THREE.Vector3): Promise<void> {
     if (!this._active_flag) return;
     const world = this.getWorld();
     if (!world) return;
 
-    // Pool is already built in beginPlay, but check just in case
+    // Build pool if not ready yet
+    if (this._pool.length === 0) {
+      await this._buildPool(world);
+    }
 
     let disc: PooledDisc;
     if (this._free.length > 0) {
@@ -92,12 +105,40 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
     this._pool.length   = 0;
     this._active.length = 0;
     this._free.length   = 0;
+
+    // Dispose shared texture
+    if (this._glowTexture) {
+      this._glowTexture.dispose();
+      this._glowTexture = null;
+    }
+
     super.endPlay();
   }
 
   // ── Internal ────────────────────────────────────────────────────────────────
 
-  private _buildPool(world: ENGINE.World): void {
+  private async _buildPool(world: ENGINE.World): Promise<void> {
+    // Load texture once
+    if (!this._glowTexture) {
+      try {
+        const resolvedPath = await ENGINE.resolveAssetPathsInText(GLOW_TEXTURE_PATH);
+        this._glowTexture = await new Promise<THREE.Texture>((resolve, reject) => {
+          new THREE.TextureLoader().load(
+            resolvedPath,
+            (texture) => {
+              texture.wrapS = THREE.ClampToEdgeWrapping;
+              texture.wrapT = THREE.ClampToEdgeWrapping;
+              resolve(texture);
+            },
+            undefined,
+            (err) => reject(err)
+          );
+        });
+      } catch (e) {
+        console.warn('[BoomerangTrailComponent] Failed to load glow texture, using fallback:', e);
+      }
+    }
+
     for (let i = 0; i < MAX_POINTS; i++) {
       const disc = this._createDisc(world);
       this._pool.push(disc);
@@ -107,11 +148,15 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
 
   private _createDisc(world: ENGINE.World): PooledDisc {
     const mat = new THREE.MeshBasicMaterial({
-      color:       new THREE.Color(0.55, 0.15, 1.0),
+      color:       new THREE.Color(0.55, 0.15, 1.0), // purple glow
       transparent: true,
       opacity:     0,
       depthWrite:  false,
       side:        THREE.DoubleSide,
+      blending:    THREE.AdditiveBlending, // Additive for magical glow effect
+      map:         this._glowTexture || undefined,
+      alphaMap:    this._glowTexture || undefined,
+      alphaTest:   0.01,
     });
     const mesh = new THREE.Mesh(DISC_GEO, mat);
     mesh.rotation.x = -Math.PI / 2; // flat on ground

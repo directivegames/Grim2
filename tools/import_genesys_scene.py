@@ -28,8 +28,8 @@ import bpy
 import mathutils
 
 # ============ CONFIGURE THESE PATHS ============
-SCENE_FILE_PATH = r"C:\Users\r2fir\Desktop\test game\Grim\Grim\assets\default.genesys-scene"
-PROJECT_ROOT = r"C:\Users\r2fir\Desktop\test game\Grim\Grim"
+SCENE_FILE_PATH = r"C:\Users\r2fir\Desktop\game\Grim2\assets\default.genesys-scene"
+PROJECT_ROOT = r"C:\Users\r2fir\Desktop\game\Grim2"
 # ===============================================
 
 # Keep this false until the level is positioned correctly. Full texture preview can

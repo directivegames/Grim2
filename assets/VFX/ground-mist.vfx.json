@@ -3,49 +3,49 @@
   "name": "ground-mist",
   "particles": [
     {
-      "nbParticles": 500,
+      "nbParticles": 120,
       "gravity": [
-        0.03,
         0,
-        0.01
+        0.002,
+        0
       ],
       "renderMode": "billboard",
-      "intensity": 0.72,
+      "intensity": 0.75,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/GlowSoft.png",
-      "easeFunction": "easeOutSine",
+      "alphaMapPath": "@project/assets/textures/vfx/SmokePuffSoft.png",
+      "easeFunction": "easeInOutSine",
       "fadeAlpha": [
-        0.12,
-        0.46
+        0.06,
+        0.38
       ],
       "fadeSize": [
-        0.18,
-        0.85
+        0.08,
+        0.92
       ],
-      "blendingMode": "additive"
+      "blendingMode": "normal"
     }
   ],
   "emitters": [
     {
       "particlesIndex": 0,
       "loop": true,
-      "duration": 1,
-      "nbParticles": 38,
+      "duration": 6,
+      "nbParticles": 22,
       "spawnMode": "time",
       "delay": 0,
       "particlesLifetime": [
-        3.024,
-        4.8
+        14,
+        20
       ],
       "startPositionMin": [
-        -1.2,
-        -0.03,
-        -1.2
+        -12,
+        -0.05,
+        -12
       ],
       "startPositionMax": [
-        1.2,
-        0.03,
-        1.2
+        12,
+        0.15,
+        12
       ],
       "startRotationMin": [
         0,
@@ -60,38 +60,39 @@
       "rotationSpeedMin": [
         0,
         0,
-        -0.45
+        -0.04
       ],
       "rotationSpeedMax": [
         0,
         0,
-        0.45
+        0.04
       ],
       "directionMin": [
-        -0.5833333333333334,
-        0.16666666666666669,
-        -0.5833333333333334
+        -0.12,
+        0.01,
+        -0.12
       ],
       "directionMax": [
-        0.5833333333333334,
-        1,
-        0.5833333333333334
-      ],
-      "size": [
-        0.452,
-        0.951
-      ],
-      "speed": [
-        0.02,
+        0.12,
+        0.03,
         0.12
       ],
+      "size": [
+        4.5,
+        7.5
+      ],
+      "speed": [
+        0.004,
+        0.018
+      ],
       "colorStart": [
-        "#c7d0d8",
-        "#cbd4dc"
+        "#ffffff",
+        "#f5f5f5",
+        "#fafafa"
       ],
       "colorEnd": [
-        "#7a838c",
-        "#7a838c"
+        "#eeeeee",
+        "#e8e8e8"
       ],
       "useLocalDirection": false
     }
