@@ -17,6 +17,7 @@ import type { DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { WeaponSlashComponent } from '../components/vfx/WeaponSlashComponent.js';
+import { WeaponSlashParticleComponent } from '../components/vfx/WeaponSlashParticleComponent.js';
 import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../components/vfx/WeaponSummonVFXComponent.js';
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
@@ -69,8 +70,23 @@ const HIT_RADIUS       = 1.2;
 const WEAPON_DAMAGE    = 25;
 const HIT_COOLDOWN     = 0.4;
 
-/** Duration (seconds) of each attack. */
-const ATTACK_DURATIONS = [0.22, 0.22, 0.38] as const;
+/** Duration (seconds) of the swing arc per combo hit (after wind-up). */
+const ATTACK_DURATIONS = [0.26, 0.24, 0.36] as const;
+
+/** Brief anticipation before the blade appears and moves. */
+const WIND_UP_DURATION = 0.05;
+
+/** Gap between combo swings so each hit reads as its own beat. */
+const RECOVERY_DURATION = 0.07;
+
+/** Freeze swing timeline briefly on connect (ms). */
+const HIT_STOP_MS = 42;
+
+/** How quickly the visible blade rotation catches up to the hit arc (rad/s factor). */
+const BLADE_LAG_SPEED = 11;
+
+/** Max forward pitch (radians) at mid-swing for inertia feel. */
+const BLADE_PITCH_MAX = 0.28;
 
 // ─── Boomerang constants ─────────────────────────────────────────────────────
 
@@ -89,6 +105,8 @@ const FIST_MAX_RANGE         = 20;           // furthest an enemy can be targete
 
 type BoomerangPhase = 'idle' | 'outbound' | 'returning';
 
+type MeleePhase = 'idle' | 'windup' | 'swing' | 'recovery';
+
 // ─── Attack state ────────────────────────────────────────────────────────────
 
 const enum AttackIndex {
@@ -104,6 +122,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   private _sceneWeaponActor: ENGINE.Actor | null = null;
   private _slashComponent:    WeaponSlashComponent | null = null;
+  private _slashParticles:    WeaponSlashParticleComponent | null = null;
   private _summonVFX:         WeaponSummonVFXComponent | null = null;
   private _bloodSplatter:     BloodSplatterComponent | null = null;
   private _boomerangTrail:    BoomerangTrailComponent | null = null;
@@ -117,20 +136,34 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Target angle at which the current attack ends. */
   private _attackEndAngle = 0;
 
-  /** Real-time stamp (performance.now ms) when the current attack started. */
-  private _attackStartMs = 0;
-
   /** Which attack fires next (0 = attack1, 1 = attack2, 2 = attack3). */
   private _comboIndex: AttackIndex = AttackIndex.One;
 
-  /** Whether an attack is currently playing. */
-  private _isAttacking = false;
+  /** Melee sequence phase (wind-up → swing → recovery). */
+  private _meleePhase: MeleePhase = 'idle';
+
+  /** performance.now() when the current wind-up / swing sequence began. */
+  private _attackStartMs = 0;
+
+  /** performance.now() when the active swing arc began (after wind-up). */
+  private _swingStartMs = 0;
+
+  /** performance.now() when recovery ends and another swing may start. */
+  private _recoveryEndMs = 0;
+
+  /** Extends swing timeline on hit-stop (ms). */
+  private _attackTimeOffsetMs = 0;
+
+  /** Visual orbit angle — lags behind hit arc during swing. */
+  private _displayOrbitAngle = 0;
 
   private _baseQuat = new THREE.Quaternion();
   private _baseQuatCaptured = false;
 
   private _orbitQuat = new THREE.Quaternion();
+  private _pitchQuat = new THREE.Quaternion();
   private static readonly _Y_AXIS = new THREE.Vector3(0, 1, 0);
+  private static readonly _PITCH_AXIS = new THREE.Vector3(1, 0, 0);
 
   private _hitCooldowns = new Map<ENGINE.Actor, number>();
 
@@ -236,6 +269,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._slashComponent = WeaponSlashComponent.create();
     this.rootComponent.add(this._slashComponent);
 
+    this._slashParticles = WeaponSlashParticleComponent.create();
+    this.rootComponent.add(this._slashParticles);
+
     this._summonVFX = WeaponSummonVFXComponent.create();
     this.rootComponent.add(this._summonVFX);
 
@@ -268,84 +304,71 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._tickBoomerang(deltaTime, player);
     }
 
-    // Process buffered melee input if not attacking
-    if (!this._isAttacking && this._queuedMelee && player) {
-      this._queuedMelee = false;
-      this._startAttack(player);
+    if (!this._sceneWeaponActor || !player) return;
+
+    const nowMs = performance.now();
+
+    if (this._meleePhase === 'recovery' && nowMs >= this._recoveryEndMs) {
+      this._meleePhase = 'idle';
+      if (this._queuedMelee) {
+        this._queuedMelee = false;
+        this._startAttack(player);
+      }
     }
 
-    if (!this._isAttacking || !this._sceneWeaponActor) return;
-    if (!player) return;
+    if (this._meleePhase === 'idle') return;
 
     if (!this._baseQuatCaptured) {
       this._baseQuat.copy(this._sceneWeaponActor.rootComponent.quaternion);
       this._baseQuatCaptured = true;
     }
 
-    // Attack progress based on real elapsed time
-    const nowMs = performance.now();
-    const realElapsedMs = nowMs - this._attackStartMs;
-    const attackElapsedSec = realElapsedMs / 1000;
+    if (this._meleePhase === 'windup') {
+      this._orbitAngle = this._attackStartAngle;
+      this._displayOrbitAngle = this._attackStartAngle;
+      this._updateWeaponPose(player, 0);
 
+      if ((nowMs - this._attackStartMs) / 1000 >= WIND_UP_DURATION) {
+        this._beginSwing(player);
+      }
+      return;
+    }
+
+    if (this._meleePhase === 'recovery') return;
+
+    const swingElapsedSec = (nowMs - this._swingStartMs - this._attackTimeOffsetMs) / 1000;
     const duration = ATTACK_DURATIONS[this._comboIndex];
-    const rawProgress = Math.min(attackElapsedSec / duration, 1);
-    const progress = easeOut(rawProgress);
+    const rawProgress = Math.min(swingElapsedSec / duration, 1);
+    const progress = heavySwingProgress(rawProgress);
 
     this._orbitAngle = this._attackStartAngle + (this._attackEndAngle - this._attackStartAngle) * progress;
 
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
-    const weaponY = this._scratchPlayerPos.y + WEAPON_HEIGHT;
+    const lagT = Math.min(1, BLADE_LAG_SPEED * deltaTime);
+    this._displayOrbitAngle += (this._orbitAngle - this._displayOrbitAngle) * lagT;
 
-    this._sceneWeaponActor.rootComponent.position.set(
-      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * HANDLE_OFFSET,
-      weaponY,
-      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * HANDLE_OFFSET,
-    );
-
-    this._orbitQuat.setFromAxisAngle(SpinningWeaponActor._Y_AXIS, -this._orbitAngle + BLADE_ANGLE_OFFSET);
-    this._sceneWeaponActor.rootComponent.quaternion.copy(this._baseQuat).premultiply(this._orbitQuat);
-
-    this._weaponStart.set(
-      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * 0.5,
-      weaponY,
-      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * 0.5,
-    );
-    this._weaponEnd.set(
-      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * BLADE_REACH,
-      weaponY,
-      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * BLADE_REACH,
-    );
+    const bladePitch = Math.sin(progress * Math.PI) * BLADE_PITCH_MAX;
+    this._updateWeaponPose(player, bladePitch);
 
     this._slashComponent?.addSample(
       this._scratchPlayerPos,
       this._orbitAngle,
       HANDLE_OFFSET + BLADE_REACH * 0.85,
-      weaponY,
+      this._scratchPlayerPos.y + WEAPON_HEIGHT,
     );
 
     this._checkForHits(player);
     this._cleanupCooldowns();
 
-    // Attack complete
     if (rawProgress >= 1) {
-      this._comboIndex = ((this._comboIndex + 1) % 3) as AttackIndex;
-      this._isAttacking = false;
-      this._setWeaponVisible(false);
-      this._slashComponent?.stopTrail();
-
-      // Process buffered melee input immediately
-      if (this._queuedMelee && player) {
-        this._queuedMelee = false;
-        this._startAttack(player);
-      }
+      this._finishSwing(player);
     }
   }
 
   // ── Combat ────────────────────────────────────────────────────────────────
 
   private _onLeftClick(): void {
-    // Buffer input during active melee (for combo fluidity) or boomerang flight
-    if (this._isAttacking) {
+    // Buffer input during wind-up, swing, or recovery (combo window)
+    if (this._isMeleeBusy()) {
       this._queuedMelee = true;
       return;
     }
@@ -357,7 +380,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _onRightClick(): void {
-    if (this._isAttacking) return;           // mid-melee swing
+    if (this._isMeleeBusy()) return;
     if (this._boomerangPhase !== 'idle') return; // already in flight
 
     const player = this.getWorld()?.getFirstPlayerPawn();
@@ -470,23 +493,99 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         break;
     }
 
-    this._orbitAngle       = this._attackStartAngle;
-    this._attackStartMs    = performance.now();
-    this._isAttacking      = true;
-    this._hasPrevWeaponPos = false;    // Reset swept detection
-    this._queuedMelee      = false;    // Clear any buffered input
-    this._setWeaponVisible(true);
-    this._slashComponent?.startTrail();
+    this._orbitAngle            = this._attackStartAngle;
+    this._displayOrbitAngle     = this._attackStartAngle;
+    this._attackStartMs         = performance.now();
+    this._attackTimeOffsetMs    = 0;
+    this._meleePhase            = 'windup';
+    this._hasPrevWeaponPos      = false;
+    this._queuedMelee           = false;
+    this._setWeaponVisible(false);
 
-    // Play blade swing sound — alternate for 2nd combo attack
+    if (player instanceof IsometricPlayerPawn) {
+      player.setMeleeArcWindup(true);
+    }
+  }
+
+  /** Wind-up complete — reveal blade, VFX, audio, and begin the arc. */
+  private _beginSwing(player: ENGINE.Pawn): void {
+    this._meleePhase = 'swing';
+    this._swingStartMs = performance.now();
+    this._hasPrevWeaponPos = false;
+
+    this._setWeaponVisible(true);
+    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    this._slashComponent?.startTrail();
+    this._slashParticles?.burstArc(
+      this._scratchPlayerPos,
+      this._attackStartAngle,
+      this._attackEndAngle,
+      WEAPON_HEIGHT,
+    );
+
+    if (player instanceof IsometricPlayerPawn) {
+      const finisher = this._comboIndex === AttackIndex.Three;
+      player.setMeleeArcWindup(false);
+      player.triggerScreenShake(finisher ? 0.11 : 0.065, finisher ? 0.17 : 0.11);
+    }
+
+    const world = this.getWorld();
     if (world) {
       const audioManager = world.getActors().find(
         (a): a is GameAudioManager => a instanceof GameAudioManager
       );
-      // Attack 2 (combo index 1) uses bladeSwing2, others use bladeSwing
-      const soundKey = this._comboIndex === AttackIndex.Two ? 'bladeSwing2' : 'bladeSwing';
-      audioManager?.play(soundKey, 1.0, true);
+      if (this._comboIndex === AttackIndex.Three) {
+        audioManager?.play('spinBlade', 1.15, true);
+      } else {
+        const soundKey = this._comboIndex === AttackIndex.Two ? 'bladeSwing2' : 'bladeSwing';
+        audioManager?.play(soundKey, 1.25, true);
+      }
     }
+  }
+
+  private _finishSwing(_player: ENGINE.Pawn): void {
+    this._comboIndex = ((this._comboIndex + 1) % 3) as AttackIndex;
+    this._setWeaponVisible(false);
+    this._slashComponent?.stopTrail();
+    this._meleePhase = 'recovery';
+    this._recoveryEndMs = performance.now() + RECOVERY_DURATION * 1000;
+  }
+
+  private _isMeleeBusy(): boolean {
+    return this._meleePhase !== 'idle';
+  }
+
+  private _updateWeaponPose(player: ENGINE.Pawn, bladePitch: number): void {
+    if (!this._sceneWeaponActor) return;
+
+    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    const weaponY = this._scratchPlayerPos.y + WEAPON_HEIGHT;
+
+    this._sceneWeaponActor.rootComponent.position.set(
+      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * HANDLE_OFFSET,
+      weaponY,
+      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * HANDLE_OFFSET,
+    );
+
+    const visualAngle = this._meleePhase === 'swing' ? this._displayOrbitAngle : this._orbitAngle;
+    this._orbitQuat.setFromAxisAngle(SpinningWeaponActor._Y_AXIS, -visualAngle + BLADE_ANGLE_OFFSET);
+    this._sceneWeaponActor.rootComponent.quaternion.copy(this._baseQuat).premultiply(this._orbitQuat);
+
+    if (bladePitch !== 0) {
+      this._pitchQuat.setFromAxisAngle(SpinningWeaponActor._PITCH_AXIS, bladePitch);
+      this._sceneWeaponActor.rootComponent.quaternion.multiply(this._pitchQuat);
+    }
+
+    this._weaponStart.set(
+      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * 0.5,
+      weaponY,
+      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * 0.5,
+    );
+    this._weaponEnd.set(
+      this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * BLADE_REACH,
+      weaponY,
+      this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * BLADE_REACH,
+    );
   }
 
   private _setWeaponVisible(visible: boolean): void {
@@ -790,8 +889,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
 
     if (player instanceof IsometricPlayerPawn) {
-      player.triggerScreenShake(0.18, 0.3);
+      player.triggerScreenShake(0.22, 0.34);
     }
+
+    this._attackTimeOffsetMs += HIT_STOP_MS;
   }
 
   // ── Cleanup ────────────────────────────────────────────────────────────────
@@ -817,6 +918,26 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function easeOut(t: number): number {
-  return 1 - (1 - t) * (1 - t);
+/**
+ * Heavy swing curve: slow wind-in → fast middle → firm deceleration at the end.
+ */
+function heavySwingProgress(t: number): number {
+  const slowEnd = 0.10;
+  const fastEnd = 0.82;
+
+  if (t <= 0) return 0;
+  if (t >= 1) return 1;
+
+  if (t < slowEnd) {
+    const u = t / slowEnd;
+    return 0.07 * u * u;
+  }
+
+  if (t < fastEnd) {
+    const u = (t - slowEnd) / (fastEnd - slowEnd);
+    return 0.07 + 0.83 * (u * u * (3 - 2 * u));
+  }
+
+  const u = (t - fastEnd) / (1 - fastEnd);
+  return 0.90 + 0.10 * (1 - Math.pow(1 - u, 3));
 }

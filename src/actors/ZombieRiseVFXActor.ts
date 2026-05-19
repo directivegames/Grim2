@@ -1,19 +1,23 @@
 /**
- * ZombieRiseVFXActor — Zombie spawn effect: ground ripple rings + ENGINE.VFXComponent smoke.
- *
- * Ground rings are pure Three.js (no texture needed).
- * Smoke particles are driven by zombie-rise.vfx.json via the engine particle system.
+ * ZombieRiseVFXActor — Zombie spawn: ground ripple rings + textured billboard smoke.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
+import {
+  type BillboardSmokePuff,
+  disposeBillboardSmokePuffs,
+  loadSmokeTexture,
+  spawnBillboardSmokeBurst,
+  tickBillboardSmokePuffs,
+} from '../components/vfx/BillboardSmokePuffs.js';
 
-/** Total actor lifetime — must outlive the VFX particle lifetime (emit 0.8s + live 1.8s). */
 const LIFETIME = 2.5;
 const GROUND_RIPPLE_SEGMENTS = 16;
+const SMOKE_PUFF_COUNT = 22;
+const SMOKE_TEXTURE_PATH = '@project/assets/textures/vfx/SmokePuffSoft.png';
 
-/** Max simultaneous rise effects — prevents spawn spam. */
 const MAX_ACTIVE = 10;
 let activeCount = 0;
 
@@ -27,40 +31,57 @@ function easeOutCubic(value: number): number {
 export class ZombieRiseVFXActor extends ENGINE.Actor {
   private groundRipple: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
   private groundRipple2: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
+  private readonly smokePuffs: BillboardSmokePuff[] = [];
   private elapsed = 0;
-  private _vfx: ENGINE.VFXComponent | null = null;
+  private _smokeTexture: THREE.Texture | null = null;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
     super.initialize({ ...options, rootComponent: root });
-
     this._createGroundRipples(root);
-
-    this._vfx = ENGINE.VFXComponent.create({
-      vfxPath: '@project/assets/VFX/zombie-rise.vfx.json',
-      autoStart: false,
-    });
-    root.add(this._vfx);
   }
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
-    this._vfx?.startEmitting();
+
+    const world = this.getWorld();
+    if (!world) return;
+
+    const origin = this.rootComponent.position;
+    void this._spawnSmoke(world, origin);
+  }
+
+  private async _spawnSmoke(world: ENGINE.World, origin: THREE.Vector3): Promise<void> {
+    if (!this._smokeTexture) {
+      this._smokeTexture = await loadSmokeTexture(SMOKE_TEXTURE_PATH);
+    }
+    spawnBillboardSmokeBurst(world, origin, this._smokeTexture, this.smokePuffs, {
+      count: SMOKE_PUFF_COUNT,
+      texturePath: SMOKE_TEXTURE_PATH,
+      lifetime: 1.8,
+      hue: [0.72, 0.82],
+      saturation: [0.55, 0.8],
+      lightness: [0.5, 0.72],
+      maxScale: [1.5, 2.6],
+      horizontalSpeed: [0.4, 1.2],
+      verticalSpeed: [0.6, 1.5],
+      peakOpacity: 0.88,
+      size: 1.25,
+    });
   }
 
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
 
     this.elapsed += deltaTime;
+    tickBillboardSmokePuffs(this.smokePuffs, deltaTime);
 
-    // Ring 1: expands and fades quickly
     if (this.groundRipple) {
       const t = Math.min(this.elapsed / (LIFETIME * 0.6), 1);
       this.groundRipple.scale.setScalar(THREE.MathUtils.lerp(0.2, 3.5, easeOutCubic(t)));
       this.groundRipple.material.opacity = 0.5 * Math.max(0, 1 - t);
     }
 
-    // Ring 2: expands slower
     if (this.groundRipple2) {
       const t2 = Math.min(this.elapsed / (LIFETIME * 0.8), 1);
       this.groundRipple2.scale.setScalar(THREE.MathUtils.lerp(0.1, 2.8, easeOutCubic(t2)));
@@ -71,6 +92,11 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
       activeCount = Math.max(0, activeCount - 1);
       this.destroy();
     }
+  }
+
+  protected override doEndPlay(): void {
+    disposeBillboardSmokePuffs(this.smokePuffs);
+    super.doEndPlay();
   }
 
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): ZombieRiseVFXActor | null {

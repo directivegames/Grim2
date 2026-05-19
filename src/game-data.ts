@@ -3,6 +3,7 @@
 
 import { registerGeneratedClassMetadata, registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
+import { GrassClumpActor } from './actors/GrassClumpActor.js';
 import { GroundFogActor } from './actors/GroundFogActor.js';
 import { HedgeActor } from './actors/HedgeActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
@@ -10,9 +11,59 @@ import { NewZombieActor } from './actors/NewZombieActor.js';
 import { TallGrassActor } from './actors/TallGrassActor.js';
 import { ZombieActor } from './actors/ZombieActor.js';
 import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
+import { FogSystemComponent } from './fog/FogSystemComponent.js';
 import { IsometricMovementComponent } from './components/movement/IsometricMovementComponent.js';
 
 export function registerMetadata(): void {
+  registerGeneratedPropertyMetadata(GrassClumpActor, {
+      "bladeCount": {
+        "type": "number",
+        "min": 1,
+        "max": 24,
+        "step": 1,
+        "category": "Grass Clump"
+      },
+      "spreadRadius": {
+        "type": "number",
+        "min": 0.05,
+        "max": 3,
+        "step": 0.05,
+        "category": "Grass Clump"
+      },
+      "scaleMin": {
+        "type": "number",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.05,
+        "category": "Grass Clump"
+      },
+      "scaleMax": {
+        "type": "number",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.05,
+        "category": "Grass Clump"
+      },
+      "overallScale": {
+        "type": "number",
+        "min": 0.1,
+        "max": 5,
+        "step": 0.05,
+        "category": "Grass Clump"
+      },
+      "tiltAmount": {
+        "type": "number",
+        "min": -0.15,
+        "max": 0.15,
+        "step": 0.01,
+        "category": "Grass Clump"
+      },
+      "seed": {
+        "type": "number",
+        "category": "Grass Clump"
+      }
+    });
+
   registerGeneratedPropertyMetadata(GroundFogActor, {
       "groundVerticalOffset": {
         "type": "number",
@@ -272,6 +323,217 @@ export function registerMetadata(): void {
         "max": 60,
         "step": 1,
         "category": "Horde"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(FogSystemComponent, {
+      "cardModelUrl": {
+        "type": "modelPath",
+        "required": true,
+        "description": "GLB mesh used as the fog card surface"
+      },
+      "baseColorMapUrl": {
+        "type": "texturePath",
+        "required": true,
+        "description": "Base color / cloud noise texture"
+      },
+      "opacityMapUrl": {
+        "type": "texturePath",
+        "required": true,
+        "description": "Opacity mask texture; red channel drives fog density"
+      },
+      "normalMapUrl": {
+        "type": "texturePath",
+        "description": "Normal texture reserved for the second-pass material lighting path"
+      },
+      "flowMapUrl": {
+        "type": "texturePath",
+        "description": "Flowmap texture; RG encodes UV velocity, 0.5 means no flow"
+      },
+      "borderMaskMapUrl": {
+        "type": "texturePath",
+        "description": "Optional border mask texture multiplied into opacity"
+      },
+      "windNoiseMapUrl": {
+        "type": "texturePath",
+        "description": "Optional world-space wind noise texture"
+      },
+      "baseColorTint": {
+        "type": "color",
+        "description": "Fog tint before atmosphere blending"
+      },
+      "atmosphereColor": {
+        "type": "color",
+        "description": "Atmosphere/environment tint used when Use Atmosphere Color is enabled"
+      },
+      "useAtmosphereColor": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "description": "Blend from base tint to atmosphere color"
+      },
+      "baseColorContrast": {
+        "type": "number",
+        "min": -1,
+        "max": 4,
+        "step": 0.01,
+        "description": "CheapContrast control for base color map"
+      },
+      "baseColorIntensity": {
+        "type": "number",
+        "min": 0,
+        "max": 8,
+        "step": 0.01,
+        "description": "Base color texture intensity"
+      },
+      "baseColorOutputIntensity": {
+        "type": "number",
+        "min": 0,
+        "max": 8,
+        "step": 0.01,
+        "description": "Final base color output multiplier"
+      },
+      "emissiveIntensity": {
+        "type": "number",
+        "min": 0,
+        "max": 8,
+        "step": 0.01,
+        "description": "Emissive-style brightness multiplier"
+      },
+      "fogDensity": {
+        "type": "number",
+        "min": 0,
+        "max": 5,
+        "step": 0.01,
+        "description": "Final opacity density multiplier"
+      },
+      "cameraFadingDistance": {
+        "type": "number",
+        "min": 0.001,
+        "max": 100,
+        "step": 0.1,
+        "description": "Distance in meters over which fog fades in near the camera"
+      },
+      "viewAngleFade": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "description": "Fade opacity at glancing view angles"
+      },
+      "flowMapIntensity": {
+        "type": "number",
+        "min": 0,
+        "max": 5,
+        "step": 0.01,
+        "description": "Flowmap UV displacement strength"
+      },
+      "flowMapSpeed": {
+        "type": "number",
+        "min": 0,
+        "max": 5,
+        "step": 0.01,
+        "description": "Flowmap animation speed"
+      },
+      "flowMapTiling": {
+        "type": "number",
+        "min": 0.01,
+        "max": 20,
+        "step": 0.01,
+        "description": "Flowmap UV tiling"
+      },
+      "flowMapDirection": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "description": "Flow direction mirror blend"
+      },
+      "useBorderMask": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "description": "Blend in the border mask texture"
+      },
+      "windEnabled": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "description": "Enable world-space wind density modulation"
+      },
+      "windSpeedX": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1,
+        "description": "Wind noise X speed"
+      },
+      "windSpeedY": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1,
+        "description": "Wind noise Y speed"
+      },
+      "windNoiseTiling": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.001,
+        "description": "World-space wind noise tiling"
+      },
+      "windNoiseContrast": {
+        "type": "number",
+        "min": -10,
+        "max": 10,
+        "step": 0.01,
+        "description": "CheapContrast control for wind noise"
+      },
+      "opacitySoftness": {
+        "type": "number",
+        "min": 0,
+        "max": 8,
+        "step": 0.01,
+        "description": "Opacity shaping multiplier after all masks"
+      },
+      "opacityBias": {
+        "type": "number",
+        "min": -1,
+        "max": 1,
+        "step": 0.01,
+        "description": "Opacity shaping bias after all masks"
+      },
+      "fallbackWidth": {
+        "type": "number",
+        "min": 0.01,
+        "max": 100,
+        "step": 0.01,
+        "description": "Fallback plane width if model loading fails"
+      },
+      "fallbackHeight": {
+        "type": "number",
+        "min": 0.01,
+        "max": 100,
+        "step": 0.01,
+        "description": "Fallback plane height if model loading fails"
+      },
+      "billboardToCamera": {
+        "type": "boolean",
+        "description": "Rotate the card to face the active camera each frame"
+      },
+      "renderOrder": {
+        "type": "number",
+        "min": -100,
+        "max": 100,
+        "step": 1,
+        "description": "Transparent render order for the fog card"
+      },
+      "debugLogging": {
+        "type": "boolean",
+        "description": "Print fog-card load/material diagnostics to the browser console"
       }
     });
 

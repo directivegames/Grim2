@@ -3,17 +3,20 @@
  */
 
 import * as ENGINE from '@gnsx/genesys.js';
+import * as THREE from 'three';
 
 // Must run before any actor ticks — harness bundle may omit patched `NpcMovementComponent` from `node_modules`.
 import './apply-npc-follow-offset-engine-patch.js';
 import './apply-grass-shader-engine-patch.js';
 import './auto-imports.js';
+import './fog/FogSystemActor.js';
 // PERFORMANCE: Import grass uniform manager to enable batched uniform updates
 import './materials/grass/GrassUniformManager.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { SpinningWeaponActor } from './actors/SpinningWeaponActor.js';
 import { WarmupActor } from './actors/WarmupActor.js';
 import { GameAudioManager } from './actors/GameAudioManager.js';
+import { ScenicFogActor } from './actors/ScenicFogActor.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
 
 /** Spring-arm length (world units). */
@@ -140,7 +143,24 @@ class MyGame extends ENGINE.BaseGameLoop {
       }
     }
 
+    this._spawnScenicFogCards(world);
     this._startWarmupSequence(world, startMenu);
+  }
+
+  /** Large flowmap fog cards at existing ground-mist cluster positions. */
+  private _spawnScenicFogCards(world: ENGINE.World): void {
+    const placements: Array<{ position: THREE.Vector3; scale: number }> = [
+      { position: new THREE.Vector3(38.9, 0.15, -1.2), scale: 4 },
+      { position: new THREE.Vector3(3.9, 0.1, -1.4), scale: 3.5 },
+      { position: new THREE.Vector3(-8.9, 0.12, 17.3), scale: 4 },
+    ];
+
+    for (const { position, scale } of placements) {
+      const fog = ScenicFogActor.create();
+      fog.rootComponent.position.copy(position);
+      fog.rootComponent.scale.set(scale, 1, scale);
+      world.addActor(fog);
+    }
   }
 
   private _startWarmupSequence(world: ENGINE.World, startMenu: StartMenuUI): void {

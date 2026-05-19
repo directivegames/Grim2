@@ -13,9 +13,9 @@ export class GameAudioManager extends ENGINE.Actor {
 
   // Sound file paths — all WAV files are in assets/sounds/
   private static readonly SOUND_PATHS: Record<string, { path: string; volume: number; poolSize: number }> = {
-    bladeSwing:      { path: '@project/assets/sounds/bladesing.wav', volume: 0.1, poolSize: 2 },
-    bladeSwing2:     { path: '@project/assets/sounds/bladeswing2.wav', volume: 0.1, poolSize: 2 },
-    spinBlade:       { path: '@project/assets/sounds/spinblade.wav', volume: 0.12, poolSize: 2 },
+    bladeSwing:      { path: '@project/assets/sounds/bladesing.wav', volume: 0.14, poolSize: 2 },
+    bladeSwing2:     { path: '@project/assets/sounds/bladeswing2.wav', volume: 0.14, poolSize: 2 },
+    spinBlade:       { path: '@project/assets/sounds/spinblade.wav', volume: 0.16, poolSize: 2 },
     fistImpact:      { path: '@project/assets/sounds/fistsoundeffect.wav', volume: 0.18, poolSize: 2 },
     zombieHit1:      { path: '@project/assets/sounds/zombiehit1.wav', volume: 0.12, poolSize: 2 },
     zombieHit2:      { path: '@project/assets/sounds/zombiehit2.wav', volume: 0.12, poolSize: 2 },

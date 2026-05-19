@@ -104,7 +104,7 @@ export function endHitStopSlomo(world: ENGINE.World): void {
 
 /**
  * Singleton kill streak tracker.
- * Records zombie deaths and triggers slow-mo + screen flash + camera shake
+ * Records zombie deaths and triggers slow-mo + contrast punch + camera shake
  * when STREAK_THRESHOLD kills happen within KILL_WINDOW_MS (real time).
  */
 class KillStreakTracker {
@@ -143,33 +143,8 @@ class KillStreakTracker {
     const player = world.getFirstPlayerPawn();
     if (player instanceof IsometricPlayerPawn) {
       player.triggerScreenShake(SHAKE_INTENSITY, SHAKE_DURATION);
-      player.triggerFOVPunch(1.0); // Full FOV punch on streak trigger
-    }
-
-    // Screen flash - epic kill streak flash
-    const container = world.gameContainer;
-    if (container) {
-      const flash = document.createElement('div');
-      flash.style.cssText = [
-        'position:absolute',
-        'inset:0',
-        'background:radial-gradient(circle,rgba(255,220,80,0.7) 0%,rgba(255,140,0,0.4) 40%,transparent 75%)',
-        'pointer-events:none',
-        'opacity:1',
-        'z-index:200',
-      ].join(';');
-      container.appendChild(flash);
-
-      const startTime = performance.now();
-      const animate = (): void => {
-        const t = Math.min((performance.now() - startTime) / 1200, 1);
-        // Hold full brightness briefly then ease out
-        const opacity = t < 0.15 ? 1 : Math.max(0, 1 - (t - 0.15) / 0.85);
-        flash.style.opacity = String(opacity);
-        if (t < 1) requestAnimationFrame(animate);
-        else flash.remove();
-      };
-      requestAnimationFrame(animate);
+      player.triggerFOVPunch(1.0);
+      player.triggerKillStreakPunch();
     }
 
     // Clear any pending restore

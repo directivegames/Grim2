@@ -5,6 +5,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ReadyToReapUI } from './ReadyToReapUI.js';
+
 const BG_URL = '@project/assets/UI/background.png';
 const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
 
@@ -403,7 +405,7 @@ export class StartMenuUI {
     this._playWrap = null;
     this._playLabel = null;
     StartMenuUI.byWorld.delete(this._world);
-    this._setInput(true);
+    void ReadyToReapUI.play(this._world, () => this._setInput(true));
   }
 
   public destroy(): void {

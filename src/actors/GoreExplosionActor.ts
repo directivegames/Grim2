@@ -1,21 +1,27 @@
 /**
  * GoreExplosionActor — Blood/gore explosion effect on zombie kill.
  *
- * - Blood chunks, drops, flash, shockwave: pure Three.js geometry (no texture needed)
- * - Blood smoke cloud: ENGINE.VFXComponent via gore-smoke.vfx.json
+ * Chunks, drops, flash, shockwave + textured billboard smoke (no VFXComponent).
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
+import {
+  type BillboardSmokePuff,
+  disposeBillboardSmokePuffs,
+  loadSmokeTexture,
+  spawnBillboardSmokeBurst,
+  tickBillboardSmokePuffs,
+} from '../components/vfx/BillboardSmokePuffs.js';
 
-/** Total actor lifetime — must outlive chunk fall + gore-smoke particle life (0.5s emit + 1.6s live). */
 const LIFETIME = 2.5;
 const GRAVITY = 9.5;
 const CHUNK_COUNT = 8;
 const BLOOD_DROP_COUNT = 16;
+const SMOKE_PUFF_COUNT = 16;
+const SMOKE_TEXTURE_PATH = '@project/assets/textures/vfx/Smoke.png';
 
-/** Max simultaneous gore explosions — prevents kill-streak lag. */
 const MAX_ACTIVE = 3;
 let activeCount = 0;
 
@@ -46,7 +52,7 @@ function randomDirection(upBias: number): THREE.Vector3 {
   return new THREE.Vector3(
     Math.cos(angle) * radius,
     randomBetween(-0.2, 1) + upBias,
-    Math.sin(angle) * radius
+    Math.sin(angle) * radius,
   ).normalize();
 }
 
@@ -58,10 +64,11 @@ function easeOutCubic(value: number): number {
 export class GoreExplosionActor extends ENGINE.Actor {
   private readonly chunkPieces: ChunkPiece[] = [];
   private readonly bloodDrops: BloodDrop[] = [];
+  private readonly smokePuffs: BillboardSmokePuff[] = [];
   private flash: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null = null;
   private shockwave: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
   private elapsed = 0;
-  private _vfx: ENGINE.VFXComponent | null = null;
+  private _smokeTexture: THREE.Texture | null = null;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
@@ -70,12 +77,6 @@ export class GoreExplosionActor extends ENGINE.Actor {
     this._createChunks(root);
     this._createFlash(root);
     this._createShockwave(root);
-
-    this._vfx = ENGINE.VFXComponent.create({
-      vfxPath: '@project/assets/VFX/gore-smoke.vfx.json',
-      autoStart: false,
-    });
-    root.add(this._vfx);
   }
 
   protected override doBeginPlay(): void {
@@ -85,9 +86,27 @@ export class GoreExplosionActor extends ENGINE.Actor {
     if (!world) return;
 
     const origin = this.rootComponent.position;
-
-    this._vfx?.startEmitting();
+    void this._spawnSmoke(world, origin);
     this._spawnBloodDrops(world, origin);
+  }
+
+  private async _spawnSmoke(world: ENGINE.World, origin: THREE.Vector3): Promise<void> {
+    if (!this._smokeTexture) {
+      this._smokeTexture = await loadSmokeTexture(SMOKE_TEXTURE_PATH);
+    }
+    spawnBillboardSmokeBurst(world, origin, this._smokeTexture, this.smokePuffs, {
+      count: SMOKE_PUFF_COUNT,
+      texturePath: SMOKE_TEXTURE_PATH,
+      lifetime: 1.6,
+      hue: [0.97, 1.02],
+      saturation: [0.75, 0.95],
+      lightness: [0.45, 0.65],
+      maxScale: [1.6, 2.8],
+      horizontalSpeed: [0.6, 2.0],
+      verticalSpeed: [0.5, 1.4],
+      peakOpacity: 0.9,
+      size: 1.3,
+    });
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -97,7 +116,8 @@ export class GoreExplosionActor extends ENGINE.Actor {
     const progress = Math.min(this.elapsed / LIFETIME, 1);
     const chunkAlpha = Math.max(0, 1 - progress * 1.35);
 
-    // Update chunks
+    tickBillboardSmokePuffs(this.smokePuffs, deltaTime);
+
     for (const piece of this.chunkPieces) {
       piece.velocity.y -= GRAVITY * deltaTime;
       piece.mesh.position.addScaledVector(piece.velocity, deltaTime);
@@ -107,9 +127,8 @@ export class GoreExplosionActor extends ENGINE.Actor {
       piece.mesh.material.opacity = chunkAlpha;
     }
 
-    // Update blood drops
     for (let i = this.bloodDrops.length - 1; i >= 0; i--) {
-      const drop = this.bloodDrops[i];
+      const drop = this.bloodDrops[i]!;
       drop.elapsed += deltaTime;
 
       drop.velocity.y -= GRAVITY * 1.5 * deltaTime;
@@ -126,14 +145,12 @@ export class GoreExplosionActor extends ENGINE.Actor {
       }
     }
 
-    // Update flash
     if (this.flash) {
       const t = Math.min(this.elapsed / 0.25, 1);
       this.flash.scale.setScalar(THREE.MathUtils.lerp(0.3, 2.5, easeOutCubic(t)));
       this.flash.material.opacity = Math.max(0, 0.9 * (1 - t));
     }
 
-    // Update shockwave
     if (this.shockwave) {
       const t = Math.min(this.elapsed / 0.4, 1);
       this.shockwave.scale.setScalar(THREE.MathUtils.lerp(0.2, 2.2, easeOutCubic(t)));
@@ -147,6 +164,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
   }
 
   protected override doEndPlay(): void {
+    disposeBillboardSmokePuffs(this.smokePuffs);
     for (const drop of this.bloodDrops) {
       drop.mesh.material.dispose();
       drop.mesh.removeFromParent();
@@ -187,7 +205,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
         velocity: new THREE.Vector3(
           Math.cos(angle) * speed,
           randomBetween(2.0, 6.0),
-          Math.sin(angle) * speed
+          Math.sin(angle) * speed,
         ),
         elapsed: 0,
       });
@@ -206,12 +224,12 @@ export class GoreExplosionActor extends ENGINE.Actor {
       mesh.scale.set(
         randomBetween(size * 0.6, size * 1.7),
         randomBetween(size * 0.45, size),
-        randomBetween(size * 0.6, size * 1.5)
+        randomBetween(size * 0.6, size * 1.5),
       );
       mesh.position.set(
         randomBetween(-0.08, 0.08),
         randomBetween(0.05, 0.25),
-        randomBetween(-0.08, 0.08)
+        randomBetween(-0.08, 0.08),
       );
       root.add(mesh);
 
@@ -238,7 +256,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
 
   private _createShockwave(root: ENGINE.SceneComponent): void {
     const material = new THREE.MeshBasicMaterial({
-      color: 0xff3300,
+      color: 0x5a8fc8,
       transparent: true,
       opacity: 0.6,
       depthWrite: false,

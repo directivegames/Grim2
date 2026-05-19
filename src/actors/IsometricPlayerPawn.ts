@@ -105,6 +105,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private readonly _mouseHitPoint = new THREE.Vector3();
   private readonly _playerPosScratch = new THREE.Vector3();
 
+  private static readonly _ARC_COLOR_READY = new THREE.Color(0x88ccff);
+  private static readonly _ARC_COLOR_WINDUP = new THREE.Color(0xcc66ff);
+
   // ── Screen shake state ──────────────────────────────────────────────────
 
   private _shakeIntensity  = 0;
@@ -119,8 +122,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private static readonly SPRINT_FOV_BOOST = 4;      // +4 FOV when moving
   private static readonly KILL_FOV_PUNCH = 3;        // +3 FOV on kill
   private static readonly STREAK_FOV_BOOST = 12;     // +12 FOV during slomo
-  private static readonly DEATH_ZOOM_START = 20;       // Starting zoom distance
-  private static readonly DEATH_ZOOM_END = 12;       // Target zoom when low health
+  private static readonly DEATH_ZOOM_START = 16.5;     // Starting zoom distance
+  private static readonly DEATH_ZOOM_END = 10;       // Target zoom when low health
 
   private _currentFOV = IsometricPlayerPawn.BASE_FOV;
   private _targetFOV = IsometricPlayerPawn.BASE_FOV;
@@ -379,6 +382,48 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._fovPunchDecay = IsometricPlayerPawn.KILL_FOV_PUNCH * intensity;
   }
 
+  /**
+   * Kill-streak freeze-frame punch — backdrop-filter over the canvas (not gameContainer.filter).
+   */
+  public triggerKillStreakPunch(): void {
+    const world = this.getWorld();
+    const container = world?.gameContainer;
+    if (!container) return;
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = [
+      'position:absolute',
+      'inset:0',
+      'pointer-events:none',
+      'z-index:198',
+      'background:transparent',
+    ].join(';');
+    container.appendChild(overlay);
+
+    const startTime = performance.now();
+    const totalMs = 380;
+    const animate = (): void => {
+      const t = Math.min((performance.now() - startTime) / totalMs, 1);
+      let sat = 1;
+      let con = 1;
+      if (t < 0.18) {
+        const kick = t / 0.18;
+        sat = 1 - kick * 0.78;
+        con = 1 + kick * 0.5;
+      } else {
+        const out = (t - 0.18) / 0.82;
+        sat = 0.22 + out * 0.78;
+        con = 1.5 - out * 0.5;
+      }
+      const filter = `saturate(${sat}) contrast(${con})`;
+      overlay.style.backdropFilter = filter;
+      overlay.style.setProperty('-webkit-backdrop-filter', filter);
+      if (t < 1) requestAnimationFrame(animate);
+      else overlay.remove();
+    };
+    requestAnimationFrame(animate);
+  }
+
   // ── Visual facing ─────────────────────────────────────────────────────────
 
   private _updateVisualFacing(deltaTime: number): void {
@@ -462,6 +507,13 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._shakeIntensity  = intensity;
     this._shakeDurationMs = duration * 1000;  // convert seconds → ms for real-time comparison
     this._shakeStartMs    = performance.now();
+  }
+
+  /** Highlights the floor arc during melee wind-up. */
+  public setMeleeArcWindup(windup: boolean): void {
+    this._weaponArcComponent?.setArcColor(
+      windup ? IsometricPlayerPawn._ARC_COLOR_WINDUP : IsometricPlayerPawn._ARC_COLOR_READY,
+    );
   }
 
   // ── Screen shake with smooth noise (not raw random) for polished feel ─────
