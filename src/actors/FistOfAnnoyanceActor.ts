@@ -11,6 +11,7 @@ import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { slomoManager } from './KillStreakTracker.js';
+import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
 import { loadSmokeTexture } from '../components/vfx/BillboardSmokePuffs.js';
 
@@ -39,7 +40,6 @@ const EXPLOSION_EMIT_DURATION = 1.0;
 
 // ─── Geometry / assets ───────────────────────────────────────────────────────
 
-const DEBRIS_GEO = new THREE.PlaneGeometry(0.98, 0.98);
 const FLASH_GEO = new THREE.SphereGeometry(1, 16, 12);
 const SHOCKWAVE_GEO = new THREE.TorusGeometry(1, 0.035, 6, 32);
 
@@ -51,9 +51,9 @@ const ROCK_DEBRIS_TEXTURE_PATH = '@project/assets/VFX/rockdebris.png';
 type FistPhase = 'rising' | 'paused' | 'retracting' | 'finishing' | 'done';
 
 interface RockDebris {
-  mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  sprite: THREE.Sprite;
   velocity: THREE.Vector3;
-  spin: THREE.Vector3;
+  spinRate: number;
   elapsed: number;
 }
 
@@ -86,7 +86,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private _explosionVfx: ENGINE.VFXComponent | null = null;
   private _phase: FistPhase = 'rising';
   private _phaseElapsed = 0;
-  private _phaseStartMs = 0;
   private _groundY = 0;
   private _hasHit = false;
   private _vfxSpawned = false;
@@ -131,7 +130,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._groundY = this.rootComponent.position.y;
     this._phase = 'rising';
     this._phaseElapsed = 0;
-    this._phaseStartMs = performance.now();
     this._hasHit = false;
     this._vfxSpawned = false;
     this._cinematicReturned = false;
@@ -154,7 +152,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     super.tickPrePhysics(deltaTime);
     if (this._phase === 'done' || !this._sceneFistActor) return;
 
-    this._phaseElapsed = (performance.now() - this._phaseStartMs) / 1000;
+    const world = this.getWorld();
+    const realDt = world ? getUnscaledDeltaTime(world, deltaTime) : deltaTime;
+    this._phaseElapsed += realDt;
     this._tickExplosionEmit(deltaTime);
 
     switch (this._phase) {
@@ -181,7 +181,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
         if (!this._hasHit) this._checkHits();
 
-        if (t >= 1) { this._phase = 'paused'; this._phaseElapsed = 0; this._phaseStartMs = performance.now(); }
+        if (t >= 1) { this._phase = 'paused'; this._phaseElapsed = 0; }
         break;
       }
 
@@ -189,7 +189,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         if (this._phaseElapsed >= PAUSE_DURATION) {
           this._phase = 'retracting';
           this._phaseElapsed = 0;
-          this._phaseStartMs = performance.now();
 
           const w = this.getWorld();
           if (w) {
@@ -277,9 +276,11 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       const dz = zPos.z - fistPos.z;
       if (dx * dx + dz * dz > FIST_HIT_RADIUS * FIST_HIT_RADIUS) continue;
 
+      // Knockback direction: radially away from fist impact point
+      const hitNormal = zPos.clone().sub(fistPos).setY(0).normalize();
       zombie.getComponent(ENGINE.CharacterStatsComponent)?.takeDamage(ONE_HIT_DAMAGE, {
         hitLocation: zPos.clone(),
-        hitNormal: new THREE.Vector3(0, 1, 0),
+        hitNormal,
       });
 
       this._showHitNumber(world, zPos);
@@ -380,9 +381,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     await this._ensureDebrisTexture();
 
     for (let i = 0; i < VFX_CHUNK_COUNT; i++) {
-      const scale = randomBetween(0.55, 1.35);
-      const mat = new THREE.MeshBasicMaterial({
-        map: this._rockDebrisTexture ?? undefined,
+      const scale = randomBetween(0.55, 1.35) * randomBetween(0.85, 1.25);
+      const mat = new THREE.SpriteMaterial({
+        map: this._rockDebrisTexture ?? null,
         color: this._rockDebrisTexture ? 0xffffff : new THREE.Color().setHSL(
           randomBetween(0.06, 0.12),
           randomBetween(0.35, 0.65),
@@ -391,28 +392,27 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         transparent: true,
         opacity: 1,
         depthWrite: true,
-        side: THREE.DoubleSide,
         blending: THREE.NormalBlending,
         alphaTest: this._rockDebrisTexture ? 0.08 : 0,
+        rotation: randomBetween(0, Math.PI * 2),
       });
-      const mesh = new THREE.Mesh(DEBRIS_GEO, mat);
-      mesh.scale.setScalar(scale * randomBetween(0.85, 1.25));
-      mesh.position.copy(origin);
-      mesh.position.y += randomBetween(0, 0.15);
-      mesh.rotation.set(-Math.PI / 2, randomBetween(0, Math.PI * 2), 0);
-      world.scene.add(mesh);
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.setScalar(scale);
+      sprite.position.copy(origin);
+      sprite.position.y += randomBetween(0, 0.15);
+      world.scene.add(sprite);
 
       const angle = Math.random() * Math.PI * 2;
       const speed = randomBetween(5, 13);
 
       this._rockDebris.push({
-        mesh,
+        sprite,
         velocity: new THREE.Vector3(
           Math.cos(angle) * speed,
           randomBetween(4, 11),
           Math.sin(angle) * speed,
         ),
-        spin: new THREE.Vector3(0, randomBetween(-12, 12), 0),
+        spinRate: randomBetween(-12, 12),
         elapsed: 0,
       });
     }
@@ -423,11 +423,13 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       const c = this._rockDebris[i]!;
       c.elapsed += deltaTime;
       c.velocity.y -= GRAVITY * deltaTime;
-      c.mesh.position.addScaledVector(c.velocity, deltaTime);
-      c.mesh.rotation.y += c.spin.y * deltaTime;
+      c.sprite.position.addScaledVector(c.velocity, deltaTime);
+      c.sprite.material.rotation += c.spinRate * deltaTime;
+      const progress = c.elapsed / VFX_CHUNK_LIFETIME;
+      c.sprite.material.opacity = Math.max(0, 1 - Math.pow(progress, 2));
       if (c.elapsed >= VFX_CHUNK_LIFETIME) {
-        c.mesh.material.dispose();
-        c.mesh.removeFromParent();
+        c.sprite.material.dispose();
+        c.sprite.removeFromParent();
         this._rockDebris.splice(i, 1);
       }
     }
@@ -464,7 +466,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private _cleanupVFX(): void {
     this._explosionEmitTimer = -1;
     this._explosionVfx?.stopEmitting();
-    for (const c of this._rockDebris) { c.mesh.material.dispose(); c.mesh.removeFromParent(); }
+    for (const c of this._rockDebris) { c.sprite.material.dispose(); c.sprite.removeFromParent(); }
     for (const f of this._flashes) { f.mesh.material.dispose(); f.mesh.removeFromParent(); }
     for (const s of this._shockwaves) { s.mesh.material.dispose(); s.mesh.removeFromParent(); }
     this._rockDebris.length = 0;

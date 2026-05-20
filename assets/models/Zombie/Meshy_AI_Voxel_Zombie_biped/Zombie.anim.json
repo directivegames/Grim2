@@ -105,7 +105,7 @@
       ]
     },
     "death": {
-      "clip": "Carry_Water_Bucket_Walk",
+      "clip": "Climb_Attempt_and_Fall_4",
       "transitions": []
     }
   },

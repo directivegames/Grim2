@@ -17,6 +17,8 @@ import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcComponent.js';
 import { HealthBarUI } from '../ui/HealthBarUI.js';
+import { killStreakTracker } from './KillStreakTracker.js';
+import { comboMeterTracker } from './ComboMeterTracker.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -312,6 +314,12 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._hitNumberUI?.tick();
     // Update KO sign animations
     this._koSignUI?.tick();
+
+    const world = this.getWorld();
+    if (world) {
+      killStreakTracker.tick(world, deltaTime);
+      comboMeterTracker.tick(world, deltaTime);
+    }
   }
 
   // ── Dynamic camera FOV & zoom ─────────────────────────────────────────────

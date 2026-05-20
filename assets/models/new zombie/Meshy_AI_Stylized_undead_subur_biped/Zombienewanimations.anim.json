@@ -123,7 +123,8 @@
       "loop": "LoopRepeat"
     },
     "run_fast_10_inplace": {
-      "loop": "LoopOnce"
+      "loop": "LoopOnce",
+      "clampWhenFinished": true
     }
   }
 }

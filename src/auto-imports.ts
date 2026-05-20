@@ -53,3 +53,5 @@ import './ui/ReadyToReapUI.ts';
 import './ui/SoulCounterUI.ts';
 import './ui/StartMenuUI.ts';
 import './ui/uiTypography.ts';
+import './utils/game-audio.ts';
+import './utils/slomo-time.ts';

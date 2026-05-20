@@ -1,41 +1,55 @@
 import * as ENGINE from '@gnsx/genesys.js';
 import { ComboCounterUI } from '../ui/ComboCounterUI.js';
 import { ComboMilestoneUI } from '../ui/ComboMilestoneUI.js';
+import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
-const RESET_DELAY_MS = 3000; // ms of no kills before combo fades
+const RESET_DELAY_SEC = 3.0;
+const FADE_DELAY_SEC = 0.45;
 
-/**
- * Singleton combo meter tracker.
- * Records kills and shows a combo counter with image background (right side, vertically centered).
- * Fades after RESET_DELAY_MS of no kills.
- */
+/** Combo meter idle/fade timers use wall-clock time so UI doesn't stall during slomo. */
 class ComboMeterTracker {
   private _count = 0;
   private _ui: ComboCounterUI | null = null;
-  private _resetId: ReturnType<typeof globalThis.setTimeout> | null = null;
-
-  // ── Public API ──────────────────────────────────────────────────────────────
+  private _idleSec = 0;
+  private _fadeSec = -1;
 
   public async recordKill(world: ENGINE.World): Promise<void> {
     this._count++;
+    this._idleSec = 0;
+    this._fadeSec = -1;
     await this._ensureUI(world);
     this._updateDisplay();
-    this._scheduleReset();
-
-    // Check for milestone
     ComboMilestoneUI.getInstance(world).checkAndTrigger(this._count);
   }
 
-  public reset(): void {
-    if (this._resetId !== null) {
-      globalThis.clearTimeout(this._resetId);
-      this._resetId = null;
+  /** Call each frame from player tick with scaled deltaTime. */
+  public tick(world: ENGINE.World, deltaTime: number): void {
+    if (this._count <= 0) return;
+    const realDt = getUnscaledDeltaTime(world, deltaTime);
+
+    if (this._fadeSec >= 0) {
+      this._fadeSec += realDt;
+      if (this._fadeSec >= FADE_DELAY_SEC) {
+        this._count = 0;
+        this._fadeSec = -1;
+        this._idleSec = 0;
+      }
+      return;
     }
-    this._count = 0;
-    this._hide();
+
+    this._idleSec += realDt;
+    if (this._idleSec >= RESET_DELAY_SEC) {
+      this._hide();
+      this._fadeSec = 0;
+    }
   }
 
-  // ── Internal ────────────────────────────────────────────────────────────────
+  public reset(): void {
+    this._count = 0;
+    this._idleSec = 0;
+    this._fadeSec = -1;
+    this._hide();
+  }
 
   private async _ensureUI(world: ENGINE.World): Promise<void> {
     if (this._ui) return;
@@ -44,23 +58,9 @@ class ComboMeterTracker {
 
   private _updateDisplay(): void {
     if (!this._ui || this._count < 2) return;
-
     this._ui.setCount(this._count);
     this._ui.show();
     this._ui.punch();
-  }
-
-  private _scheduleReset(): void {
-    if (this._resetId !== null) globalThis.clearTimeout(this._resetId);
-
-    this._resetId = globalThis.setTimeout(() => {
-      this._hide();
-      // Delay actual count reset until fade finishes
-      globalThis.setTimeout(() => {
-        this._count = 0;
-        this._resetId = null;
-      }, 450);
-    }, RESET_DELAY_MS);
   }
 
   private _hide(): void {

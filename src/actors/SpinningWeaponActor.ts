@@ -24,7 +24,7 @@ import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../compon
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
-import { GameAudioManager } from './GameAudioManager.js';
+import { getGameAudioManager } from '../utils/game-audio.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
@@ -143,14 +143,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Melee sequence phase (wind-up → swing → recovery). */
   private _meleePhase: MeleePhase = 'idle';
 
-  /** performance.now() when the current wind-up / swing sequence began. */
-  private _attackStartMs = 0;
+  /** Elapsed game-time seconds in current wind-up phase. */
+  private _windupElapsedSec = 0;
 
-  /** performance.now() when the active swing arc began (after wind-up). */
-  private _swingStartMs = 0;
+  /** Elapsed game-time seconds in current swing phase. */
+  private _swingElapsedSec = 0;
 
-  /** performance.now() when recovery ends and another swing may start. */
-  private _recoveryEndMs = 0;
+  /** Remaining game-time seconds until recovery ends. */
+  private _recoveryRemainingSec = 0;
 
   /** Visual orbit angle — lags behind hit arc during swing. */
   private _displayOrbitAngle = 0;
@@ -310,14 +310,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     if (!this._sceneWeaponActor || !player) return;
 
-    const nowMs = performance.now();
-
-    if (this._meleePhase === 'recovery' && nowMs >= this._recoveryEndMs) {
-      this._meleePhase = 'idle';
-      if (this._queuedMelee) {
-        this._queuedMelee = false;
-        this._startAttack(player);
+    if (this._meleePhase === 'recovery') {
+      this._recoveryRemainingSec -= deltaTime;
+      if (this._recoveryRemainingSec <= 0) {
+        this._meleePhase = 'idle';
+        if (this._queuedMelee) {
+          this._queuedMelee = false;
+          this._startAttack(player);
+        }
       }
+      return;
     }
 
     if (this._meleePhase === 'idle') return;
@@ -332,15 +334,15 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._displayOrbitAngle = this._attackStartAngle;
       this._updateWeaponPose(player, 0);
 
-      if ((nowMs - this._attackStartMs) / 1000 >= WIND_UP_DURATION) {
+      this._windupElapsedSec += deltaTime;
+      if (this._windupElapsedSec >= WIND_UP_DURATION) {
         this._beginSwing(player);
       }
       return;
     }
 
-    if (this._meleePhase === 'recovery') return;
-
-    const swingElapsedSec = (nowMs - this._swingStartMs) / 1000;
+    this._swingElapsedSec += deltaTime;
+    const swingElapsedSec = this._swingElapsedSec;
     const duration = ATTACK_DURATIONS[this._comboIndex];
     const rawProgress = Math.min(swingElapsedSec / duration, 1);
     const progress = heavySwingProgress(rawProgress);
@@ -420,14 +422,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._lastFistTime = currentTime; // cooldown starts only now
 
     // Play fist impact sound with distance attenuation (always audible, even at range)
-    const audioManager = world.getActors().find(
-      (a): a is GameAudioManager => a instanceof GameAudioManager
-    );
-    if (audioManager) {
-      const playerPos = new THREE.Vector3();
-      player.rootComponent.getWorldPosition(playerPos);
-      audioManager.playAtDistance('fistImpact', targetPos, playerPos, FIST_MAX_RANGE, 0.15);
-    }
+    const playerPos = new THREE.Vector3();
+    player.rootComponent.getWorldPosition(playerPos);
+    getGameAudioManager(world).playAtDistance('fistImpact', targetPos, playerPos, FIST_MAX_RANGE, 0.15);
 
     // Camera shake on fist impact
     if (player instanceof IsometricPlayerPawn) {
@@ -507,7 +504,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     this._orbitAngle            = this._attackStartAngle;
     this._displayOrbitAngle     = this._attackStartAngle;
-    this._attackStartMs         = performance.now();
+    this._windupElapsedSec      = 0;
     this._meleePhase            = 'windup';
     this._hasPrevWeaponPos      = false;
     this._queuedMelee           = false;
@@ -521,7 +518,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Wind-up complete — reveal blade, VFX, audio, and begin the arc. */
   private _beginSwing(player: ENGINE.Pawn): void {
     this._meleePhase = 'swing';
-    this._swingStartMs = performance.now();
+    this._swingElapsedSec = 0;
     this._hasPrevWeaponPos = false;
 
     this._setWeaponVisible(true);
@@ -550,14 +547,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const world = this.getWorld();
     if (world) {
-      const audioManager = world.getActors().find(
-        (a): a is GameAudioManager => a instanceof GameAudioManager
-      );
+      const audioManager = getGameAudioManager(world);
       if (this._comboIndex === AttackIndex.Three) {
-        audioManager?.play('spinBlade', 1.15, true);
+        audioManager.play('spinBlade', 1.15, true);
       } else {
         const soundKey = this._comboIndex === AttackIndex.Two ? 'bladeSwing2' : 'bladeSwing';
-        audioManager?.play(soundKey, 1.25, true);
+        audioManager.play(soundKey, 1.25, true);
       }
     }
   }
@@ -569,7 +564,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._slashSprite?.endSwing();
     this._slashComponent?.stopTrail();
     this._meleePhase = 'recovery';
-    this._recoveryEndMs = performance.now() + RECOVERY_DURATION * 1000;
+    this._recoveryRemainingSec = RECOVERY_DURATION;
   }
 
   private _isMeleeBusy(): boolean {
@@ -745,9 +740,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
       this._hitCooldowns.set(zombie, currentTime);
 
+      // Knockback direction: away from boomerang hit position
+      const hitNormal = this._scratchZombiePos.clone().sub(this._boomerangPos).setY(0).normalize();
       const hitInfo: DamageHitInfo = {
         hitLocation: this._scratchZombiePos.clone(),
-        hitNormal: new THREE.Vector3(0, 1, 0),
+        hitNormal,
       };
       const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
       let isFatal = false;
@@ -884,10 +881,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._hitCooldowns.set(zombie, currentTime);
 
     zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
 
+    // Knockback direction: away from player (or closest point on weapon line)
+    const hitNormal = this._scratchZombiePos.clone().sub(this._scratchPlayerPos).setY(0).normalize();
     const hitInfo: DamageHitInfo = {
       hitLocation: this._scratchZombiePos.clone(),
-      hitNormal: new THREE.Vector3(0, 1, 0),
+      hitNormal,
     };
 
     const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);

@@ -48,24 +48,21 @@ interface RespawnQueueEntry {
   zombie: NewZombieActor;
 }
 
-type TimeoutHandle = ReturnType<typeof globalThis.setTimeout>;
-
 @ENGINE.GameClass()
 export class ZombieHordeManager extends ENGINE.Actor {
   private _activeZombies = new Map<NewZombieActor, ActiveZombie>();
   private _respawnQueue: RespawnQueueEntry[] = [];
+  private _pendingWaveSpawns: { delayRemaining: number }[] = [];
 
   private _totalKills = 0;
   private _hordeActive = false;
   private _waveTimer = 0;
   private _placedZombiesCount = 0;
   private _spawningPaused = false;
+  private _needsHookPlaced = true;
 
   /** Placed-zombie references — cleared in doEndPlay to avoid dangling callbacks. */
   private _placedZombies: NewZombieActor[] = [];
-
-  /** All pending setTimeout handles — cleared in doEndPlay to prevent stale callbacks. */
-  private _pendingTimeouts: TimeoutHandle[] = [];
 
   // Scratch vectors
   private readonly _playerPos = new THREE.Vector3();
@@ -85,8 +82,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
-    const id = globalThis.setTimeout(() => this.hookPlacedZombies(), 0);
-    this._pendingTimeouts.push(id);
+    this._needsHookPlaced = true;
   }
 
   private hookPlacedZombies(): void {
@@ -146,6 +142,13 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   public override tickPrePhysics(deltaTime: number): void {
+    if (this._needsHookPlaced) {
+      this._needsHookPlaced = false;
+      this.hookPlacedZombies();
+    }
+
+    this._processPendingWaveSpawns(deltaTime);
+
     if (!this._hordeActive) return;
     if (this._totalKills >= MAX_TOTAL_KILLS) return;
 
@@ -251,11 +254,26 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   private spawnSingleZombieWithDelay(delaySec: number = 0): void {
     if (delaySec > 0) {
-      const id = globalThis.setTimeout(() => this.spawnSingleZombie(), delaySec * 1000);
-      this._pendingTimeouts.push(id);
+      this._pendingWaveSpawns.push({ delayRemaining: delaySec });
     } else {
       this.spawnSingleZombie();
     }
+  }
+
+  private _processPendingWaveSpawns(deltaTime: number): void {
+    if (this._pendingWaveSpawns.length === 0) return;
+
+    let writeIdx = 0;
+    for (let i = 0; i < this._pendingWaveSpawns.length; i++) {
+      const entry = this._pendingWaveSpawns[i]!;
+      entry.delayRemaining -= deltaTime;
+      if (entry.delayRemaining > 0) {
+        this._pendingWaveSpawns[writeIdx++] = entry;
+      } else {
+        this.spawnSingleZombie();
+      }
+    }
+    this._pendingWaveSpawns.length = writeIdx;
   }
 
   /**
@@ -350,11 +368,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   protected override doEndPlay(): void {
-    // Cancel all pending timeouts — prevents callbacks from firing after world teardown
-    for (const id of this._pendingTimeouts) {
-      globalThis.clearTimeout(id);
-    }
-    this._pendingTimeouts.length = 0;
+    this._pendingWaveSpawns.length = 0;
 
     // Disconnect placed-zombie callbacks
     for (const zombie of this._placedZombies) {

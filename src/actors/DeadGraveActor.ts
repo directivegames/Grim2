@@ -38,7 +38,7 @@ function ensureGraveCollisionProfile(): void {
 }
 
 /** Seconds before grave auto-destroys to prevent physics/shadow accumulation. */
-const GRAVE_LIFETIME_SEC = 30;
+const GRAVE_LIFETIME_SEC = 8;
 
 /** Max simultaneous graves — oldest gets recycled when limit hit. */
 const MAX_GRAVES = 25;
@@ -46,14 +46,14 @@ const MAX_GRAVES = 25;
 // Grave pool management
 interface PooledGrave {
   actor: DeadGraveActor;
-  spawnTime: number;
+  spawnGameTime: number;
 }
 
 let gravePool: PooledGrave[] = [];
 
 @ENGINE.GameClass()
 export class DeadGraveActor extends ENGINE.Actor {
-  private _spawnTime = 0;
+  private _aliveSec = 0;
   private _isPooled = false;
 
   public override initialize(options?: ActorOptions): void {
@@ -91,7 +91,7 @@ export class DeadGraveActor extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
-    this._spawnTime = performance.now();
+    this._aliveSec = 0;
 
     // Apply heavy damping so the gravestone settles quickly and feels weighty
     const physics = this.getPhysicsEngine();
@@ -104,10 +104,10 @@ export class DeadGraveActor extends ENGINE.Actor {
     }
   }
 
-  public override tickPrePhysics(_deltaTime: number): void {
-    super.tickPrePhysics(_deltaTime);
-    // Auto-cleanup after lifetime to prevent physics/shadow accumulation
-    if (performance.now() - this._spawnTime > GRAVE_LIFETIME_SEC * 1000) {
+  public override tickPrePhysics(deltaTime: number): void {
+    super.tickPrePhysics(deltaTime);
+    this._aliveSec += deltaTime;
+    if (this._aliveSec >= GRAVE_LIFETIME_SEC) {
       this.destroy();
     }
   }
@@ -128,14 +128,15 @@ export class DeadGraveActor extends ENGINE.Actor {
     // Clean up destroyed graves from pool (check if actor is still in world)
     gravePool = gravePool.filter(g => g.actor.getWorld() !== null);
 
+    const spawnGameTime = world.getGameTime();
+
     // If at cap, recycle the oldest grave
     if (gravePool.length >= MAX_GRAVES) {
-      // Sort by spawn time, oldest first
-      gravePool.sort((a, b) => a.spawnTime - b.spawnTime);
+      gravePool.sort((a, b) => a.spawnGameTime - b.spawnGameTime);
       const oldest = gravePool.shift();
       if (oldest) {
         oldest.actor.recycle(position, velocity);
-        gravePool.push({ actor: oldest.actor, spawnTime: performance.now() });
+        gravePool.push({ actor: oldest.actor, spawnGameTime });
         return oldest.actor;
       }
     }
@@ -155,7 +156,7 @@ export class DeadGraveActor extends ENGINE.Actor {
       }
     }
 
-    gravePool.push({ actor: grave, spawnTime: performance.now() });
+    gravePool.push({ actor: grave, spawnGameTime });
     return grave;
   }
 
@@ -170,8 +171,7 @@ export class DeadGraveActor extends ENGINE.Actor {
     // Reset rotation for variety
     this.rootComponent.rotation.y = Math.random() * Math.PI * 2;
 
-    // Reset spawn time
-    this._spawnTime = performance.now();
+    this._aliveSec = 0;
 
     // Apply new velocity
     const world = this.getWorld();
