@@ -1,8 +1,8 @@
 /**
  * ReadyToReapUI — Dramatic "READY TO" → "REAP" intro after the start menu.
  *
- * Plays over a black screen with multiply-blended PNGs (white bg knocks out).
- * Camera shake on the player pawn at each impact beat.
+ * Transparent overlay: game canvas stays visible; multiply-blended PNGs knock out white.
+ * Input stays disabled until onComplete (StartMenuUI re-enables movement).
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
@@ -41,6 +41,12 @@ export class ReadyToReapUI {
       return;
     }
 
+    try {
+      world.inputManager.setInputEnabled(false);
+    } catch {
+      /* world may be tearing down */
+    }
+
     ReadyToReapUI._injectKeyframes(container);
 
     const [readyUrl, reapUrl] = await Promise.all([
@@ -54,7 +60,7 @@ export class ReadyToReapUI {
       position: absolute;
       inset: 0;
       z-index: 10070;
-      background: #000;
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -127,7 +133,7 @@ export class ReadyToReapUI {
     overlay.appendChild(flash);
     container.appendChild(overlay);
 
-    const pulseFlash = (peak = 0.55, holdMs = 50): void => {
+    const pulseFlash = (peak = 0.22, holdMs = 50): void => {
       flash.style.transition = 'none';
       flash.style.opacity = String(peak);
       void flash.offsetWidth;
@@ -174,8 +180,8 @@ export class ReadyToReapUI {
     };
 
     try {
-      // Beat 0 — black slam + shake
-      pulseFlash(0.35, 40);
+      // Beat 0 — impact flash + shake
+      pulseFlash(0.14, 40);
       triggerShake(world, 0.35, 0.15);
       await delay(80);
 
@@ -184,7 +190,7 @@ export class ReadyToReapUI {
       img.style.animation = 'grim-rtr-slam-down 0.42s cubic-bezier(0.34, 1.45, 0.64, 1) forwards';
       expandRing();
       triggerShake(world, 0.85, 0.32);
-      pulseFlash(0.5, 60);
+      pulseFlash(0.2, 60);
       await delay(420);
 
       img.style.animation = 'none';
@@ -197,7 +203,7 @@ export class ReadyToReapUI {
       await delay(320);
 
       img.style.visibility = 'hidden';
-      pulseFlash(0.45, 45);
+      pulseFlash(0.16, 45);
       await delay(120);
 
       // REAP — slam from below (bigger)
@@ -208,7 +214,7 @@ export class ReadyToReapUI {
       expandRing();
       spawnGreenSparks();
       triggerShake(world, 1.0, 0.38);
-      pulseFlash(0.6, 70);
+      pulseFlash(0.24, 70);
       await delay(480);
 
       img.style.animation = 'grim-rtr-wobble 0.35s ease-in-out';
@@ -222,7 +228,7 @@ export class ReadyToReapUI {
       img.style.animation = 'grim-rtr-explode 0.38s cubic-bezier(0.6, 0, 1, 0.2) forwards';
       sparksHost.replaceChildren();
       triggerShake(world, 0.9, 0.35);
-      pulseFlash(0.55, 80);
+      pulseFlash(0.2, 80);
       await delay(380);
 
       // Fade overlay out

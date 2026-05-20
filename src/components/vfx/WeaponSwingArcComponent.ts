@@ -23,8 +23,8 @@ const ARC_ANGLE = Math.PI;
 /** Segments for smooth arc edges. */
 const ARC_SEGMENTS = 32;
 
-/** Arc material opacity - faint enough to not clutter, visible enough to guide. */
-const ARC_OPACITY = 0.15;
+/** Arc material opacity — neon guide on the floor. */
+const ARC_OPACITY = 0.38;
 
 /** Y offset from ground to avoid z-fighting. */
 const ARC_Y_OFFSET = 0.02;
@@ -69,7 +69,7 @@ const SHARED_ARC_GEOMETRY = createHalfCircleGeometry(ARC_RADIUS, ARC_SEGMENTS);
 export class WeaponSwingArcComponent extends ENGINE.MeshComponent {
   public override initialize(options?: SceneComponentOptions): void {
     const material = new THREE.MeshBasicMaterial({
-      color: 0x88ccff, // Light blue, subtle
+      color: 0x00e8ff,
       transparent: true,
       opacity: ARC_OPACITY,
       depthWrite: false,

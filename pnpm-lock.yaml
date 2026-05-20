@@ -12,8 +12,8 @@ importers:
         specifier: latest
         version: 0.0.6
       '@gnsx/genesys.js':
-        specifier: 10.12.0
-        version: 10.12.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)
+        specifier: 10.13.0
+        version: 10.13.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)
       three:
         specifier: npm:@gnsx/three@0.184.7
         version: '@gnsx/three@0.184.7'
@@ -30,6 +30,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 1.22.0
         version: 1.22.0
+      '@types/adm-zip':
+        specifier: 0.5.8
+        version: 0.5.8
       '@types/jsdom':
         specifier: 21.1.7
         version: 21.1.7
@@ -48,6 +51,9 @@ importers:
       '@typescript-eslint/utils':
         specifier: 8.38.0
         version: 8.38.0(eslint@9.24.0(jiti@2.7.0))(typescript@5.8.3)
+      adm-zip:
+        specifier: 0.5.17
+        version: 0.5.17
       ajv:
         specifier: 8.20.0
         version: 8.20.0
@@ -508,8 +514,8 @@ packages:
   '@gnsx/genesys.harness@0.0.6':
     resolution: {integrity: sha512-Y2+3BL8AR0xDVp1oZ0M7hZACJ69t5Ncel5P5EwYGrZcvxDPDqnEbjgDyrssHQKYmp5J6osy+8dWlIALV1LoZhA==}
 
-  '@gnsx/genesys.js@10.12.0':
-    resolution: {integrity: sha512-k2ZjEigd7U6xs0Kf5PLcGcHVg/WXvbWO3kNcsagxYAHEw++LX4Bs6dKgGDW4hLMOvzXgqqys1fzCQViz9r9oew==}
+  '@gnsx/genesys.js@10.13.0':
+    resolution: {integrity: sha512-jUktdyEzWC6zqaZquM/57sDqYkmsZZRo5CEIZQy4hH+opihQyd5Vw4LccR/eNGrhsher5fojLGfdrezhiCe46Q==}
 
   '@gnsx/three-types@0.184.4':
     resolution: {integrity: sha512-o51cce6SkiFPl/ixXc9yyhXH+nqjkHaSq75oZ6GR9e/Q2RProLZ2OUNDqYbtOmnraCX+3oEVGuJbCsJkaQFFzQ==}
@@ -885,6 +891,9 @@ packages:
   '@tweenjs/tween.js@25.0.0':
     resolution: {integrity: sha512-XKLA6syeBUaPzx4j3qwMqzzq+V4uo72BnlbOjmuljLrRqdsd3qnzvZZoxvMHZ23ndsRS4aufU6JOZYpCbU6T1A==}
 
+  '@types/adm-zip@0.5.8':
+    resolution: {integrity: sha512-RVVH7QvZYbN+ihqZ4kX/dMiowf6o+Jk1fNwiSdx0NahBJLU787zkULhGhJM8mf/obmLGmgdMM0bXsQTmyfbR7Q==}
+
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -987,6 +996,10 @@ packages:
     resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  adm-zip@0.5.17:
+    resolution: {integrity: sha512-+Ut8d9LLqwEvHHJl1+PIHqoyDxFgVN847JTVM3Izi3xHDWPE4UtzzXysMZQs64DMcrJfBeS/uoEP4AD3HQHnQQ==}
+    engines: {node: '>=12.0'}
 
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
@@ -2816,7 +2829,7 @@ snapshots:
 
   '@gnsx/genesys.harness@0.0.6': {}
 
-  '@gnsx/genesys.js@10.12.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)':
+  '@gnsx/genesys.js@10.13.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@msgpack/msgpack': 3.1.3
@@ -3143,6 +3156,10 @@ snapshots:
 
   '@tweenjs/tween.js@25.0.0': {}
 
+  '@types/adm-zip@0.5.8':
+    dependencies:
+      '@types/node': 24.12.0
+
   '@types/estree@1.0.8': {}
 
   '@types/jsdom@21.1.7':
@@ -3269,6 +3286,8 @@ snapshots:
       acorn: 8.16.0
 
   acorn@8.16.0: {}
+
+  adm-zip@0.5.17: {}
 
   agent-base@7.1.4: {}
 

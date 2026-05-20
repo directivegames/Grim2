@@ -12,13 +12,15 @@
     "validate-prefabs": "pnpm exec tsx ./scripts/genesys/validate-prefabs.ts",
     "install-developer-skills": "pnpm exec tsx ./scripts/genesys/install-developer-skills.ts",
     "apply-lightmaps": "pnpm exec tsx ./tools/apply-lightmaps-cli.ts",
-    "add-uv2": "pnpm exec tsx ./tools/add-uv2-to-glbs-cli.ts"
+    "add-uv2": "pnpm exec tsx ./tools/add-uv2-to-glbs-cli.ts",
+    "check-pack-isolation": "pnpm exec tsx ./scripts/genesys/check-pack-isolation.ts",
+    "export-pack": "pnpm exec tsx ./scripts/genesys/export-pack.ts"
   },
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
     "@gnsx/genesys.harness": "latest",
-    "@gnsx/genesys.js": "10.12.0",
+    "@gnsx/genesys.js": "10.13.0",
     "three": "npm:@gnsx/three@0.184.7"
   },
   "pnpm": {
@@ -53,7 +55,9 @@
     "vite-plugin-node-polyfills": "0.24.0",
     "ws": "8.18.2",
     "zod": "3.25.76",
-    "zod-to-json-schema": "3.25.2"
+    "zod-to-json-schema": "3.25.2",
+    "@types/adm-zip": "0.5.8",
+    "adm-zip": "0.5.17"
   },
   "name": "Grim",
   "version": "0.0.1"

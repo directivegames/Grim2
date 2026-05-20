@@ -18,6 +18,8 @@ import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { WeaponSlashComponent } from '../components/vfx/WeaponSlashComponent.js';
 import { WeaponSlashParticleComponent } from '../components/vfx/WeaponSlashParticleComponent.js';
+import { WeaponSlashSpriteComponent } from '../components/vfx/WeaponSlashSpriteComponent.js';
+import { WeaponSwingLightComponent } from '../components/vfx/WeaponSwingLightComponent.js';
 import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../components/vfx/WeaponSummonVFXComponent.js';
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
@@ -79,9 +81,6 @@ const WIND_UP_DURATION = 0.05;
 /** Gap between combo swings so each hit reads as its own beat. */
 const RECOVERY_DURATION = 0.07;
 
-/** Freeze swing timeline briefly on connect (ms). */
-const HIT_STOP_MS = 42;
-
 /** How quickly the visible blade rotation catches up to the hit arc (rad/s factor). */
 const BLADE_LAG_SPEED = 11;
 
@@ -123,6 +122,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _sceneWeaponActor: ENGINE.Actor | null = null;
   private _slashComponent:    WeaponSlashComponent | null = null;
   private _slashParticles:    WeaponSlashParticleComponent | null = null;
+  private _slashSprite:       WeaponSlashSpriteComponent | null = null;
+  private _swingLight:        WeaponSwingLightComponent | null = null;
   private _summonVFX:         WeaponSummonVFXComponent | null = null;
   private _bloodSplatter:     BloodSplatterComponent | null = null;
   private _boomerangTrail:    BoomerangTrailComponent | null = null;
@@ -150,9 +151,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   /** performance.now() when recovery ends and another swing may start. */
   private _recoveryEndMs = 0;
-
-  /** Extends swing timeline on hit-stop (ms). */
-  private _attackTimeOffsetMs = 0;
 
   /** Visual orbit angle — lags behind hit arc during swing. */
   private _displayOrbitAngle = 0;
@@ -272,6 +270,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._slashParticles = WeaponSlashParticleComponent.create();
     this.rootComponent.add(this._slashParticles);
 
+    this._slashSprite = WeaponSlashSpriteComponent.create();
+    this.rootComponent.add(this._slashSprite);
+
+    this._swingLight = WeaponSwingLightComponent.create();
+    this.rootComponent.add(this._swingLight);
+
     this._summonVFX = WeaponSummonVFXComponent.create();
     this.rootComponent.add(this._summonVFX);
 
@@ -336,7 +340,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     if (this._meleePhase === 'recovery') return;
 
-    const swingElapsedSec = (nowMs - this._swingStartMs - this._attackTimeOffsetMs) / 1000;
+    const swingElapsedSec = (nowMs - this._swingStartMs) / 1000;
     const duration = ATTACK_DURATIONS[this._comboIndex];
     const rawProgress = Math.min(swingElapsedSec / duration, 1);
     const progress = heavySwingProgress(rawProgress);
@@ -348,6 +352,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const bladePitch = Math.sin(progress * Math.PI) * BLADE_PITCH_MAX;
     this._updateWeaponPose(player, bladePitch);
+    this._swingLight?.followBlade(this._weaponStart, this._weaponEnd);
+    this._slashSprite?.updateSwing(
+      rawProgress,
+      this._displayOrbitAngle,
+      this._weaponStart,
+      this._weaponEnd,
+      bladePitch,
+    );
 
     this._slashComponent?.addSample(
       this._scratchPlayerPos,
@@ -496,7 +508,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._orbitAngle            = this._attackStartAngle;
     this._displayOrbitAngle     = this._attackStartAngle;
     this._attackStartMs         = performance.now();
-    this._attackTimeOffsetMs    = 0;
     this._meleePhase            = 'windup';
     this._hasPrevWeaponPos      = false;
     this._queuedMelee           = false;
@@ -515,6 +526,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     this._setWeaponVisible(true);
     player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    this._swingLight?.beginSwing(this._comboIndex === AttackIndex.Three);
+    if (this._comboIndex !== AttackIndex.Three) {
+      this._slashSprite?.beginSwing(
+        this._attackStartAngle,
+        this._attackEndAngle,
+        false,
+      );
+    }
     this._slashComponent?.startTrail();
     this._slashParticles?.burstArc(
       this._scratchPlayerPos,
@@ -546,6 +565,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _finishSwing(_player: ENGINE.Pawn): void {
     this._comboIndex = ((this._comboIndex + 1) % 3) as AttackIndex;
     this._setWeaponVisible(false);
+    this._swingLight?.endSwing();
+    this._slashSprite?.endSwing();
     this._slashComponent?.stopTrail();
     this._meleePhase = 'recovery';
     this._recoveryEndMs = performance.now() + RECOVERY_DURATION * 1000;
@@ -891,8 +912,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     if (player instanceof IsometricPlayerPawn) {
       player.triggerScreenShake(0.22, 0.34);
     }
-
-    this._attackTimeOffsetMs += HIT_STOP_MS;
   }
 
   // ── Cleanup ────────────────────────────────────────────────────────────────

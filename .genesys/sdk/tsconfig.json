@@ -27,11 +27,14 @@
     "noEmit": true,
     "types": [
       "node"
-    ]
+    ],
+    "baseUrl": "../..",
+    "paths": {}
   },
   "include": [
     "../../src/**/*",
     "../../scripts/**/*",
-    "../../vite.config.ts"
+    "../../vite.config.ts",
+    "../../packs/*/src/**/*"
   ]
 }

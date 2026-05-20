@@ -1,7 +1,7 @@
 /**
  * FistOfAnnoyanceActor — Giant fist impact effect.
  *
- * Uses pure Three.js geometry with additive blending (same pattern as DustTrailComponent).
+ * Impact smoke: engine VFX (explosion-cloud.vfx.json). Debris: rockdebris.png billboards.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -12,12 +12,7 @@ import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { slomoManager } from './KillStreakTracker.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
-import {
-  type BillboardSmokePuff,
-  loadSmokeTexture,
-  spawnBillboardSmokeBurst,
-  tickBillboardSmokePuffs,
-} from '../components/vfx/BillboardSmokePuffs.js';
+import { loadSmokeTexture } from '../components/vfx/BillboardSmokePuffs.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -34,24 +29,21 @@ const RETRACT_DURATION = 0.20;
 
 const FIST_HIT_RADIUS = 2.4;
 const ONE_HIT_DAMAGE = 99999;
-const DEBRIS_COUNT = 26;
-const DEBRIS_LIFETIME = 1.6;
+const VFX_CHUNK_COUNT = 26;
+const VFX_CHUNK_LIFETIME = 1.65;
 const GRAVITY = 9.5;
-
-const RISING_DUST_INTERVAL = 0.05;
 
 const FLASH_LIFETIME = 0.35;
 const SHOCKWAVE_LIFETIME = 0.5;
+const EXPLOSION_EMIT_DURATION = 1.0;
 
-// ─── Geometry ────────────────────────────────────────────────────────────────
+// ─── Geometry / assets ───────────────────────────────────────────────────────
 
-const DEBRIS_PLANE_GEO = new THREE.PlaneGeometry(1, 1);
+const DEBRIS_GEO = new THREE.PlaneGeometry(0.98, 0.98);
 const FLASH_GEO = new THREE.SphereGeometry(1, 16, 12);
 const SHOCKWAVE_GEO = new THREE.TorusGeometry(1, 0.035, 6, 32);
 
-const DUST_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.png';
-/** Texture from `explosion-cloud.vfx.json` (CloudChunky). */
-const EXPLOSION_CLOUD_TEXTURE_PATH = '@project/assets/textures/vfx/CloudChunky.png';
+const EXPLOSION_CLOUD_VFX = '@project/assets/VFX/explosion-cloud.vfx.json';
 const ROCK_DEBRIS_TEXTURE_PATH = '@project/assets/VFX/rockdebris.png';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -61,7 +53,7 @@ type FistPhase = 'rising' | 'paused' | 'retracting' | 'finishing' | 'done';
 interface RockDebris {
   mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
   velocity: THREE.Vector3;
-  spin: number;
+  spin: THREE.Vector3;
   elapsed: number;
 }
 
@@ -91,6 +83,7 @@ function easeOutCubic(t: number): number { return 1 - Math.pow(1 - t, 3); }
 export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
   private _sceneFistActor: ENGINE.Actor | null = null;
+  private _explosionVfx: ENGINE.VFXComponent | null = null;
   private _phase: FistPhase = 'rising';
   private _phaseElapsed = 0;
   private _phaseStartMs = 0;
@@ -98,19 +91,22 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private _hasHit = false;
   private _vfxSpawned = false;
   private _cinematicReturned = false;
+  private _explosionEmitTimer = -1;
 
-  private readonly _debris: RockDebris[] = [];
+  private readonly _rockDebris: RockDebris[] = [];
   private readonly _flashes: ImpactFlash[] = [];
   private readonly _shockwaves: Shockwave[] = [];
-  private readonly _smokePuffs: BillboardSmokePuff[] = [];
-  private _dustTexture: THREE.Texture | null = null;
-  private _explosionCloudTexture: THREE.Texture | null = null;
   private _rockDebrisTexture: THREE.Texture | null = null;
-  private _risingDustTimer = 0;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
     super.initialize({ ...options, rootComponent: root });
+
+    this._explosionVfx = ENGINE.VFXComponent.create({
+      vfxPath: EXPLOSION_CLOUD_VFX,
+      autoStart: false,
+    });
+    this.rootComponent.add(this._explosionVfx);
   }
 
   protected override doBeginPlay(): void {
@@ -140,6 +136,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._vfxSpawned = false;
     this._cinematicReturned = false;
 
+    this._explosionEmitTimer = -1;
     this._setFistPosition(this._groundY + FIST_START_Y);
 
     const player = world.getFirstPlayerPawn();
@@ -148,13 +145,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     }
 
     slomoManager.setSlomo(world, SLOMO_VALUE, FIST_SLOMO_PRIORITY);
-    void Promise.all([
-      loadSmokeTexture(DUST_TEXTURE_PATH),
-      loadSmokeTexture(EXPLOSION_CLOUD_TEXTURE_PATH),
-      loadSmokeTexture(ROCK_DEBRIS_TEXTURE_PATH),
-    ]).then(([dust, cloud, rock]) => {
-      this._dustTexture = dust;
-      this._explosionCloudTexture = cloud;
+    void loadSmokeTexture(ROCK_DEBRIS_TEXTURE_PATH).then((rock) => {
       this._rockDebrisTexture = rock;
     });
   }
@@ -164,7 +155,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     if (this._phase === 'done' || !this._sceneFistActor) return;
 
     this._phaseElapsed = (performance.now() - this._phaseStartMs) / 1000;
-    tickBillboardSmokePuffs(this._smokePuffs, deltaTime);
+    this._tickExplosionEmit(deltaTime);
 
     switch (this._phase) {
       case 'rising': {
@@ -176,16 +167,11 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         );
         this._setFistPosition(y);
 
-        this._risingDustTimer += deltaTime;
-        if (this._risingDustTimer >= RISING_DUST_INTERVAL) {
-          this._risingDustTimer = 0;
-          void this._spawnRisingDustPuff();
-        }
-
         if (!this._vfxSpawned && t >= 0.5) {
           void this._spawnGroundBreakVFX();
           this._spawnImpactFlash();
           this._spawnShockwave();
+          this._triggerExplosionCloud();
           this._vfxSpawned = true;
           const player = this.getWorld()?.getFirstPlayerPawn();
           if (player && (player as unknown as { triggerScreenShake?: (a: number, d: number) => void }).triggerScreenShake) {
@@ -243,10 +229,10 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
         this._updateVFX(deltaTime);
 
-        const vfxFinished = this._debris.length === 0 &&
+        const vfxFinished = this._rockDebris.length === 0 &&
           this._flashes.length === 0 &&
           this._shockwaves.length === 0 &&
-          this._smokePuffs.length === 0;
+          this._explosionEmitTimer < 0;
 
         if (vfxFinished) {
           this._phase = 'done';
@@ -308,6 +294,22 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     HitNumberUI.getInstance(world).showDamage(ONE_HIT_DAMAGE, pos);
   }
 
+  private _triggerExplosionCloud(): void {
+    if (!this._explosionVfx) return;
+    this._explosionVfx.position.set(0, 0.12, 0);
+    this._explosionVfx.startEmitting();
+    this._explosionEmitTimer = EXPLOSION_EMIT_DURATION;
+  }
+
+  private _tickExplosionEmit(deltaTime: number): void {
+    if (this._explosionEmitTimer < 0) return;
+    this._explosionEmitTimer -= deltaTime;
+    if (this._explosionEmitTimer <= 0) {
+      this._explosionEmitTimer = -1;
+      this._explosionVfx?.stopEmitting();
+    }
+  }
+
   private _spawnImpactFlash(): void {
     const world = this.getWorld();
     if (!world) return;
@@ -359,35 +361,10 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._shockwaves.push({ mesh, elapsed: 0 });
   }
 
-  private async _spawnRisingDustPuff(): Promise<void> {
-    const world = this.getWorld();
-    if (!world) return;
-
-    if (!this._dustTexture) {
-      this._dustTexture = await loadSmokeTexture(DUST_TEXTURE_PATH);
+  private async _ensureDebrisTexture(): Promise<void> {
+    if (!this._rockDebrisTexture) {
+      this._rockDebrisTexture = await loadSmokeTexture(ROCK_DEBRIS_TEXTURE_PATH);
     }
-
-    const origin = new THREE.Vector3();
-    if (this._sceneFistActor) {
-      this._sceneFistActor.rootComponent.getWorldPosition(origin);
-    } else {
-      origin.set(this.rootComponent.position.x, this._groundY + 0.05, this.rootComponent.position.z);
-    }
-
-    spawnBillboardSmokeBurst(world, origin, this._dustTexture, this._smokePuffs, {
-      count: 4,
-      texturePath: DUST_TEXTURE_PATH,
-      lifetime: 1.1,
-      hue: [0.08, 0.12],
-      saturation: [0.4, 0.55],
-      lightness: [0.55, 0.72],
-      maxScale: [1.1, 2.0],
-      horizontalSpeed: [0.15, 0.55],
-      verticalSpeed: [1.0, 2.0],
-      peakOpacity: 0.75,
-      size: 1.05,
-      blending: THREE.AdditiveBlending,
-    });
   }
 
   private async _spawnGroundBreakVFX(): Promise<void> {
@@ -400,113 +377,63 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       this.rootComponent.position.z,
     );
 
-    if (!this._explosionCloudTexture) {
-      this._explosionCloudTexture = await loadSmokeTexture(EXPLOSION_CLOUD_TEXTURE_PATH);
-    }
-    if (!this._dustTexture) {
-      this._dustTexture = await loadSmokeTexture(DUST_TEXTURE_PATH);
-    }
-    if (!this._rockDebrisTexture) {
-      this._rockDebrisTexture = await loadSmokeTexture(ROCK_DEBRIS_TEXTURE_PATH);
-    }
+    await this._ensureDebrisTexture();
 
-    // Main explosion cloud (CloudChunky — matches explosion-cloud.vfx.json)
-    spawnBillboardSmokeBurst(world, origin, this._explosionCloudTexture, this._smokePuffs, {
-      count: 14,
-      texturePath: EXPLOSION_CLOUD_TEXTURE_PATH,
-      lifetime: 1.85,
-      hue: [0.07, 0.11],
-      saturation: [0.18, 0.32],
-      lightness: [0.48, 0.62],
-      maxScale: [2.8, 4.8],
-      horizontalSpeed: [0.4, 1.4],
-      verticalSpeed: [0.9, 2.4],
-      peakOpacity: 0.88,
-      size: 2.1,
-      blending: THREE.NormalBlending,
-    });
-
-    // Fine dust ring (DustPuffSoft)
-    spawnBillboardSmokeBurst(world, origin, this._dustTexture, this._smokePuffs, {
-      count: 20,
-      texturePath: DUST_TEXTURE_PATH,
-      lifetime: 1.35,
-      hue: [0.07, 0.13],
-      saturation: [0.45, 0.6],
-      lightness: [0.58, 0.75],
-      maxScale: [1.6, 2.8],
-      horizontalSpeed: [1.4, 4.0],
-      verticalSpeed: [0.5, 1.4],
-      peakOpacity: 0.9,
-      size: 1.25,
-      blending: THREE.AdditiveBlending,
-    });
-
-    this._spawnRockDebris(world, origin);
-  }
-
-  private _spawnRockDebris(world: ENGINE.World, origin: THREE.Vector3): void {
-    if (!this._rockDebrisTexture) return;
-
-    for (let i = 0; i < DEBRIS_COUNT; i++) {
-      const size = randomBetween(0.12, 0.42);
+    for (let i = 0; i < VFX_CHUNK_COUNT; i++) {
+      const scale = randomBetween(0.55, 1.35);
       const mat = new THREE.MeshBasicMaterial({
-        map: this._rockDebrisTexture,
-        alphaMap: this._rockDebrisTexture,
-        color: new THREE.Color().setHSL(
-          randomBetween(0.06, 0.11),
-          randomBetween(0.2, 0.45),
-          randomBetween(0.55, 0.78),
+        map: this._rockDebrisTexture ?? undefined,
+        color: this._rockDebrisTexture ? 0xffffff : new THREE.Color().setHSL(
+          randomBetween(0.06, 0.12),
+          randomBetween(0.35, 0.65),
+          randomBetween(0.22, 0.42),
         ),
         transparent: true,
         opacity: 1,
-        depthWrite: false,
-        blending: THREE.NormalBlending,
+        depthWrite: true,
         side: THREE.DoubleSide,
-        alphaTest: 0.04,
+        blending: THREE.NormalBlending,
+        alphaTest: this._rockDebrisTexture ? 0.08 : 0,
       });
-
-      const mesh = new THREE.Mesh(DEBRIS_PLANE_GEO, mat);
-      mesh.scale.setScalar(size * randomBetween(0.85, 1.35));
+      const mesh = new THREE.Mesh(DEBRIS_GEO, mat);
+      mesh.scale.setScalar(scale * randomBetween(0.85, 1.25));
       mesh.position.copy(origin);
       mesh.position.y += randomBetween(0, 0.15);
-      mesh.rotation.set(-Math.PI / 2, 0, randomBetween(0, Math.PI * 2));
+      mesh.rotation.set(-Math.PI / 2, randomBetween(0, Math.PI * 2), 0);
       world.scene.add(mesh);
 
       const angle = Math.random() * Math.PI * 2;
-      const speed = randomBetween(4.0, 11.5);
+      const speed = randomBetween(5, 13);
 
-      this._debris.push({
+      this._rockDebris.push({
         mesh,
         velocity: new THREE.Vector3(
           Math.cos(angle) * speed,
-          randomBetween(3.0, 8.5),
+          randomBetween(4, 11),
           Math.sin(angle) * speed,
         ),
-        spin: randomBetween(-9, 9),
+        spin: new THREE.Vector3(0, randomBetween(-12, 12), 0),
         elapsed: 0,
       });
     }
   }
 
   private _updateVFX(deltaTime: number): void {
-    for (let i = this._debris.length - 1; i >= 0; i--) {
-      const d = this._debris[i];
-      d.elapsed += deltaTime;
-      d.velocity.y -= GRAVITY * deltaTime;
-      d.mesh.position.addScaledVector(d.velocity, deltaTime);
-      d.mesh.rotation.z += d.spin * deltaTime;
-      d.mesh.material.opacity = Math.max(0, 1 - d.elapsed / DEBRIS_LIFETIME);
-      if (d.elapsed >= DEBRIS_LIFETIME) {
-        d.mesh.material.dispose();
-        d.mesh.removeFromParent();
-        this._debris.splice(i, 1);
+    for (let i = this._rockDebris.length - 1; i >= 0; i--) {
+      const c = this._rockDebris[i]!;
+      c.elapsed += deltaTime;
+      c.velocity.y -= GRAVITY * deltaTime;
+      c.mesh.position.addScaledVector(c.velocity, deltaTime);
+      c.mesh.rotation.y += c.spin.y * deltaTime;
+      if (c.elapsed >= VFX_CHUNK_LIFETIME) {
+        c.mesh.material.dispose();
+        c.mesh.removeFromParent();
+        this._rockDebris.splice(i, 1);
       }
     }
 
-    // Update flashes
     for (let i = this._flashes.length - 1; i >= 0; i--) {
-      const f = this._flashes[i];
+      const f = this._flashes[i]!;
       f.elapsed += deltaTime;
       const progress = Math.min(f.elapsed / FLASH_LIFETIME, 1);
       const scale = THREE.MathUtils.lerp(0.3, 2.5, easeOutCubic(progress));
@@ -519,9 +446,8 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       }
     }
 
-    // Update shockwaves
     for (let i = this._shockwaves.length - 1; i >= 0; i--) {
-      const s = this._shockwaves[i];
+      const s = this._shockwaves[i]!;
       s.elapsed += deltaTime;
       const progress = Math.min(s.elapsed / SHOCKWAVE_LIFETIME, 1);
       const scale = THREE.MathUtils.lerp(0.2, 3.5, easeOutCubic(progress));
@@ -536,14 +462,15 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   }
 
   private _cleanupVFX(): void {
-    for (const d of this._debris) { d.mesh.material.dispose(); d.mesh.removeFromParent(); }
-    for (const s of this._smokePuffs) { s.mesh.material.dispose(); s.mesh.removeFromParent(); }
-    this._smokePuffs.length = 0;
+    this._explosionEmitTimer = -1;
+    this._explosionVfx?.stopEmitting();
+    for (const c of this._rockDebris) { c.mesh.material.dispose(); c.mesh.removeFromParent(); }
     for (const f of this._flashes) { f.mesh.material.dispose(); f.mesh.removeFromParent(); }
     for (const s of this._shockwaves) { s.mesh.material.dispose(); s.mesh.removeFromParent(); }
-    this._debris.length = 0;
+    this._rockDebris.length = 0;
     this._flashes.length = 0;
     this._shockwaves.length = 0;
+    this._rockDebrisTexture = null;
   }
 
   protected override doEndPlay(): void {

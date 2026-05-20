@@ -6,6 +6,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import * as THREE from 'three';
 
 // Must run before any actor ticks — harness bundle may omit patched `NpcMovementComponent` from `node_modules`.
+import './apply-actor-movement-predictor-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
 import './apply-grass-shader-engine-patch.js';
 import './auto-imports.js';
@@ -102,7 +103,10 @@ class MyGame extends ENGINE.BaseGameLoop {
   public override getDefaultRendererOptions(): ENGINE.RendererOptions {
     return {
       webgl: { powerPreference: 'high-performance', antialias: false },
-      webgpu: { powerPreference: 'high-performance', antialias: false },
+      webgpu: {
+        powerPreference: 'high-performance',
+        antialias: false,
+      },
     };
   }
 
