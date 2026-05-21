@@ -32,21 +32,19 @@ const _pos = new THREE.Vector3();
 const _vel = new THREE.Vector3();
 const _tangent = new THREE.Vector3();
 const _outward = new THREE.Vector3();
+const _streakColorScratch = new THREE.Color();
+const _glowColorScratch = new THREE.Color(0.55, 0.2, 0.95);
 
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
 }
 
-function slashStreakColor(tNorm: number): THREE.Color {
-  return new THREE.Color(
+function applySlashStreakColor(tNorm: number, out: THREE.Color): THREE.Color {
+  return out.setRGB(
     THREE.MathUtils.lerp(0.75, 0.95, tNorm),
     THREE.MathUtils.lerp(0.15, 1.0, tNorm),
     1.0,
   );
-}
-
-function slashGlowColor(): THREE.Color {
-  return new THREE.Color(0.55, 0.2, 0.95);
 }
 
 interface SlashParticle {
@@ -73,6 +71,7 @@ function _orientStreak(mesh: THREE.Mesh, tangent: THREE.Vector3): void {
 @ENGINE.GameClass()
 export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
   private readonly _pool: SlashParticle[] = [];
+  private readonly _free: SlashParticle[] = [];
   private readonly _active: SlashParticle[] = [];
   private _poolBuilt = false;
 
@@ -90,6 +89,7 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
     for (const p of this._active) {
       p.mesh.visible = false;
       p.active = false;
+      this._free.push(p);
     }
     this._active.length = 0;
     for (const p of this._pool) {
@@ -97,6 +97,7 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
       p.mesh.visible = false;
       p.active = false;
     }
+    this._free.length = 0;
     super.endPlay();
   }
 
@@ -152,7 +153,8 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
         .addScaledVector(_outward, OUTWARD_SPEED * randomBetween(0.4, 1.0));
       _vel.y += UP_SPEED * randomBetween(0.3, 1.0);
 
-      this._spawnParticle(p, _pos, _vel, slashStreakColor(t), STREAK_LIFETIME, false);
+      applySlashStreakColor(t, _streakColorScratch);
+      this._spawnParticle(p, _pos, _vel, _streakColorScratch, STREAK_LIFETIME, false);
       _orientStreak(p.mesh, _tangent);
 
       const lenScale = randomBetween(0.75, 1.0);
@@ -185,7 +187,7 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
         .addScaledVector(_outward, OUTWARD_SPEED * 0.35);
       _vel.y += UP_SPEED * 0.5;
 
-      this._spawnParticle(p, _pos, _vel, slashGlowColor(), GLOW_LIFETIME, true);
+      this._spawnParticle(p, _pos, _vel, _glowColorScratch, GLOW_LIFETIME, true);
       p.mesh.scale.setScalar(randomBetween(0.6, 1.0));
     }
   }
@@ -209,22 +211,21 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
       mesh.visible = false;
       mesh.frustumCulled = false;
 
-      this._pool.push({
+      const particle: SlashParticle = {
         mesh,
         elapsed: 0,
         velocity: new THREE.Vector3(),
         lifetime: STREAK_LIFETIME,
         active: false,
         isGlow,
-      });
+      };
+      this._pool.push(particle);
+      this._free.push(particle);
     }
   }
 
   private _acquire(): SlashParticle | null {
-    for (const p of this._pool) {
-      if (!p.active) return p;
-    }
-    return null;
+    return this._free.pop() ?? null;
   }
 
   private _spawnParticle(
@@ -272,6 +273,7 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
       if (progress >= 1) {
         p.mesh.visible = false;
         p.active = false;
+        this._free.push(p);
         list[i] = list[list.length - 1]!;
         list.pop();
       }

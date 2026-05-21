@@ -37,6 +37,8 @@ const NEW_ZOMBIE_MATERIAL_URL =
 
 const CAPSULE_RADIUS = 0.35;
 const CAPSULE_HEIGHT = 1.75;
+/** Blob shadow sits on the actor root at foot height (not on the body-center pivot). */
+const BLOB_SHADOW_FEET_Y = 0.02;
 const NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE = 0.82;
 
 const ATTACK_ZONE_HYSTERESIS_MARGIN = 0.38;
@@ -202,6 +204,7 @@ export class NewZombieActor extends ENGINE.Actor {
   private _ragdollGroundY = 0;
   private _ragdollLandPos: THREE.Vector3 | null = null;
   private _ragdollPivot: ENGINE.SceneComponent | null = null;
+  private _blobShadow: BlobShadowComponent | null = null;
   private _ragdollTimer = 0;
 
   /** Tuned so first ground contact aligns with end of death clip (~1s fall). */
@@ -368,13 +371,13 @@ export class NewZombieActor extends ENGINE.Actor {
     (npc as unknown as { pathFollowingAccuracy: number }).pathFollowingAccuracy = NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY;
     (npc as unknown as { actorFollowingDistance: number }).actorFollowingDistance = NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE;
 
-    const shadow = BlobShadowComponent.create({ radius: 0.45, opacity: 0.3 });
+    this._blobShadow = BlobShadowComponent.create({ radius: 0.45, opacity: 0.3 });
 
-    // Hierarchy: root (capsule) -> pivot (at body center) -> visual + anim + shadow
+    // Hierarchy: root (capsule) -> pivot (body center) -> visual + anim; shadow on root at feet
     pivot.add(visual);
     pivot.add(anim);
-    pivot.add(shadow);
     root.add(pivot);
+    root.add(this._blobShadow);
 
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
   }
@@ -388,6 +391,8 @@ export class NewZombieActor extends ENGINE.Actor {
       visual.castShadow = false;
       visual.receiveShadow = false;
     }
+
+    this._ensureBlobShadowAtFeet();
 
     this._tickOffset = Math.floor(Math.random() * 100);
 
@@ -648,6 +653,51 @@ export class NewZombieActor extends ENGINE.Actor {
     this._idleWalkDebounceTimer = 0;
   }
 
+  /** Scene zombies serialize the blob on the pivot at body height — move it to the feet on root. */
+  private _ensureBlobShadowAtFeet(): void {
+    const shadow = this._blobShadow ?? this.getComponent(BlobShadowComponent);
+    if (!shadow) {
+      return;
+    }
+    this._blobShadow = shadow;
+
+    const pivot = this._ragdollPivot;
+    if (pivot && shadow.parent === pivot) {
+      pivot.remove(shadow);
+      this.rootComponent.add(shadow);
+    }
+
+    shadow.position.set(0, BLOB_SHADOW_FEET_Y, 0);
+    shadow.visible = !this._deathSequenceStarted;
+  }
+
+  private _hideBlobShadow(): void {
+    const shadow = this._blobShadow ?? this.getComponent(BlobShadowComponent);
+    if (!shadow) {
+      return;
+    }
+    this._blobShadow = shadow;
+    shadow.visible = false;
+  }
+
+  private _showBlobShadow(): void {
+    if (this._deathSequenceStarted) {
+      return;
+    }
+    const shadow = this._blobShadow ?? this.getComponent(BlobShadowComponent);
+    if (!shadow) {
+      return;
+    }
+    this._blobShadow = shadow;
+    this._ensureBlobShadowAtFeet();
+
+    shadow.visible = true;
+    shadow.traverse(obj => {
+      obj.visible = true;
+      obj.layers.enable(0);
+    });
+  }
+
   /**
    * PERFORMANCE: Shadow casting disabled entirely for performance.
    * Shadows were causing significant frame drops on mid-range GPUs.
@@ -721,6 +771,8 @@ export class NewZombieActor extends ENGINE.Actor {
   public override handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
+
+    this._hideBlobShadow();
 
     zombieSpatialManager.unregisterZombie(this);
 
@@ -886,21 +938,24 @@ export class NewZombieActor extends ENGINE.Actor {
    * Immediately enters chase mode (aggro = true).
    */
   public softReset(position: THREE.Vector3): void {
-    // Unhide
+    // Clear death before unhide so blob shadow restore is allowed
+    this._deathSequenceStarted = false;
+    this._deathPosition = null;
+    this._ragdollLandPos = null;
+    this._ragdollTimer = 0;
+    this._ragdollVelocity.set(0, 0, 0);
+
     this.setHiddenInGame(false);
 
     // Move to spawn position
     this.rootComponent.position.copy(position);
     this.rootComponent.updateMatrixWorld();
 
-    // Reset all death/aggro state
-    this._deathSequenceStarted = false;
+    // Reset aggro / BT state
     this._hasAggro = true;
     this._attackZoneLatched = false;
     this._btBranch = 'chase';
     this._hitAnimEndTime = -Infinity;
-    this._deathPosition = null;
-    this._ragdollLandPos = null;
     this._consecutiveStuckChecks = 0;
     this._stuckCheckPosition.copy(position);
     this._animStateChangeTimer = 0;
@@ -971,6 +1026,8 @@ export class NewZombieActor extends ENGINE.Actor {
       this._animationInitialized = true;
     }
     this._startupComplete = true;
+
+    this._showBlobShadow();
   }
 
   /**
@@ -997,6 +1054,10 @@ export class NewZombieActor extends ENGINE.Actor {
         obj.layers.enable(0);
       }
     });
+
+    if (!hidden && !this._deathSequenceStarted) {
+      this._showBlobShadow();
+    }
   }
 
   /**

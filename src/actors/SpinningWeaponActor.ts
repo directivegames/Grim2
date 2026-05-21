@@ -18,7 +18,6 @@ import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { WeaponSlashComponent } from '../components/vfx/WeaponSlashComponent.js';
 import { WeaponSlashParticleComponent } from '../components/vfx/WeaponSlashParticleComponent.js';
-import { WeaponSlashSpriteComponent } from '../components/vfx/WeaponSlashSpriteComponent.js';
 import { WeaponSwingLightComponent } from '../components/vfx/WeaponSwingLightComponent.js';
 import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../components/vfx/WeaponSummonVFXComponent.js';
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
@@ -73,13 +72,13 @@ const WEAPON_DAMAGE    = 25;
 const HIT_COOLDOWN     = 0.4;
 
 /** Duration (seconds) of the swing arc per combo hit (after wind-up). */
-const ATTACK_DURATIONS = [0.26, 0.24, 0.36] as const;
+const ATTACK_DURATIONS = [0.20, 0.18, 0.28] as const;
 
 /** Brief anticipation before the blade appears and moves. */
-const WIND_UP_DURATION = 0.05;
+const WIND_UP_DURATION = 0.04;
 
 /** Gap between combo swings so each hit reads as its own beat. */
-const RECOVERY_DURATION = 0.07;
+const RECOVERY_DURATION = 0.05;
 
 /** How quickly the visible blade rotation catches up to the hit arc (rad/s factor). */
 const BLADE_LAG_SPEED = 11;
@@ -122,7 +121,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _sceneWeaponActor: ENGINE.Actor | null = null;
   private _slashComponent:    WeaponSlashComponent | null = null;
   private _slashParticles:    WeaponSlashParticleComponent | null = null;
-  private _slashSprite:       WeaponSlashSpriteComponent | null = null;
   private _swingLight:        WeaponSwingLightComponent | null = null;
   private _summonVFX:         WeaponSummonVFXComponent | null = null;
   private _bloodSplatter:     BloodSplatterComponent | null = null;
@@ -184,6 +182,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _scratchPos        = new THREE.Vector3();
   private _scratchPlayerPos  = new THREE.Vector3();
   private _scratchZombiePos  = new THREE.Vector3();
+  private readonly _hitNormalScratch = new THREE.Vector3();
+  private readonly _hitLocationScratch = new THREE.Vector3();
   private _weaponStart       = new THREE.Vector3();
   private _weaponEnd         = new THREE.Vector3();
 
@@ -270,9 +270,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._slashParticles = WeaponSlashParticleComponent.create();
     this.rootComponent.add(this._slashParticles);
 
-    this._slashSprite = WeaponSlashSpriteComponent.create();
-    this.rootComponent.add(this._slashSprite);
-
     this._swingLight = WeaponSwingLightComponent.create();
     this.rootComponent.add(this._swingLight);
 
@@ -355,13 +352,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const bladePitch = Math.sin(progress * Math.PI) * BLADE_PITCH_MAX;
     this._updateWeaponPose(player, bladePitch);
     this._swingLight?.followBlade(this._weaponStart, this._weaponEnd);
-    this._slashSprite?.updateSwing(
-      rawProgress,
-      this._displayOrbitAngle,
-      this._weaponStart,
-      this._weaponEnd,
-      bladePitch,
-    );
 
     this._slashComponent?.addSample(
       this._scratchPlayerPos,
@@ -524,13 +514,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._setWeaponVisible(true);
     player.rootComponent.getWorldPosition(this._scratchPlayerPos);
     this._swingLight?.beginSwing(this._comboIndex === AttackIndex.Three);
-    if (this._comboIndex !== AttackIndex.Three) {
-      this._slashSprite?.beginSwing(
-        this._attackStartAngle,
-        this._attackEndAngle,
-        false,
-      );
-    }
     this._slashComponent?.startTrail();
     this._slashParticles?.burstArc(
       this._scratchPlayerPos,
@@ -561,7 +544,6 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._comboIndex = ((this._comboIndex + 1) % 3) as AttackIndex;
     this._setWeaponVisible(false);
     this._swingLight?.endSwing();
-    this._slashSprite?.endSwing();
     this._slashComponent?.stopTrail();
     this._meleePhase = 'recovery';
     this._recoveryRemainingSec = RECOVERY_DURATION;
@@ -609,9 +591,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._sceneWeaponActor.rootComponent.visible = visible;
 
     if (this._summonVFX) {
-      const pos = new THREE.Vector3();
-      this._sceneWeaponActor.rootComponent.getWorldPosition(pos);
-      this._summonVFX.burst(pos, visible ? APPEAR_COUNT : DISMISS_COUNT);
+      this._sceneWeaponActor.rootComponent.getWorldPosition(this._scratchPos);
+      this._summonVFX.burst(this._scratchPos, visible ? APPEAR_COUNT : DISMISS_COUNT);
     }
   }
 
@@ -740,11 +721,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
       this._hitCooldowns.set(zombie, currentTime);
 
-      // Knockback direction: away from boomerang hit position
-      const hitNormal = this._scratchZombiePos.clone().sub(this._boomerangPos).setY(0).normalize();
+      this._hitNormalScratch.copy(this._scratchZombiePos).sub(this._boomerangPos).setY(0);
+      if (this._hitNormalScratch.lengthSq() < 1e-8) {
+        this._hitNormalScratch.set(1, 0, 0);
+      } else {
+        this._hitNormalScratch.normalize();
+      }
+      this._hitLocationScratch.copy(this._scratchZombiePos);
       const hitInfo: DamageHitInfo = {
-        hitLocation: this._scratchZombiePos.clone(),
-        hitNormal,
+        hitLocation: this._hitLocationScratch,
+        hitNormal: this._hitNormalScratch,
       };
       const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
       let isFatal = false;
@@ -883,11 +869,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
     player.rootComponent.getWorldPosition(this._scratchPlayerPos);
 
-    // Knockback direction: away from player (or closest point on weapon line)
-    const hitNormal = this._scratchZombiePos.clone().sub(this._scratchPlayerPos).setY(0).normalize();
+    this._hitNormalScratch.copy(this._scratchZombiePos).sub(this._scratchPlayerPos).setY(0);
+    if (this._hitNormalScratch.lengthSq() < 1e-8) {
+      this._hitNormalScratch.set(1, 0, 0);
+    } else {
+      this._hitNormalScratch.normalize();
+    }
+    this._hitLocationScratch.copy(this._scratchZombiePos);
     const hitInfo: DamageHitInfo = {
-      hitLocation: this._scratchZombiePos.clone(),
-      hitNormal,
+      hitLocation: this._hitLocationScratch,
+      hitNormal: this._hitNormalScratch,
     };
 
     const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);

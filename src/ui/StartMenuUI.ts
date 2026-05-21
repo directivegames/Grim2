@@ -153,11 +153,6 @@ export class StartMenuUI {
       position: absolute;
       inset: 0;
       z-index: 10050;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding: clamp(12px, 4vh, 48px);
       box-sizing: border-box;
       user-select: none;
       overflow: hidden;
@@ -181,32 +176,56 @@ export class StartMenuUI {
       background: radial-gradient(ellipse at 50% 40%, transparent 0%, rgba(0,0,0,0.35) 100%);
     `;
 
-    const bar = document.createElement('div');
-    bar.style.cssText = `
-      position: relative;
+    const bottomDock = document.createElement('div');
+    bottomDock.style.cssText = `
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 50%;
       z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(10px, 2vh, 22px);
-      width: min(520px, 92vw);
-      margin-bottom: clamp(8px, 3vh, 36px);
+      justify-content: flex-end;
+      padding: clamp(8px, 2vh, 20px);
+      box-sizing: border-box;
+      pointer-events: none;
+    `;
+
+    const bar = document.createElement('div');
+    bar.style.cssText = `
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(6px, 1.1vh, 12px);
+      width: min(360px, 47vw);
+      margin-bottom: clamp(4px, 1.5vh, 16px);
+      pointer-events: auto;
+    `;
+
+    /** Matches menu element.png (~3.4:1) — height from aspect ratio; bar width is 50% of prior size. */
+    const menuButtonBase = `
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3.4 / 1;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     `;
 
     const playWrap = document.createElement('div');
     playWrap.style.cssText = `
-      position: relative;
-      width: 100%;
-      min-height: clamp(52px, 12vh, 76px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      ${menuButtonBase}
       cursor: not-allowed;
       transition: filter 0.35s ease, opacity 0.35s ease, transform 0.25s ease;
     `;
     if (this._resolvedPanelUrl) {
       playWrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
-      playWrap.style.backgroundSize = '100% 100%';
+      playWrap.style.backgroundSize = '100% auto';
       playWrap.style.backgroundRepeat = 'no-repeat';
       playWrap.style.backgroundPosition = 'center';
     }
@@ -216,8 +235,8 @@ export class StartMenuUI {
     playLabel.style.cssText = `
       font-family: Montserrat, system-ui, sans-serif;
       font-weight: 800;
-      font-size: clamp(1.15rem, 4.2vw, 1.65rem);
-      letter-spacing: 0.22em;
+      font-size: clamp(0.7rem, 1.9vw, 0.95rem);
+      letter-spacing: 0.2em;
       color: rgba(200, 210, 220, 0.55);
       text-shadow: 0 1px 2px rgba(0,0,0,0.9);
       pointer-events: none;
@@ -227,18 +246,13 @@ export class StartMenuUI {
 
     const quitWrap = document.createElement('div');
     quitWrap.style.cssText = `
-      position: relative;
-      width: 100%;
-      min-height: clamp(48px, 10vh, 68px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      ${menuButtonBase}
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.2s ease;
     `;
     if (this._resolvedPanelUrl) {
       quitWrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
-      quitWrap.style.backgroundSize = '100% 100%';
+      quitWrap.style.backgroundSize = '100% auto';
       quitWrap.style.backgroundRepeat = 'no-repeat';
       quitWrap.style.backgroundPosition = 'center';
       quitWrap.style.filter = 'brightness(0.82)';
@@ -248,10 +262,11 @@ export class StartMenuUI {
     quitLabel.style.cssText = `
       font-family: Montserrat, system-ui, sans-serif;
       font-weight: 700;
-      font-size: clamp(0.95rem, 3.5vw, 1.25rem);
-      letter-spacing: 0.28em;
+      font-size: clamp(0.6rem, 1.6vw, 0.8rem);
+      letter-spacing: 0.24em;
       color: rgba(220, 228, 236, 0.88);
       text-shadow: 0 1px 3px rgba(0,0,0,0.95);
+      pointer-events: none;
     `;
     quitWrap.appendChild(quitLabel);
     quitWrap.addEventListener('click', () => this._onQuit());
@@ -266,9 +281,10 @@ export class StartMenuUI {
 
     bar.appendChild(playWrap);
     bar.appendChild(quitWrap);
+    bottomDock.appendChild(bar);
     root.appendChild(bg);
     root.appendChild(vignette);
-    root.appendChild(bar);
+    root.appendChild(bottomDock);
 
     gameContainer.appendChild(root);
     StartMenuUI._removeBlockersFrom(gameContainer);
@@ -292,6 +308,15 @@ export class StartMenuUI {
       wrap.style.pointerEvents = 'auto';
       label.style.color = 'rgba(160, 245, 255, 0.98)';
       label.style.textShadow = '0 0 18px rgba(0, 220, 255, 0.55), 0 2px 4px rgba(0,0,0,0.95)';
+      if (!wrap.dataset.hoverBound) {
+        wrap.dataset.hoverBound = '1';
+        wrap.addEventListener('mouseenter', () => {
+          wrap.style.transform = 'scale(1.03)';
+        });
+        wrap.addEventListener('mouseleave', () => {
+          wrap.style.transform = 'scale(1)';
+        });
+      }
     } else {
       wrap.style.cursor = 'not-allowed';
       wrap.style.opacity = '0.5';

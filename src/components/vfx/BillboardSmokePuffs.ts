@@ -1,12 +1,17 @@
 /**
  * Textured billboard smoke/dust puffs — pure Three.js (no VFXComponent).
  * Shared by gore, zombie spawn, and fist impact effects.
+ *
+ * Meshes/materials are pooled per texture path — no per-puff alloc/dispose.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 const PUFF_GEOMETRY = new THREE.PlaneGeometry(1.2, 1.2);
 const textureCache = new Map<string, THREE.Texture>();
+
+/** Max pooled puffs per texture (dust + gore + spawn combined). */
+const POOL_SIZE_PER_TEXTURE = 96;
 
 export interface BillboardSmokePuff {
   mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
@@ -43,6 +48,44 @@ export interface SmokeBurstOptions {
   blending?: THREE.Blending;
 }
 
+interface PooledPuffSlot {
+  mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  inUse: boolean;
+}
+
+interface TexturePuffPool {
+  texturePath: string;
+  free: PooledPuffSlot[];
+  slots: PooledPuffSlot[];
+  sceneAttached: boolean;
+}
+
+const poolsByTexture = new Map<string, TexturePuffPool>();
+
+const _colorScratch = new THREE.Color();
+
+function randomBetween(min: number, max: number): number {
+  return min + Math.random() * (max - min);
+}
+
+function easeOutCubic(t: number): number {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function applyPuffColor(
+  mat: THREE.MeshBasicMaterial,
+  hue: [number, number],
+  sat: [number, number],
+  lit: [number, number],
+): void {
+  _colorScratch.setHSL(
+    randomBetween(hue[0], hue[1]),
+    randomBetween(sat[0], sat[1]),
+    randomBetween(lit[0], lit[1]),
+  );
+  mat.color.copy(_colorScratch);
+}
+
 export function createBillboardSmokeMaterial(
   options: SmokeMaterialOptions,
 ): THREE.MeshBasicMaterial {
@@ -67,17 +110,14 @@ export function createBillboardSmokeMaterial(
   });
 }
 
-function randomBetween(min: number, max: number): number {
-  return min + Math.random() * (max - min);
-}
-
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
-}
-
 export async function loadSmokeTexture(texturePath: string): Promise<THREE.Texture | null> {
   const cached = textureCache.get(texturePath);
-  if (cached) return cached;
+  if (cached) {
+    if (!cached.userData.smokeTexturePath) {
+      cached.userData.smokeTexturePath = texturePath;
+    }
+    return cached;
+  }
 
   try {
     const resolvedPath = await ENGINE.resolveAssetPathsInText(texturePath);
@@ -93,10 +133,74 @@ export async function loadSmokeTexture(texturePath: string): Promise<THREE.Textu
         (err) => reject(err),
       );
     });
+    texture.userData.smokeTexturePath = texturePath;
     textureCache.set(texturePath, texture);
     return texture;
   } catch {
     return null;
+  }
+}
+
+function getOrCreatePool(texturePath: string, texture: THREE.Texture | null): TexturePuffPool {
+  let pool = poolsByTexture.get(texturePath);
+  if (!pool) {
+    pool = { texturePath, free: [], slots: [], sceneAttached: false };
+    poolsByTexture.set(texturePath, pool);
+  }
+
+  while (pool.slots.length < POOL_SIZE_PER_TEXTURE) {
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      map: texture ?? undefined,
+      alphaMap: texture ?? undefined,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      alphaTest: 0.01,
+    });
+    const mesh = new THREE.Mesh(PUFF_GEOMETRY, mat);
+    mesh.visible = false;
+    mesh.frustumCulled = false;
+    const slot: PooledPuffSlot = { mesh, inUse: false };
+    pool.slots.push(slot);
+    pool.free.push(slot);
+  }
+
+  return pool;
+}
+
+function ensurePoolInScene(world: ENGINE.World, pool: TexturePuffPool): void {
+  if (pool.sceneAttached) return;
+  for (const slot of pool.slots) {
+    world.scene.add(slot.mesh);
+  }
+  pool.sceneAttached = true;
+}
+
+function acquirePuff(pool: TexturePuffPool): PooledPuffSlot | null {
+  if (pool.free.length === 0) {
+    for (const slot of pool.slots) {
+      if (!slot.inUse) {
+        pool.free.push(slot);
+      }
+    }
+  }
+  const slot = pool.free.pop();
+  if (!slot) return null;
+  slot.inUse = true;
+  return slot;
+}
+
+function releasePuff(pool: TexturePuffPool, mesh: THREE.Mesh): void {
+  mesh.visible = false;
+  for (const slot of pool.slots) {
+    if (slot.mesh === mesh) {
+      slot.inUse = false;
+      pool.free.push(slot);
+      return;
+    }
   }
 }
 
@@ -119,26 +223,28 @@ export function spawnBillboardSmokeBurst(
   const planeSize = options.size ?? 1.2;
   const blending = options.blending ?? THREE.AdditiveBlending;
 
+  const pool = getOrCreatePool(options.texturePath, texture);
+  ensurePoolInScene(world, pool);
+
   for (let i = 0; i < options.count; i++) {
+    const slot = acquirePuff(pool);
+    if (!slot) break;
+
+    const mesh = slot.mesh;
+    const mat = mesh.material;
+    mat.blending = blending;
+    applyPuffColor(mat, hue, sat, lit);
+    mat.opacity = peakOpacity;
+
     const angle = Math.random() * Math.PI * 2;
     const speed = randomBetween(hSpeed[0], hSpeed[1]);
 
-    const material = createBillboardSmokeMaterial({
-      texture,
-      blending,
-      hue,
-      saturation: sat,
-      lightness: lit,
-      opacity: peakOpacity,
-    });
-
-    const mesh = new THREE.Mesh(PUFF_GEOMETRY, material);
     mesh.scale.setScalar(planeSize * randomBetween(0.5, 0.9));
     mesh.position.copy(origin);
     mesh.position.y += randomBetween(yOff[0], yOff[1]);
     mesh.rotation.set(-Math.PI / 2, 0, randomBetween(0, Math.PI * 2));
-
-    world.scene.add(mesh);
+    mesh.visible = true;
+    mesh.userData.poolTexturePath = options.texturePath;
 
     puffs.push({
       mesh,
@@ -157,7 +263,9 @@ export function spawnBillboardSmokeBurst(
 }
 
 export function tickBillboardSmokePuffs(puffs: BillboardSmokePuff[], deltaTime: number): void {
-  for (let i = puffs.length - 1; i >= 0; i--) {
+  let writeIdx = 0;
+
+  for (let i = 0; i < puffs.length; i++) {
     const puff = puffs[i]!;
     puff.elapsed += deltaTime;
     const progress = Math.min(puff.elapsed / puff.lifetime, 1);
@@ -167,18 +275,28 @@ export function tickBillboardSmokePuffs(puffs: BillboardSmokePuff[], deltaTime: 
     puff.velocity.multiplyScalar(0.96);
     puff.mesh.rotation.z += puff.spin * deltaTime;
     puff.mesh.material.opacity = puff.peakOpacity * Math.max(0, 1 - progress);
+
     if (progress >= 1) {
-      puff.mesh.material.dispose();
-      puff.mesh.removeFromParent();
-      puffs.splice(i, 1);
+      puff.mesh.visible = false;
+      const texPath = puff.mesh.userData.poolTexturePath as string | undefined;
+      const pool = texPath ? poolsByTexture.get(texPath) : undefined;
+      if (pool) {
+        releasePuff(pool, puff.mesh);
+      }
+    } else {
+      puffs[writeIdx++] = puff;
     }
   }
+
+  puffs.length = writeIdx;
 }
 
 export function disposeBillboardSmokePuffs(puffs: BillboardSmokePuff[]): void {
   for (const puff of puffs) {
-    puff.mesh.material.dispose();
-    puff.mesh.removeFromParent();
+    puff.mesh.visible = false;
+    const texPath = puff.mesh.userData.poolTexturePath as string | undefined;
+    const pool = texPath ? poolsByTexture.get(texPath) : undefined;
+    if (pool) releasePuff(pool, puff.mesh);
   }
   puffs.length = 0;
 }

@@ -12,11 +12,11 @@ importers:
         specifier: latest
         version: 0.0.6
       '@gnsx/genesys.js':
-        specifier: 10.13.0
-        version: 10.13.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)
+        specifier: 10.14.1
+        version: 10.14.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)
       three:
-        specifier: npm:@gnsx/three@0.184.7
-        version: '@gnsx/three@0.184.7'
+        specifier: npm:@gnsx/three@0.184.8
+        version: '@gnsx/three@0.184.8'
     devDependencies:
       '@gltf-transform/core':
         specifier: ^4.3.0
@@ -514,14 +514,14 @@ packages:
   '@gnsx/genesys.harness@0.0.6':
     resolution: {integrity: sha512-Y2+3BL8AR0xDVp1oZ0M7hZACJ69t5Ncel5P5EwYGrZcvxDPDqnEbjgDyrssHQKYmp5J6osy+8dWlIALV1LoZhA==}
 
-  '@gnsx/genesys.js@10.13.0':
-    resolution: {integrity: sha512-jUktdyEzWC6zqaZquM/57sDqYkmsZZRo5CEIZQy4hH+opihQyd5Vw4LccR/eNGrhsher5fojLGfdrezhiCe46Q==}
+  '@gnsx/genesys.js@10.14.1':
+    resolution: {integrity: sha512-kSoj1S0USQGKgupLjkO0hknOlSYNCe8eYouTGhVxhvybKPrh/cuAK7ZMVPDRb6cfFNm0zTTdqQIjgN4lJJOvpg==}
 
   '@gnsx/three-types@0.184.4':
     resolution: {integrity: sha512-o51cce6SkiFPl/ixXc9yyhXH+nqjkHaSq75oZ6GR9e/Q2RProLZ2OUNDqYbtOmnraCX+3oEVGuJbCsJkaQFFzQ==}
 
-  '@gnsx/three@0.184.7':
-    resolution: {integrity: sha512-s21LZLrGjHDCQTvYVMLyWMXF5+eUbXNdblFhv74odQQrfThQNMIPDiUwzy5XOki5QRK03tN+TsWkuh+L7ypfWw==}
+  '@gnsx/three@0.184.8':
+    resolution: {integrity: sha512-ByijbJnEenhMitq5P7oN74q4Uvmr8mWZ8+Hy3o05AGDl3wIcxyiKZsVU0NpWGkVpRj+FrdJwaGnV14qGDF0ybw==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2829,11 +2829,11 @@ snapshots:
 
   '@gnsx/genesys.harness@0.0.6': {}
 
-  '@gnsx/genesys.js@10.13.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)':
+  '@gnsx/genesys.js@10.14.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.4)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@msgpack/msgpack': 3.1.3
-      '@recast-navigation/three': 0.43.1(@gnsx/three-types@0.184.4)(@gnsx/three@0.184.7)
+      '@recast-navigation/three': 0.43.1(@gnsx/three-types@0.184.4)(@gnsx/three@0.184.8)
       '@tweenjs/tween.js': 25.0.0
       dat.gui: 0.7.9
       esbuild-wasm: 0.28.0
@@ -2841,12 +2841,12 @@ snapshots:
       manifold-3d: 3.4.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(esbuild-wasm@0.28.0)
       nanoid: 5.1.11
       nipplejs: 0.10.2
-      postprocessing: 6.39.1(@gnsx/three@0.184.7)
+      postprocessing: 6.39.1(@gnsx/three@0.184.8)
       recast-navigation: 0.43.1
       reflect-metadata: 0.2.2
       stats.js: 0.17.0
-      three: '@gnsx/three@0.184.7'
-      three-mesh-bvh: 0.9.9(@gnsx/three@0.184.7)
+      three: '@gnsx/three@0.184.8'
+      three-mesh-bvh: 0.9.9(@gnsx/three@0.184.8)
       ts-morph: 27.0.2
       tweakpane: 4.0.5
       xatlas-three: 0.2.1
@@ -2872,7 +2872,7 @@ snapshots:
       fflate: 0.8.2
       meshoptimizer: 1.1.1
 
-  '@gnsx/three@0.184.7': {}
+  '@gnsx/three@0.184.8': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -3040,12 +3040,12 @@ snapshots:
       '@recast-navigation/core': 0.43.1
       '@recast-navigation/wasm': 0.43.1
 
-  '@recast-navigation/three@0.43.1(@gnsx/three-types@0.184.4)(@gnsx/three@0.184.7)':
+  '@recast-navigation/three@0.43.1(@gnsx/three-types@0.184.4)(@gnsx/three@0.184.8)':
     dependencies:
       '@recast-navigation/core': 0.43.1
       '@recast-navigation/generators': 0.43.1
       '@types/three': '@gnsx/three-types@0.184.4'
-      three: '@gnsx/three@0.184.7'
+      three: '@gnsx/three@0.184.8'
 
   '@recast-navigation/wasm@0.43.1': {}
 
@@ -4469,9 +4469,9 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postprocessing@6.39.1(@gnsx/three@0.184.7):
+  postprocessing@6.39.1(@gnsx/three@0.184.8):
     dependencies:
-      three: '@gnsx/three@0.184.7'
+      three: '@gnsx/three@0.184.8'
 
   prebuild-install@7.1.3:
     dependencies:
@@ -4834,9 +4834,9 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  three-mesh-bvh@0.9.9(@gnsx/three@0.184.7):
+  three-mesh-bvh@0.9.9(@gnsx/three@0.184.8):
     dependencies:
-      three: '@gnsx/three@0.184.7'
+      three: '@gnsx/three@0.184.8'
 
   timers-browserify@2.0.12:
     dependencies:

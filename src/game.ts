@@ -19,6 +19,8 @@ import { WarmupActor } from './actors/WarmupActor.js';
 import { GameAudioManager } from './actors/GameAudioManager.js';
 import { ScenicFogActor } from './actors/ScenicFogActor.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
+import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
+import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
 
 /** Spring-arm length (world units). */
 const ISO_CAMERA_DISTANCE = 20;
@@ -118,6 +120,13 @@ class MyGame extends ENGINE.BaseGameLoop {
   public override async start(): Promise<void> {
     await super.start();
     trySetPixelRatioOne(this.renderer);
+    // No lights in this scene use castShadow, so the shadow map system is
+    // entirely unused. Disabling it removes per-frame shadow prep overhead
+    // (frustum culling pass, map allocation checks) that the engine enables
+    // unconditionally in its renderer init.
+    if (this.renderer) {
+      this.renderer.native.shadowMap.enabled = false;
+    }
   }
 
   /**
@@ -148,7 +157,55 @@ class MyGame extends ENGINE.BaseGameLoop {
     }
 
     this._spawnScenicFogCards(world);
+    this._attachPoliceLightFlashers(world);
+    this._attachFireLightFlickers(world);
     this._startWarmupSequence(world, startMenu);
+  }
+
+  /** Scene policerdone cars use static point lights — drive them at runtime. */
+  private _attachPoliceLightFlashers(world: ENGINE.World): void {
+    for (const actor of world.getActors()) {
+      if (!actor.name.startsWith('Policerdone')) {
+        continue;
+      }
+      const mesh = actor.getComponent(ENGINE.GLTFMeshComponent);
+      if (!mesh?.modelUrl?.includes('policerdone')) {
+        continue;
+      }
+      if (actor.getComponent(PoliceLightFlasherComponent)) {
+        continue;
+      }
+      const flasher = PoliceLightFlasherComponent.create({ name: 'PoliceLightFlasher' });
+      actor.rootComponent.add(flasher);
+    }
+  }
+
+  /** Burning props (e.g. Car 1 Redon 03) — organic fire light flicker. */
+  private _attachFireLightFlickers(world: ENGINE.World): void {
+    for (const actor of world.getActors()) {
+      if (!this._actorHasFireVfx(actor)) {
+        continue;
+      }
+      if (actor.getComponent(FireLightFlickerComponent)) {
+        continue;
+      }
+      const lights = actor.getComponents(ENGINE.PointLightComponent);
+      if (lights.length === 0) {
+        continue;
+      }
+      const flicker = FireLightFlickerComponent.create({ name: 'FireLightFlicker' });
+      actor.rootComponent.add(flicker);
+    }
+  }
+
+  private _actorHasFireVfx(actor: ENGINE.Actor): boolean {
+    for (const vfx of actor.getComponents(ENGINE.VFXComponent)) {
+      const path = (vfx as { vfxPath?: string }).vfxPath;
+      if (path?.includes('fire.vfx')) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /** Large flowmap fog cards at existing ground-mist cluster positions. */

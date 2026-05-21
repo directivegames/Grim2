@@ -87,6 +87,12 @@ export class GameAudioManager extends ENGINE.Actor {
 
     void sound.play(key, undefined, forceRestart);
 
+    // Match playback rate to world slomo so SFX stays in sync with slow-motion.
+    const world = this.getWorld();
+    const slomo = world ? ((world as unknown as { slomo: number }).slomo ?? 1.0) : 1.0;
+    const rate = slomo < 0.9 ? Math.max(0.05, slomo) : 1.0;
+    sound.getAudio(key)?.setPlaybackRate(rate);
+
     // Reset volume back to default after playing
     if (clampedVolume < 1.0) {
       // Small delay to let play start, then restore
@@ -125,6 +131,15 @@ export class GameAudioManager extends ENGINE.Actor {
   private getDefaultVolume(key: string): number {
     const config = GameAudioManager.SOUND_PATHS[key];
     return config?.volume ?? 1.0;
+  }
+
+  /** Reset every pooled SFX source to normal speed (call when slow-mo ends). */
+  public syncPlaybackRates(rate = 1.0): void {
+    for (const [key, pool] of this._soundPools) {
+      for (const sound of pool) {
+        sound.getAudio(key)?.setPlaybackRate(rate);
+      }
+    }
   }
 
   private getNextSound(key: string): ENGINE.SoundComponent | null {

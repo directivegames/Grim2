@@ -207,9 +207,11 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
     return mesh ?? null;
   }
 
-  private _billboardToCamera(mesh: THREE.Mesh, yawOffset: number): void {
-    const world = this.getWorld();
-    const camera = world?.getActiveCamera();
+  private _billboardToCamera(
+    mesh: THREE.Mesh,
+    yawOffset: number,
+    camera: THREE.Camera | null,
+  ): void {
     if (!camera) {
       return;
     }
@@ -226,6 +228,7 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
   private _updateDrops(deltaTime: number): void {
     const drops = this._drops;
     let writeIndex = 0;
+    const camera = this.getWorld()?.getActiveCamera() ?? null;
 
     for (let i = 0; i < drops.length; i++) {
       const drop = drops[i];
@@ -236,7 +239,7 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
       drop.elapsed += deltaTime;
       const frameIndex = Math.floor(drop.elapsed / FRAME_DURATION);
 
-      this._billboardToCamera(drop.mesh, drop.yawOffset);
+      this._billboardToCamera(drop.mesh, drop.yawOffset, camera);
 
       const texture = drop.mesh.material.map;
       if (texture) {

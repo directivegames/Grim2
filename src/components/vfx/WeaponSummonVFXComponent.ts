@@ -13,6 +13,7 @@ const GLOW_GEO = new THREE.SphereGeometry(0.06, 8, 8);
 const _up   = new THREE.Vector3(0, 1, 0);
 const _dir  = new THREE.Vector3();
 const _axis = new THREE.Vector3();
+const _sparkColorScratch = new THREE.Color();
 
 interface Spark {
   mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
@@ -27,9 +28,8 @@ function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
 }
 
-/** Electric cyan-to-white palette for lightning effect. */
-function sparkColor(tNorm: number): THREE.Color {
-  return new THREE.Color(
+function applySparkColor(tNorm: number, out: THREE.Color): THREE.Color {
+  return out.setRGB(
     THREE.MathUtils.lerp(1.0, 0.0, tNorm),
     THREE.MathUtils.lerp(1.0, 0.8, tNorm),
     THREE.MathUtils.lerp(1.0, 1.0, tNorm),
@@ -38,9 +38,10 @@ function sparkColor(tNorm: number): THREE.Color {
 
 // ── Module-level pool (shared across all WeaponSummonVFXComponent instances) ──
 
-const POOL_SIZE = 60; // max burst is 14; 60 covers two overlapping bursts with glows
-
+const POOL_SIZE = 60;
 const _pool: Spark[] = [];
+const _free: Spark[] = [];
+let _poolSceneAttached = false;
 
 function _buildPool(): void {
   for (let i = 0; i < POOL_SIZE; i++) {
@@ -55,7 +56,6 @@ function _buildPool(): void {
     const mesh = new THREE.Mesh(STREAK_GEO, mat);
     mesh.visible = false;
 
-    // Create glow for every particle; only shown on 40% when active
     const glowMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
@@ -66,42 +66,58 @@ function _buildPool(): void {
     const glowMesh = new THREE.Mesh(GLOW_GEO, glowMat);
     glowMesh.visible = false;
 
-    _pool.push({
+    const spark: Spark = {
       mesh,
       glow: glowMesh,
       elapsed: 0,
       velocity: new THREE.Vector3(),
       flickerOffset: 0,
       active: false,
-    });
+    };
+    _pool.push(spark);
+    _free.push(spark);
   }
 }
 
-function _acquireSpark(): Spark | null {
+function _ensurePoolInScene(scene: THREE.Scene): void {
+  if (_poolSceneAttached) return;
+  if (_pool.length === 0) _buildPool();
   for (const s of _pool) {
-    if (!s.active) return s;
+    scene.add(s.mesh);
+    if (s.glow) scene.add(s.glow);
   }
-  return null;
+  _poolSceneAttached = true;
+}
+
+function _acquireSpark(): Spark | null {
+  return _free.pop() ?? null;
 }
 
 @ENGINE.GameClass()
 export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
   private readonly _activeSparks: Spark[] = [];
 
-  // ── Public API ──────────────────────────────────────────────────────────────
+  public override beginPlay(): void {
+    super.beginPlay();
+    const world = this.getWorld();
+    if (world) {
+      _ensurePoolInScene(world.scene);
+    }
+  }
 
   public burst(worldPos: THREE.Vector3, count: number): void {
     const world = this.getWorld();
     if (!world) return;
 
-    if (_pool.length === 0) _buildPool();
+    _ensurePoolInScene(world.scene);
 
     for (let i = 0; i < count; i++) {
       const spark = _acquireSpark();
       if (!spark) break;
 
       const tNorm = Math.random();
-      spark.mesh.material.color.copy(sparkColor(tNorm));
+      applySparkColor(tNorm, _sparkColorScratch);
+      spark.mesh.material.color.copy(_sparkColorScratch);
       spark.mesh.material.opacity = 1;
       spark.mesh.position.copy(worldPos);
       spark.mesh.position.y += randomBetween(-0.4, 0.6);
@@ -119,15 +135,12 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
         spark.mesh.quaternion.setFromAxisAngle(_axis, ang);
       }
 
-      world.scene.add(spark.mesh);
-
       const useGlow = tNorm < 0.4;
       if (useGlow && spark.glow) {
         spark.glow.material.opacity = 1;
         spark.glow.position.copy(spark.mesh.position);
         spark.glow.scale.setScalar(1);
         spark.glow.visible = true;
-        world.scene.add(spark.glow);
       } else if (spark.glow) {
         spark.glow.visible = false;
       }
@@ -140,14 +153,10 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
     }
   }
 
-  // ── Tick ────────────────────────────────────────────────────────────────────
-
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
     this._updateSparks(deltaTime);
   }
-
-  // ── Internal ────────────────────────────────────────────────────────────────
 
   private _updateSparks(deltaTime: number): void {
     const sparks = this._activeSparks;
@@ -155,10 +164,10 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
       const spark = sparks[i]!;
       spark.elapsed += deltaTime;
 
-      const useLifetime = (spark.glow?.visible) ? SPARK_LIFETIME : PARTICLE_LIFETIME;
+      const useLifetime = spark.glow?.visible ? SPARK_LIFETIME : PARTICLE_LIFETIME;
       const progress = spark.elapsed / useLifetime;
 
-      const flicker = (Math.sin(spark.elapsed * 40 + spark.flickerOffset) > 0.15) ? 1.0 : 0.2;
+      const flicker = Math.sin(spark.elapsed * 40 + spark.flickerOffset) > 0.15 ? 1.0 : 0.2;
 
       spark.mesh.position.addScaledVector(spark.velocity, deltaTime);
       spark.velocity.y -= 4 * deltaTime;
@@ -171,30 +180,26 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
       }
 
       if (progress >= 1) {
-        spark.mesh.removeFromParent();
         spark.mesh.visible = false;
         if (spark.glow) {
-          spark.glow.removeFromParent();
           spark.glow.visible = false;
         }
         spark.active = false;
+        _free.push(spark);
         sparks[i] = sparks[sparks.length - 1]!;
         sparks.pop();
       }
     }
   }
 
-  // ── Cleanup ─────────────────────────────────────────────────────────────────
-
   public override endPlay(): void {
     for (const spark of this._activeSparks) {
-      spark.mesh.removeFromParent();
       spark.mesh.visible = false;
       if (spark.glow) {
-        spark.glow.removeFromParent();
         spark.glow.visible = false;
       }
       spark.active = false;
+      _free.push(spark);
     }
     this._activeSparks.length = 0;
     super.endPlay();

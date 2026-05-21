@@ -33,6 +33,13 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
   public override async beginPlay(): Promise<void> {
     super.beginPlay();
     this._dustTexture = await loadSmokeTexture(DUST_TEXTURE_PATH);
+    const world = this.getWorld();
+    if (world && this._dustTexture) {
+      spawnBillboardSmokeBurst(world, _spawnPos, this._dustTexture, [], {
+        count: 0,
+        texturePath: DUST_TEXTURE_PATH,
+      });
+    }
   }
 
   public override tickPrePhysics(deltaTime: number): void {

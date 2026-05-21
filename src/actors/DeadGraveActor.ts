@@ -37,13 +37,16 @@ function ensureGraveCollisionProfile(): void {
   (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
 }
 
-/** Seconds before grave auto-destroys to prevent physics/shadow accumulation. */
+/** Seconds before non-pooled grave auto-destroys (pooled graves never destroy). */
 const GRAVE_LIFETIME_SEC = 8;
 
-/** Max simultaneous graves — oldest gets recycled when limit hit. */
+/** After this many seconds, switch dynamic body to static — removes from Rapier island. */
+const GRAVE_SETTLE_SEC = 1.5;
+
+/** Max simultaneous graves — oldest (FIFO) gets recycled when limit hit. */
 const MAX_GRAVES = 25;
 
-// Grave pool management
+// Grave pool management (FIFO: shift front, push back on recycle)
 interface PooledGrave {
   actor: DeadGraveActor;
   spawnGameTime: number;
@@ -55,6 +58,7 @@ let gravePool: PooledGrave[] = [];
 export class DeadGraveActor extends ENGINE.Actor {
   private _aliveSec = 0;
   private _isPooled = false;
+  private _physicsSettled = false;
 
   public override initialize(options?: ActorOptions): void {
     ensureGraveCollisionProfile();
@@ -92,6 +96,7 @@ export class DeadGraveActor extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     super.doBeginPlay();
     this._aliveSec = 0;
+    this._physicsSettled = false;
 
     // Apply heavy damping so the gravestone settles quickly and feels weighty
     const physics = this.getPhysicsEngine();
@@ -107,8 +112,33 @@ export class DeadGraveActor extends ENGINE.Actor {
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
     this._aliveSec += deltaTime;
-    if (this._aliveSec >= GRAVE_LIFETIME_SEC) {
+
+    if (!this._physicsSettled && this._aliveSec >= GRAVE_SETTLE_SEC) {
+      this._freezePhysics();
+    }
+
+    if (!this._isPooled && this._aliveSec >= GRAVE_LIFETIME_SEC) {
       this.destroy();
+    }
+  }
+
+  /** Stop simulating this grave in Rapier once it has landed. */
+  private _freezePhysics(): void {
+    if (this._physicsSettled) return;
+    this._physicsSettled = true;
+
+    const root = this.rootComponent as ENGINE.MeshComponent;
+    root.overridePhysicsOptions({
+      enabled: true,
+      motionType: ENGINE.PhysicsMotionType.Static,
+      collisionProfile: 'DeadGraveNoPawnBlock',
+    });
+
+    const physics = this.getPhysicsEngine();
+    if (physics && root) {
+      type VectorParam = 'linearVelocity' | 'angularVelocity';
+      physics.setVectorParam(root, 'linearVelocity' as VectorParam as any, [0, 0, 0]);
+      physics.setVectorParam(root, 'angularVelocity' as VectorParam as any, [0, 0, 0]);
     }
   }
 
@@ -130,9 +160,8 @@ export class DeadGraveActor extends ENGINE.Actor {
 
     const spawnGameTime = world.getGameTime();
 
-    // If at cap, recycle the oldest grave
+    // FIFO: front of queue is oldest when pool is at cap
     if (gravePool.length >= MAX_GRAVES) {
-      gravePool.sort((a, b) => a.spawnGameTime - b.spawnGameTime);
       const oldest = gravePool.shift();
       if (oldest) {
         oldest.actor.recycle(position, velocity);
@@ -164,20 +193,26 @@ export class DeadGraveActor extends ENGINE.Actor {
    * Recycle this grave to a new position with new velocity.
    */
   private recycle(position: THREE.Vector3, velocity?: THREE.Vector3): void {
-    // Reset position
+    this._physicsSettled = false;
+    this._aliveSec = 0;
+
+    const root = this.rootComponent as ENGINE.MeshComponent;
+    root.overridePhysicsOptions({
+      enabled: true,
+      motionType: ENGINE.PhysicsMotionType.Dynamic,
+      collisionProfile: 'DeadGraveNoPawnBlock',
+      gravityScale: 3.5,
+      density: 3.0,
+    });
+
     this.rootComponent.position.copy(position);
     this.rootComponent.updateMatrixWorld();
 
-    // Reset rotation for variety
     this.rootComponent.rotation.y = Math.random() * Math.PI * 2;
 
-    this._aliveSec = 0;
-
-    // Apply new velocity
     const world = this.getWorld();
     if (world && velocity) {
       const physics = world.getPhysicsEngine();
-      const root = this.rootComponent as ENGINE.MeshComponent;
       if (physics && root) {
         type VectorParam = 'linearVelocity' | 'angularVelocity';
         physics.setVectorParam(root, 'linearVelocity' as VectorParam as any, velocity.toArray() as [number, number, number]);

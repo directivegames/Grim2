@@ -1,5 +1,11 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
+import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
+
+/** Music slow-mo rate — less extreme than game slomo (0.12) so the track stays audible. */
+const KILL_STREAK_MUSIC_RATE = 0.42;
+/** Wall-clock lerp speed — reaches target in ~0.12s while staying synced on enter/exit. */
+const MUSIC_RATE_LERP_SPEED = 14;
 
 @ENGINE.GameClass()
 export class BackgroundMusicActor extends ENGINE.Actor {
@@ -34,18 +40,24 @@ export class BackgroundMusicActor extends ENGINE.Actor {
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
 
-    // Match music playback rate to world slomo for that cinematic time-warp feel
-    // Only for kill streak slomo (<= 0.15), not fist slomo (0.30)
+    // Kill-streak slomo: gentler rate than world.slomo; fast wall-clock lerp for audible warp.
     const world = this.getWorld();
     if (world && this.soundComponent) {
       const slomo = (world as unknown as { slomo: number }).slomo ?? 1.0;
-      // Only slow music during kill streak slomo (0.12), not fist slomo (0.30)
-      const targetRate = slomo <= 0.15 ? Math.max(0.05, slomo) : 1.0;
-      // Smoothly interpolate to target rate (don't snap instantly)
-      const rateSpeed = 3.0 * deltaTime; // gentle lerp speed
-      this._currentPlaybackRate = THREE.MathUtils.lerp(this._currentPlaybackRate, targetRate, rateSpeed);
+      const targetRate = slomo <= 0.15 ? KILL_STREAK_MUSIC_RATE : 1.0;
+      const realDt = getUnscaledDeltaTime(world, deltaTime);
 
-      // Apply to the underlying audio source
+      if (Math.abs(targetRate - this._targetPlaybackRate) > 0.001) {
+        this._targetPlaybackRate = targetRate;
+      }
+
+      const lerpT = Math.min(1, MUSIC_RATE_LERP_SPEED * realDt);
+      this._currentPlaybackRate = THREE.MathUtils.lerp(
+        this._currentPlaybackRate,
+        this._targetPlaybackRate,
+        lerpT,
+      );
+
       const audio = this.soundComponent.getAudio('backgroundMusic');
       if (audio && Math.abs(audio.playbackRate - this._currentPlaybackRate) > 0.001) {
         audio.setPlaybackRate(this._currentPlaybackRate);

@@ -1,7 +1,8 @@
 /**
  * FistOfAnnoyanceActor — Giant fist impact effect.
  *
- * Impact smoke: engine VFX (explosion-cloud.vfx.json). Debris: rockdebris.png billboards.
+ * Plays at normal speed — no slow-mo, no cinematic camera.
+ * Slow-mo is exclusively controlled by kill streak.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -10,16 +11,12 @@ import type { ActorOptions } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
-import { slomoManager } from './KillStreakTracker.js';
-import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
 import { loadSmokeTexture } from '../components/vfx/BillboardSmokePuffs.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const FIST_ACTOR_NAME = 'fistofannoyance';
-const SLOMO_VALUE = 0.30;
-const FIST_SLOMO_PRIORITY = 2;
 
 const FIST_START_Y = -3.5;
 const FIST_PEAK_Y = -0.1;
@@ -77,6 +74,105 @@ function easeOutQuart(t: number): number { return 1 - Math.pow(1 - t, 4); }
 function easeInQuart(t: number): number { return t * t * t * t; }
 function easeOutCubic(t: number): number { return 1 - Math.pow(1 - t, 3); }
 
+// ─── Module-level VFX pools (reuse across fist uses) ─────────────────────────
+
+const DEBRIS_POOL_SIZE = 32;
+const FLASH_POOL_SIZE = 2;
+const SHOCK_POOL_SIZE = 2;
+
+interface PooledDebrisSlot {
+  sprite: THREE.Sprite;
+  inUse: boolean;
+}
+
+interface PooledFlashSlot {
+  mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
+  inUse: boolean;
+}
+
+interface PooledShockSlot {
+  mesh: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial>;
+  inUse: boolean;
+}
+
+const _debrisSlots: PooledDebrisSlot[] = [];
+const _debrisFree: PooledDebrisSlot[] = [];
+const _flashSlots: PooledFlashSlot[] = [];
+const _flashFree: PooledFlashSlot[] = [];
+const _shockSlots: PooledShockSlot[] = [];
+const _shockFree: PooledShockSlot[] = [];
+let _fistVfxPoolsBuilt = false;
+let _fistVfxSceneAttached = false;
+
+function _ensureFistVfxPools(world: ENGINE.World, debrisTexture: THREE.Texture | null): void {
+  if (!_fistVfxPoolsBuilt) {
+    for (let i = 0; i < DEBRIS_POOL_SIZE; i++) {
+      const mat = new THREE.SpriteMaterial({
+        map: debrisTexture,
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0,
+        depthWrite: true,
+        blending: THREE.NormalBlending,
+        alphaTest: debrisTexture ? 0.08 : 0,
+      });
+      const sprite = new THREE.Sprite(mat);
+      sprite.visible = false;
+      const slot: PooledDebrisSlot = { sprite, inUse: false };
+      _debrisSlots.push(slot);
+      _debrisFree.push(slot);
+    }
+
+    for (let i = 0; i < FLASH_POOL_SIZE; i++) {
+      const mat = new THREE.MeshBasicMaterial({
+        color: 0xffcc66,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      const mesh = new THREE.Mesh(FLASH_GEO, mat);
+      mesh.visible = false;
+      const slot: PooledFlashSlot = { mesh, inUse: false };
+      _flashSlots.push(slot);
+      _flashFree.push(slot);
+    }
+
+    for (let i = 0; i < SHOCK_POOL_SIZE; i++) {
+      const mat = new THREE.MeshBasicMaterial({
+        color: 0x5a8fc8,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      const mesh = new THREE.Mesh(SHOCKWAVE_GEO, mat);
+      mesh.rotation.x = Math.PI / 2;
+      mesh.visible = false;
+      const slot: PooledShockSlot = { mesh, inUse: false };
+      _shockSlots.push(slot);
+      _shockFree.push(slot);
+    }
+
+    _fistVfxPoolsBuilt = true;
+  }
+
+  if (!_fistVfxSceneAttached) {
+    for (const slot of _debrisSlots) world.scene.add(slot.sprite);
+    for (const slot of _flashSlots) world.scene.add(slot.mesh);
+    for (const slot of _shockSlots) world.scene.add(slot.mesh);
+    _fistVfxSceneAttached = true;
+  }
+
+  if (debrisTexture) {
+    for (const slot of _debrisSlots) {
+      slot.sprite.material.map = debrisTexture;
+      slot.sprite.material.alphaTest = 0.08;
+      slot.sprite.material.color.setHex(0xffffff);
+    }
+  }
+}
+
 // ─── FistOfAnnoyanceActor ────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
@@ -89,13 +185,18 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private _groundY = 0;
   private _hasHit = false;
   private _vfxSpawned = false;
-  private _cinematicReturned = false;
   private _explosionEmitTimer = -1;
 
   private readonly _rockDebris: RockDebris[] = [];
   private readonly _flashes: ImpactFlash[] = [];
   private readonly _shockwaves: Shockwave[] = [];
   private _rockDebrisTexture: THREE.Texture | null = null;
+
+  private readonly _fistPosScratch = new THREE.Vector3();
+  private readonly _zPosScratch = new THREE.Vector3();
+  private readonly _hitNormalScratch = new THREE.Vector3();
+  private readonly _hitLocationScratch = new THREE.Vector3();
+  private readonly _originScratch = new THREE.Vector3();
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
@@ -132,17 +233,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._phaseElapsed = 0;
     this._hasHit = false;
     this._vfxSpawned = false;
-    this._cinematicReturned = false;
-
     this._explosionEmitTimer = -1;
     this._setFistPosition(this._groundY + FIST_START_Y);
 
-    const player = world.getFirstPlayerPawn();
-    if (player instanceof IsometricPlayerPawn) {
-      player.startCinematicFocus(this.rootComponent.position.clone());
-    }
-
-    slomoManager.setSlomo(world, SLOMO_VALUE, FIST_SLOMO_PRIORITY);
     void loadSmokeTexture(ROCK_DEBRIS_TEXTURE_PATH).then((rock) => {
       this._rockDebrisTexture = rock;
     });
@@ -152,9 +245,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     super.tickPrePhysics(deltaTime);
     if (this._phase === 'done' || !this._sceneFistActor) return;
 
-    const world = this.getWorld();
-    const realDt = world ? getUnscaledDeltaTime(world, deltaTime) : deltaTime;
-    this._phaseElapsed += realDt;
+    this._phaseElapsed += deltaTime;
     this._tickExplosionEmit(deltaTime);
 
     switch (this._phase) {
@@ -174,8 +265,8 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
           this._triggerExplosionCloud();
           this._vfxSpawned = true;
           const player = this.getWorld()?.getFirstPlayerPawn();
-          if (player && (player as unknown as { triggerScreenShake?: (a: number, d: number) => void }).triggerScreenShake) {
-            (player as unknown as { triggerScreenShake(a: number, d: number): void }).triggerScreenShake(0.35, 0.7);
+          if (player instanceof IsometricPlayerPawn) {
+            player.triggerScreenShake(0.35, 0.7);
           }
         }
 
@@ -189,12 +280,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         if (this._phaseElapsed >= PAUSE_DURATION) {
           this._phase = 'retracting';
           this._phaseElapsed = 0;
-
-          const w = this.getWorld();
-          if (w) {
-            const p = w.getFirstPlayerPawn();
-            if (p instanceof IsometricPlayerPawn) p.endCinematicFocus();
-          }
         }
         break;
       }
@@ -217,15 +302,6 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       }
 
       case 'finishing': {
-        const w = this.getWorld();
-        if (w) {
-          const p = w.getFirstPlayerPawn();
-          if (p instanceof IsometricPlayerPawn && !this._cinematicReturned) {
-            p.endCinematicFocus();
-            this._cinematicReturned = true;
-          }
-        }
-
         this._updateVFX(deltaTime);
 
         const vfxFinished = this._rockDebris.length === 0 &&
@@ -262,31 +338,33 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world || !this._sceneFistActor) return;
 
-    const fistPos = new THREE.Vector3();
-    this._sceneFistActor.rootComponent.getWorldPosition(fistPos);
+    this._sceneFistActor.rootComponent.getWorldPosition(this._fistPosScratch);
 
-    const nearby = zombieSpatialManager.getNearbyZombies(fistPos, FIST_HIT_RADIUS);
-    const zPos = new THREE.Vector3();
+    const nearby = zombieSpatialManager.getNearbyZombies(this._fistPosScratch, FIST_HIT_RADIUS);
 
     for (const zombie of nearby) {
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
-      zombie.rootComponent.getWorldPosition(zPos);
-      const dx = zPos.x - fistPos.x;
-      const dz = zPos.z - fistPos.z;
+      zombie.rootComponent.getWorldPosition(this._zPosScratch);
+      const dx = this._zPosScratch.x - this._fistPosScratch.x;
+      const dz = this._zPosScratch.z - this._fistPosScratch.z;
       if (dx * dx + dz * dz > FIST_HIT_RADIUS * FIST_HIT_RADIUS) continue;
 
-      // Knockback direction: radially away from fist impact point
-      const hitNormal = zPos.clone().sub(fistPos).setY(0).normalize();
+      this._hitNormalScratch.copy(this._zPosScratch).sub(this._fistPosScratch).setY(0);
+      if (this._hitNormalScratch.lengthSq() < 1e-8) {
+        this._hitNormalScratch.set(1, 0, 0);
+      } else {
+        this._hitNormalScratch.normalize();
+      }
+      this._hitLocationScratch.copy(this._zPosScratch);
       zombie.getComponent(ENGINE.CharacterStatsComponent)?.takeDamage(ONE_HIT_DAMAGE, {
-        hitLocation: zPos.clone(),
-        hitNormal,
+        hitLocation: this._hitLocationScratch,
+        hitNormal: this._hitNormalScratch,
       });
 
-      this._showHitNumber(world, zPos);
-
+      this._showHitNumber(world, this._zPosScratch);
       (zombie as unknown as { flashYellow(): void }).flashYellow?.();
-      GoreExplosionActor.spawnAt(world, zPos);
+      GoreExplosionActor.spawnAt(world, this._zPosScratch);
       this._hasHit = true;
     }
   }
@@ -315,51 +393,44 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    const origin = new THREE.Vector3(
+    _ensureFistVfxPools(world, this._rockDebrisTexture);
+    const slot = _flashFree.pop();
+    if (!slot) return;
+
+    slot.inUse = true;
+    this._originScratch.set(
       this.rootComponent.position.x,
       this._groundY,
       this.rootComponent.position.z,
     );
 
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xffcc66,
-      transparent: true,
-      opacity: 0.8,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    });
-    const mesh = new THREE.Mesh(FLASH_GEO, material);
-    mesh.scale.setScalar(0.3);
-    mesh.position.copy(origin);
-    world.scene.add(mesh);
-
-    this._flashes.push({ mesh, elapsed: 0 });
+    slot.mesh.scale.setScalar(0.3);
+    slot.mesh.position.copy(this._originScratch);
+    slot.mesh.material.opacity = 0.8;
+    slot.mesh.visible = true;
+    this._flashes.push({ mesh: slot.mesh, elapsed: 0 });
   }
 
   private _spawnShockwave(): void {
     const world = this.getWorld();
     if (!world) return;
 
-    const origin = new THREE.Vector3(
+    _ensureFistVfxPools(world, this._rockDebrisTexture);
+    const slot = _shockFree.pop();
+    if (!slot) return;
+
+    slot.inUse = true;
+    this._originScratch.set(
       this.rootComponent.position.x,
       this._groundY + 0.04,
       this.rootComponent.position.z,
     );
 
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x5a8fc8,
-      transparent: true,
-      opacity: 0.6,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    });
-    const mesh = new THREE.Mesh(SHOCKWAVE_GEO, material);
-    mesh.rotation.x = Math.PI / 2;
-    mesh.scale.setScalar(0.2);
-    mesh.position.copy(origin);
-    world.scene.add(mesh);
-
-    this._shockwaves.push({ mesh, elapsed: 0 });
+    slot.mesh.scale.setScalar(0.2);
+    slot.mesh.position.copy(this._originScratch);
+    slot.mesh.material.opacity = 0.6;
+    slot.mesh.visible = true;
+    this._shockwaves.push({ mesh: slot.mesh, elapsed: 0 });
   }
 
   private async _ensureDebrisTexture(): Promise<void> {
@@ -372,41 +443,33 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    const origin = new THREE.Vector3(
+    this._originScratch.set(
       this.rootComponent.position.x,
       this._groundY,
       this.rootComponent.position.z,
     );
 
     await this._ensureDebrisTexture();
+    _ensureFistVfxPools(world, this._rockDebrisTexture);
 
     for (let i = 0; i < VFX_CHUNK_COUNT; i++) {
+      const slot = _debrisFree.pop();
+      if (!slot) break;
+
+      slot.inUse = true;
       const scale = randomBetween(0.55, 1.35) * randomBetween(0.85, 1.25);
-      const mat = new THREE.SpriteMaterial({
-        map: this._rockDebrisTexture ?? null,
-        color: this._rockDebrisTexture ? 0xffffff : new THREE.Color().setHSL(
-          randomBetween(0.06, 0.12),
-          randomBetween(0.35, 0.65),
-          randomBetween(0.22, 0.42),
-        ),
-        transparent: true,
-        opacity: 1,
-        depthWrite: true,
-        blending: THREE.NormalBlending,
-        alphaTest: this._rockDebrisTexture ? 0.08 : 0,
-        rotation: randomBetween(0, Math.PI * 2),
-      });
-      const sprite = new THREE.Sprite(mat);
-      sprite.scale.setScalar(scale);
-      sprite.position.copy(origin);
-      sprite.position.y += randomBetween(0, 0.15);
-      world.scene.add(sprite);
+      slot.sprite.scale.setScalar(scale);
+      slot.sprite.position.copy(this._originScratch);
+      slot.sprite.position.y += randomBetween(0, 0.15);
+      slot.sprite.material.opacity = 1;
+      slot.sprite.material.rotation = randomBetween(0, Math.PI * 2);
+      slot.sprite.visible = true;
 
       const angle = Math.random() * Math.PI * 2;
       const speed = randomBetween(5, 13);
 
       this._rockDebris.push({
-        sprite,
+        sprite: slot.sprite,
         velocity: new THREE.Vector3(
           Math.cos(angle) * speed,
           randomBetween(4, 11),
@@ -419,7 +482,8 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   }
 
   private _updateVFX(deltaTime: number): void {
-    for (let i = this._rockDebris.length - 1; i >= 0; i--) {
+    let debrisWrite = 0;
+    for (let i = 0; i < this._rockDebris.length; i++) {
       const c = this._rockDebris[i]!;
       c.elapsed += deltaTime;
       c.velocity.y -= GRAVITY * deltaTime;
@@ -428,13 +492,22 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       const progress = c.elapsed / VFX_CHUNK_LIFETIME;
       c.sprite.material.opacity = Math.max(0, 1 - Math.pow(progress, 2));
       if (c.elapsed >= VFX_CHUNK_LIFETIME) {
-        c.sprite.material.dispose();
-        c.sprite.removeFromParent();
-        this._rockDebris.splice(i, 1);
+        c.sprite.visible = false;
+        for (const slot of _debrisSlots) {
+          if (slot.sprite === c.sprite) {
+            slot.inUse = false;
+            _debrisFree.push(slot);
+            break;
+          }
+        }
+      } else {
+        this._rockDebris[debrisWrite++] = c;
       }
     }
+    this._rockDebris.length = debrisWrite;
 
-    for (let i = this._flashes.length - 1; i >= 0; i--) {
+    let flashWrite = 0;
+    for (let i = 0; i < this._flashes.length; i++) {
       const f = this._flashes[i]!;
       f.elapsed += deltaTime;
       const progress = Math.min(f.elapsed / FLASH_LIFETIME, 1);
@@ -442,13 +515,22 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       f.mesh.scale.setScalar(scale);
       f.mesh.material.opacity = 0.8 * Math.max(0, 1 - progress);
       if (progress >= 1) {
-        f.mesh.material.dispose();
-        f.mesh.removeFromParent();
-        this._flashes.splice(i, 1);
+        f.mesh.visible = false;
+        for (const slot of _flashSlots) {
+          if (slot.mesh === f.mesh) {
+            slot.inUse = false;
+            _flashFree.push(slot);
+            break;
+          }
+        }
+      } else {
+        this._flashes[flashWrite++] = f;
       }
     }
+    this._flashes.length = flashWrite;
 
-    for (let i = this._shockwaves.length - 1; i >= 0; i--) {
+    let shockWrite = 0;
+    for (let i = 0; i < this._shockwaves.length; i++) {
       const s = this._shockwaves[i]!;
       s.elapsed += deltaTime;
       const progress = Math.min(s.elapsed / SHOCKWAVE_LIFETIME, 1);
@@ -456,29 +538,61 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       s.mesh.scale.setScalar(scale);
       s.mesh.material.opacity = 0.6 * Math.max(0, 1 - progress);
       if (progress >= 1) {
-        s.mesh.material.dispose();
-        s.mesh.removeFromParent();
-        this._shockwaves.splice(i, 1);
+        s.mesh.visible = false;
+        for (const slot of _shockSlots) {
+          if (slot.mesh === s.mesh) {
+            slot.inUse = false;
+            _shockFree.push(slot);
+            break;
+          }
+        }
+      } else {
+        this._shockwaves[shockWrite++] = s;
       }
     }
+    this._shockwaves.length = shockWrite;
   }
 
   private _cleanupVFX(): void {
     this._explosionEmitTimer = -1;
     this._explosionVfx?.stopEmitting();
-    for (const c of this._rockDebris) { c.sprite.material.dispose(); c.sprite.removeFromParent(); }
-    for (const f of this._flashes) { f.mesh.material.dispose(); f.mesh.removeFromParent(); }
-    for (const s of this._shockwaves) { s.mesh.material.dispose(); s.mesh.removeFromParent(); }
+    for (const c of this._rockDebris) {
+      c.sprite.visible = false;
+      for (const slot of _debrisSlots) {
+        if (slot.sprite === c.sprite) {
+          slot.inUse = false;
+          _debrisFree.push(slot);
+          break;
+        }
+      }
+    }
+    for (const f of this._flashes) {
+      f.mesh.visible = false;
+      for (const slot of _flashSlots) {
+        if (slot.mesh === f.mesh) {
+          slot.inUse = false;
+          _flashFree.push(slot);
+          break;
+        }
+      }
+    }
+    for (const s of this._shockwaves) {
+      s.mesh.visible = false;
+      for (const slot of _shockSlots) {
+        if (slot.mesh === s.mesh) {
+          slot.inUse = false;
+          _shockFree.push(slot);
+          break;
+        }
+      }
+    }
     this._rockDebris.length = 0;
     this._flashes.length = 0;
     this._shockwaves.length = 0;
-    this._rockDebrisTexture = null;
   }
 
   protected override doEndPlay(): void {
     this._cleanupVFX();
-    const world = this.getWorld();
-    if (world) slomoManager.resetIfPriority(world, FIST_SLOMO_PRIORITY);
     super.doEndPlay();
   }
 }

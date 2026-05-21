@@ -19,6 +19,7 @@ import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcCompone
 import { HealthBarUI } from '../ui/HealthBarUI.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
+import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -140,6 +141,24 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private readonly _cinematicDesired = new THREE.Vector3();
   private readonly _cinematicPlayerPos = new THREE.Vector3();
   private static readonly _ZERO_VEC = new THREE.Vector3(0, 0, 0);
+
+  // ── Kill-streak orbit (camera yaws around Grim while he moves) ───────────
+
+  private static readonly STREAK_ORBIT_SWEEP_RAD = Math.PI * 2;
+  /** Wall-clock seconds to ease camera yaw back after orbit / slow-mo ends. */
+  private static readonly STREAK_ORBIT_RETURN_DURATION_SEC = 1.15;
+
+  private _streakOrbitActive = false;
+  private _streakOrbitReturning = false;
+  private _streakOrbitElapsed = 0;
+  private _streakOrbitDuration = 0;
+  private _streakOrbitYaw = 0;
+  private _streakOrbitReturnElapsed = 0;
+  private _streakOrbitReturnStartYaw = 0;
+
+  // ── Slow-motion screen overlay ────────────────────────────────────────────
+
+  private _slomoOverlayEl: HTMLDivElement | null = null;
 
   // ── Damage vignette state ────────────────────────────────────────────────
 
@@ -304,6 +323,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     super.tickPrePhysics(deltaTime); // handles animation parameters
     this._updateVisualFacing(deltaTime);
     this._updateWeaponArcFromMouse(); // Always update arc, even when standing still
+    this._updateKillStreakOrbit(deltaTime);
     this._updateCinematicCamera(deltaTime);
     this._updateScreenShake(deltaTime);
     this._updateDamageVignette(deltaTime);
@@ -428,6 +448,82 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       overlay.style.setProperty('-webkit-backdrop-filter', filter);
       if (t < 1) requestAnimationFrame(animate);
       else overlay.remove();
+    };
+    requestAnimationFrame(animate);
+  }
+
+  /**
+   * Activate the slow-motion visual overlay: desaturation, blue-tinted vignette,
+   * plus a punchy white flash on entry. Call when kill-streak slomo begins.
+   */
+  public startSlomoEffect(): void {
+    const world = this.getWorld();
+    const container = world?.gameContainer;
+    if (!container) return;
+
+    // Flash on entry
+    this._spawnSlomoFlash(container, 'rgba(255,255,255,0.55)', 180);
+
+    // Remove any previous overlay
+    this._slomoOverlayEl?.remove();
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = [
+      'position:absolute',
+      'inset:0',
+      'pointer-events:none',
+      'z-index:195',
+      'transition:opacity 0.18s ease-out',
+      'opacity:0',
+      // Desaturate + slight cool tint + radial vignette
+      'background:radial-gradient(ellipse at center, transparent 38%, rgba(10,20,60,0.55) 100%)',
+      'backdrop-filter:saturate(0.25) brightness(0.88) hue-rotate(15deg)',
+      '-webkit-backdrop-filter:saturate(0.25) brightness(0.88) hue-rotate(15deg)',
+    ].join(';');
+    container.appendChild(overlay);
+    this._slomoOverlayEl = overlay;
+
+    // Fade in on next frame so the CSS transition fires
+    requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+  }
+
+  /**
+   * Deactivate the slow-motion overlay with a flash on exit. Call when slomo ends.
+   */
+  public endSlomoEffect(): void {
+    const world = this.getWorld();
+    const container = world?.gameContainer;
+
+    if (container) {
+      this._spawnSlomoFlash(container, 'rgba(255,255,255,0.4)', 260);
+    }
+
+    const overlay = this._slomoOverlayEl;
+    if (!overlay) return;
+    this._slomoOverlayEl = null;
+
+    overlay.style.transition = 'opacity 0.35s ease-in';
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.remove(), 400);
+  }
+
+  private _spawnSlomoFlash(container: HTMLElement, color: string, durationMs: number): void {
+    const flash = document.createElement('div');
+    flash.style.cssText = [
+      'position:absolute',
+      'inset:0',
+      'pointer-events:none',
+      `z-index:199`,
+      `background:${color}`,
+      'opacity:1',
+    ].join(';');
+    container.appendChild(flash);
+    const start = performance.now();
+    const animate = (): void => {
+      const t = Math.min((performance.now() - start) / durationMs, 1);
+      flash.style.opacity = String(1 - t);
+      if (t < 1) requestAnimationFrame(animate);
+      else flash.remove();
     };
     requestAnimationFrame(animate);
   }
@@ -597,10 +693,106 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     return a + b;
   }
 
+  // ── Kill-streak orbit ─────────────────────────────────────────────────────
+
+  /**
+   * Orbit the isometric camera around Grim (pivot on player root — follows movement).
+   * Duration should match kill-streak slow-mo (wall-clock seconds).
+   */
+  public startKillStreakOrbit(durationSec: number): void {
+    this._streakOrbitDuration = Math.max(0.5, durationSec);
+    this._streakOrbitElapsed = 0;
+    this._streakOrbitYaw = 0;
+    this._streakOrbitActive = true;
+    this._streakOrbitReturning = false;
+
+    this._cinematicActive = false;
+    this._cinematicReturning = false;
+    this._cinematicOffset.set(0, 0, 0);
+  }
+
+  /** Begin easing camera yaw back to default isometric. */
+  public endKillStreakOrbit(): void {
+    this._beginOrbitReturn();
+  }
+
+  /** Wrap orbit offset to [-π, π] so return takes the shortest path (avoids 2π→0 spin). */
+  private _normalizeOrbitYawOffset(yaw: number): number {
+    const twoPi = Math.PI * 2;
+    let a = yaw % twoPi;
+    if (a > Math.PI) a -= twoPi;
+    if (a < -Math.PI) a += twoPi;
+    return a;
+  }
+
+  private _beginOrbitReturn(): void {
+    this._streakOrbitActive = false;
+    this._streakOrbitYaw = this._normalizeOrbitYawOffset(this._streakOrbitYaw);
+
+    if (Math.abs(this._streakOrbitYaw) < 0.02) {
+      this._streakOrbitReturning = false;
+      this._streakOrbitYaw = 0;
+      this._streakOrbitReturnElapsed = 0;
+      this._applyIsometricCameraRotation(0);
+      return;
+    }
+
+    this._streakOrbitReturning = true;
+    this._streakOrbitReturnStartYaw = this._streakOrbitYaw;
+    this._streakOrbitReturnElapsed = 0;
+  }
+
+  private _applyIsometricCameraRotation(extraYaw: number, rollZ = 0): void {
+    if (!this.cameraPivot) return;
+    this.cameraPivot.rotation.set(ISO_PITCH, ISO_YAW + extraYaw, rollZ, 'YXZ');
+  }
+
+  private static _easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  private _updateKillStreakOrbit(deltaTime: number): void {
+    if (!this.cameraPivot) return;
+    if (!this._streakOrbitActive && !this._streakOrbitReturning) return;
+
+    const world = this.getWorld();
+    const realDt = world ? getUnscaledDeltaTime(world, deltaTime) : deltaTime;
+
+    if (this._streakOrbitReturning) {
+      this._streakOrbitReturnElapsed += realDt;
+      const t = Math.min(
+        this._streakOrbitReturnElapsed / IsometricPlayerPawn.STREAK_ORBIT_RETURN_DURATION_SEC,
+        1,
+      );
+      const eased = 1 - Math.pow(1 - t, 3);
+      this._streakOrbitYaw = this._streakOrbitReturnStartYaw * (1 - eased);
+      this._applyIsometricCameraRotation(this._streakOrbitYaw);
+
+      if (t >= 1) {
+        this._streakOrbitYaw = 0;
+        this._streakOrbitReturning = false;
+        this._streakOrbitReturnElapsed = 0;
+        this._applyIsometricCameraRotation(0);
+      }
+      return;
+    }
+
+    this._streakOrbitElapsed += realDt;
+    const t = Math.min(this._streakOrbitElapsed / this._streakOrbitDuration, 1);
+    const eased = IsometricPlayerPawn._easeInOutCubic(t);
+    this._streakOrbitYaw = IsometricPlayerPawn.STREAK_ORBIT_SWEEP_RAD * eased;
+    this._applyIsometricCameraRotation(this._streakOrbitYaw);
+
+    if (t >= 1) {
+      this._beginOrbitReturn();
+    }
+  }
+
   // ── Cinematic focus ───────────────────────────────────────────────────────
 
   /** Pan the camera toward a world position and hold there. */
   public startCinematicFocus(worldTarget: THREE.Vector3): void {
+    if (this._streakOrbitActive || this._streakOrbitReturning) return;
     this._cinematicTarget.copy(worldTarget);
     this._cinematicActive    = true;
     this._cinematicReturning = false;
@@ -685,6 +877,11 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     if (world) {
       (world as unknown as { slomo: number }).slomo = 1;
     }
+    this.endKillStreakOrbit();
+    this._streakOrbitReturning = false;
+    this._streakOrbitYaw = 0;
+    this._slomoOverlayEl?.remove();
+    this._slomoOverlayEl = null;
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     stats?.onHealthChanged.remove(this._onHealthChanged);
     this._vignetteEl?.remove();

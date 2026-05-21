@@ -17,8 +17,10 @@ const LIFETIME = 2.5;
 const GROUND_RIPPLE_SEGMENTS = 16;
 const SMOKE_PUFF_COUNT = 22;
 const SMOKE_TEXTURE_PATH = '@project/assets/textures/vfx/SmokePuffSoft.png';
+const riseSmokeTexturePromise = loadSmokeTexture(SMOKE_TEXTURE_PATH);
 
 const MAX_ACTIVE = 10;
+const SPAWN_Y_OFFSET = new THREE.Vector3(0, 0.1, 0);
 let activeCount = 0;
 
 const GROUND_GEOMETRY = new THREE.RingGeometry(0.1, 1, GROUND_RIPPLE_SEGMENTS);
@@ -33,7 +35,6 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
   private groundRipple2: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
   private readonly smokePuffs: BillboardSmokePuff[] = [];
   private elapsed = 0;
-  private _smokeTexture: THREE.Texture | null = null;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
@@ -52,10 +53,8 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
   }
 
   private async _spawnSmoke(world: ENGINE.World, origin: THREE.Vector3): Promise<void> {
-    if (!this._smokeTexture) {
-      this._smokeTexture = await loadSmokeTexture(SMOKE_TEXTURE_PATH);
-    }
-    spawnBillboardSmokeBurst(world, origin, this._smokeTexture, this.smokePuffs, {
+    const smokeTexture = await riseSmokeTexturePromise;
+    spawnBillboardSmokeBurst(world, origin, smokeTexture, this.smokePuffs, {
       count: SMOKE_PUFF_COUNT,
       texturePath: SMOKE_TEXTURE_PATH,
       lifetime: 1.8,
@@ -103,9 +102,8 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
     if (activeCount >= MAX_ACTIVE) return null;
     activeCount++;
 
-    const actor = ZombieRiseVFXActor.create({
-      position: position.clone().add(new THREE.Vector3(0, 0.1, 0)),
-    });
+    const spawnPos = position.clone().add(SPAWN_Y_OFFSET);
+    const actor = ZombieRiseVFXActor.create({ position: spawnPos });
     world.addActor(actor);
     return actor;
   }
