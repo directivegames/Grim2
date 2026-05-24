@@ -9,6 +9,7 @@ import * as THREE from 'three';
 import './apply-actor-movement-predictor-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
 import './apply-grass-shader-engine-patch.js';
+import './apply-cloud-shadow-engine-patch.js';
 import './auto-imports.js';
 import './fog/FogSystemActor.js';
 // PERFORMANCE: Import grass uniform manager to enable batched uniform updates
@@ -18,6 +19,10 @@ import { SpinningWeaponActor } from './actors/SpinningWeaponActor.js';
 import { WarmupActor } from './actors/WarmupActor.js';
 import { GameAudioManager } from './actors/GameAudioManager.js';
 import { ScenicFogActor } from './actors/ScenicFogActor.js';
+import { CloudShadowActor } from './cloudShadow/CloudShadowActor.js';
+import { DEFAULT_CLOUD_SHADOW_MAP } from './cloudShadow/CloudShadowState.js';
+import { FilmGrainActor } from './post/FilmGrainActor.js';
+import { DEFAULT_FILM_GRAIN_SETTINGS, FilmGrainUI } from './ui/FilmGrainUI.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
 import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
 import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
@@ -157,6 +162,8 @@ class MyGame extends ENGINE.BaseGameLoop {
     }
 
     this._spawnScenicFogCards(world);
+    this._spawnCloudShadows(world);
+    this._spawnFilmGrain(world);
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     this._startWarmupSequence(world, startMenu);
@@ -206,6 +213,22 @@ class MyGame extends ENGINE.BaseGameLoop {
       }
     }
     return false;
+  }
+
+  /** World-space cloud shadows — flat multiply overlay plane. */
+  private _spawnCloudShadows(world: ENGINE.World): void {
+    world.addActor(CloudShadowActor.create({
+      name: 'CloudShadows',
+      cloudMapUrl: DEFAULT_CLOUD_SHADOW_MAP,
+    }));
+  }
+
+  /** CSS film-grain overlay on the game container. */
+  private _spawnFilmGrain(world: ENGINE.World): void {
+    world.addActor(FilmGrainActor.create({
+      name: 'FilmGrain',
+    }));
+    FilmGrainUI.attach(world, DEFAULT_FILM_GRAIN_SETTINGS);
   }
 
   /** Large flowmap fog cards at existing ground-mist cluster positions. */

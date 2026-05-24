@@ -3,24 +3,23 @@
   "name": "smoke",
   "particles": [
     {
-      "nbParticles": 150,
+      "nbParticles": 60,
       "gravity": [
-        0.08,
-        0.02,
-        0.03
+        0.0,
+        0.04,
+        0.0
       ],
       "renderMode": "billboard",
-      "intensity": 0.9,
+      "intensity": 0.75,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/SmokePuffSoft.png",
       "easeFunction": "easeOutSine",
       "fadeAlpha": [
-        0.12,
-        0.32
+        0.0,
+        0.35
       ],
       "fadeSize": [
-        0.22,
-        1
+        0.15,
+        1.0
       ],
       "blendingMode": "additive"
     }
@@ -28,24 +27,24 @@
   "emitters": [
     {
       "particlesIndex": 0,
-      "loop": true,
-      "duration": 1,
-      "nbParticles": 65,
+      "loop": false,
+      "duration": 0.4,
+      "nbParticles": 30,
       "spawnMode": "time",
       "delay": 0,
       "particlesLifetime": [
-        2.394,
-        3.8
+        1.2,
+        2.0
       ],
       "startPositionMin": [
-        -0.28,
-        -0.28,
-        -0.28
+        -0.3,
+        0.0,
+        -0.3
       ],
       "startPositionMax": [
-        0.28,
-        0.28,
-        0.28
+        0.3,
+        0.2,
+        0.3
       ],
       "startRotationMin": [
         0,
@@ -60,38 +59,38 @@
       "rotationSpeedMin": [
         0,
         0,
-        -0.55
+        -0.4
       ],
       "rotationSpeedMax": [
         0,
         0,
-        0.55
+        0.4
       ],
       "directionMin": [
-        -0.16129032258064518,
-        0.3870967741935484,
-        -0.16129032258064518
+        -0.25,
+        0.6,
+        -0.25
       ],
       "directionMax": [
-        0.16129032258064518,
-        1,
-        0.16129032258064518
+        0.25,
+        1.0,
+        0.25
       ],
       "size": [
-        0.43,
-        0.91
+        0.6,
+        1.4
       ],
       "speed": [
-        0.24,
-        0.62
+        0.3,
+        0.8
       ],
       "colorStart": [
-        "#48494f",
-        "#5a5a5e"
+        "#3a3a3f",
+        "#4a4a50"
       ],
       "colorEnd": [
-        "#a8aaae",
-        "#b2b4b8"
+        "#7a7a80",
+        "#909096"
       ],
       "useLocalDirection": false
     }

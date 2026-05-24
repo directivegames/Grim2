@@ -129,6 +129,11 @@ export class ZombieSpatialManager {
     return this.zombieToCell.size;
   }
 
+  /** All zombies currently registered (for projectile ignore lists). */
+  getAllRegisteredZombies(): ENGINE.Actor[] {
+    return Array.from(this.zombieToCell.keys());
+  }
+
   /**
    * Clear all zombies (e.g., on level change).
    */

@@ -3,6 +3,7 @@
 
 import { registerGeneratedClassMetadata, registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
+import { BigUndeadActor } from './actors/BigUndeadActor.js';
 import { GrassClumpActor } from './actors/GrassClumpActor.js';
 import { GroundFogActor } from './actors/GroundFogActor.js';
 import { HedgeActor } from './actors/HedgeActor.js';
@@ -11,10 +12,71 @@ import { NewZombieActor } from './actors/NewZombieActor.js';
 import { TallGrassActor } from './actors/TallGrassActor.js';
 import { ZombieActor } from './actors/ZombieActor.js';
 import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
+import { CloudShadowComponent } from './cloudShadow/CloudShadowComponent.js';
 import { FogSystemComponent } from './fog/FogSystemComponent.js';
+import { FilmGrainComponent } from './post/FilmGrainComponent.js';
 import { IsometricMovementComponent } from './components/movement/IsometricMovementComponent.js';
 
 export function registerMetadata(): void {
+  registerGeneratedPropertyMetadata(BigUndeadActor, {
+      "maxHealth": {
+        "type": "number",
+        "min": 1,
+        "max": 10000,
+        "step": 1,
+        "category": "Big Undead"
+      },
+      "moveSpeed": {
+        "type": "number",
+        "min": 0.5,
+        "max": 20,
+        "step": 0.1,
+        "category": "Big Undead"
+      },
+      "aggroRadius": {
+        "type": "number",
+        "min": 1,
+        "max": 100,
+        "step": 0.5,
+        "category": "Big Undead"
+      },
+      "fireRange": {
+        "type": "number",
+        "min": 2,
+        "max": 20,
+        "step": 0.5,
+        "category": "Big Undead"
+      },
+      "projectileDamage": {
+        "type": "number",
+        "min": 0,
+        "max": 500,
+        "step": 1,
+        "category": "Big Undead"
+      },
+      "wanderRadius": {
+        "type": "number",
+        "min": 2,
+        "max": 50,
+        "step": 0.5,
+        "category": "Big Undead"
+      },
+      "wanderWaitMin": {
+        "type": "number",
+        "min": 0.5,
+        "max": 20,
+        "step": 0.5,
+        "category": "Big Undead"
+      },
+      "wanderWaitMax": {
+        "type": "number",
+        "min": 0.5,
+        "max": 30,
+        "step": 0.5,
+        "category": "Big Undead"
+      }
+    });
+
   registerGeneratedPropertyMetadata(GrassClumpActor, {
       "bladeCount": {
         "type": "number",
@@ -326,6 +388,152 @@ export function registerMetadata(): void {
       }
     });
 
+  registerGeneratedPropertyMetadata(CloudShadowComponent, {
+      "enabled": {
+        "type": "boolean",
+        "category": "Cloud Shadows",
+        "description": "Enable cloud shadow overlay"
+      },
+      "cloudMapUrl": {
+        "type": "texturePath",
+        "category": "Cloud Shadows",
+        "description": "Grayscale cloud noise texture"
+      },
+      "cloudScale": {
+        "type": "number",
+        "min": 0.0001,
+        "max": 0.05,
+        "step": 0.0001,
+        "category": "Cloud Shadows",
+        "description": "World-space UV scale (lower = larger, sparser clouds)"
+      },
+      "cloudSpeed": {
+        "type": "number",
+        "min": 0,
+        "max": 0.2,
+        "step": 0.001,
+        "category": "Cloud Shadows",
+        "description": "Scroll speed multiplier"
+      },
+      "windDirectionX": {
+        "type": "number",
+        "min": -1,
+        "max": 1,
+        "step": 0.01,
+        "category": "Cloud Shadows",
+        "description": "Wind direction X"
+      },
+      "windDirectionZ": {
+        "type": "number",
+        "min": -1,
+        "max": 1,
+        "step": 0.01,
+        "category": "Cloud Shadows",
+        "description": "Wind direction Z"
+      },
+      "shadowStrength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "category": "Cloud Shadows",
+        "description": "Maximum shadow strength"
+      },
+      "cloudLow": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "category": "Cloud Shadows",
+        "description": "Cloud mask smoothstep low (wider = softer, less shadow)"
+      },
+      "cloudHigh": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "category": "Cloud Shadows",
+        "description": "Cloud mask smoothstep high"
+      },
+      "layer2ScaleMul": {
+        "type": "number",
+        "min": 1,
+        "max": 5,
+        "step": 0.01,
+        "category": "Layers",
+        "description": "Second layer scale multiplier"
+      },
+      "layer2SpeedMul": {
+        "type": "number",
+        "min": 0.05,
+        "max": 2,
+        "step": 0.01,
+        "category": "Layers",
+        "description": "Second layer speed multiplier"
+      },
+      "layer1Weight": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "category": "Layers",
+        "description": "Primary cloud layer blend weight"
+      },
+      "layer2Weight": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "category": "Layers",
+        "description": "Secondary cloud layer blend weight"
+      },
+      "planeSize": {
+        "type": "number",
+        "min": 50,
+        "max": 500,
+        "step": 1,
+        "category": "Overlay",
+        "description": "Overlay plane half-size (world units)"
+      },
+      "planeHeight": {
+        "type": "number",
+        "min": 0.01,
+        "max": 2,
+        "step": 0.01,
+        "category": "Overlay",
+        "description": "Overlay plane height (Y)"
+      },
+      "planeOffsetX": {
+        "type": "number",
+        "min": -500,
+        "max": 500,
+        "step": 1,
+        "category": "Overlay",
+        "description": "Overlay plane world X offset"
+      },
+      "planeOffsetZ": {
+        "type": "number",
+        "min": -500,
+        "max": 500,
+        "step": 1,
+        "category": "Overlay",
+        "description": "Overlay plane world Z offset"
+      },
+      "renderOrder": {
+        "type": "number",
+        "min": -100,
+        "max": 100,
+        "step": 1,
+        "category": "Overlay",
+        "description": "Transparent render order for the overlay plane"
+      },
+      "debugLogging": {
+        "type": "boolean",
+        "category": "Debug",
+        "description": "Log overlay spawn to console"
+      }
+    });
+
   registerGeneratedPropertyMetadata(FogSystemComponent, {
       "cardModelUrl": {
         "type": "modelPath",
@@ -534,6 +742,48 @@ export function registerMetadata(): void {
       "debugLogging": {
         "type": "boolean",
         "description": "Print fog-card load/material diagnostics to the browser console"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(FilmGrainComponent, {
+      "enabled": {
+        "type": "boolean",
+        "category": "Film Grain",
+        "description": "Enable film grain overlay"
+      },
+      "opacity": {
+        "type": "number",
+        "min": 0,
+        "max": 0.5,
+        "step": 0.005,
+        "category": "Film Grain",
+        "description": "Grain overlay opacity"
+      },
+      "baseFrequency": {
+        "type": "number",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.01,
+        "category": "Film Grain",
+        "description": "Noise frequency (lower = coarser grain)"
+      },
+      "numOctaves": {
+        "type": "number",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "category": "Film Grain",
+        "description": "Noise detail octaves"
+      },
+      "animated": {
+        "type": "boolean",
+        "category": "Film Grain",
+        "description": "Animate grain each frame"
+      },
+      "blendMode": {
+        "type": "string",
+        "category": "Film Grain",
+        "description": "CSS mix-blend-mode (overlay, normal, screen, multiply)"
       }
     });
 

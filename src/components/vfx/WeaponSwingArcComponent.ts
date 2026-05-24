@@ -24,7 +24,7 @@ const ARC_ANGLE = Math.PI;
 const ARC_SEGMENTS = 32;
 
 /** Arc material opacity — neon guide on the floor. */
-const ARC_OPACITY = 0.38;
+const ARC_OPACITY = 0.18;
 
 /** Y offset from ground to avoid z-fighting. */
 const ARC_Y_OFFSET = 0.02;

@@ -1,0 +1,129 @@
+{
+  "externalAnimationSources": [
+    "@project/assets/models/Bigundead/Meshy_AI_Oozebound_Office_Zomb_biped/Meshy_AI_Oozebound_Office_Zomb_biped_Meshy_AI_Meshy_Merged_Animations.glb"
+  ],
+  "stripPositionTracksOnBones": [
+    "Hips"
+  ],
+  "parameters": {
+    "state": "idle"
+  },
+  "initialState": "idle",
+  "oneShotClips": [],
+  "states": {
+    "idle": {
+      "clip": "dying_backwards",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        }
+      ]
+    },
+    "walk": {
+      "clip": "Running",
+      "transitions": [
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.08
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        }
+      ]
+    },
+    "attack": {
+      "clip": "dying_backwards",
+      "transitions": [
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.1
+        },
+        {
+          "to": "hit",
+          "condition": { "state": { "equalTo": "hit" } },
+          "blendDuration": 0.05
+        },
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.03
+        }
+      ]
+    },
+    "hit": {
+      "clip": "Charged_Spell_Cast",
+      "transitions": [
+        {
+          "to": "death",
+          "condition": { "state": { "equalTo": "death" } },
+          "blendDuration": 0.05
+        },
+        {
+          "to": "walk",
+          "condition": { "state": { "equalTo": "walk" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.15
+        },
+        {
+          "to": "attack",
+          "condition": { "state": { "equalTo": "attack" } },
+          "blendDuration": 0.15
+        }
+      ]
+    },
+    "death": {
+      "clip": "BigUndead_Death",
+      "transitions": []
+    }
+  },
+  "clipOptions": {
+    "dying_backwards": {
+      "loop": "LoopRepeat"
+    },
+    "Running": {
+      "loop": "LoopRepeat"
+    },
+    "Charged_Spell_Cast": {
+      "loop": "LoopRepeat"
+    },
+    "BigUndead_Death": {
+      "loop": "LoopOnce",
+      "clampWhenFinished": true
+    }
+  }
+}

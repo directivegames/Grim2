@@ -28,7 +28,8 @@ import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 const NEW_ZOMBIE_NPC_PROFILE = 'NewZombieNPC';
 
-const NEW_ZOMBIE_MODEL_URL =
+/** Shared with ZombieHordeManager for GLB preload at horde start. */
+export const NEW_ZOMBIE_MODEL_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb` as ENGINE.ModelPath;
 const NEW_ZOMBIE_ANIM_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.anim.json`;
@@ -668,7 +669,7 @@ export class NewZombieActor extends ENGINE.Actor {
     }
 
     shadow.position.set(0, BLOB_SHADOW_FEET_Y, 0);
-    shadow.visible = !this._deathSequenceStarted;
+    shadow.visible = !this._deathSequenceStarted && !this.isHiddenInGame();
   }
 
   private _hideBlobShadow(): void {
@@ -1071,6 +1072,20 @@ export class NewZombieActor extends ENGINE.Actor {
     const gravePos = landPos.clone().add(new THREE.Vector3(0, 0.5, 0));
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
 
+    const smokeActor = ENGINE.Actor.create();
+    smokeActor.rootComponent.position.copy(landPos);
+    smokeActor.rootComponent.position.y += 0.1;
+    const smokeVfx = ENGINE.VFXComponent.create({
+      vfxPath: '@project/assets/VFX/smoke.vfx.json',
+      autoStart: true,
+    });
+    smokeActor.rootComponent.add(smokeVfx);
+    world.addActor(smokeActor);
+
+    setTimeout(() => {
+      smokeActor.destroy();
+    }, 3000);
+
     this._awardSoul(world);
   }
 
@@ -1191,7 +1206,7 @@ export class NewZombieActor extends ENGINE.Actor {
     npc.setTargetPosition(this._steerGoal, STEER_GOAL_STOP);
   }
 
-  private syncStatsAndMovementFromProperties(): void {
+  protected syncStatsAndMovementFromProperties(): void {
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     if (stats) {
       stats.setMaxHealth(this.maxHealth);

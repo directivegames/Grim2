@@ -1,22 +1,15 @@
 /**
- * ZombieRiseVFXActor — Zombie spawn: ground ripple rings + textured billboard smoke.
+ * ZombieRiseVFXActor — Zombie spawn: ground ripple rings + smoke.vfx.json particles.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
-import {
-  type BillboardSmokePuff,
-  disposeBillboardSmokePuffs,
-  loadSmokeTexture,
-  spawnBillboardSmokeBurst,
-  tickBillboardSmokePuffs,
-} from '../components/vfx/BillboardSmokePuffs.js';
+
+const SPAWN_SMOKE_VFX = '@project/assets/VFX/smoke.vfx.json';
 
 const LIFETIME = 2.5;
 const GROUND_RIPPLE_SEGMENTS = 16;
-const SMOKE_PUFF_COUNT = 22;
-const SMOKE_TEXTURE_PATH = '@project/assets/textures/vfx/SmokePuffSoft.png';
 
 const MAX_ACTIVE = 10;
 let activeCount = 0;
@@ -31,50 +24,24 @@ function easeOutCubic(value: number): number {
 export class ZombieRiseVFXActor extends ENGINE.Actor {
   private groundRipple: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
   private groundRipple2: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
-  private readonly smokePuffs: BillboardSmokePuff[] = [];
   private elapsed = 0;
-  private _smokeTexture: THREE.Texture | null = null;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
     super.initialize({ ...options, rootComponent: root });
     this._createGroundRipples(root);
-  }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    const world = this.getWorld();
-    if (!world) return;
-
-    const origin = this.rootComponent.position;
-    void this._spawnSmoke(world, origin);
-  }
-
-  private async _spawnSmoke(world: ENGINE.World, origin: THREE.Vector3): Promise<void> {
-    if (!this._smokeTexture) {
-      this._smokeTexture = await loadSmokeTexture(SMOKE_TEXTURE_PATH);
-    }
-    spawnBillboardSmokeBurst(world, origin, this._smokeTexture, this.smokePuffs, {
-      count: SMOKE_PUFF_COUNT,
-      texturePath: SMOKE_TEXTURE_PATH,
-      lifetime: 1.8,
-      hue: [0.72, 0.82],
-      saturation: [0.55, 0.8],
-      lightness: [0.5, 0.72],
-      maxScale: [1.5, 2.6],
-      horizontalSpeed: [0.4, 1.2],
-      verticalSpeed: [0.6, 1.5],
-      peakOpacity: 0.88,
-      size: 1.25,
+    const smokeVfx = ENGINE.VFXComponent.create({
+      vfxPath: SPAWN_SMOKE_VFX,
+      autoStart: true,
     });
+    root.add(smokeVfx);
   }
 
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
 
     this.elapsed += deltaTime;
-    tickBillboardSmokePuffs(this.smokePuffs, deltaTime);
 
     if (this.groundRipple) {
       const t = Math.min(this.elapsed / (LIFETIME * 0.6), 1);
@@ -92,11 +59,6 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
       activeCount = Math.max(0, activeCount - 1);
       this.destroy();
     }
-  }
-
-  protected override doEndPlay(): void {
-    disposeBillboardSmokePuffs(this.smokePuffs);
-    super.doEndPlay();
   }
 
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): ZombieRiseVFXActor | null {

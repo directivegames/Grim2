@@ -11,8 +11,7 @@ const ANIM_DURATION = 0.5;
 const SPLATTER_COUNT = 1;
 const MAX_POOL_SIZE = 32;
 
-const BLOOD_SPRITESHEET_PATH =
-  '@project/assets/VFX/BloodFX Batch 1/VFX Blood Batch 1_SpriteSheetRows.png';
+const BLOOD_SPRITESHEET_PATH = '@project/assets/VFX/BloodFX/Blooduse.png';
 
 /** Second row (0-based index 1) — horizontal side-impact splatter. */
 const SPLATTER_ROW = 1;
@@ -48,18 +47,35 @@ function applyFrameUV(texture: THREE.Texture, frameIndex: number): void {
   texture.offset.set(frameIndex / FRAME_COUNT, rowVOffset(SPLATTER_ROW));
 }
 
-/** Discard near-black pixels so the spritesheet background is not drawn. */
-function applyBlackKeyCutout(material: THREE.MeshBasicMaterial, threshold = 0.12): void {
-  material.customProgramCacheKey = () => `bloodBlackKey_${threshold}`;
-  material.onBeforeCompile = (shader) => {
-    shader.fragmentShader = shader.fragmentShader.replace(
-      '#include <map_fragment>',
-      `#include <map_fragment>
-      if (dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722)) < ${threshold.toFixed(4)}) {
-        discard;
-      }`,
-    );
-  };
+/** Convert the sheet's black background into real alpha so it works in WebGPU too. */
+function createBlackKeyedTexture(source: THREE.Texture, threshold = 32): THREE.Texture {
+  const image = source.image as CanvasImageSource & { width: number; height: number };
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    return source;
+  }
+
+  ctx.drawImage(image, 0, 0);
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = pixels.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const luminance = data[i]! * 0.2126 + data[i + 1]! * 0.7152 + data[i + 2]! * 0.0722;
+    data[i + 3] = luminance < threshold ? 0 : 255;
+  }
+
+  ctx.putImageData(pixels, 0, 0);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
 }
 
 @ENGINE.GameClass()
@@ -151,7 +167,7 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
             texture.wrapS = THREE.ClampToEdgeWrapping;
             texture.wrapT = THREE.ClampToEdgeWrapping;
             texture.colorSpace = THREE.SRGBColorSpace;
-            resolve(texture);
+            resolve(createBlackKeyedTexture(texture));
           },
           undefined,
           (err) => reject(err),
@@ -195,7 +211,6 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
     if (!texture) {
       mat.color.setHex(0xff1111);
     } else {
-      applyBlackKeyCutout(mat);
     }
 
     return new THREE.Mesh(DROP_GEO, mat);

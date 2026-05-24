@@ -1,41 +1,16 @@
 /**
  * GoreExplosionActor — Blood/gore explosion effect on zombie kill.
  *
- * Chunks, drops, flash, shockwave + textured blood burst sprites (no VFXComponent).
+ * Chunks, drops, flash, and shockwave on zombie kill.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
-import {
-  type BillboardSmokePuff,
-  disposeBillboardSmokePuffs,
-  loadSmokeTexture,
-  spawnBillboardSmokeBurst,
-  tickBillboardSmokePuffs,
-} from '../components/vfx/BillboardSmokePuffs.js';
-
 const LIFETIME = 2.5;
 const GRAVITY = 9.5;
 const CHUNK_COUNT = 8;
 const BLOOD_DROP_COUNT = 16;
-const BLOOD_BURST_PUFF_COUNT = 16;
-/** BloodFX Batch 1 spritesheet — row 2 = side splatter frames (matches weapon hit splatter). */
-const BLOOD_BURST_TEXTURE_PATH =
-  '@project/assets/VFX/BloodFX Batch 1/VFX Blood Batch 1_SpriteSheetRows.png';
-const BLOOD_BURST_ROW = 1;
-const BLOOD_BURST_ROW_COUNT = 9;
-const BLOOD_BURST_FRAME_COUNT = 7;
-const goreBloodTexturePromise = loadSmokeTexture(BLOOD_BURST_TEXTURE_PATH);
-let goreBloodBaseTexture: THREE.Texture | null = null;
-
-function applyBloodBurstFrameUV(texture: THREE.Texture, frameIndex: number): void {
-  texture.repeat.set(1 / BLOOD_BURST_FRAME_COUNT, 1 / BLOOD_BURST_ROW_COUNT);
-  texture.offset.set(
-    frameIndex / BLOOD_BURST_FRAME_COUNT,
-    (BLOOD_BURST_ROW_COUNT - BLOOD_BURST_ROW - 1) / BLOOD_BURST_ROW_COUNT,
-  );
-}
 
 const MAX_ACTIVE = 3;
 let activeCount = 0;
@@ -79,7 +54,6 @@ function easeOutCubic(value: number): number {
 export class GoreExplosionActor extends ENGINE.Actor {
   private readonly chunkPieces: ChunkPiece[] = [];
   private readonly bloodDrops: BloodDrop[] = [];
-  private readonly bloodBurstPuffs: BillboardSmokePuff[] = [];
   private flash: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null = null;
   private shockwave: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
   private elapsed = 0;
@@ -100,47 +74,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
     if (!world) return;
 
     const origin = this.rootComponent.position;
-    void this._spawnBloodBurst(world, origin);
     this._spawnBloodDrops(world, origin);
-  }
-
-  private async _spawnBloodBurst(world: ENGINE.World, origin: THREE.Vector3): Promise<void> {
-    const bloodTexture = await goreBloodTexturePromise;
-    if (bloodTexture) {
-      goreBloodBaseTexture = bloodTexture;
-    }
-    const puffCountBefore = this.bloodBurstPuffs.length;
-    spawnBillboardSmokeBurst(world, origin, bloodTexture, this.bloodBurstPuffs, {
-      count: BLOOD_BURST_PUFF_COUNT,
-      texturePath: BLOOD_BURST_TEXTURE_PATH,
-      lifetime: 1.6,
-      hue: [0, 0],
-      saturation: [0, 0],
-      lightness: [0.95, 1],
-      maxScale: [1.2, 2.2],
-      horizontalSpeed: [0.6, 2.0],
-      verticalSpeed: [0.5, 1.4],
-      peakOpacity: 0.95,
-      size: 1.1,
-      blending: THREE.NormalBlending,
-    });
-
-    if (!bloodTexture) {
-      return;
-    }
-
-    for (let i = puffCountBefore; i < this.bloodBurstPuffs.length; i++) {
-      const puff = this.bloodBurstPuffs[i]!;
-      const mat = puff.mesh.material;
-      const frame = Math.floor(Math.random() * BLOOD_BURST_FRAME_COUNT);
-      const tex = bloodTexture.clone();
-      applyBloodBurstFrameUV(tex, frame);
-      mat.map = tex;
-      mat.alphaMap = tex;
-      mat.color.setHex(0xffffff);
-      mat.blending = THREE.NormalBlending;
-      mat.needsUpdate = true;
-    }
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -149,8 +83,6 @@ export class GoreExplosionActor extends ENGINE.Actor {
     this.elapsed += deltaTime;
     const progress = Math.min(this.elapsed / LIFETIME, 1);
     const chunkAlpha = Math.max(0, 1 - progress * 1.35);
-
-    tickBillboardSmokePuffs(this.bloodBurstPuffs, deltaTime);
 
     for (const piece of this.chunkPieces) {
       piece.velocity.y -= GRAVITY * deltaTime;
@@ -201,14 +133,6 @@ export class GoreExplosionActor extends ENGINE.Actor {
   }
 
   protected override doEndPlay(): void {
-    for (const puff of this.bloodBurstPuffs) {
-      const map = puff.mesh.material.map;
-      if (map && map !== goreBloodBaseTexture) {
-        map.dispose();
-      }
-    }
-    disposeBillboardSmokePuffs(this.bloodBurstPuffs);
-
     for (const piece of this.chunkPieces) {
       piece.mesh.material.dispose();
       piece.mesh.removeFromParent();

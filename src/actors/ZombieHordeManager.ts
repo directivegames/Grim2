@@ -15,7 +15,12 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
-import { NewZombieActor } from './NewZombieActor.js';
+import {
+  createDefaultHordeEnemyTypes,
+  HORDE_NORMAL_ZOMBIE_SPAWN_WEIGHT,
+  type HordeEnemyType,
+} from '../horde/HordeEnemyRegistry.js';
+import { NEW_ZOMBIE_MODEL_URL, NewZombieActor } from './NewZombieActor.js';
 import { ZombieRiseVFXActor } from './ZombieRiseVFXActor.js';
 
 // Configuration
@@ -64,6 +69,10 @@ export class ZombieHordeManager extends ENGINE.Actor {
   /** Placed-zombie references — cleared in doEndPlay to avoid dangling callbacks. */
   private _placedZombies: NewZombieActor[] = [];
 
+  /** Elite / alternate enemy types (Big Undead, etc.) — see HordeEnemyRegistry. */
+  private readonly _hordeEnemyTypes: HordeEnemyType[] = createDefaultHordeEnemyTypes();
+  private readonly _activeEliteActors = new Map<string, Set<ENGINE.Actor>>();
+
   // Scratch vectors
   private readonly _playerPos = new THREE.Vector3();
   private readonly _spawnPos = new THREE.Vector3();
@@ -83,6 +92,18 @@ export class ZombieHordeManager extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     super.doBeginPlay();
     this._needsHookPlaced = true;
+
+    for (const type of this._hordeEnemyTypes) {
+      this._activeEliteActors.set(type.id, new Set());
+    }
+
+    // Warm GLB caches so first reveals are not blocked on async load.
+    void ENGINE.resourceManager.loadModel(ENGINE.AssetPath.fromString(NEW_ZOMBIE_MODEL_URL));
+    for (const type of this._hordeEnemyTypes) {
+      if (type.modelUrl) {
+        void ENGINE.resourceManager.loadModel(ENGINE.AssetPath.fromString(type.modelUrl));
+      }
+    }
   }
 
   private hookPlacedZombies(): void {
@@ -256,8 +277,109 @@ export class ZombieHordeManager extends ENGINE.Actor {
     if (delaySec > 0) {
       this._pendingWaveSpawns.push({ delayRemaining: delaySec });
     } else {
-      this.spawnSingleZombie();
+      this.spawnHordeEnemySlot();
     }
+  }
+
+  /**
+   * Fills one horde spawn slot — either an elite from the registry (weighted)
+   * or a normal pooled zombie.
+   */
+  private spawnHordeEnemySlot(): void {
+    const eliteType = this._pickEliteTypeForSpawn();
+    if (eliteType) {
+      this._spawnEliteEnemy(eliteType);
+      return;
+    }
+    this.spawnSingleZombie();
+  }
+
+  private _pickEliteTypeForSpawn(): HordeEnemyType | null {
+    const eligible = this._hordeEnemyTypes.filter(type => {
+      if (this._totalKills < type.killsToUnlock) return false;
+      const active = this._activeEliteActors.get(type.id);
+      return (active?.size ?? 0) < type.maxActive;
+    });
+    if (eligible.length === 0) return null;
+
+    let totalWeight = HORDE_NORMAL_ZOMBIE_SPAWN_WEIGHT;
+    for (const type of eligible) {
+      totalWeight += type.spawnWeight;
+    }
+
+    let roll = Math.random() * totalWeight;
+    if (roll < HORDE_NORMAL_ZOMBIE_SPAWN_WEIGHT) {
+      return null;
+    }
+    roll -= HORDE_NORMAL_ZOMBIE_SPAWN_WEIGHT;
+
+    for (const type of eligible) {
+      if (roll < type.spawnWeight) {
+        return type;
+      }
+      roll -= type.spawnWeight;
+    }
+
+    return null;
+  }
+
+  private _spawnEliteEnemy(type: HordeEnemyType): void {
+    const world = this.getWorld();
+    const player = world?.getFirstPlayerPawn();
+    if (!world || !player) return;
+
+    player.rootComponent.getWorldPosition(this._playerPos);
+    const spawnPos = this.getSpawnPosition(this._playerPos);
+    if (!spawnPos) return;
+
+    const actor = type.create(world, spawnPos);
+    const onDied = () => this._onEliteEnemyDied(type, actor);
+    type.hookDeath(actor, onDied);
+
+    const activeSet = this._activeEliteActors.get(type.id);
+    activeSet?.add(actor);
+
+    this._revealActorWhenVisualReady(world, actor, spawnPos, type);
+  }
+
+  private _onEliteEnemyDied(type: HordeEnemyType, actor: ENGINE.Actor): void {
+    type.clearDeathHook(actor);
+    this._activeEliteActors.get(type.id)?.delete(actor);
+
+    this._totalKills++;
+
+    if (!this._hordeActive && this._totalKills >= this.killsToActivate) {
+      this.activateHorde();
+    }
+
+    this.checkVictoryCondition();
+  }
+
+  private _revealActorWhenVisualReady(
+    world: ENGINE.World,
+    actor: ENGINE.Actor,
+    spawnPos: THREE.Vector3,
+    type: HordeEnemyType,
+  ): void {
+    const finalSpawnPos = spawnPos.clone();
+    const visual = actor.getComponent(ENGINE.GLTFMeshComponent);
+
+    const reveal = (): void => {
+      if (!actor.getWorld()) return;
+      actor.rootComponent.position.copy(finalSpawnPos);
+      ZombieRiseVFXActor.spawnAt(world, finalSpawnPos);
+    };
+
+    if (!visual || visual.isModelLoaded()) {
+      reveal();
+      return;
+    }
+
+    void visual.waitForLoad().then(reveal).catch(() => {
+      type.clearDeathHook(actor);
+      this._activeEliteActors.get(type.id)?.delete(actor);
+      actor.destroy();
+    });
   }
 
   private _processPendingWaveSpawns(deltaTime: number): void {
@@ -270,7 +392,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       if (entry.delayRemaining > 0) {
         this._pendingWaveSpawns[writeIdx++] = entry;
       } else {
-        this.spawnSingleZombie();
+        this.spawnHordeEnemySlot();
       }
     }
     this._pendingWaveSpawns.length = writeIdx;
@@ -358,12 +480,18 @@ export class ZombieHordeManager extends ENGINE.Actor {
     hordeActive: boolean;
     activeZombies: number;
     respawnQueue: number;
+    activeElites: Record<string, number>;
   } {
+    const activeElites: Record<string, number> = {};
+    for (const [id, set] of this._activeEliteActors) {
+      activeElites[id] = set.size;
+    }
     return {
       totalKills: this._totalKills,
       hordeActive: this._hordeActive,
       activeZombies: this._activeZombies.size,
       respawnQueue: this._respawnQueue.length,
+      activeElites,
     };
   }
 
@@ -382,6 +510,15 @@ export class ZombieHordeManager extends ENGINE.Actor {
     }
     this._activeZombies.clear();
     this._respawnQueue.length = 0;
+
+    for (const type of this._hordeEnemyTypes) {
+      const active = this._activeEliteActors.get(type.id);
+      if (!active) continue;
+      for (const actor of active) {
+        type.clearDeathHook(actor);
+      }
+      active.clear();
+    }
 
     super.doEndPlay();
   }

@@ -127,6 +127,7 @@ export async function loadSmokeTexture(texturePath: string): Promise<THREE.Textu
         (tex) => {
           tex.wrapS = THREE.ClampToEdgeWrapping;
           tex.wrapT = THREE.ClampToEdgeWrapping;
+          tex.colorSpace = THREE.SRGBColorSpace;
           resolve(tex);
         },
         undefined,
@@ -158,7 +159,7 @@ function getOrCreatePool(texturePath: string, texture: THREE.Texture | null): Te
       depthWrite: false,
       blending: THREE.AdditiveBlending,
       side: THREE.DoubleSide,
-      alphaTest: 0.01,
+      alphaTest: texture ? 0.08 : 0,
     });
     const mesh = new THREE.Mesh(PUFF_GEOMETRY, mat);
     mesh.visible = false;
@@ -166,6 +167,18 @@ function getOrCreatePool(texturePath: string, texture: THREE.Texture | null): Te
     const slot: PooledPuffSlot = { mesh, inUse: false };
     pool.slots.push(slot);
     pool.free.push(slot);
+  }
+
+  if (texture) {
+    for (const slot of pool.slots) {
+      const mat = slot.mesh.material;
+      if (!mat.map) {
+        mat.map = texture;
+        mat.alphaMap = texture;
+        mat.alphaTest = 0.08;
+        mat.needsUpdate = true;
+      }
+    }
   }
 
   return pool;
