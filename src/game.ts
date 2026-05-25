@@ -24,6 +24,7 @@ import { DEFAULT_CLOUD_SHADOW_MAP } from './cloudShadow/CloudShadowState.js';
 import { FilmGrainActor } from './post/FilmGrainActor.js';
 import { DEFAULT_FILM_GRAIN_SETTINGS, FilmGrainUI } from './ui/FilmGrainUI.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
+import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
 import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
 
@@ -166,6 +167,7 @@ class MyGame extends ENGINE.BaseGameLoop {
     this._spawnFilmGrain(world);
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
+    PauseManagerActor.ensureExists(world);
     this._startWarmupSequence(world, startMenu);
   }
 

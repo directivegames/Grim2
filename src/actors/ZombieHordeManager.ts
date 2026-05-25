@@ -495,6 +495,21 @@ export class ZombieHordeManager extends ENGINE.Actor {
     };
   }
 
+  /** Reset wave state when the player quits to the main menu. */
+  public resetForMainMenu(): void {
+    this._hordeActive = false;
+    this._totalKills = 0;
+    this._waveTimer = 0;
+    this._spawningPaused = false;
+    this._pendingWaveSpawns.length = 0;
+    this._respawnQueue.length = 0;
+
+    for (const [zombie] of this._activeZombies) {
+      zombie.onDied = null;
+    }
+    this._activeZombies.clear();
+  }
+
   protected override doEndPlay(): void {
     this._pendingWaveSpawns.length = 0;
 

@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
+import { gameSettings } from '../utils/game-settings.js';
+
+/** Base music volume before user settings scale. */
+const BASE_MUSIC_VOLUME = 0.5;
 
 /** Music slow-mo rate — less extreme than game slomo (0.12) so the track stays audible. */
 const KILL_STREAK_MUSIC_RATE = 0.42;
@@ -11,7 +15,8 @@ const MUSIC_RATE_LERP_SPEED = 14;
 export class BackgroundMusicActor extends ENGINE.Actor {
   private soundComponent: ENGINE.SoundComponent | null = null;
   private _isMuted = false;
-  private _previousVolume = 0.25;
+  private _previousVolume = BASE_MUSIC_VOLUME;
+  private _musicVolumeScale = gameSettings.musicVolume;
   private _currentPlaybackRate = 1.0;
   private _targetPlaybackRate = 1.0;
 
@@ -23,7 +28,7 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'backgroundMusic';
     soundResource.audioPath = '@project/assets/sounds/NeonChapel.wav';
-    soundResource.volume = 0.5;
+    soundResource.volume = BASE_MUSIC_VOLUME * gameSettings.musicVolume;
 
     this.soundComponent = ENGINE.SoundComponent.create({
       loop: true,
@@ -65,11 +70,23 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     }
   }
 
+  /** Set music volume scale from settings (0-1). */
+  public setMusicVolume(scale: number): void {
+    this._musicVolumeScale = Math.max(0, Math.min(1, scale));
+    if (this._isMuted || !this.soundComponent) {
+      return;
+    }
+
+    const volume = BASE_MUSIC_VOLUME * this._musicVolumeScale;
+    this._previousVolume = volume;
+    this.soundComponent.setVolumeAll(volume);
+  }
+
   /** Mute the background music. */
   public mute(): void {
     if (this._isMuted) return;
     this._isMuted = true;
-    this._previousVolume = 0.25;
+    this._previousVolume = BASE_MUSIC_VOLUME * this._musicVolumeScale;
 
     if (this.soundComponent) {
       this.soundComponent.setVolumeAll(0);

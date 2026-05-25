@@ -857,6 +857,17 @@ export class NewZombieActor extends ENGINE.Actor {
     // premature vanishing (globalThis.setTimeout uses wall-clock time, not game time).
   }
 
+  /** Force-hide when quitting to the main menu (horde reset). */
+  public parkForHordeReset(): void {
+    if (this._deathSequenceStarted) {
+      this.setHiddenInGame(true);
+      this.rootComponent.position.set(0, -1000, 0);
+      zombieSpatialManager.unregisterZombie(this);
+      return;
+    }
+    this.recycle();
+  }
+
   /**
    * Recycle this pooled zombie — hide it and park it off-screen.
    * The HordeManager will later call softReset() to respawn it.

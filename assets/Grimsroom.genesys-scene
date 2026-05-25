@@ -1,0 +1,493 @@
+{
+  "$objects": [
+    {
+      "$bc": "ENGINE.DirectionalLightComponent",
+      "$id": 1,
+      "$value": {
+        "castShadow": true,
+        "children": [
+          {
+            "$ref": 2
+          }
+        ],
+        "light": {
+          "$ref": 2
+        },
+        "position": {
+          "$bc": "v3",
+          "_": [
+            10,
+            50,
+            -10
+          ]
+        },
+        "rotation": {
+          "$bc": "e",
+          "_": [
+            1.373401,
+            -0.193658,
+            0.766163
+          ]
+        },
+        "userData": {
+          "objectFlags": 1
+        },
+        "uuid": "3d3b016f-2257-4d3f-a91b-e45b1461b788"
+      }
+    },
+    {
+      "$bc": "THREE.DirectionalLight",
+      "$id": 2,
+      "$value": {
+        "_": [
+          {
+            "$bc": "c",
+            "_": [
+              1,
+              1,
+              1
+            ]
+          },
+          1
+        ]
+      }
+    },
+    {
+      "$bc": "ENGINE.MeshComponent",
+      "$id": 3,
+      "$value": {
+        "children": {
+          "$length": 1
+        },
+        "geometry": {
+          "$bc": "THREE.BoxGeometry",
+          "_": [
+            500,
+            0.1,
+            500
+          ]
+        },
+        "material": {
+          "$bc": "$global",
+          "name": "DefaultMaterial"
+        },
+        "name": "MeshComponent",
+        "position": {
+          "$bc": "v3",
+          "_": [
+            0,
+            -0.9,
+            0
+          ]
+        },
+        "receiveShadow": true,
+        "userData": {
+          "objectFlags": 1
+        },
+        "uuid": "9c2f48a5-6ed3-4d85-82e0-2ada6c66d9d9",
+        "uvScaleTilesPerUnit": 0.2
+      }
+    },
+    {
+      "$bc": "ENGINE.SceneEnvironmentComponent",
+      "$id": 4,
+      "$value": {
+        "textureUrl": "@engine/assets/textures/skybox/citrus_orchard_road_puresky_2k.hdr",
+        "userData": {
+          "objectFlags": 1
+        },
+        "uuid": "09777c4d-6673-40da-8682-1e02dbf22dcc"
+      }
+    },
+    {
+      "$bc": "THREE.DirectionalLight",
+      "$id": 5,
+      "$value": {
+        "_": [
+          {
+            "$bc": "c",
+            "_": [
+              1,
+              1,
+              1
+            ]
+          },
+          20
+        ]
+      }
+    },
+    {
+      "$bc": "THREE.HemisphereLight",
+      "$id": 6,
+      "$value": {
+        "_": [
+          {
+            "$bc": "c",
+            "_": [
+              0.016807,
+              0.015996,
+              0.0865
+            ]
+          },
+          {
+            "$bc": "c",
+            "_": [
+              0.001214,
+              0.001821,
+              0.023153
+            ]
+          },
+          150
+        ]
+      }
+    },
+    {
+      "$bc": "THREE.PointLight",
+      "$id": 7,
+      "$value": {
+        "_": [
+          {
+            "$bc": "c",
+            "_": [
+              0.262251,
+              1,
+              0.027321
+            ]
+          },
+          50,
+          3.8,
+          2.2
+        ]
+      }
+    },
+    {
+      "$bc": "THREE.PointLight",
+      "$id": 8,
+      "$value": {
+        "_": [
+          {
+            "$bc": "c",
+            "_": [
+              0.262251,
+              1,
+              0.027321
+            ]
+          },
+          50,
+          3.8,
+          2.2
+        ]
+      }
+    }
+  ],
+  "$root": {
+    "$bc": "ENGINE.World",
+    "$uuid": "7d511794eab5b84a",
+    "actors": {
+      "1": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {
+          "rootComponent": {
+            "$ref": 1
+          }
+        },
+        "name": "Directional Light",
+        "rootComponent": {
+          "$ref": 1
+        },
+        "uuid": "8c409e1d9ee2f020"
+      },
+      "2": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {
+          "rootComponent": {
+            "$ref": 3
+          }
+        },
+        "name": "Ground",
+        "rootComponent": {
+          "$ref": 3
+        },
+        "uuid": "41901c2401cae48d"
+      },
+      "3": {
+        "$bc": "ENGINE.PlayerStart",
+        "$initOptions": {},
+        "name": "Player Start",
+        "rootComponent": {
+          "$bc": "ENGINE.SceneComponent",
+          "children": {
+            "$length": 1
+          },
+          "position": {
+            "$bc": "v3",
+            "_": [
+              0,
+              0.9,
+              0
+            ]
+          },
+          "userData": {
+            "objectFlags": 1
+          },
+          "uuid": "03fa9ca9-7906-4c1a-843e-46d0e7ef5ea1"
+        },
+        "uuid": "ac09203bc9bc94ea"
+      },
+      "4": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {
+          "rootComponent": {
+            "$ref": 4
+          }
+        },
+        "name": "Environment",
+        "rootComponent": {
+          "$ref": 4
+        },
+        "uuid": "599f17224bd928ea"
+      },
+      "5": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/Grimsroom.glb"
+        },
+        "name": "Grimsroom",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/Grimsroom.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              0.3,
+              -0.3,
+              0.5
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              30,
+              30,
+              30
+            ]
+          },
+          "uuid": "a1fd77f9-4855-4fcc-ab20-2d385b2eadb9"
+        },
+        "uuid": "fcbcc9bd7ff20469"
+      },
+      "6": {
+        "$bc": "ENGINE.GLTFMeshActor",
+        "$initOptions": {
+          "modelUrl": "@project/assets/models/Grim2.glb"
+        },
+        "name": "Grim 2",
+        "rootComponent": {
+          "$bc": "ENGINE.GLTFMeshComponent",
+          "modelUrl": "@project/assets/models/Grim2.glb",
+          "name": "RootComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -1,
+              -0.3,
+              0.4
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              0.349066,
+              0
+            ]
+          },
+          "uuid": "18e70284-c257-461c-8345-2ebb3aa4bd06"
+        },
+        "uuid": "50a0c9cdf0156ad7"
+      },
+      "7": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {},
+        "name": "Directional Light 02",
+        "rootComponent": {
+          "$bc": "ENGINE.DirectionalLightComponent",
+          "children": [
+            {
+              "$ref": 5
+            }
+          ],
+          "light": {
+            "$ref": 5
+          },
+          "name": "DirectionalLightComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -2.8,
+              4.1,
+              3.7
+            ]
+          },
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              -2.478368,
+              0,
+              0
+            ]
+          },
+          "shadowCameraLeft": -48.7,
+          "uuid": "255cacc6-6de8-45d3-9120-6995eb070c90"
+        },
+        "uuid": "f0a727380b150b7c"
+      },
+      "8": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {},
+        "name": "Hemisphere Light",
+        "rootComponent": {
+          "$bc": "ENGINE.HemisphereLightComponent",
+          "children": [
+            {
+              "$ref": 6
+            }
+          ],
+          "light": {
+            "$ref": 6
+          },
+          "name": "HemisphereLightComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              0,
+              7.2,
+              0
+            ]
+          },
+          "uuid": "103014a7-8edd-4486-9f43-380fb564b1ef"
+        },
+        "uuid": "d3308dcbf7552098"
+      },
+      "9": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {},
+        "name": "Point Light",
+        "rootComponent": {
+          "$bc": "ENGINE.PointLightComponent",
+          "children": [
+            {
+              "$ref": 7
+            }
+          ],
+          "light": {
+            "$ref": 7
+          },
+          "name": "PointLightComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -3,
+              1.3,
+              -1.5
+            ]
+          },
+          "uuid": "53ed3011-6478-482a-a18a-e593e9b71675"
+        },
+        "uuid": "467dcd181eb44f7f"
+      },
+      "10": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {},
+        "name": "Point Light 02",
+        "rootComponent": {
+          "$bc": "ENGINE.PointLightComponent",
+          "children": [
+            {
+              "$ref": 8
+            }
+          ],
+          "light": {
+            "$ref": 8
+          },
+          "name": "PointLightComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              2.4,
+              1.3,
+              -3.3
+            ]
+          },
+          "uuid": "7d2a6121da3ca334"
+        },
+        "uuid": "3cb54e956471582d"
+      },
+      "$length": 11
+    },
+    "editorData": {
+      "sceneTree": {
+        "children": [
+          {
+            "id": "8c409e1d9ee2f020",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "41901c2401cae48d",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "f0a727380b150b7c",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "d3308dcbf7552098",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "ac09203bc9bc94ea",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "599f17224bd928ea",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "fcbcc9bd7ff20469",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "50a0c9cdf0156ad7",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "467dcd181eb44f7f",
+            "isExpanded": false,
+            "nodeType": "actor"
+          },
+          {
+            "id": "3cb54e956471582d",
+            "isExpanded": false,
+            "nodeType": "actor"
+          }
+        ],
+        "id": "7d511794eab5b84a",
+        "nodeType": "scene"
+      }
+    },
+    "gameModeClass": null,
+    "postProcessConfiguration": null,
+    "resources": null,
+    "settings": {}
+  },
+  "$version": 2
+}

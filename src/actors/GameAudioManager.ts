@@ -6,10 +6,13 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { gameSettings } from '../utils/game-settings.js';
+
 @ENGINE.GameClass()
 export class GameAudioManager extends ENGINE.Actor {
   private _soundPools = new Map<string, ENGINE.SoundComponent[]>();
   private _poolCursors = new Map<string, number>();
+  private _sfxVolumeScale = 1;
 
   // Sound file paths — all WAV files are in assets/sounds/
   private static readonly SOUND_PATHS: Record<string, { path: string; volume: number; poolSize: number }> = {
@@ -54,6 +57,8 @@ export class GameAudioManager extends ENGINE.Actor {
       this._soundPools.set(key, pool);
       this._poolCursors.set(key, 0);
     }
+
+    this.applySfxVolume(gameSettings.sfxVolume);
   }
 
   /**
@@ -78,10 +83,12 @@ export class GameAudioManager extends ENGINE.Actor {
       return;
     }
 
-    const clampedVolume = Math.max(0, Math.min(1, volumeScale));
+    const defaultVolume = this.getDefaultVolume(key);
+    const baseVolume = defaultVolume * this._sfxVolumeScale;
+    const clampedVolume = Math.max(0, Math.min(1, volumeScale * baseVolume));
 
     // Apply volume scale for distance attenuation
-    if (clampedVolume < 1.0) {
+    if (clampedVolume < baseVolume) {
       sound.setVolumeAll(clampedVolume);
     }
 
@@ -94,11 +101,10 @@ export class GameAudioManager extends ENGINE.Actor {
     sound.getAudio(key)?.setPlaybackRate(rate);
 
     // Reset volume back to default after playing
-    if (clampedVolume < 1.0) {
+    if (clampedVolume < baseVolume) {
       // Small delay to let play start, then restore
       setTimeout(() => {
-        const defaultVolume = this.getDefaultVolume(key);
-        sound.setVolumeAll(defaultVolume);
+        sound.setVolumeAll(baseVolume);
       }, 50);
     }
   }
@@ -131,6 +137,17 @@ export class GameAudioManager extends ENGINE.Actor {
   private getDefaultVolume(key: string): number {
     const config = GameAudioManager.SOUND_PATHS[key];
     return config?.volume ?? 1.0;
+  }
+
+  /** Apply global SFX volume scale from settings (0-1). */
+  public applySfxVolume(scale: number): void {
+    this._sfxVolumeScale = Math.max(0, Math.min(1, scale));
+    for (const [key, pool] of this._soundPools) {
+      const defaultVolume = this.getDefaultVolume(key);
+      for (const sound of pool) {
+        sound.setVolumeAll(defaultVolume * this._sfxVolumeScale);
+      }
+    }
   }
 
   /** Reset every pooled SFX source to normal speed (call when slow-mo ends). */

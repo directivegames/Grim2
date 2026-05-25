@@ -6,6 +6,8 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { ReadyToReapUI } from './ReadyToReapUI.js';
+import { OptionsMenuUI } from './OptionsMenuUI.js';
+import { setGameplayUnlocked } from '../utils/game-pause.js';
 
 const BG_URL = '@project/assets/UI/background.png';
 const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
@@ -69,6 +71,28 @@ export class StartMenuUI {
       return;
     }
     container.querySelectorAll(`[${BLOCKER_ATTR}]`).forEach(el => el.remove());
+  }
+
+  public static isVisible(world: ENGINE.World): boolean {
+    const inst = StartMenuUI.byWorld.get(world);
+    return Boolean(inst?._root);
+  }
+
+  /** Re-show the main menu after quitting from the pause menu. */
+  public static reopenAfterQuit(world: ENGINE.World): StartMenuUI {
+    let inst = StartMenuUI.byWorld.get(world);
+    if (!inst) {
+      inst = new StartMenuUI(world);
+      StartMenuUI.byWorld.set(world, inst);
+    }
+    inst._dismissed = false;
+    inst._warmupReady = true;
+    inst._root = null;
+    inst._playWrap = null;
+    inst._playLabel = null;
+    StartMenuUI.preflightCover(world);
+    void inst._mount();
+    return inst;
   }
 
   /** Show menu, disable gameplay input, resolve assets. Safe to call once per world. */
@@ -282,6 +306,70 @@ export class StartMenuUI {
     bar.appendChild(playWrap);
     bar.appendChild(quitWrap);
     bottomDock.appendChild(bar);
+
+    const optionsWrap = document.createElement('div');
+    optionsWrap.style.cssText = `
+      position: absolute;
+      left: clamp(12px, 2.5vw, 28px);
+      bottom: clamp(12px, 2.5vh, 28px);
+      z-index: 3;
+      width: clamp(64px, 8vw, 84px);
+      height: clamp(72px, 9vw, 96px);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      pointer-events: auto;
+      background: linear-gradient(180deg, rgba(28, 32, 38, 0.95), rgba(14, 16, 20, 0.98));
+      border: 1px solid rgba(120, 140, 160, 0.45);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 4px 14px rgba(0, 0, 0, 0.55);
+      clip-path: polygon(
+        8% 0%, 92% 0%, 100% 8%, 100% 92%, 92% 100%, 8% 100%, 0% 92%, 0% 8%
+      );
+      transition: transform 0.15s ease, filter 0.2s ease;
+    `;
+
+    const gearIcon = document.createElement('span');
+    gearIcon.textContent = '⚙';
+    gearIcon.style.cssText = `
+      font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+      color: rgba(200, 210, 220, 0.92);
+      line-height: 1;
+      pointer-events: none;
+    `;
+
+    const optionsLabel = document.createElement('span');
+    optionsLabel.textContent = 'OPTIONS';
+    optionsLabel.style.cssText = `
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.42rem, 1vw, 0.55rem);
+      letter-spacing: 0.12em;
+      color: rgba(200, 210, 220, 0.9);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+      pointer-events: none;
+    `;
+
+    optionsWrap.appendChild(gearIcon);
+    optionsWrap.appendChild(optionsLabel);
+    optionsWrap.addEventListener('click', () => {
+      OptionsMenuUI.open(this._world);
+    });
+    optionsWrap.addEventListener('mouseenter', () => {
+      optionsWrap.style.transform = 'scale(1.04)';
+      optionsWrap.style.filter = 'brightness(1.08)';
+    });
+    optionsWrap.addEventListener('mouseleave', () => {
+      optionsWrap.style.transform = 'scale(1)';
+      optionsWrap.style.filter = 'none';
+    });
+
+    bottomDock.appendChild(optionsWrap);
     root.appendChild(bg);
     root.appendChild(vignette);
     root.appendChild(bottomDock);
@@ -430,7 +518,10 @@ export class StartMenuUI {
     this._playWrap = null;
     this._playLabel = null;
     StartMenuUI.byWorld.delete(this._world);
-    void ReadyToReapUI.play(this._world, () => this._setInput(true));
+    void ReadyToReapUI.play(this._world, () => {
+      this._setInput(true);
+      setGameplayUnlocked(true);
+    });
   }
 
   public destroy(): void {

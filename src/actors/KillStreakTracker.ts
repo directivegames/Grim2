@@ -2,6 +2,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
+import { gameSettings } from '../utils/game-settings.js';
 
 const KILL_WINDOW_SEC = 2.0;
 /** Kills required per tier; escalates on each trigger, decays one step after inactivity. */
@@ -195,7 +196,7 @@ class KillStreakTracker {
       player.triggerFOVPunch(1.0);
       player.triggerKillStreakPunch();
       player.startSlomoEffect();
-      if (Math.random() < KILLSTREAK_ORBIT_CHANCE) {
+      if (Math.random() < KILLSTREAK_ORBIT_CHANCE && !gameSettings.disable360Spin) {
         player.startKillStreakOrbit(SLOMO_DURATION_SEC);
       }
     }
