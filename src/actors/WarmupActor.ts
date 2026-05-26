@@ -26,6 +26,8 @@ type WarmupCallback = () => void;
 
 @ENGINE.GameClass()
 export class WarmupActor extends ENGINE.Actor {
+  private static _hasCompletedOnce = false;
+
   private _onComplete: WarmupCallback | null = null;
   private _warmupActors: ENGINE.Actor[] = [];
   private _audioManager: GameAudioManager | null = null;
@@ -142,10 +144,11 @@ export class WarmupActor extends ENGINE.Actor {
 
     // Check if all warmup actors have had time to initialize
     const allActorsReady = this._warmupActors.every(actor => {
-      // Check if GLTF meshes are loaded
-      const gltfMesh = actor.getComponent(ENGINE.GLTFMeshComponent);
-      if (gltfMesh) {
-        return (gltfMesh as unknown as { isReady?: () => boolean }).isReady?.() ?? true;
+      // Check if every GLTF mesh on the actor has finished loading.
+      for (const gltfMesh of actor.getComponents(ENGINE.GLTFMeshComponent)) {
+        if (gltfMesh.isLoading()) {
+          return false;
+        }
       }
       return true;
     });
@@ -169,7 +172,9 @@ export class WarmupActor extends ENGINE.Actor {
     this._warmupActors.length = 0;
 
     this._isComplete = true;
+    WarmupActor._hasCompletedOnce = true;
     this._signalComplete();
+    this.destroy();
   }
 
   private _signalComplete(): void {
@@ -181,6 +186,10 @@ export class WarmupActor extends ENGINE.Actor {
 
   public isComplete(): boolean {
     return this._isComplete;
+  }
+
+  public static hasCompletedWarmup(): boolean {
+    return WarmupActor._hasCompletedOnce;
   }
 
   public static spawnAndWarmup(world: ENGINE.World, onComplete: () => void): WarmupActor {

@@ -9,6 +9,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
+import { isGameplayUnlocked } from '../utils/game-pause.js';
+import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
 
 const VOMITBALL_MODEL_URL =
   '@project/assets/models/Vomitball.glb' as ENGINE.ModelPath;
@@ -60,8 +62,16 @@ export class VomitballProjectileActor extends ENGINE.Actor {
 
     void visual.waitForLoad().catch(() => {
       console.warn('VomitballProjectileActor: failed to load Vomitball.glb');
-      this.destroy();
+      this._retire();
     });
+  }
+
+  /** Hide and destroy only after GLTF load callbacks have settled. */
+  private _retire(): void {
+    if (!this.getWorld()) return;
+    this._hasHit = true;
+    this.setHiddenInGame(true);
+    destroyActorWhenGltfIdle(this);
   }
 
   /**
@@ -117,7 +127,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
 
     this._lifetimeSec += deltaTime;
     if (this._lifetimeSec >= MAX_LIFETIME_SEC) {
-      this.destroy();
+      this._retire();
       super.tickPrePhysics(deltaTime);
       return;
     }
@@ -139,13 +149,15 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     this._distanceTraveled += step;
 
     if (this._distanceTraveled >= MAX_TRAVEL_DISTANCE) {
-      this.destroy();
+      this._retire();
     }
 
     super.tickPrePhysics(deltaTime);
   }
 
   private _tryHitPlayer(): boolean {
+    if (!isGameplayUnlocked()) return false;
+
     const world = this.getWorld();
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return false;
@@ -172,7 +184,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
       player.triggerScreenShake(0.08, 0.15);
     }
 
-    this.destroy();
+    this._retire();
     return true;
   }
 
@@ -206,7 +218,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     }
 
     this._hasHit = true;
-    this.destroy();
+    this._retire();
     return true;
   }
 }

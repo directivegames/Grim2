@@ -22,6 +22,7 @@ import { SoulCounterUI } from '../ui/SoulCounterUI.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
+import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -38,6 +39,9 @@ const NEW_ZOMBIE_MATERIAL_URL =
 
 const CAPSULE_RADIUS = 0.35;
 const CAPSULE_HEIGHT = 1.75;
+
+/** Root Y offset so capsule feet sit on the nav floor (root is capsule center). */
+export const NEW_ZOMBIE_CAPSULE_HALF_HEIGHT = CAPSULE_HEIGHT * 0.5;
 /** Blob shadow sits on the actor root at foot height (not on the body-center pivot). */
 const BLOB_SHADOW_FEET_Y = 0.02;
 const NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE = 0.82;
@@ -451,6 +455,13 @@ export class NewZombieActor extends ENGINE.Actor {
     // PERFORMANCE: Skip all processing for hidden (pooled) zombies
     if (this.isHiddenInGame()) {
       super.tickPrePhysics(deltaTime);
+      return;
+    }
+
+    if (!isGameplayUnlocked()) {
+      this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+      const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+      if (anim?.isReady()) anim.setParameter('state', 'idle');
       return;
     }
 
@@ -979,11 +990,16 @@ export class NewZombieActor extends ENGINE.Actor {
     this._animationInitialized = false;
 
     // Reset blackboard for immediate chase
-    // Use actual spawn distance (12-15) so attackZoneLatched stays false until close
     if (this.blackboard) {
       this.blackboard.clear();
       this.blackboard.setValue('HasAggro', true);
-      this.blackboard.setValue('DistanceToPlayer', 15); // Spawned 12-15 units away
+      const player = this.getWorld()?.getFirstPlayerPawn();
+      if (player) {
+        const dist = this.rootComponent.position.distanceTo(player.rootComponent.position);
+        this.blackboard.setValue('DistanceToPlayer', dist);
+      } else {
+        this.blackboard.setValue('DistanceToPlayer', 15);
+      }
     }
 
     // Reset behavior tree
@@ -1215,6 +1231,29 @@ export class NewZombieActor extends ENGINE.Actor {
     }
 
     npc.setTargetPosition(this._steerGoal, STEER_GOAL_STOP);
+  }
+
+  private static readonly BASE_MAX_HEALTH = 100;
+  private static readonly BASE_ATTACK_DAMAGE = 10;
+
+  /** Apply mission risk multipliers to this zombie's combat stats. */
+  public applyMissionRiskMultipliers(healthMult: number, damageMult: number): void {
+    this.maxHealth = NewZombieActor.BASE_MAX_HEALTH * healthMult;
+    this.attackDamage = NewZombieActor.BASE_ATTACK_DAMAGE * damageMult;
+    this.syncStatsAndMovementFromProperties();
+
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (!stats || this._deathSequenceStarted) return;
+
+    const mutableStats = stats as unknown as {
+      maxHealth: number;
+      currentHealth: number;
+      onHealthChanged: { invoke(current: number, max: number): void };
+    };
+    mutableStats.maxHealth = this.maxHealth;
+    mutableStats.currentHealth = this.maxHealth;
+    this._lastTrackedHealth = this.maxHealth;
+    mutableStats.onHealthChanged.invoke(this.maxHealth, this.maxHealth);
   }
 
   protected syncStatsAndMovementFromProperties(): void {

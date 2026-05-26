@@ -55,7 +55,7 @@ export class HitNumberUI {
     this._gameContainer = (world as unknown as { gameContainer?: HTMLElement }).gameContainer ?? null;
     if (!this._gameContainer) return;
 
-    injectBreeSerifFont();
+    void injectBreeSerifFont();
     void this._resolveUrl();
     this._initializePool();
     this._initialized = true;

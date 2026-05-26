@@ -19,6 +19,7 @@ export class BackgroundMusicActor extends ENGINE.Actor {
   private _musicVolumeScale = gameSettings.musicVolume;
   private _currentPlaybackRate = 1.0;
   private _targetPlaybackRate = 1.0;
+  private _started = false;
 
   constructor() {
     super();
@@ -32,7 +33,7 @@ export class BackgroundMusicActor extends ENGINE.Actor {
 
     this.soundComponent = ENGINE.SoundComponent.create({
       loop: true,
-      autoPlay: true,
+      autoPlay: false,
       autoPlayClipKey: 'backgroundMusic',
       positional: false,
       bus: 'Music',
@@ -40,6 +41,35 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     });
 
     this.addComponent(this.soundComponent);
+  }
+
+  /** Start playback (safe to call repeatedly). */
+  public start(): void {
+    if (!this.soundComponent || this._started) {
+      return;
+    }
+    this._started = true;
+    void this.soundComponent.play('backgroundMusic');
+  }
+
+  /** Stop playback (does not destroy the actor). */
+  public stop(): void {
+    this._started = false;
+    this.soundComponent?.stopAll();
+  }
+
+  public static ensurePlaying(world: ENGINE.World): BackgroundMusicActor {
+    const existing = world.getActors().find(a => a instanceof BackgroundMusicActor);
+    const actor = existing instanceof BackgroundMusicActor
+      ? existing
+      : BackgroundMusicActor.create({ name: 'BackgroundMusicActor' });
+
+    if (!(existing instanceof BackgroundMusicActor)) {
+      world.addActor(actor);
+    }
+
+    actor.start();
+    return actor;
   }
 
   public override tickPrePhysics(deltaTime: number): void {

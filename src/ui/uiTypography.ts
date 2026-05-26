@@ -1,6 +1,7 @@
 /**
  * Shared sunset-yellow typography for in-game HUD text.
  */
+import * as ENGINE from '@gnsx/genesys.js';
 
 export const FONT_URL = '@project/assets/UI/Bree_Serif/BreeSerif-Regular.ttf';
 
@@ -26,15 +27,22 @@ export const CHROMATIC_TEXT_SHADOW = `
   0 0 16px rgba(255, 179, 71, 1)
 `.replace(/\s+/g, ' ').trim();
 
-export function injectBreeSerifFont(): void {
+export async function injectBreeSerifFont(): Promise<void> {
   if (document.querySelector('style[data-font="BreeSerif"]')) return;
+
+  const resolved = await ENGINE.resolveAssetPathsInText(`url("${FONT_URL}")`);
+  const match = resolved.match(/url\(["']?([^"')]+)["']?\)/);
+  const fontSrc = (match?.[1] ?? resolved).trim();
+  if (!fontSrc || fontSrc.includes('@project')) {
+    return;
+  }
 
   const fontFace = document.createElement('style');
   fontFace.setAttribute('data-font', 'BreeSerif');
   fontFace.textContent = `
     @font-face {
       font-family: 'BreeSerif';
-      src: url('${FONT_URL}') format('truetype');
+      src: url('${fontSrc}') format('truetype');
       font-weight: normal;
       font-style: normal;
     }
@@ -83,5 +91,3 @@ export function flashChromaticText(el: HTMLElement): void {
     { duration: 120, easing: 'ease-out', fill: 'forwards' },
   );
 }
-
-

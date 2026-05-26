@@ -6,6 +6,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
 import { GAME_SETTINGS_DEFAULTS, gameSettings } from '../utils/game-settings.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
+import { playMenuSelectSound } from '../utils/menu-audio.js';
 
 const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
 const OPTIONS_LOGO_URL = '@project/assets/UI/Options.png';
@@ -292,8 +293,14 @@ export class OptionsMenuUI {
       onChange(next);
     };
 
-    leftArrow.addEventListener('click', () => setValue(false));
-    rightArrow.addEventListener('click', () => setValue(true));
+    leftArrow.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
+      setValue(false);
+    });
+    rightArrow.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
+      setValue(true);
+    });
 
     control.appendChild(leftArrow);
     control.appendChild(valueLabel);
@@ -441,7 +448,10 @@ export class OptionsMenuUI {
       pointer-events: none;
     `;
     backWrap.appendChild(backLabel);
-    backWrap.addEventListener('click', () => this.close());
+    backWrap.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
+      this.close();
+    });
     backWrap.addEventListener('mouseenter', () => {
       backWrap.style.transform = 'scale(1.03)';
       backWrap.style.filter = 'brightness(1.05)';
@@ -477,7 +487,10 @@ export class OptionsMenuUI {
       gap: 4px;
     `;
     defaultsBtn.innerHTML = `<span style="font-size:1rem;line-height:1;">📖</span><span>DEFAULTS</span>`;
-    defaultsBtn.addEventListener('click', () => this._resetDefaults());
+    defaultsBtn.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
+      this._resetDefaults();
+    });
     panel.appendChild(defaultsBtn);
 
     menuStack.appendChild(panel);

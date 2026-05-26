@@ -77,6 +77,7 @@ These scene files can be very large and consume significant tokens. They contain
 
 ## UI
 - Any HTML UI you create **MUST NOT** be added to the document root directly. Add them to the game UI container, which can be accessed through `world.gameContainer`.
+- For in-game UI (HUD, menus, buttons, bars, inventories, crosshairs, minimaps, counters, etc.), **prefer the engine's `BaseUIComponent` widgets** (Game UI Kit) over hand-rolling HTML / CSS. See the `genesys-ui-kit` skill in `.agents/skills/genesys-ui-kit/` — its `references/catalog.md` lists every shipped widget. Fall back to raw HTML only when the user asks for a custom look or no widget matches.
 
 ## Testing Constraints
 - You may **only** use `pnpm build` to verify code compilation.

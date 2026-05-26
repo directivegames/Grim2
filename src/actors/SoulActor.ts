@@ -8,6 +8,9 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
+import { missionState } from '../mission/MissionState.js';
+import { isInsideSpawnBlocker } from '../mission/spawn-blockers.js';
+import { isValidGameplaySpawnPosition } from '../mission/spawn-exclusion.js';
 import { SoulCounterUI } from '../ui/SoulCounterUI.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 
@@ -35,6 +38,7 @@ interface PooledSoul {
 }
 
 let soulPool: PooledSoul[] = [];
+const _spawnCheckPlayerPos = new THREE.Vector3();
 
 
 @ENGINE.GameClass()
@@ -135,6 +139,10 @@ export class SoulActor extends ENGINE.Actor {
     // Increment player's soul counter
     player.soulsCollected++;
 
+    if (missionState.isActive) {
+      missionState.onSoulCollected();
+    }
+
     // Update UI
     const ui = await SoulCounterUI.getInstance(this.getWorld());
     ui.increment();
@@ -152,7 +160,18 @@ export class SoulActor extends ENGINE.Actor {
    * Spawn a soul at the given position.
    * Uses pooling — teleports oldest soul if at cap.
    */
-  public static spawnAt(world: ENGINE.World, position: THREE.Vector3): SoulActor {
+  public static spawnAt(world: ENGINE.World, position: THREE.Vector3): SoulActor | null {
+    const pawn = world.getFirstPlayerPawn();
+    if (pawn) {
+      pawn.rootComponent.getWorldPosition(_spawnCheckPlayerPos);
+      if (
+        !isValidGameplaySpawnPosition(position, _spawnCheckPlayerPos) ||
+        isInsideSpawnBlocker(position)
+      ) {
+        return null;
+      }
+    }
+
     // Clean up destroyed souls from pool (check if actor is still in world)
     soulPool = soulPool.filter(s => s.actor.getWorld() !== null);
 

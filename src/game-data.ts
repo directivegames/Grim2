@@ -4,11 +4,14 @@
 import { registerGeneratedClassMetadata, registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
 import { BigUndeadActor } from './actors/BigUndeadActor.js';
+import { DialogueTriggerActor } from './actors/DialogueTriggerActor.js';
 import { GrassClumpActor } from './actors/GrassClumpActor.js';
 import { GroundFogActor } from './actors/GroundFogActor.js';
 import { HedgeActor } from './actors/HedgeActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { NewZombieActor } from './actors/NewZombieActor.js';
+import { SpawnBlockerActor } from './actors/SpawnBlockerActor.js';
+import { SpawnPointMarkerActor } from './actors/SpawnPointMarkerActor.js';
 import { TallGrassActor } from './actors/TallGrassActor.js';
 import { ZombieActor } from './actors/ZombieActor.js';
 import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
@@ -74,6 +77,17 @@ export function registerMetadata(): void {
         "max": 30,
         "step": 0.5,
         "category": "Big Undead"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(DialogueTriggerActor, {
+      "dialogueId": {
+        "type": "string",
+        "category": "Dialogue"
+      },
+      "playOnBeginPlay": {
+        "type": "boolean",
+        "category": "Dialogue"
       }
     });
 
@@ -231,6 +245,66 @@ export function registerMetadata(): void {
         "max": 30,
         "step": 0.5,
         "category": "Zombie"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(SpawnBlockerActor, {
+      "halfExtentX": {
+        "type": "number",
+        "min": 0.25,
+        "max": 200,
+        "step": 0.25,
+        "category": "Spawn Blocker"
+      },
+      "halfExtentY": {
+        "type": "number",
+        "min": 0.25,
+        "max": 50,
+        "step": 0.25,
+        "category": "Spawn Blocker"
+      },
+      "halfExtentZ": {
+        "type": "number",
+        "min": 0.25,
+        "max": 200,
+        "step": 0.25,
+        "category": "Spawn Blocker"
+      },
+      "showWireframeInGame": {
+        "type": "boolean",
+        "category": "Spawn Blocker"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(SpawnPointMarkerActor, {
+      "enabled": {
+        "type": "boolean",
+        "category": "Spawn Point"
+      },
+      "halfExtentX": {
+        "type": "number",
+        "min": 0.15,
+        "max": 4,
+        "step": 0.05,
+        "category": "Spawn Point"
+      },
+      "halfExtentY": {
+        "type": "number",
+        "min": 0.15,
+        "max": 4,
+        "step": 0.05,
+        "category": "Spawn Point"
+      },
+      "halfExtentZ": {
+        "type": "number",
+        "min": 0.15,
+        "max": 4,
+        "step": 0.05,
+        "category": "Spawn Point"
+      },
+      "showWireframeInGame": {
+        "type": "boolean",
+        "category": "Spawn Point"
       }
     });
 
@@ -765,7 +839,7 @@ export function registerMetadata(): void {
         "max": 2,
         "step": 0.01,
         "category": "Film Grain",
-        "description": "Noise frequency (lower = coarser grain)"
+        "description": "Grain tile scale (lower = coarser / larger tiles)"
       },
       "numOctaves": {
         "type": "number",
@@ -773,7 +847,7 @@ export function registerMetadata(): void {
         "max": 5,
         "step": 1,
         "category": "Film Grain",
-        "description": "Noise detail octaves"
+        "description": "Flicker speed (higher = faster frame changes)"
       },
       "animated": {
         "type": "boolean",

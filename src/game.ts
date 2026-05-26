@@ -24,7 +24,10 @@ import { DEFAULT_CLOUD_SHADOW_MAP } from './cloudShadow/CloudShadowState.js';
 import { FilmGrainActor } from './post/FilmGrainActor.js';
 import { DEFAULT_FILM_GRAIN_SETTINGS, FilmGrainUI } from './ui/FilmGrainUI.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
+import { setGameplayUnlocked } from './utils/game-pause.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
+import { GrimIntroActor } from './actors/GrimIntroActor.js';
+import { MenuMusicActor } from './actors/MenuMusicActor.js';
 import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
 import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
 
@@ -144,22 +147,21 @@ class MyGame extends ENGINE.BaseGameLoop {
   }
 
   /**
-   * Scene cameras using {@link ENGINE.ViewTargetCameraComponent} sit on a stack and
-   * override the pawn camera. Turn them all off so only the pawn isometric camera renders.
-   * Start menu + warmup: menu stays until PLAY after shaders/assets are warmed.
+   * Default scene loads at startup (engine waits for all resources).
+   * Title menu + Grim's Room cutscene are HTML/camera overlays on this scene.
    */
   protected override postStart(): void {
     super.postStart();
     const world = this.getWorld();
     if (!world) return;
 
-    const startMenu = StartMenuUI.attach(world);
+    setGameplayUnlocked(false);
+    world.inputManager.setInputEnabled(false);
+    this._disableSceneViewTargetCameras(world);
 
-    // Disable scene cameras
-    for (const actor of world.getActors()) {
-      for (const vtc of actor.getComponents(ENGINE.ViewTargetCameraComponent)) {
-        vtc.setActive(false);
-      }
+    const pawn = world.getFirstPlayerPawn();
+    if (pawn) {
+      pawn.setHiddenInGame(true);
     }
 
     this._spawnScenicFogCards(world);
@@ -168,7 +170,24 @@ class MyGame extends ENGINE.BaseGameLoop {
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
+
+    const startMenu = StartMenuUI.attach(world, () => {
+      world.addActor(GrimIntroActor.create({ name: 'GrimIntroActor' }));
+    });
+
+    // Menu-only music until PLAY is pressed.
+    MenuMusicActor.ensureExists(world);
+
     this._startWarmupSequence(world, startMenu);
+  }
+
+  /** Scene-placed cinematic cameras must not override the pawn isometric camera during play. */
+  private _disableSceneViewTargetCameras(world: ENGINE.World): void {
+    for (const actor of world.getActors()) {
+      for (const vtc of actor.getComponents(ENGINE.ViewTargetCameraComponent)) {
+        vtc.setActive(false);
+      }
+    }
   }
 
   /** Scene policerdone cars use static point lights — drive them at runtime. */
@@ -249,11 +268,17 @@ class MyGame extends ENGINE.BaseGameLoop {
     }
   }
 
+  /** Compile shaders during the title screen, then enable PLAY when ready. */
   private _startWarmupSequence(world: ENGINE.World, startMenu: StartMenuUI): void {
     const weaponActor = SpinningWeaponActor.create();
     world.addActor(weaponActor);
 
     GameAudioManager.ensureExists(world);
+
+    if (WarmupActor.hasCompletedWarmup()) {
+      startMenu.markWarmupComplete();
+      return;
+    }
 
     WarmupActor.spawnAndWarmup(world, () => {
       startMenu.markWarmupComplete();

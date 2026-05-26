@@ -40,7 +40,7 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
     max: 2,
     step: 0.01,
     category: 'Film Grain',
-    description: 'Noise frequency (lower = coarser grain)',
+    description: 'Grain tile scale (lower = coarser / larger tiles)',
   })
   public baseFrequency: number = DEFAULT_FILM_GRAIN_SETTINGS.baseFrequency;
 
@@ -50,7 +50,7 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
     max: 5,
     step: 1,
     category: 'Film Grain',
-    description: 'Noise detail octaves',
+    description: 'Flicker speed (higher = faster frame changes)',
   })
   public numOctaves: number = DEFAULT_FILM_GRAIN_SETTINGS.numOctaves;
 

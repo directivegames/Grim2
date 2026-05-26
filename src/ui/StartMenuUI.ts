@@ -5,8 +5,12 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ensureGrimIntroBlackCover } from '../actors/GrimIntroActor.js';
+import { MenuMusicActor } from '../actors/MenuMusicActor.js';
 import { ReadyToReapUI } from './ReadyToReapUI.js';
 import { OptionsMenuUI } from './OptionsMenuUI.js';
+import { playMenuSelectSound } from '../utils/menu-audio.js';
+import { fadeInElement } from '../utils/screen-transition.js';
 import { setGameplayUnlocked } from '../utils/game-pause.js';
 
 const BG_URL = '@project/assets/UI/background.png';
@@ -36,6 +40,10 @@ export class StartMenuUI {
   private _dismissed = false;
   private _resolvedBgUrl = '';
   private _resolvedPanelUrl = '';
+  /** Optional override called instead of ReadyToReapUI when PLAY is clicked. */
+  private _onPlay: (() => void) | null = null;
+  /** True when _onPlay already ran at click time (grim intro pre-started). */
+  private _customPlayStarted = false;
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -86,6 +94,7 @@ export class StartMenuUI {
       StartMenuUI.byWorld.set(world, inst);
     }
     inst._dismissed = false;
+    inst._customPlayStarted = false;
     inst._warmupReady = true;
     inst._root = null;
     inst._playWrap = null;
@@ -95,8 +104,13 @@ export class StartMenuUI {
     return inst;
   }
 
-  /** Show menu, disable gameplay input, resolve assets. Safe to call once per world. */
-  public static attach(world: ENGINE.World): StartMenuUI {
+  /**
+   * Show menu, disable gameplay input, resolve assets. Safe to call once per world.
+   * @param onPlay Optional callback invoked when PLAY is clicked (after shatter animation).
+   *               When provided, replaces the default ReadyToReapUI flow — use this to
+   *               trigger a scene transition instead (e.g. loadMap to Grim's Room).
+   */
+  public static attach(world: ENGINE.World, onPlay?: () => void): StartMenuUI {
     let inst = StartMenuUI.byWorld.get(world);
     if (inst?._root) {
       return inst;
@@ -104,6 +118,9 @@ export class StartMenuUI {
     if (!inst) {
       inst = new StartMenuUI(world);
       StartMenuUI.byWorld.set(world, inst);
+    }
+    if (onPlay) {
+      inst._onPlay = onPlay;
     }
     const w = world as GameContainerWorld;
     if (w.gameContainer && !w.options?.headless) {
@@ -122,6 +139,11 @@ export class StartMenuUI {
   public markWarmupComplete(): void {
     this._warmupReady = true;
     this._refreshPlayState();
+  }
+
+  /** Override the PLAY action after the menu has been created (e.g. after reopenAfterQuit). */
+  public setOnPlay(onPlay: () => void): void {
+    this._onPlay = onPlay;
   }
 
   private _gameContainer(): HTMLElement | null {
@@ -358,6 +380,7 @@ export class StartMenuUI {
     optionsWrap.appendChild(gearIcon);
     optionsWrap.appendChild(optionsLabel);
     optionsWrap.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
       OptionsMenuUI.open(this._world);
     });
     optionsWrap.addEventListener('mouseenter', () => {
@@ -374,8 +397,10 @@ export class StartMenuUI {
     root.appendChild(vignette);
     root.appendChild(bottomDock);
 
+    root.style.opacity = '0';
     gameContainer.appendChild(root);
     StartMenuUI._removeBlockersFrom(gameContainer);
+    fadeInElement(root, 520);
 
     this._root = root;
     this._playWrap = playWrap;
@@ -419,7 +444,20 @@ export class StartMenuUI {
     if (!this._warmupReady || this._dismissed || !this._root) {
       return;
     }
+    playMenuSelectSound(this._world);
     this._dismissed = true;
+
+    // Menu music should stop immediately when gameplay is initiated.
+    MenuMusicActor.stopAll(this._world);
+
+    // Black out and start grim intro immediately — never expose the street view
+    // while the menu shatter runs or the intro actor spins up.
+    if (this._onPlay) {
+      ensureGrimIntroBlackCover(this._world);
+      this._onPlay();
+      this._customPlayStarted = true;
+    }
+
     const gameContainer = this._gameContainer();
     const root = this._root;
     if (!gameContainer || !this._resolvedBgUrl) {
@@ -506,6 +544,7 @@ export class StartMenuUI {
   }
 
   private _onQuit(): void {
+    playMenuSelectSound(this._world);
     window.close();
   }
 
@@ -518,10 +557,18 @@ export class StartMenuUI {
     this._playWrap = null;
     this._playLabel = null;
     StartMenuUI.byWorld.delete(this._world);
-    void ReadyToReapUI.play(this._world, () => {
-      this._setInput(true);
-      setGameplayUnlocked(true);
-    });
+
+    if (this._customPlayStarted) {
+      this._customPlayStarted = false;
+    } else if (this._onPlay) {
+      this._onPlay();
+    } else {
+      // Default flow — show the dramatic intro then unlock gameplay.
+      void ReadyToReapUI.play(this._world, () => {
+        this._setInput(true);
+        setGameplayUnlocked(true);
+      });
+    }
   }
 
   public destroy(): void {

@@ -2,6 +2,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { OptionsMenuUI } from '../ui/OptionsMenuUI.js';
 import { StartMenuUI } from '../ui/StartMenuUI.js';
+import { TUT_SOUL_OVERLAY_ATTR } from '../ui/TutSoulUI.js';
 
 let _gameplayUnlocked = false;
 let _paused = false;
@@ -26,6 +27,13 @@ function isReadyToReapActive(): boolean {
   return document.querySelector('.grim-rtr-overlay') != null;
 }
 
+function isTutSoulActive(): boolean {
+  if (typeof document === 'undefined') {
+    return false;
+  }
+  return document.querySelector(`[${TUT_SOUL_OVERLAY_ATTR}]`) != null;
+}
+
 /** True when ESC should open the pause menu (in active gameplay). */
 export function canOpenPause(world: ENGINE.World): boolean {
   if (!_gameplayUnlocked || _paused) {
@@ -38,6 +46,9 @@ export function canOpenPause(world: ENGINE.World): boolean {
     return false;
   }
   if (isReadyToReapActive()) {
+    return false;
+  }
+  if (isTutSoulActive()) {
     return false;
   }
   return true;

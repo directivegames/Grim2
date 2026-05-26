@@ -23,6 +23,8 @@ export class GameAudioManager extends ENGINE.Actor {
     zombieHit1:      { path: '@project/assets/sounds/zombiehit1.wav', volume: 0.12, poolSize: 2 },
     zombieHit2:      { path: '@project/assets/sounds/zombiehit2.wav', volume: 0.12, poolSize: 2 },
     zombieDeath:     { path: '@project/assets/sounds/zombiedeath.wav', volume: 0.18, poolSize: 4 },
+    menuSelect:      { path: '@project/assets/sounds/selectsound.wav', volume: 0.42, poolSize: 2 },
+    letsReap:        { path: '@project/assets/sounds/Letsreap.mp3', volume: 0.55, poolSize: 1 },
   };
 
   // Global cooldown for hit sounds to prevent audio spam when hitting zombie hordes

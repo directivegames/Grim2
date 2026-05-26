@@ -19,7 +19,10 @@ import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcCompone
 import { HealthBarUI } from '../ui/HealthBarUI.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
+import { missionRunner } from '../mission/MissionRunner.js';
+import { missionState } from '../mission/MissionState.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
+import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -167,14 +170,23 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private _vignetteDurationMs = 900;  // 0.9 real seconds to fade out
   private _vignetteActive    = false;
   private _lastKnownHealth   = -1;
+  private _missionDeathReported = false;
 
   private readonly _onHealthChanged = (current: number, max: number): void => {
     if (this._lastKnownHealth >= 0 && current < this._lastKnownHealth) {
       this._showDamageVignette();
     }
     this._lastKnownHealth = current;
-    // Update health bar UI
     this._healthBarUI?.updateHealth(current, max);
+
+    if (
+      current <= 0 &&
+      missionState.isActive &&
+      !this._missionDeathReported
+    ) {
+      this._missionDeathReported = true;
+      missionState.onGrimDied();
+    }
   };
 
   // ── Component factory overrides ───────────────────────────────────────────
@@ -339,6 +351,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     if (world) {
       killStreakTracker.tick(world, deltaTime);
       comboMeterTracker.tick(world, deltaTime);
+      missionRunner.tick(world, deltaTime);
     }
   }
 
@@ -580,12 +593,22 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     const world = this.getWorld();
     if (!world) return;
     for (const actor of world.getActors()) {
-      if (actor.uuid === SCENE_PLACEHOLDER_GRIM2_ACTOR_UUID) {
-        actor.destroy();
-        this._sceneGrim2PlaceholderRemoved = true;
-        return;
-      }
+      if (actor.uuid !== SCENE_PLACEHOLDER_GRIM2_ACTOR_UUID) continue;
+
+      // Defer destroy until GLTF load callbacks finish (avoids "ensure failed").
+      this._sceneGrim2PlaceholderRemoved = true;
+      destroyActorWhenGltfIdle(actor);
+      return;
     }
+  }
+
+  /**
+   * Reset the placeholder-removed flag so that when the gameplay scene reloads
+   * (e.g. after quitting to the main menu and replaying), the placeholder is
+   * correctly destroyed again on the next play session.
+   */
+  public resetScenePlaceholderFlag(): void {
+    this._sceneGrim2PlaceholderRemoved = false;
   }
 
   // ── Animation parameters ─────────────────────────────────────────────────

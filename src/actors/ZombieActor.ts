@@ -21,6 +21,7 @@ import { DeadGraveActor } from './DeadGraveActor.js';
 import { KOSignUI } from '../ui/KOSignUI.js';
 import { SoulCounterUI } from '../ui/SoulCounterUI.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
+import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -453,6 +454,13 @@ export class ZombieActor extends ENGINE.Actor {
   }
 
   public override tickPrePhysics(deltaTime: number): void {
+    if (!isGameplayUnlocked()) {
+      this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+      const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+      if (anim?.isReady()) anim.setParameter('state', 'idle');
+      return;
+    }
+
     if (this._deathSequenceStarted) {
       this.tickRagdoll(deltaTime);
       super.tickPrePhysics(deltaTime);

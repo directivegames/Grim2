@@ -48,7 +48,7 @@ export class SoulCounterUI {
     const gameContainer = (world as unknown as { gameContainer?: HTMLElement }).gameContainer;
     if (!gameContainer) return;
 
-    injectBreeSerifFont();
+    void injectBreeSerifFont();
 
     // Main container - positioned bottom-right
     this._container = document.createElement('div');

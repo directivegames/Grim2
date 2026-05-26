@@ -1,0 +1,16 @@
+{
+  "$root": {
+    "$bc": "THREE.MeshStandardMaterial",
+    "color": {
+      "$bc": "c",
+      "_": [
+        0,
+        0,
+        0
+      ]
+    },
+    "name": "Black",
+    "uuid": "058ae532-1eab-4f7e-8437-1fc6b76cdfeb"
+  },
+  "$version": 2
+}

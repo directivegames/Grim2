@@ -1,12 +1,14 @@
 /**
- * ReadyToReapUI — Dramatic "READY TO" → "REAP" intro after the start menu.
+ * ReadyToReapUI — Dramatic "READY TO" → "REAP" intro before gameplay.
  *
  * Transparent overlay: game canvas stays visible; multiply-blended PNGs knock out white.
- * Input stays disabled until onComplete (StartMenuUI re-enables movement).
+ * Input stays disabled until onComplete. Fades out the intro black cover once assets load.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
+import { fadeOutIntroBlackCover } from '../utils/screen-transition.js';
 
 const READY_URL = '@project/assets/VFX/readyto.png';
 const REAP_URL = '@project/assets/VFX/REAP.png';
@@ -29,11 +31,21 @@ function triggerShake(world: ENGINE.World, intensity: number, durationSec: numbe
   }
 }
 
+export interface ReadyToReapPlayOptions {
+  /** When false, caller starts gameplay music after onComplete (e.g. mission accept). */
+  startGameplayMusic?: boolean;
+}
+
 export class ReadyToReapUI {
   /**
    * Full intro sequence; calls onComplete when the player may take control.
    */
-  public static async play(world: ENGINE.World, onComplete: () => void): Promise<void> {
+  public static async play(
+    world: ENGINE.World,
+    onComplete: () => void,
+    options: ReadyToReapPlayOptions = {},
+  ): Promise<void> {
+    const { startGameplayMusic = true } = options;
     const w = world as GameContainerWorld;
     const container = w.gameContainer;
     if (!container || w.options?.headless) {
@@ -47,12 +59,19 @@ export class ReadyToReapUI {
       /* world may be tearing down */
     }
 
+    if (startGameplayMusic) {
+      BackgroundMusicActor.ensurePlaying(world);
+    }
+
     ReadyToReapUI._injectKeyframes(container);
 
     const [readyUrl, reapUrl] = await Promise.all([
       ENGINE.resolveAssetPathsInText(READY_URL),
       ENGINE.resolveAssetPathsInText(REAP_URL),
     ]);
+
+    // Reveal the level only once title art is ready — avoids empty scene flash.
+    await fadeOutIntroBlackCover(world, 480);
 
     const overlay = document.createElement('div');
     overlay.className = 'grim-rtr-overlay';

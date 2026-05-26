@@ -23,6 +23,7 @@ import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { VomitballProjectileActor } from './VomitballProjectileActor.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
+import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -287,9 +288,35 @@ export class BigUndeadActor extends ENGINE.Actor {
     zombieSpatialManager.registerZombie(this);
   }
 
+  /** Horde spawn / relocate — immediately chase instead of waiting for aggro radius. */
+  public wakeForHordeSpawn(): void {
+    if (this._deathSequenceStarted) {
+      return;
+    }
+    this._hasAggro = true;
+    this._kiteState = 'approach';
+    this._shotsFired = 0;
+    this._fireShotTimer = 0;
+    this._postBurstTimer = 0;
+    this.wanderRoot?.reset();
+    const npc = this.getComponent(ENGINE.NpcMovementComponent) as { enabled?: boolean } | null;
+    if (npc) {
+      npc.enabled = true;
+    }
+    zombieSpatialManager.unregisterZombie(this);
+    zombieSpatialManager.registerZombie(this);
+  }
+
   public override tickPrePhysics(deltaTime: number): void {
     if (this.isHiddenInGame()) {
       super.tickPrePhysics(deltaTime);
+      return;
+    }
+
+    if (!isGameplayUnlocked()) {
+      this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+      const anim = this.getComponent(ENGINE.AnimationStateMachineComponent);
+      if (anim?.isReady()) anim.setParameter('state', 'idle');
       return;
     }
 

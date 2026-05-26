@@ -43,7 +43,7 @@ export class ComboCounterUI {
   private async _initializeAsync(): Promise<void> {
     if (!this._gameContainer) return;
 
-    injectBreeSerifFont();
+    await injectBreeSerifFont();
 
     // Resolve background URL
     const css = `.bg { background-image: url("${BG_URL}"); }`;

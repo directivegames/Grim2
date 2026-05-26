@@ -3,6 +3,7 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { withMenuSelectSound } from '../utils/menu-audio.js';
 import { resumeGame } from '../utils/game-pause.js';
 import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 
@@ -99,7 +100,7 @@ export class PauseMenuUI {
       pointer-events: none;
     `;
     wrap.appendChild(text);
-    wrap.addEventListener('click', onClick);
+    wrap.addEventListener('click', withMenuSelectSound(this._world, onClick));
     wrap.addEventListener('mouseenter', () => {
       wrap.style.transform = 'scale(1.03)';
       wrap.style.filter = 'brightness(1.06)';
