@@ -1,7 +1,4 @@
-import {
-  SUBURBS_TUTORIAL_MISSION_CONFIG,
-  type MissionConfig,
-} from './mission-types.js';
+import type { MissionConfig } from './mission-types.js';
 
 /** Difficulty shown on the mission briefing panel. */
 export type MissionDifficulty = 'Easy' | 'Medium' | 'Hard';
@@ -32,7 +29,12 @@ export interface MissionDef {
   mapY: number;
   /** If false, icon is visible but not selectable (coming soon). */
   selectable: boolean;
-  /** Runtime rules when this location is started. Omitted for coming-soon entries. */
+  /**
+   * Mission goal pool id — goals are rolled at START from [`mission-pools.ts`](./mission-pools.ts).
+   * Legacy fixed `missionConfig` is still supported for one-off entries.
+   */
+  missionPoolId?: string;
+  /** @deprecated Prefer `missionPoolId` + risk roll. */
   missionConfig?: MissionConfig;
 }
 
@@ -74,13 +76,12 @@ export const MISSIONS: readonly MissionDef[] = [
     mapTitle: '3. OAKRIDGE SUBURBS',
     mapTagline: 'HOME OF THE LIVING... AND THE DEAD.',
     name: 'Oakridge Suburbs',
-    subtitle: 'Level Risk 1',
-    briefingSubline: 'Level Risk 1',
+    subtitle: 'Level Risk',
     difficulty: 'Easy',
     description:
       'Reap the souls in the local suburb, where getting the mail and becoming possessed go hand in hand.',
     objectives: [
-      'Mission: Reap 300 souls and save 6 innocents.',
+      'Choose a risk level, then start — goals are rolled for that tier.',
       'Condition: Finish before collateral damage reaches 100%.',
       'Modifiers: None.',
     ],
@@ -88,7 +89,7 @@ export const MISSIONS: readonly MissionDef[] = [
     mapX: 0.76,
     mapY: 0.44,
     selectable: true,
-    missionConfig: SUBURBS_TUTORIAL_MISSION_CONFIG,
+    missionPoolId: 'suburbs',
   },
   {
     id: 'underworld',
@@ -160,7 +161,7 @@ export function getSelectableMissions(): MissionDef[] {
   return MISSIONS.filter((m) => m.selectable);
 }
 
-/** Gameplay config for a started mission, if defined. */
+/** Fixed gameplay config when a mission still uses `missionConfig` directly. */
 export function getMissionGameplayConfig(mission: MissionDef): MissionConfig | undefined {
   return mission.missionConfig;
 }

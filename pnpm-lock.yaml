@@ -12,8 +12,8 @@ importers:
         specifier: latest
         version: 0.0.6
       '@gnsx/genesys.js':
-        specifier: 10.17.0
-        version: 10.17.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)
+        specifier: 10.17.1
+        version: 10.17.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)
       three:
         specifier: npm:@gnsx/three@0.184.11
         version: '@gnsx/three@0.184.11'
@@ -517,8 +517,8 @@ packages:
   '@gnsx/genesys.harness@0.0.6':
     resolution: {integrity: sha512-Y2+3BL8AR0xDVp1oZ0M7hZACJ69t5Ncel5P5EwYGrZcvxDPDqnEbjgDyrssHQKYmp5J6osy+8dWlIALV1LoZhA==}
 
-  '@gnsx/genesys.js@10.17.0':
-    resolution: {integrity: sha512-iAZyJq60pfUb0Z/GwfUa3SIFl4IutfnGBgNzWPT79uciSnTzkmyiwQm0GlZarHgKiT6SW2a6tJpkMMYRpfAsYA==}
+  '@gnsx/genesys.js@10.17.1':
+    resolution: {integrity: sha512-duFx8dQUDmOLMqH9r9DLT9V4m4sBkJQPg4evDy5AHWVp9dWj/YdXaLY49+HgIxWQbZdTOJafNn1Tf58CNi/GaQ==}
 
   '@gnsx/three-types@0.184.6':
     resolution: {integrity: sha512-bn1bvWoVdJYaZ4b0GeJKxzsGEV5HQyPeLW0PUj6J8ugJUwEw7qrrf81VfeZuuxKoIefScNczNceiSwQwR7hffg==}
@@ -2832,7 +2832,7 @@ snapshots:
 
   '@gnsx/genesys.harness@0.0.6': {}
 
-  '@gnsx/genesys.js@10.17.0(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)':
+  '@gnsx/genesys.js@10.17.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@msgpack/msgpack': 3.1.3

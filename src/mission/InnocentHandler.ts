@@ -127,7 +127,7 @@ export class InnocentHandler {
   }
 
   public getWorldPosition(out: THREE.Vector3): boolean {
-    if (!this._prop || !this._active || this._ending) {
+    if (!this._prop || !this._active || this._ending || this._prop.isHiddenInGame()) {
       return false;
     }
     this._prop.rootComponent.getWorldPosition(out);

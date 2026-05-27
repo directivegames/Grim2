@@ -8,7 +8,6 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
-import { fadeOutIntroBlackCover } from '../utils/screen-transition.js';
 
 const READY_URL = '@project/assets/VFX/readyto.png';
 const REAP_URL = '@project/assets/VFX/REAP.png';
@@ -53,6 +52,22 @@ export class ReadyToReapUI {
       return;
     }
 
+    // Mount overlay immediately so the gameplay can run under it.
+    const overlay = document.createElement('div');
+    overlay.className = 'grim-rtr-overlay';
+    overlay.style.cssText = `
+      position: absolute;
+      inset: 0;
+      z-index: 10070;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      pointer-events: auto;
+    `;
+    container.appendChild(overlay);
+
     try {
       world.inputManager.setInputEnabled(false);
     } catch {
@@ -70,22 +85,7 @@ export class ReadyToReapUI {
       ENGINE.resolveAssetPathsInText(REAP_URL),
     ]);
 
-    // Reveal the level only once title art is ready — avoids empty scene flash.
-    await fadeOutIntroBlackCover(world, 480);
-
-    const overlay = document.createElement('div');
-    overlay.className = 'grim-rtr-overlay';
-    overlay.style.cssText = `
-      position: absolute;
-      inset: 0;
-      z-index: 10070;
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      pointer-events: auto;
-    `;
+    // No screen fades here — this should be a transparent overlay over gameplay.
 
     const flash = document.createElement('div');
     flash.className = 'grim-rtr-flash';
@@ -150,7 +150,6 @@ export class ReadyToReapUI {
     overlay.appendChild(sparksHost);
     overlay.appendChild(imgWrap);
     overlay.appendChild(flash);
-    container.appendChild(overlay);
 
     const pulseFlash = (peak = 0.22, holdMs = 50): void => {
       flash.style.transition = 'none';

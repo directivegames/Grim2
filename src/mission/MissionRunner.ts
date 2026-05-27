@@ -9,6 +9,7 @@ import { ZombieHordeManager } from '../actors/ZombieHordeManager.js';
 import { CollateralDamageUI } from '../ui/CollateralDamageUI.js';
 import { CollateralWarningUI } from '../ui/CollateralWarningUI.js';
 import { InnocentFeedbackUI } from '../ui/InnocentFeedbackUI.js';
+import { InnocentHelpMeUI } from '../ui/InnocentHelpMeUI.js';
 import { InnocentIndicatorUI } from '../ui/InnocentIndicatorUI.js';
 import { InnocentSaveProgressUI } from '../ui/InnocentSaveProgressUI.js';
 import { MissionResultUI } from '../ui/MissionResultUI.js';
@@ -77,13 +78,13 @@ class MissionRunnerImpl {
 
 
 
-  public start(world: ENGINE.World, mission: MissionDef): void {
+  public start(world: ENGINE.World, mission: MissionDef, config?: MissionConfig): void {
 
-    const config = getMissionGameplayConfig(mission);
+    const resolved = config ?? getMissionGameplayConfig(mission);
 
-    if (!config) {
+    if (!resolved) {
 
-      console.warn(`[MissionRunner] No missionConfig on mission "${mission.id}" — skipping.`);
+      console.warn(`[MissionRunner] No mission config for "${mission.id}" — skipping.`);
 
       return;
 
@@ -110,11 +111,11 @@ class MissionRunnerImpl {
     this._usedInnocentMarkers.clear();
     this._innocentHandler.bind(world);
 
-    this._applyHordeRisk(world, config);
+    this._applyHordeRisk(world, resolved);
 
 
 
-    void this._startMissionWithUi(world, config);
+    void this._startMissionWithUi(world, resolved);
 
   }
 
@@ -135,12 +136,14 @@ class MissionRunnerImpl {
       CollateralWarningUI.getInstance(world),
     ]);
     const indicatorUi = InnocentIndicatorUI.getInstance(world);
+    const helpMeUi = InnocentHelpMeUI.getInstance(world);
 
     collateralUi.setPercent(0);
     collateralUi.show();
     innocentProgressUi.show();
     innocentProgressUi.setProgress(0, config.type === 'reap-and-save' ? config.innocentsToSave : 0);
     indicatorUi.hide();
+    helpMeUi.hide();
 
     missionState.setListeners({
       onRequestInnocentSpawn: () => this._revealInnocent(),
@@ -152,10 +155,12 @@ class MissionRunnerImpl {
       },
       onInnocentSaved: () => {
         indicatorUi.hide();
+        helpMeUi.hide();
         feedbackUi.showSoulSaved();
       },
       onInnocentKilled: (jumpPercent) => {
         indicatorUi.hide();
+        helpMeUi.hide();
         feedbackUi.showSoulWasted(() => warningUi.showCollateralJump(jumpPercent));
       },
       onCollateralChanged: (percent) => collateralUi.setPercent(percent),
@@ -165,6 +170,7 @@ class MissionRunnerImpl {
         collateralUi.hide();
         innocentProgressUi.hide();
         indicatorUi.hide();
+        helpMeUi.hide();
         this._innocentHandler.shutdown();
         void MissionResultUI.show(world, result);
       },
@@ -190,16 +196,20 @@ class MissionRunnerImpl {
 
 
     const indicatorUi = InnocentIndicatorUI.getInstance(world);
+    const helpMeUi = InnocentHelpMeUI.getInstance(world);
 
     if (this._innocentHandler.getWorldPosition(this._innocentWorldPos)) {
 
       indicatorUi.show();
-
       indicatorUi.updateTarget(this._innocentWorldPos);
+
+      helpMeUi.show();
+      helpMeUi.updateTarget(this._innocentWorldPos);
 
     } else {
 
       indicatorUi.hide();
+      helpMeUi.hide();
 
     }
 
@@ -224,6 +234,7 @@ class MissionRunnerImpl {
       CollateralDamageUI.hideForWorld(w);
       InnocentSaveProgressUI.hideForWorld(w);
       InnocentIndicatorUI.hideForWorld(w);
+      InnocentHelpMeUI.hideForWorld(w);
 
     }
 
@@ -249,7 +260,12 @@ class MissionRunnerImpl {
 
       if (actor instanceof ZombieHordeManager) {
 
-        actor.applyMissionRisk(risk.enemyHealthMult, risk.enemyDamageMult, risk.eliteSpawnWeight);
+        actor.applyMissionRisk(
+          risk.enemyHealthMult,
+          risk.enemyDamageMult,
+          risk.eliteSpawnWeight,
+          config.riskLevel,
+        );
 
         return;
 

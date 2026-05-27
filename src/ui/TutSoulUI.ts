@@ -15,6 +15,11 @@ export const TUT_SOUL_OVERLAY_ATTR = 'data-tut-soul';
 
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
+export interface TutSoulShowOptions {
+  /** When false, only dismisses the overlay (caller handles resume / next intro step). */
+  resumeOnClose?: boolean;
+}
+
 export class TutSoulUI {
   private static _overlay: HTMLDivElement | null = null;
 
@@ -22,7 +27,12 @@ export class TutSoulUI {
    * Full-screen tutorial; pauses gameplay until the player clicks Close.
    * Calls `onComplete` after the overlay is dismissed.
    */
-  public static async show(world: ENGINE.World, onComplete: () => void): Promise<void> {
+  public static async show(
+    world: ENGINE.World,
+    onComplete: () => void,
+    options: TutSoulShowOptions = {},
+  ): Promise<void> {
+    const { resumeOnClose = true } = options;
     const gc = (world as GameContainerWorld).gameContainer;
     if (!gc || (world as GameContainerWorld).options?.headless) {
       onComplete();
@@ -101,7 +111,9 @@ export class TutSoulUI {
       playMenuSelectSound(world);
       markTutSoulSeen();
       TutSoulUI.close();
-      resumeGame(world);
+      if (resumeOnClose) {
+        resumeGame(world);
+      }
       onComplete();
     };
 

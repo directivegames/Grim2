@@ -32,6 +32,9 @@ import { tryApplyHordeZombieSpawnPointWorldPosition } from '../mission/innocent-
 import { BigUndeadActor } from './BigUndeadActor.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
+import { ENEMY_TYPE_ZOMBIE } from '../data/items.js';
+import type { RiskLevel } from '../data/risk-levels.js';
+import { tryRollMissionItemDropOnEnemyKill } from '../utils/mission-enemy-drops.js';
 
 // Configuration
 const MAX_ACTIVE_ZOMBIES = 65;
@@ -83,6 +86,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
   private _riskHealthMult = 1;
   private _riskDamageMult = 1;
   private _riskEliteSpawnWeightBonus = 0;
+  private _missionRiskLevel: RiskLevel = 1;
 
   /** Placed-zombie references — cleared in doEndPlay to avoid dangling callbacks. */
   private _placedZombies: NewZombieActor[] = [];
@@ -150,6 +154,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   private onPlacedZombieDied(): void {
     this._totalKills++;
+    tryRollMissionItemDropOnEnemyKill(ENEMY_TYPE_ZOMBIE);
 
     if (!this._hordeActive && this._totalKills >= this.killsToActivate) {
       this.activateHorde();
@@ -164,6 +169,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
    */
   private onPoolZombieDied(zombie: NewZombieActor): void {
     this._totalKills++;
+    tryRollMissionItemDropOnEnemyKill(ENEMY_TYPE_ZOMBIE);
 
     const entry = this._activeZombies.get(zombie);
     if (entry) {
@@ -341,6 +347,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   private _pickEliteTypeForSpawn(): HordeEnemyType | null {
     const eligible = this._hordeEnemyTypes.filter(type => {
+      if (type.minRiskLevel > this._missionRiskLevel) return false;
       if (this._totalKills < type.killsToUnlock) return false;
       const active = this._activeEliteActors.get(type.id);
       return (active?.size ?? 0) < type.maxActive;
@@ -396,6 +403,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._activeEliteActors.get(type.id)?.delete(actor);
 
     this._totalKills++;
+    tryRollMissionItemDropOnEnemyKill(type.id);
 
     if (!this._hordeActive && this._totalKills >= this.killsToActivate) {
       this.activateHorde();
@@ -635,10 +643,12 @@ export class ZombieHordeManager extends ENGINE.Actor {
     healthMult: number,
     damageMult: number,
     eliteSpawnWeightBonus: number,
+    riskLevel: RiskLevel = 1,
   ): void {
     this._riskHealthMult = healthMult;
     this._riskDamageMult = damageMult;
     this._riskEliteSpawnWeightBonus = eliteSpawnWeightBonus;
+    this._missionRiskLevel = riskLevel;
     this._applyRiskToAllZombies();
   }
 
@@ -646,6 +656,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._riskHealthMult = 1;
     this._riskDamageMult = 1;
     this._riskEliteSpawnWeightBonus = 0;
+    this._missionRiskLevel = 1;
     this._applyRiskToAllZombies();
   }
 

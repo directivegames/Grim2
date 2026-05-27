@@ -1,17 +1,21 @@
 /**
- * MissionResultUI — win / fail overlay with stats and RETURN TO MAP.
+ * MissionResultUI — win / fail overlay with stats; success continues to rewards.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { MissionEndResult } from '../mission/MissionState.js';
+import { grimVault } from '../game/GrimVault.js';
 import { injectBreeSerifFont } from './uiTypography.js';
 import { pauseGame } from '../utils/game-pause.js';
-import { returnToMainMenu } from '../utils/return-to-main-menu.js';
+import { returnToMap } from '../utils/return-to-map.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeToBlackThen } from '../utils/screen-transition.js';
+import { MissionRewardsUI } from './MissionRewardsUI.js';
 
 const PANEL_URL = '@project/assets/UI/menu element.png';
 const FRAME_URL = '@project/assets/UI/optionsbackground.png';
+
+const FAIL_SOUL_RETAIN_FRACTION = 0.1;
 
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
@@ -39,6 +43,15 @@ export class MissionResultUI {
     MissionResultUI.close();
     pauseGame(world);
     await injectBreeSerifFont();
+
+    const won = result.outcome === 'success';
+    let soulsBanked = 0;
+    if (!won) {
+      soulsBanked = Math.floor(result.soulsCollected * FAIL_SOUL_RETAIN_FRACTION);
+      if (soulsBanked > 0) {
+        grimVault.addSouls(soulsBanked);
+      }
+    }
 
     const [panelUrl, frameUrl] = await Promise.all([
       MissionResultUI._resolveUrl(PANEL_URL),
@@ -75,7 +88,6 @@ export class MissionResultUI {
       panel.style.backgroundRepeat = 'no-repeat';
     }
 
-    const won = result.outcome === 'success';
     const title = document.createElement('h1');
     title.textContent = won ? 'REAP SUCCESSFUL' : 'REAP FAILED';
     title.style.cssText = `
@@ -119,11 +131,16 @@ export class MissionResultUI {
     ];
     if (!won) {
       lines.push(`Collateral: ${Math.round(result.collateralDamage)}%`);
+      lines.push(
+        soulsBanked > 0
+          ? `Souls saved to vault (10%): ${soulsBanked}`
+          : 'Souls saved to vault (10%): 0',
+      );
     }
     stats.innerHTML = lines.map((l) => `<div>${l}</div>`).join('');
 
     const btn = document.createElement('div');
-    btn.textContent = 'RETURN TO MAP';
+    btn.textContent = won ? 'NEXT →' : 'RETURN TO MAP';
     btn.style.cssText = `
       position: relative;
       width: min(300px, 80%);
@@ -160,11 +177,16 @@ export class MissionResultUI {
     });
     btn.addEventListener('click', () => {
       playMenuSelectSound(world);
+      if (won) {
+        MissionResultUI.close();
+        void MissionRewardsUI.show(world, result);
+        return;
+      }
       void fadeToBlackThen(
         world,
         () => {
           MissionResultUI.close();
-          returnToMainMenu(world);
+          returnToMap(world);
         },
         300,
         100,

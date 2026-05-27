@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "pnpm run generate-property-metadata && tsc && pnpm exec tsx ./scripts/genesys/write-build-stamp.ts",
+    "build": "pnpm run sync-assets && pnpm run generate-property-metadata && tsc && pnpm exec tsx ./scripts/genesys/write-build-stamp.ts",
     "turbo:build": "turbo run build",
     "generate-property-metadata": "pnpm exec tsx node_modules/@gnsx/genesys.js/scripts/generate-property-metadata.ts src/game-data.ts",
     "build-project": "pnpm exec tsx ./scripts/genesys/build-project.ts",
@@ -9,7 +9,7 @@
     "remove-engine-comments": "pnpm exec tsx ./scripts/genesys/remove-engine-comments.ts",
     "sync-assets": "pnpm exec tsx ./scripts/genesys/sync-project-assets-to-dist.ts",
     "rename-glb-animation": "pnpm exec tsx ./scripts/genesys/rename-glb-animation.ts",
-    "dev": "pnpm exec tsx ./scripts/genesys/dev/generate-manifest.ts && vite",
+    "dev": "pnpm run sync-assets && pnpm exec tsx ./scripts/genesys/dev/generate-manifest.ts && vite",
     "validate-prefabs": "pnpm exec tsx ./scripts/genesys/validate-prefabs.ts",
     "install-developer-skills": "pnpm exec tsx ./scripts/genesys/install-developer-skills.ts",
     "apply-lightmaps": "pnpm exec tsx ./tools/apply-lightmaps-cli.ts",
@@ -21,7 +21,7 @@
   "type": "module",
   "dependencies": {
     "@gnsx/genesys.harness": "latest",
-    "@gnsx/genesys.js": "10.17.0",
+    "@gnsx/genesys.js": "10.17.1",
     "three": "npm:@gnsx/three@0.184.11"
   },
   "pnpm": {

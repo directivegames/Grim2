@@ -25,6 +25,7 @@ import { FilmGrainActor } from './post/FilmGrainActor.js';
 import { DEFAULT_FILM_GRAIN_SETTINGS, FilmGrainUI } from './ui/FilmGrainUI.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
 import { setGameplayUnlocked } from './utils/game-pause.js';
+import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { GrimIntroActor } from './actors/GrimIntroActor.js';
 import { MenuMusicActor } from './actors/MenuMusicActor.js';
@@ -170,6 +171,7 @@ class MyGame extends ENGINE.BaseGameLoop {
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
+    DebugCheatsActor.ensureExists(world);
 
     const startMenu = StartMenuUI.attach(world, () => {
       world.addActor(GrimIntroActor.create({ name: 'GrimIntroActor' }));

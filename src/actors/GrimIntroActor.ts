@@ -22,16 +22,9 @@ import { GRIM_INTRO_DIALOGUE } from '../data/dialogues/grim-intro.js';
 
 import { DialogueUI } from '../ui/DialogueUI.js';
 
-import { missionRunner } from '../mission/MissionRunner.js';
 import { MapUI } from '../ui/MapUI.js';
 import type { MissionDef } from '../data/missions.js';
-import { TutSoulUI } from '../ui/TutSoulUI.js';
-import { ReadyToReapUI } from '../ui/ReadyToReapUI.js';
-import { BackgroundMusicActor } from './BackgroundMusicActor.js';
-import { shouldShowTutSoul } from '../utils/tut-progress.js';
-import { getGameAudioManager } from '../utils/game-audio.js';
-
-import { removeAllBlockingOverlays } from '../utils/screen-transition.js';
+import { beginMissionFromMap } from '../utils/begin-mission-from-map.js';
 import { setGameplayUnlocked } from '../utils/game-pause.js';
 import { CutsceneMusicActor } from './CutsceneMusicActor.js';
 
@@ -415,53 +408,8 @@ export class GrimIntroActor extends ENGINE.Actor {
 
 
   /**
-   * Map START → black hold + Letsreap sting + Ready To Reap, then gameplay.
-   * Pawn and mission stay off until the title sequence finishes.
+   * Map START → live mission under UI: Tut Soul (if enabled) → Ready To Reap → control.
    */
-  private _beginMissionFromMap(world: ENGINE.World, mission: MissionDef): void {
-    ensureGrimIntroBlackCover(world);
-
-    const pawn = world.getFirstPlayerPawn();
-    if (pawn) {
-      pawn.setHiddenInGame(true);
-    }
-
-    setGameplayUnlocked(false);
-    try {
-      world.inputManager.setInputEnabled(false);
-    } catch {
-      /* */
-    }
-
-    getGameAudioManager(world).play('letsReap', 1.0, true);
-
-    void ReadyToReapUI.play(
-      world,
-      () => {
-        removeAllBlockingOverlays(world);
-
-        if (pawn) {
-          pawn.setHiddenInGame(false);
-        }
-
-        setGameplayUnlocked(true);
-        BackgroundMusicActor.ensurePlaying(world);
-
-        const beginGameplay = (): void => {
-          world.inputManager.setInputEnabled(true);
-          missionRunner.start(world, mission);
-        };
-
-        if (shouldShowTutSoul()) {
-          void TutSoulUI.show(world, beginGameplay);
-        } else {
-          beginGameplay();
-        }
-      },
-      { startGameplayMusic: false },
-    );
-  }
-
   private async _finishIntro(): Promise<void> {
 
     const world = this.getWorld();
@@ -486,8 +434,8 @@ export class GrimIntroActor extends ENGINE.Actor {
 
     ensureGrimIntroBlackCover(world);
 
-    MapUI.open(world, (mission: MissionDef) => {
-      this._beginMissionFromMap(world, mission);
+    MapUI.open(world, (mission: MissionDef, config) => {
+      beginMissionFromMap(world, mission, config);
     });
 
   }

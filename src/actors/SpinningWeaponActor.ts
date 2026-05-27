@@ -22,6 +22,7 @@ import { WeaponSwingLightComponent } from '../components/vfx/WeaponSwingLightCom
 import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../components/vfx/WeaponSummonVFXComponent.js';
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
+import { grimVault } from '../game/GrimVault.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
@@ -97,11 +98,29 @@ const BOOMERANG_CATCH_RADIUS = 1.8;          // distance to player that counts a
 const BOOMERANG_HIT_RADIUS   = 1.1;          // damage sphere radius while in flight
 const BOOMERANG_LAUNCH_OFFSET = 1.5;         // units in front of Grim at launch
 
-const FIST_COOLDOWN          = 5;            // seconds between fist strikes (shortened for testing)
+const SOUL_THROW_SKILL_ID       = 'soulThrow';
+const SOUL_THROW_COOLDOWN_L3    = 10;          // shared cooldown at rank 3
+const SOUL_THROW_ARC_HALF_SPREAD = 0.28;       // radians between center and side blades
+const SOUL_THROW_DAMAGE_MULT_L3 = 0.55;        // rank 3 per-blade damage multiplier
+
+/** Shared with FistAbilityHUDUI for cooldown display. */
+export const FIST_COOLDOWN_SEC = 5;
+const FIST_COOLDOWN = FIST_COOLDOWN_SEC;
 const FIST_MIN_RANGE         = 5;            // closest an enemy can be targeted
 const FIST_MAX_RANGE         = 20;           // furthest an enemy can be targeted
 
-type BoomerangPhase = 'idle' | 'outbound' | 'returning';
+type SoulBladePhase = 'outbound' | 'returning';
+
+interface ActiveSoulBlade {
+  phase: SoulBladePhase;
+  pos: THREE.Vector3;
+  dir: THREE.Vector3;
+  distanceTraveled: number;
+  spinAngle: number;
+  /** 0 = scene weapon mesh; 1+ = extra trail-only blades */
+  visualSlot: number;
+  trail: BoomerangTrailComponent | null;
+}
 
 type MeleePhase = 'idle' | 'windup' | 'swing' | 'recovery';
 
@@ -163,15 +182,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   private _hitCooldowns = new Map<ENGINE.Actor, number>();
 
-  // ── Boomerang state ───────────────────────────────────────────────────────
+  // ── Soul Throw (boomerang) state ──────────────────────────────────────────
 
-  private _boomerangPhase: BoomerangPhase = 'idle';
-  private _boomerangPos    = new THREE.Vector3();
-  private _boomerangDir    = new THREE.Vector3(); // normalised, horizontal
-  private _boomerangDistanceTraveled = 0;
-  private _boomerangSpinAngle = 0;
+  private readonly _soulBlades: ActiveSoulBlade[] = [];
+  private _extraBladeTrails: BoomerangTrailComponent[] = [];
   private _boomerangSpinQuat  = new THREE.Quaternion();
   private static readonly _SPIN_AXIS = new THREE.Vector3(0, 1, 0);
+  private readonly _bladeDirScratch = new THREE.Vector3();
+
+  /** Rank 3 Soul Throw cooldown (starts ready). */
+  private _lastSoulThrowTime = -SOUL_THROW_COOLDOWN_L3;
 
   /** Game-time timestamp of the last fist strike (starts negative so it's ready immediately). */
   private _lastFistTime = -FIST_COOLDOWN;
@@ -282,6 +302,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._boomerangTrail = BoomerangTrailComponent.create();
     this.rootComponent.add(this._boomerangTrail);
 
+    this._extraBladeTrails = [
+      BoomerangTrailComponent.create(),
+      BoomerangTrailComponent.create(),
+    ];
+    for (const trail of this._extraBladeTrails) {
+      this.rootComponent.add(trail);
+    }
+
     // Post-creation warmups (now components actually exist)
     // Blood splatter pool is already warmed in its beginPlay
     // Summon VFX warmup: burst some particles off-screen to compile shaders
@@ -300,9 +328,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const player = this.getWorld()?.getFirstPlayerPawn();
 
-    // Boomerang takes priority — runs independently of melee
-    if (this._boomerangPhase !== 'idle' && player) {
-      this._tickBoomerang(deltaTime, player);
+    if (this._soulBlades.length > 0 && player) {
+      this._tickSoulBlades(deltaTime, player);
     }
 
     if (!this._sceneWeaponActor || !player) return;
@@ -376,7 +403,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._queuedMelee = true;
       return;
     }
-    if (this._boomerangPhase !== 'idle') return; // weapon is in flight
+    if (this._soulThrowBlocksMelee()) return;
 
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (!player) return;
@@ -384,12 +411,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _onRightClick(): void {
-    if (this._isMeleeBusy()) return;
-    if (this._boomerangPhase !== 'idle') return; // already in flight
+    if (this._getSoulThrowLevel() < 1) return;
+    if (this._isMeleeBusy() && this._getSoulThrowLevel() < 3) return;
+    if (this._getSoulThrowLevel() < 3 && this._hasActiveSoulBlades()) return;
+    if (this._isSoulThrowOnCooldown()) return;
 
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (!player) return;
-    this._throwBoomerang(player);
+    this._launchSoulThrow(player);
   }
 
   private _onEKey(): void {
@@ -402,27 +431,43 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const player = world.getFirstPlayerPawn();
     if (!player) return;
 
-    const target = this._pickFistTarget(player);
-    if (!target) return; // no valid enemy — cooldown does NOT start
+    const fistLevel = Math.min(3, Math.max(1, grimVault.getSkillLevel('fistOfAnnoyance')));
+    const targets = this._pickFistTargets(player, fistLevel);
+    if (targets.length === 0) return; // no valid enemy — cooldown does NOT start
 
-    const targetPos = new THREE.Vector3();
-    target.rootComponent.getWorldPosition(targetPos);
+    const offsets: [number, number][] = [
+      [0, 0],
+      [1.4, 0.9],
+      [-1.3, -1.0],
+    ];
 
-    FistOfAnnoyanceActor.spawnAt(world, targetPos);
-    this._lastFistTime = currentTime; // cooldown starts only now
-
-    // Play fist impact sound with distance attenuation (always audible, even at range)
     const playerPos = new THREE.Vector3();
     player.rootComponent.getWorldPosition(playerPos);
-    getGameAudioManager(world).playAtDistance('fistImpact', targetPos, playerPos, FIST_MAX_RANGE, 0.15);
 
-    // Camera shake on fist impact
+    for (let i = 0; i < targets.length; i++) {
+      const targetPos = new THREE.Vector3();
+      targets[i]!.rootComponent.getWorldPosition(targetPos);
+      const off = offsets[i] ?? [0, 0];
+      targetPos.x += off[0];
+      targetPos.z += off[1];
+      FistOfAnnoyanceActor.spawnAt(world, targetPos);
+      getGameAudioManager(world).playAtDistance(
+        'fistImpact',
+        targetPos,
+        playerPos,
+        FIST_MAX_RANGE,
+        0.15,
+      );
+    }
+
+    this._lastFistTime = currentTime; // cooldown starts only now
+
     if (player instanceof IsometricPlayerPawn) {
-      player.triggerScreenShake(0.2, 0.4);
+      player.triggerScreenShake(0.15 + fistLevel * 0.05, 0.35 + fistLevel * 0.05);
     }
   }
 
-  private _pickFistTarget(player: ENGINE.Pawn): ENGINE.Actor | null {
+  private _pickFistTargets(player: ENGINE.Pawn, maxCount: number): ENGINE.Actor[] {
     const playerPos = new THREE.Vector3();
     player.rootComponent.getWorldPosition(playerPos);
 
@@ -444,8 +489,17 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       candidates.push(zombie);
     }
 
-    if (candidates.length === 0) return null;
-    return candidates[Math.floor(Math.random() * candidates.length)];
+    if (candidates.length === 0) return [];
+
+    const picked: ENGINE.Actor[] = [];
+    const pool = [...candidates];
+    const count = Math.min(maxCount, pool.length);
+    for (let i = 0; i < count; i++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      picked.push(pool[idx]!);
+      pool.splice(idx, 1);
+    }
+    return picked;
   }
 
   private _startAttack(player: ENGINE.Pawn): void {
@@ -596,11 +650,41 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
   }
 
-  // ── Boomerang ─────────────────────────────────────────────────────────────
+  // ── Soul Throw ────────────────────────────────────────────────────────────
 
-  private _throwBoomerang(player: ENGINE.Pawn): void {
-    if (!this._sceneWeaponActor) return;
+  private _getSoulThrowLevel(): number {
+    return grimVault.getSkillLevel(SOUL_THROW_SKILL_ID);
+  }
 
+  private _hasActiveSoulBlades(): boolean {
+    return this._soulBlades.length > 0;
+  }
+
+  /** Ranks 1–2 lock melee while blades are in flight; rank 3 does not. */
+  private _soulThrowBlocksMelee(): boolean {
+    return this._getSoulThrowLevel() < 3 && this._hasActiveSoulBlades();
+  }
+
+  private _isSoulThrowOnCooldown(): boolean {
+    if (this._getSoulThrowLevel() < 3) return false;
+    const world = this.getWorld();
+    if (!world) return false;
+    return world.getGameTime() - this._lastSoulThrowTime < SOUL_THROW_COOLDOWN_L3;
+  }
+
+  private _soulThrowDamage(): number {
+    return this._getSoulThrowLevel() >= 3
+      ? WEAPON_DAMAGE * SOUL_THROW_DAMAGE_MULT_L3
+      : WEAPON_DAMAGE;
+  }
+
+  private _rotateDirAroundY(dir: THREE.Vector3, yaw: number, out: THREE.Vector3): void {
+    const c = Math.cos(yaw);
+    const s = Math.sin(yaw);
+    out.set(dir.x * c - dir.z * s, 0, dir.x * s + dir.z * c);
+  }
+
+  private _resolveAimDirection(player: ENGINE.Pawn, out: THREE.Vector3): void {
     const world = this.getWorld();
     let dirSet = false;
 
@@ -608,11 +692,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const camera = world.getActiveCamera();
       if (camera) {
         const ndcMouse = world.inputManager.getMousePosition();
-
-        // Set ground plane at the player's Y level
         player.rootComponent.getWorldPosition(this._scratchPlayerPos);
         this._groundPlane.constant = -this._scratchPlayerPos.y;
-
         this._raycaster.setFromCamera(ndcMouse, camera);
 
         if (this._raycaster.ray.intersectPlane(this._groundPlane, this._mouseHitPoint)) {
@@ -620,91 +701,152 @@ export class SpinningWeaponActor extends ENGINE.Actor {
           const dz = this._mouseHitPoint.z - this._scratchPlayerPos.z;
           const len = Math.sqrt(dx * dx + dz * dz);
           if (len > 0.01) {
-            this._boomerangDir.set(dx / len, 0, dz / len);
+            out.set(dx / len, 0, dz / len);
             dirSet = true;
           }
         }
       }
     }
 
-    // Fallback: use Grim's facing direction if the ray missed
     if (!dirSet) {
       const facing = player instanceof IsometricPlayerPawn ? player.getFacingYaw() : 0;
-      this._boomerangDir.set(Math.sin(facing), 0, Math.cos(facing));
-    }
-
-    player.rootComponent.getWorldPosition(this._boomerangPos);
-    this._boomerangPos.y += BOOMERANG_HEIGHT;
-    this._boomerangPos.addScaledVector(this._boomerangDir, BOOMERANG_LAUNCH_OFFSET);
-
-    this._boomerangDistanceTraveled = 0;
-    this._boomerangSpinAngle = 0;
-    this._boomerangPhase = 'outbound';
-
-    this._sceneWeaponActor.rootComponent.position.copy(this._boomerangPos);
-    this._sceneWeaponActor.rootComponent.visible = true;
-    this._boomerangTrail?.start();
-    if (this._summonVFX) {
-      this._summonVFX.burst(this._boomerangPos.clone(), APPEAR_COUNT);
+      out.set(Math.sin(facing), 0, Math.cos(facing));
     }
   }
 
-  private _tickBoomerang(deltaTime: number, player: ENGINE.Pawn): void {
-    if (!this._sceneWeaponActor) return;
+  private _launchSoulThrow(player: ENGINE.Pawn): void {
+    const level = this._getSoulThrowLevel();
+    if (level < 1) return;
 
-    // Spin
-    this._boomerangSpinAngle += BOOMERANG_SPIN_RATE * deltaTime;
-    this._boomerangSpinQuat.setFromAxisAngle(SpinningWeaponActor._SPIN_AXIS, this._boomerangSpinAngle);
-    this._sceneWeaponActor.rootComponent.quaternion.copy(this._baseQuat).premultiply(this._boomerangSpinQuat);
+    const world = this.getWorld();
+    if (!world) return;
 
-    if (this._boomerangPhase === 'outbound') {
+    this._resolveAimDirection(player, this._bladeDirScratch);
+
+    const bladeCount = level >= 2 ? 3 : 1;
+    const yawOffsets =
+      bladeCount === 1
+        ? [0]
+        : [-SOUL_THROW_ARC_HALF_SPREAD, 0, SOUL_THROW_ARC_HALF_SPREAD];
+
+    for (let i = 0; i < bladeCount; i++) {
+      this._rotateDirAroundY(this._bladeDirScratch, yawOffsets[i]!, this._scratchPos);
+      this._spawnSoulBlade(player, this._scratchPos, i);
+    }
+
+    if (level >= 3) {
+      this._lastSoulThrowTime = world.getGameTime();
+    }
+
+    getGameAudioManager(world).play('spinBlade', 1.0, true);
+  }
+
+  private _spawnSoulBlade(player: ENGINE.Pawn, dir: THREE.Vector3, visualSlot: number): void {
+    const launchPos = new THREE.Vector3();
+    player.rootComponent.getWorldPosition(launchPos);
+    launchPos.y += BOOMERANG_HEIGHT;
+    launchPos.addScaledVector(dir, BOOMERANG_LAUNCH_OFFSET);
+
+    const trail =
+      visualSlot === 0
+        ? this._boomerangTrail
+        : this._extraBladeTrails[visualSlot - 1] ?? null;
+
+    const blade: ActiveSoulBlade = {
+      phase: 'outbound',
+      pos: launchPos,
+      dir: dir.clone(),
+      distanceTraveled: 0,
+      spinAngle: 0,
+      visualSlot,
+      trail,
+    };
+
+    this._soulBlades.push(blade);
+    trail?.start();
+
+    if (visualSlot === 0 && this._sceneWeaponActor) {
+      this._sceneWeaponActor.rootComponent.position.copy(launchPos);
+      this._sceneWeaponActor.rootComponent.visible = true;
+      if (this._summonVFX) {
+        this._summonVFX.burst(launchPos, APPEAR_COUNT);
+      }
+    }
+  }
+
+  private _tickSoulBlades(deltaTime: number, player: ENGINE.Pawn): void {
+    for (let i = this._soulBlades.length - 1; i >= 0; i--) {
+      this._tickOneSoulBlade(this._soulBlades[i]!, deltaTime, player);
+    }
+  }
+
+  private _tickOneSoulBlade(blade: ActiveSoulBlade, deltaTime: number, player: ENGINE.Pawn): void {
+    blade.spinAngle += BOOMERANG_SPIN_RATE * deltaTime;
+
+    if (blade.phase === 'outbound') {
       const step = BOOMERANG_SPEED * deltaTime;
-      this._boomerangPos.addScaledVector(this._boomerangDir, step);
-      this._boomerangDistanceTraveled += step;
-
-      if (this._boomerangDistanceTraveled >= BOOMERANG_RANGE) {
-        this._boomerangPhase = 'returning';
+      blade.pos.addScaledVector(blade.dir, step);
+      blade.distanceTraveled += step;
+      if (blade.distanceTraveled >= BOOMERANG_RANGE) {
+        blade.phase = 'returning';
       }
     } else {
-      // Steer toward Grim's current position
       player.rootComponent.getWorldPosition(this._scratchPlayerPos);
       this._scratchPlayerPos.y += BOOMERANG_HEIGHT;
 
-      this._scratchPos.copy(this._scratchPlayerPos).sub(this._boomerangPos); // toGrim
+      this._scratchPos.copy(this._scratchPlayerPos).sub(blade.pos);
       const dist = this._scratchPos.length();
 
       if (dist < BOOMERANG_CATCH_RADIUS) {
-        // Caught
-        this._boomerangPhase = 'idle';
-        this._boomerangTrail?.stop();
-        this._sceneWeaponActor.rootComponent.visible = false;
-        if (this._summonVFX) {
-          this._summonVFX.burst(this._boomerangPos.clone(), DISMISS_COUNT);
-        }
+        this._dismissSoulBlade(blade);
         return;
       }
 
-      this._boomerangPos.addScaledVector(this._scratchPos.normalize(), BOOMERANG_RETURN_SPEED * deltaTime);
+      blade.pos.addScaledVector(this._scratchPos.normalize(), BOOMERANG_RETURN_SPEED * deltaTime);
     }
 
-    this._sceneWeaponActor.rootComponent.position.copy(this._boomerangPos);
-    this._boomerangTrail?.addPoint(this._boomerangPos);
-    this._checkBoomerangHits();
+    if (blade.visualSlot === 0 && this._sceneWeaponActor) {
+      this._boomerangSpinQuat.setFromAxisAngle(SpinningWeaponActor._SPIN_AXIS, blade.spinAngle);
+      this._sceneWeaponActor.rootComponent.quaternion
+        .copy(this._baseQuat)
+        .premultiply(this._boomerangSpinQuat);
+      this._sceneWeaponActor.rootComponent.position.copy(blade.pos);
+    }
+
+    void blade.trail?.addPoint(blade.pos);
+    this._checkSoulBladeHits(blade);
   }
 
-  // ── Hit detection ─────────────────────────────────────────────────────────
+  private _dismissSoulBlade(blade: ActiveSoulBlade): void {
+    const idx = this._soulBlades.indexOf(blade);
+    if (idx >= 0) {
+      this._soulBlades.splice(idx, 1);
+    }
 
-  private _checkBoomerangHits(): void {
+    blade.trail?.stop();
+
+    if (blade.visualSlot === 0 && this._sceneWeaponActor) {
+      this._sceneWeaponActor.rootComponent.visible = false;
+      if (this._summonVFX) {
+        this._summonVFX.burst(blade.pos, DISMISS_COUNT);
+      }
+    }
+  }
+
+  private _checkSoulBladeHits(blade: ActiveSoulBlade): void {
     const world = this.getWorld();
     if (!world) return;
 
     const player = world.getFirstPlayerPawn();
     const currentTime = world.getGameTime();
+    const damage = this._soulThrowDamage();
 
-    const nearbyZombies = zombieSpatialManager.getNearbyZombies(this._boomerangPos, BOOMERANG_HIT_RADIUS + 1);
+    const nearbyZombies = zombieSpatialManager.getNearbyZombies(
+      blade.pos,
+      BOOMERANG_HIT_RADIUS + 1,
+    );
 
     for (const zombie of nearbyZombies) {
-      // Skip hidden (recycled/pooled) zombies
       if ((zombie as unknown as { isHiddenInGame(): boolean }).isHiddenInGame()) {
         continue;
       }
@@ -715,13 +857,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       if (lastHit !== undefined && currentTime - lastHit < HIT_COOLDOWN) continue;
 
       zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
-      const dx = this._scratchZombiePos.x - this._boomerangPos.x;
-      const dz = this._scratchZombiePos.z - this._boomerangPos.z;
+      const dx = this._scratchZombiePos.x - blade.pos.x;
+      const dz = this._scratchZombiePos.z - blade.pos.z;
       if (dx * dx + dz * dz > BOOMERANG_HIT_RADIUS * BOOMERANG_HIT_RADIUS) continue;
 
       this._hitCooldowns.set(zombie, currentTime);
 
-      this._hitNormalScratch.copy(this._scratchZombiePos).sub(this._boomerangPos).setY(0);
+      this._hitNormalScratch.copy(this._scratchZombiePos).sub(blade.pos).setY(0);
       if (this._hitNormalScratch.lengthSq() < 1e-8) {
         this._hitNormalScratch.set(1, 0, 0);
       } else {
@@ -733,19 +875,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         hitNormal: this._hitNormalScratch,
       };
       const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
-      let isFatal = false;
       if (stats) {
-        const healthBefore = stats.getCurrentHealth();
-        stats.takeDamage(WEAPON_DAMAGE, hitInfo);
-        isFatal = healthBefore > 0 && stats.getCurrentHealth() <= 0;
+        stats.takeDamage(damage, hitInfo);
       }
       (zombie as unknown as { flashYellow(): void }).flashYellow();
 
-      // Blood splatter at hit location
       this._bloodSplatter?.burst(this._scratchZombiePos);
-
-      // Show hit number with background
-      this._showHitNumber(world, this._scratchZombiePos);
+      this._showHitNumber(world, this._scratchZombiePos, damage);
 
       if (player instanceof IsometricPlayerPawn) {
         player.triggerScreenShake(0.12, 0.25);
@@ -753,8 +889,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
   }
 
-  private _showHitNumber(world: ENGINE.World, pos: THREE.Vector3): void {
-    HitNumberUI.getInstance(world).showDamage(WEAPON_DAMAGE, pos);
+  // ── Hit detection ─────────────────────────────────────────────────────────
+
+  private _showHitNumber(
+    world: ENGINE.World,
+    pos: THREE.Vector3,
+    damage: number = WEAPON_DAMAGE,
+  ): void {
+    HitNumberUI.getInstance(world).showDamage(damage, pos);
   }
 
   /** Previous frame weapon positions for swept hit detection. */
@@ -919,6 +1061,28 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         this._hitCooldowns.delete(zombie);
       }
     }
+  }
+
+  public getFistCooldownRemaining(): number {
+    const world = this.getWorld();
+    if (!world) {
+      return 0;
+    }
+    const elapsed = world.getGameTime() - this._lastFistTime;
+    return Math.max(0, FIST_COOLDOWN - elapsed);
+  }
+
+  public isFistReady(): boolean {
+    return this.getFistCooldownRemaining() <= 0;
+  }
+
+  public static findInWorld(world: ENGINE.World): SpinningWeaponActor | null {
+    for (const actor of world.getActors()) {
+      if (actor instanceof SpinningWeaponActor) {
+        return actor;
+      }
+    }
+    return null;
   }
 
   public override getEditorClassIcon(): string | null {

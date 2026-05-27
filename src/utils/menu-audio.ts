@@ -18,3 +18,12 @@ export function withMenuSelectSound(world: ENGINE.World, handler: () => void): (
     handler();
   };
 }
+
+/** Shop entrance sting when opening Grim's upgrades from the map. */
+export function playShopOpenSound(world: ENGINE.World): void {
+  try {
+    getGameAudioManager(world).play('buying', 1.0, true);
+  } catch {
+    /* */
+  }
+}

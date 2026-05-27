@@ -16,9 +16,13 @@ import { ISO_YAW, IsometricMovementComponent } from '../components/movement/Isom
 import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcComponent.js';
+import { BoneShardIconTestHUDUI } from '../ui/BoneShardIconTestHUDUI.js';
+import { FistAbilityHUDUI } from '../ui/FistAbilityHUDUI.js';
 import { HealthBarUI } from '../ui/HealthBarUI.js';
+import { ItemIconCache } from '../ui/ItemIconCache.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
+import { grimVault } from '../game/GrimVault.js';
 import { missionRunner } from '../mission/MissionRunner.js';
 import { missionState } from '../mission/MissionState.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
@@ -97,6 +101,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   /** Health bar UI reference. */
   private _healthBarUI: HealthBarUI | null = null;
+  private _fistAbilityHUD: FistAbilityHUDUI | null = null;
 
   /** Hit number UI reference. */
   private _hitNumberUI: import('../ui/HitNumberUI.js').HitNumberUI | null = null;
@@ -276,14 +281,42 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
+  /** Apply purchased Grim upgrades to runtime stats (call after vault changes or mission start). */
+  public applyGrimVaultStats(): void {
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (!stats) {
+      return;
+    }
+    const grim = grimVault.computeStats();
+    const prevMax = stats.getMaxHealth();
+    const ratio = prevMax > 0 ? stats.getCurrentHealth() / prevMax : 1;
+
+    stats.setMaxHealth(grim.maxHealth);
+    const targetHealth = Math.round(grim.maxHealth * ratio);
+    const cur = stats.getCurrentHealth();
+    if (targetHealth > cur) {
+      stats.heal(targetHealth - cur);
+    }
+    stats.setSpeed(grim.moveSpeed);
+    stats.setAttackDamage(grim.attackMult);
+  }
+
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+    this.applyGrimVaultStats();
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     if (stats) {
       this._lastKnownHealth = stats.getCurrentHealth();
       stats.onHealthChanged.add(this._onHealthChanged);
       // Initialize health bar UI asynchronously
       void this._initHealthBarUI(stats);
+      void this._initFistAbilityHUD();
+      void this._initBoneShardIconTestHUD();
+      const world = this.getWorld();
+      if (world) {
+        // Resolve item icon URLs while the scene is active (same context as fist/health).
+        void ItemIconCache.warm(world);
+      }
       // Initialize hit number UI
       void this._initHitNumberUI();
       // Initialize KO sign UI
@@ -294,6 +327,14 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private async _initHealthBarUI(stats: ENGINE.CharacterStatsComponent): Promise<void> {
     this._healthBarUI = await HealthBarUI.getInstance(this.getWorld());
     this._healthBarUI.updateHealth(stats.getCurrentHealth(), stats.getMaxHealth());
+  }
+
+  private async _initFistAbilityHUD(): Promise<void> {
+    this._fistAbilityHUD = await FistAbilityHUDUI.getInstance(this.getWorld());
+  }
+
+  private async _initBoneShardIconTestHUD(): Promise<void> {
+    await BoneShardIconTestHUDUI.getInstance(this.getWorld());
   }
 
   private async _initHitNumberUI(): Promise<void> {
@@ -342,6 +383,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._updateCameraFOV(deltaTime);
     // Update health bar animation
     this._healthBarUI?.tick(deltaTime);
+    this._fistAbilityHUD?.tick();
     // Update hit number animations
     this._hitNumberUI?.tick();
     // Update KO sign animations
@@ -912,6 +954,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     // Clean up health bar UI
     this._healthBarUI?.destroy();
     this._healthBarUI = null;
+    this._fistAbilityHUD?.destroy();
+    this._fistAbilityHUD = null;
     // Clean up KO sign UI
     this._koSignUI?.destroy();
     this._koSignUI = null;

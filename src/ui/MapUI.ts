@@ -7,13 +7,25 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { GRIM_INTRO_BLACK_COVER_ATTR } from '../actors/GrimIntroActor.js';
 import { MapMusicActor } from '../actors/MapMusicActor.js';
 import { MISSIONS, type MissionDef } from '../data/missions.js';
-import { withMenuSelectSound } from '../utils/menu-audio.js';
+import type { MissionConfig } from '../data/mission-types.js';
+import { RISK_LEVELS, type RiskLevel } from '../data/risk-levels.js';
+import {
+  getMissionGoalPreview,
+  rollMissionConfigForPoolId,
+} from '../game/MissionSelector.js';
+import { grimVault } from '../game/GrimVault.js';
+import { UpgradeShopUI } from './UpgradeShopUI.js';
+import { ItemIconCache } from './ItemIconCache.js';
+import { playShopOpenSound, withMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeInElement, fadeOutIntroBlackCover } from '../utils/screen-transition.js';
 
 const MAP_BG_URL = '@project/assets/UI/Burdenvillemaponly.png';
 const COMPASS_URL = '@project/assets/UI/compass.png';
 const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
 const OPTIONS_FRAME_URL = '@project/assets/UI/optionsbackground.png';
+const SHOP_ICON_FILE = 'ShopC.png';
+const SHOP_MAP_X = 0.35;
+const SHOP_MAP_Y = 0.64;
 
 const MAP_OVERLAY_ATTR = 'data-grim-map-ui';
 
@@ -51,11 +63,16 @@ export class MapUI {
   private readonly _world: ENGINE.World;
   private _root: HTMLDivElement | null = null;
   private _briefing: HTMLDivElement | null = null;
-  private _onMissionStart: ((mission: MissionDef) => void) | null = null;
+  private _onMissionStart: ((mission: MissionDef, config: MissionConfig) => void) | null = null;
+  private _briefingMission: MissionDef | null = null;
+  private _selectedRiskLevel: RiskLevel = 1;
+  private _briefingGoalsEl: HTMLParagraphElement | null = null;
+  private _briefingSubEl: HTMLParagraphElement | null = null;
   private _resolvedMapUrl = '';
   private _resolvedCompassUrl = '';
   private _resolvedPanelUrl = '';
   private _resolvedFrameUrl = '';
+  private _resolvedShopIconUrl = '';
   private readonly _resolvedIconUrls = new Map<string, string>();
 
   private constructor(world: ENGINE.World) {
@@ -72,12 +89,18 @@ export class MapUI {
    */
   public static open(
     world: ENGINE.World,
-    onMissionStart: (mission: MissionDef) => void,
+    onMissionStart: (mission: MissionDef, config: MissionConfig) => void,
   ): MapUI {
     const w = world as GameContainerWorld;
     if (!w.gameContainer || w.options?.headless) {
       const fallback = MISSIONS.find(m => m.selectable) ?? MISSIONS[2]!;
-      onMissionStart(fallback);
+      const poolId = fallback.missionPoolId ?? 'suburbs';
+      const config =
+        rollMissionConfigForPoolId(poolId, 1) ??
+        rollMissionConfigForPoolId('suburbs', 1);
+      if (config) {
+        onMissionStart(fallback, config);
+      }
       return new MapUI(world);
     }
 
@@ -111,19 +134,26 @@ export class MapUI {
       return;
     }
 
+    // Warm item icons while the map is open (shop uses this cache).
+    // We intentionally do not await to avoid delaying map display.
+    void ItemIconCache.warm(this._world);
+
     try {
       this._world.inputManager.setInputEnabled(false);
     } catch {
       /* */
     }
 
-    const [mapUrl, compassUrl, panelUrl, frameUrl, ...missionIconUrls] = await Promise.all([
+    const [mapUrl, compassUrl, panelUrl, frameUrl, shopIconUrl, ...missionIconUrls] =
+      await Promise.all([
       resolveAssetUrl(MAP_BG_URL),
       resolveAssetUrl(COMPASS_URL),
       resolveAssetUrl(MENU_PANEL_URL),
       resolveAssetUrl(OPTIONS_FRAME_URL),
+      resolveAssetUrl(missionIconPath(SHOP_ICON_FILE)),
       ...MISSIONS.map(m => resolveAssetUrl(missionIconPath(m.iconFile))),
     ]);
+    this._resolvedShopIconUrl = shopIconUrl;
     this._resolvedMapUrl = mapUrl;
     this._resolvedCompassUrl = compassUrl;
     this._resolvedPanelUrl = panelUrl;
@@ -185,6 +215,7 @@ export class MapUI {
     MISSIONS.forEach((mission, index) => {
       markersLayer.appendChild(this._createMarker(mission, index));
     });
+    markersLayer.appendChild(this._createShopMarker(MISSIONS.length));
     mapWrap.appendChild(markersLayer);
 
     const compass = document.createElement('div');
@@ -355,6 +386,125 @@ export class MapUI {
     return wrap;
   }
 
+  private _createShopMarker(markerIndex: number): HTMLDivElement {
+    const wrap = document.createElement('div');
+    const iconResolved = this._resolvedShopIconUrl;
+
+    wrap.className = 'grim-map-marker-enter';
+    wrap.style.cssText = `
+      position: absolute;
+      left: ${SHOP_MAP_X * 100}%;
+      top: ${SHOP_MAP_Y * 100}%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(4px, 0.5vw, 8px);
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 4;
+      max-width: min(40vw, 320px);
+      opacity: 0;
+      animation: grim-map-marker-in 0.5s ease forwards;
+      animation-delay: ${120 + markerIndex * 70}ms;
+    `;
+
+    const iconEl = document.createElement('div');
+    iconEl.setAttribute('role', 'button');
+    iconEl.setAttribute('aria-label', "Grim's Upgrades");
+    iconEl.className = 'grim-map-icon-pulse';
+    iconEl.style.cssText = `
+      flex-shrink: 0;
+      width: clamp(72px, 12vw, 140px);
+      height: clamp(40px, 7vw, 72px);
+      background-image: ${iconResolved ? `url("${iconResolved}")` : 'none'};
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(255, 200, 80, 0.35));
+    `;
+    wrap.appendChild(iconEl);
+
+    const plaque = document.createElement('div');
+    plaque.style.cssText = `
+      position: relative;
+      background: rgba(12, 14, 18, 0.92);
+      border: 1px solid rgba(255, 200, 120, 0.45);
+      padding: 6px 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      pointer-events: none;
+    `;
+
+    const title = document.createElement('div');
+    title.textContent = "GRIM'S UPGRADES";
+    title.style.cssText = `
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(0.45rem, 1.1vw, 0.62rem);
+      letter-spacing: 0.08em;
+      color: rgba(255, 232, 176, 0.98);
+      line-height: 1.2;
+      text-align: center;
+    `;
+
+    const tagline = document.createElement('div');
+    tagline.textContent = 'SOULS · ITEMS · POWER';
+    tagline.style.cssText = `
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 600;
+      font-size: clamp(0.38rem, 0.9vw, 0.5rem);
+      letter-spacing: 0.04em;
+      color: rgba(200, 190, 160, 0.88);
+      margin-top: 2px;
+      text-align: center;
+    `;
+
+    const tooltip = document.createElement('div');
+    tooltip.textContent = 'SHOP';
+    tooltip.style.cssText = `
+      margin-top: 4px;
+      padding: 2px 6px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 200, 120, 0.45);
+      font-family: Montserrat, system-ui, sans-serif;
+      font-size: clamp(0.4rem, 0.85vw, 0.5rem);
+      letter-spacing: 0.12em;
+      color: rgba(255, 232, 176, 0.95);
+      white-space: nowrap;
+      text-align: center;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity 0.15s ease, max-height 0.15s ease, margin-top 0.15s ease;
+    `;
+
+    plaque.append(title, tagline, tooltip);
+    wrap.appendChild(plaque);
+
+    wrap.addEventListener('mouseenter', () => {
+      tooltip.style.opacity = '1';
+      tooltip.style.maxHeight = '24px';
+      tooltip.style.marginTop = '4px';
+      iconEl.style.transform = 'scale(1.1)';
+      iconEl.style.filter = 'brightness(1.12) drop-shadow(0 0 12px rgba(255, 200, 80, 0.55))';
+    });
+    wrap.addEventListener('mouseleave', () => {
+      tooltip.style.opacity = '0';
+      tooltip.style.maxHeight = '0';
+      tooltip.style.marginTop = '0';
+      iconEl.style.transform = 'scale(1)';
+      iconEl.style.filter = 'drop-shadow(0 0 8px rgba(255, 200, 80, 0.35))';
+    });
+
+    wrap.addEventListener('click', () => {
+      playShopOpenSound(this._world);
+      UpgradeShopUI.open(this._world);
+    });
+
+    return wrap;
+  }
+
   private _showBriefing(mission: MissionDef): void {
     const gameContainer = this._gameContainer();
     if (!gameContainer || !mission.selectable) {
@@ -362,6 +512,10 @@ export class MapUI {
     }
 
     this._closeBriefing();
+    this._briefingMission = mission;
+    this._selectedRiskLevel = grimVault.getUnlockedRiskLevel();
+    this._briefingGoalsEl = null;
+    this._briefingSubEl = null;
 
     const backdrop = document.createElement('div');
     backdrop.style.cssText = `
@@ -414,8 +568,7 @@ export class MapUI {
     `;
 
     const sub = document.createElement('p');
-    sub.textContent =
-      mission.briefingSubline ?? `${mission.subtitle} · ${mission.difficulty}`;
+    this._briefingSubEl = sub;
     sub.style.cssText = `
       margin: 0;
       text-align: center;
@@ -423,6 +576,82 @@ export class MapUI {
       font-size: clamp(0.65rem, 1.4vw, 0.78rem);
       letter-spacing: 0.14em;
       color: rgba(200, 210, 220, 0.85);
+    `;
+
+    const riskLabel = document.createElement('p');
+    riskLabel.textContent = 'SELECT RISK LEVEL';
+    riskLabel.style.cssText = `
+      margin: 4px 0 0;
+      text-align: center;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-size: clamp(0.58rem, 1.2vw, 0.72rem);
+      letter-spacing: 0.18em;
+      color: rgba(160, 245, 255, 0.85);
+    `;
+
+    const riskRow = document.createElement('div');
+    riskRow.style.cssText = `
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 6px;
+    `;
+
+    const unlockedMax = grimVault.getUnlockedRiskLevel();
+    for (const risk of RISK_LEVELS) {
+      const enabled = risk <= unlockedMax;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = String(risk);
+      btn.disabled = !enabled;
+      btn.style.cssText = `
+        min-width: 2.4rem;
+        padding: 6px 10px;
+        font-family: Montserrat, system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        cursor: ${enabled ? 'pointer' : 'not-allowed'};
+        opacity: ${enabled ? '1' : '0.35'};
+        border-radius: 4px;
+        border: 1px solid rgba(100, 180, 220, 0.45);
+        background: rgba(10, 20, 30, 0.75);
+        color: rgba(200, 230, 255, 0.95);
+      `;
+      if (risk === this._selectedRiskLevel) {
+        btn.style.borderColor = 'rgba(0, 220, 255, 0.9)';
+        btn.style.boxShadow = '0 0 12px rgba(0, 220, 255, 0.45)';
+      }
+      if (enabled) {
+        btn.addEventListener('click', withMenuSelectSound(this._world, () => {
+          this._selectedRiskLevel = risk;
+          for (const child of riskRow.children) {
+            const el = child as HTMLButtonElement;
+            const n = Number(el.textContent);
+            const selected = n === risk;
+            el.style.borderColor = selected
+              ? 'rgba(0, 220, 255, 0.9)'
+              : 'rgba(100, 180, 220, 0.45)';
+            el.style.boxShadow = selected
+              ? '0 0 12px rgba(0, 220, 255, 0.45)'
+              : 'none';
+          }
+          this._refreshBriefingRiskCopy();
+        }));
+      }
+      riskRow.appendChild(btn);
+    }
+
+    const goalsPreview = document.createElement('p');
+    this._briefingGoalsEl = goalsPreview;
+    goalsPreview.style.cssText = `
+      margin: 10px 0 0;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-size: clamp(0.68rem, 1.45vw, 0.8rem);
+      line-height: 1.45;
+      color: rgba(160, 245, 255, 0.92);
+      text-align: center;
     `;
 
     const desc = document.createElement('p');
@@ -470,6 +699,11 @@ export class MapUI {
 
     panel.appendChild(heading);
     panel.appendChild(sub);
+    if (mission.missionPoolId) {
+      panel.appendChild(riskLabel);
+      panel.appendChild(riskRow);
+      panel.appendChild(goalsPreview);
+    }
     panel.appendChild(desc);
     if (mission.objectives.length > 0) {
       panel.appendChild(objList);
@@ -485,6 +719,25 @@ export class MapUI {
 
     gameContainer.appendChild(backdrop);
     this._briefing = backdrop;
+    this._refreshBriefingRiskCopy();
+  }
+
+  private _refreshBriefingRiskCopy(): void {
+    const mission = this._briefingMission;
+    if (!mission) {
+      return;
+    }
+
+    if (this._briefingSubEl) {
+      this._briefingSubEl.textContent = `Risk Level ${this._selectedRiskLevel} · ${mission.difficulty}`;
+    }
+
+    if (this._briefingGoalsEl && mission.missionPoolId) {
+      const preview = getMissionGoalPreview(mission.missionPoolId, this._selectedRiskLevel);
+      this._briefingGoalsEl.textContent = preview
+        ? `Mission: ${preview}`
+        : '';
+    }
   }
 
   private _createPanelButton(
@@ -536,16 +789,36 @@ export class MapUI {
 
   private _confirmMission(mission: MissionDef): void {
     const cb = this._onMissionStart;
+
+    let config: MissionConfig | undefined;
+    if (mission.missionPoolId) {
+      if (!grimVault.canSelectRiskLevel(this._selectedRiskLevel)) {
+        return;
+      }
+      config = rollMissionConfigForPoolId(mission.missionPoolId, this._selectedRiskLevel);
+    } else {
+      config = mission.missionConfig;
+    }
+
+    if (!config) {
+      return;
+    }
+
     this.destroy();
-    cb?.(mission);
+    cb?.(mission, config);
   }
 
   private _closeBriefing(): void {
     this._briefing?.remove();
     this._briefing = null;
+    this._briefingMission = null;
+    this._briefingGoalsEl = null;
+    this._briefingSubEl = null;
   }
 
   public destroy(): void {
+    UpgradeShopUI.close(this._world);
+    ItemIconCache.dispose(this._world);
     this._closeBriefing();
     if (this._root?.parentNode) {
       this._root.parentNode.removeChild(this._root);

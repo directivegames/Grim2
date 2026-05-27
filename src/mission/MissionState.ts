@@ -58,6 +58,8 @@ class MissionStateImpl {
   private _activeInnocent = false;
   private _innocentSpawnPending = false;
   private _spawnRetryDelaySec = 0;
+  /** Item ids rolled during this run (shown on reward screen, not picked up in-world). */
+  private readonly _pendingItemDrops: string[] = [];
 
   public get isActive(): boolean {
     return this._active && !this._ended;
@@ -95,6 +97,17 @@ class MissionStateImpl {
     return this._innocentSaveTimerSec;
   }
 
+  public get pendingItemDrops(): readonly string[] {
+    return this._pendingItemDrops;
+  }
+
+  public addItemDrop(itemId: string): void {
+    if (!this.isActive || !itemId) {
+      return;
+    }
+    this._pendingItemDrops.push(itemId);
+  }
+
   public setListeners(listeners: MissionStateListeners): void {
     this._listeners = listeners;
   }
@@ -124,6 +137,7 @@ class MissionStateImpl {
     this._activeInnocent = false;
     this._innocentSpawnPending = false;
     this._spawnRetryDelaySec = 0;
+    this._pendingItemDrops.length = 0;
   }
 
   /** Advance passive collateral and innocent save timer. */
@@ -277,6 +291,26 @@ class MissionStateImpl {
     const soulsMet = this._soulsCollected >= this._config.soulsRequired;
     const innocentsMet = this._innocentsSaved >= this._config.innocentsToSave;
     if (!soulsMet || !innocentsMet) return;
+
+    this._endSuccess();
+  }
+
+  /** Debug (P): force a successful mission end when a run is active. */
+  public debugForceSuccess(): void {
+    if (!this._active || this._ended || !this._config) {
+      return;
+    }
+
+    if (isReapAndSaveMission(this._config)) {
+      this._soulsCollected = Math.max(
+        this._soulsCollected,
+        this._config.soulsRequired,
+      );
+      this._innocentsSaved = Math.max(
+        this._innocentsSaved,
+        this._config.innocentsToSave,
+      );
+    }
 
     this._endSuccess();
   }

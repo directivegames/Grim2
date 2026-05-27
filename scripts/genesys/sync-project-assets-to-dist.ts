@@ -3,7 +3,8 @@
  * and in the editor file server (e.g. `.dist/assets/models/Grim.glb`).
  *
  * The Genesys build only ships models it discovers; code-only references can 404
- * until you run this or rebuild from the SDK. Run `pnpm sync-assets` after adding GLBs.
+ * until you run this or rebuild from the SDK. Run `pnpm sync-assets` after adding
+ * GLBs or UI PNGs (shop item icons: Boneshard.png, cursedvial.png, etc.).
  */
 import fs from 'fs';
 import path from 'path';

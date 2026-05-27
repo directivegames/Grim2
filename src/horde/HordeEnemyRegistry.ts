@@ -8,6 +8,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import * as THREE from 'three';
 
 import { BigUndeadActor, BIG_UNDEAD_MODEL_URL } from '../actors/BigUndeadActor.js';
+import type { RiskLevel } from '../data/risk-levels.js';
 
 /** Weight used for a normal zombie when rolling spawn type per slot. */
 export const HORDE_NORMAL_ZOMBIE_SPAWN_WEIGHT = 10;
@@ -21,6 +22,8 @@ export interface HordeEnemyType {
   readonly spawnWeight: number;
   /** Max alive at once for this type. */
   readonly maxActive: number;
+  /** Minimum mission risk level before this type can spawn. */
+  readonly minRiskLevel: RiskLevel;
   /** Optional GLB to preload when the horde manager starts. */
   readonly modelUrl?: ENGINE.ModelPath;
   create(world: ENGINE.World, position: THREE.Vector3): ENGINE.Actor;
@@ -35,6 +38,7 @@ export function createDefaultHordeEnemyTypes(): HordeEnemyType[] {
       killsToUnlock: 30,
       spawnWeight: 2,
       maxActive: 2,
+      minRiskLevel: 2,
       modelUrl: BIG_UNDEAD_MODEL_URL,
       create(world: ENGINE.World, position: THREE.Vector3): ENGINE.Actor {
         const actor = BigUndeadActor.create({ position: position.clone() });
