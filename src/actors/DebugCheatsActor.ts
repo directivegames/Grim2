@@ -1,11 +1,13 @@
 /**
- * DebugCheatsActor — dev hotkeys for testing progression (P / O).
+ * DebugCheatsActor — dev hotkeys for testing (P / O / R / L on map).
  * Uses a window key listener so cheats work when map/menus disable engine input.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
 import {
+  debugForcePostmanMission,
   debugGrantVaultResources,
+  debugRerollMapMissions,
   debugWinMission,
 } from '../utils/debug-cheats.js';
 
@@ -30,6 +32,18 @@ export class DebugCheatsActor extends ENGINE.Actor {
     }
     if (key === 'o') {
       if (debugGrantVaultResources(world)) {
+        e.preventDefault();
+      }
+      return;
+    }
+    if (key === 'r') {
+      if (debugRerollMapMissions(world)) {
+        e.preventDefault();
+      }
+      return;
+    }
+    if (key === 'l') {
+      if (debugForcePostmanMission(world)) {
         e.preventDefault();
       }
     }

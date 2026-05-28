@@ -3,10 +3,32 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { OptionsMenuUI } from '../ui/OptionsMenuUI.js';
 import { StartMenuUI } from '../ui/StartMenuUI.js';
 import { TUT_SOUL_OVERLAY_ATTR } from '../ui/TutSoulUI.js';
+import { applyMusicVolumeToWorld } from './apply-music-volume.js';
+import { gameSettings } from './game-settings.js';
 
 let _gameplayUnlocked = false;
 let _paused = false;
 let _savedSlomo = 1;
+let _musicDuckDepth = 0;
+
+const MUSIC_DUCK_MULT = 0.35;
+
+function duckMusic(world: ENGINE.World): void {
+  _musicDuckDepth++;
+  if (_musicDuckDepth === 1) {
+    applyMusicVolumeToWorld(world, gameSettings.musicVolume * MUSIC_DUCK_MULT);
+  }
+}
+
+function unduckMusic(world: ENGINE.World): void {
+  if (_musicDuckDepth <= 0) {
+    return;
+  }
+  _musicDuckDepth--;
+  if (_musicDuckDepth === 0) {
+    applyMusicVolumeToWorld(world, gameSettings.musicVolume);
+  }
+}
 
 export function setGameplayUnlocked(unlocked: boolean): void {
   _gameplayUnlocked = unlocked;
@@ -63,6 +85,7 @@ export function pauseGame(world: ENGINE.World): void {
   _savedSlomo = typeof w.slomo === 'number' && w.slomo > 0 ? w.slomo : 1;
   w.slomo = 0;
   _paused = true;
+  duckMusic(world);
 
   try {
     world.inputManager.setInputEnabled(false);
@@ -72,15 +95,15 @@ export function pauseGame(world: ENGINE.World): void {
 }
 
 export function resumeGame(world: ENGINE.World): void {
-  if (!_paused) {
-    return;
+  if (_paused) {
+    const w = world as unknown as { slomo?: number };
+    w.slomo = _savedSlomo > 0 ? _savedSlomo : 1;
+    _paused = false;
+    _savedSlomo = 1;
+    unduckMusic(world);
   }
 
-  const w = world as unknown as { slomo?: number };
-  w.slomo = _savedSlomo > 0 ? _savedSlomo : 1;
-  _paused = false;
-  _savedSlomo = 1;
-
+  // Always restore input — mission intro disables input without calling pauseGame().
   try {
     world.inputManager.setInputEnabled(true);
   } catch {

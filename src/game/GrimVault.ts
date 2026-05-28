@@ -34,8 +34,21 @@ const DEFAULT_SKILL_LEVEL: Partial<Record<string, number>> = {
 class GrimVaultImpl {
   private _profile: PlayerProfile = defaultProfile();
 
+  // ── Diminishing returns / guard rails ─────────────────────────────────────
+  // These are "industry standard" safety nets to prevent invulnerable end-states
+  // while still allowing infinite stat investment.
+  private static readonly DEFENCE_CAP = 0.75;
+  private static readonly DEFENCE_K = 0.35;
+
+  private static readonly RESIST_CAP = 0.75;
+  private static readonly RESIST_K = 0.4;
+
+  private static readonly SOUL_HEAL_BONUS_CAP = 1.8; // total leech ~= base + 1.8 (≈ 2.0 HP/kill)
+  private static readonly SOUL_HEAL_BONUS_K = 0.9;
+
   public init(): void {
     this._profile = loadProfile();
+    this.syncTutorialFromProgress();
   }
 
   public get profile(): Readonly<PlayerProfile> {
@@ -44,6 +57,7 @@ class GrimVaultImpl {
 
   public reload(): void {
     this._profile = loadProfile();
+    this.syncTutorialFromProgress();
   }
 
   // ── Souls ─────────────────────────────────────────────────────────────────
@@ -89,6 +103,66 @@ class GrimVaultImpl {
 
   public canSelectRiskLevel(level: RiskLevel): boolean {
     return level >= 1 && level <= this._profile.unlockedRiskLevel;
+  }
+
+  public isTutorialCompleted(): boolean {
+    return this._profile.tutorialCompleted || this._profile.unlockedRiskLevel >= 2;
+  }
+
+  /**
+   * Persist tutorialCompleted when risk 2+ is already unlocked (e.g. legacy saves).
+   */
+  public syncTutorialFromProgress(): void {
+    if (this._profile.unlockedRiskLevel >= 2 && !this._profile.tutorialCompleted) {
+      this._profile.tutorialCompleted = true;
+      this._persist();
+    }
+  }
+
+  public markTutorialCompleted(): void {
+    if (this._profile.tutorialCompleted) {
+      return;
+    }
+    this._profile.tutorialCompleted = true;
+    this._persist();
+  }
+
+  public isRisk5PlusUnlocked(): boolean {
+    return this._profile.risk5PlusUnlocked;
+  }
+
+  public getRisk5PlusCompletions(): number {
+    return this._profile.risk5PlusCompletions;
+  }
+
+  public unlockRisk5Plus(): void {
+    if (this._profile.risk5PlusUnlocked) {
+      return;
+    }
+    this._profile.risk5PlusUnlocked = true;
+    this._persist();
+  }
+
+  public incrementRisk5PlusCompletions(): void {
+    this._profile.risk5PlusCompletions += 1;
+    this._persist();
+  }
+
+  public canSelectRisk5Plus(): boolean {
+    return this._profile.risk5PlusUnlocked && this._profile.unlockedRiskLevel >= 5;
+  }
+
+  /** Wipe souls, upgrades, inventory, risk unlocks, and tutorial progress. */
+  public resetAllProgress(): void {
+    this._profile = defaultProfile();
+    this._persist();
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.removeItem('grim2-seen-tutsoul');
+      } catch {
+        /* */
+      }
+    }
   }
 
   // ── Inventory ─────────────────────────────────────────────────────────────
@@ -303,10 +377,24 @@ class GrimVaultImpl {
   // ── Computed stats ────────────────────────────────────────────────────────
 
   public computeStats(): GrimStats {
+    return this._computeStatsFromLevels(this._profile.statLevels);
+  }
+
+  /**
+   * Shop helper: preview effective stats if a single stat upgrade were at a given level.
+   * Used for "current → next" display (diminishing returns makes per-level gains non-linear).
+   */
+  public computeStatsWithStatLevelOverride(statId: string, level: number): GrimStats {
+    const clamped = Math.max(0, Math.floor(level));
+    const levels: Partial<Record<string, number>> = { ...this._profile.statLevels, [statId]: clamped };
+    return this._computeStatsFromLevels(levels);
+  }
+
+  private _computeStatsFromLevels(levels: Partial<Record<string, number>>): GrimStats {
     const stats: GrimStats = { ...BASE_GRIM_STATS };
 
     for (const def of GRIM_STAT_UPGRADES) {
-      const level = this.getStatLevel(def.id);
+      const level = levels[def.id] ?? 0;
       if (level <= 0) {
         continue;
       }
@@ -315,7 +403,59 @@ class GrimVaultImpl {
       stats[key] = stats[key] + bonus;
     }
 
-    return stats;
+    return this._applyGuardRails(stats);
+  }
+
+  private _applyGuardRails(stats: GrimStats): GrimStats {
+    const out: GrimStats = { ...stats };
+
+    // Defence: diminishing returns towards cap.
+    out.defence = this._diminishTowardsCap(
+      Math.max(0, out.defence),
+      GrimVaultImpl.DEFENCE_CAP,
+      GrimVaultImpl.DEFENCE_K,
+    );
+
+    // Resistances: diminishing returns towards cap.
+    out.poisonRes = this._diminishTowardsCap(
+      Math.max(0, out.poisonRes),
+      GrimVaultImpl.RESIST_CAP,
+      GrimVaultImpl.RESIST_K,
+    );
+    out.possessionRes = this._diminishTowardsCap(
+      Math.max(0, out.possessionRes),
+      GrimVaultImpl.RESIST_CAP,
+      GrimVaultImpl.RESIST_K,
+    );
+    out.fearRes = this._diminishTowardsCap(
+      Math.max(0, out.fearRes),
+      GrimVaultImpl.RESIST_CAP,
+      GrimVaultImpl.RESIST_K,
+    );
+
+    // Soul leech: keep the base value linear, but apply diminishing returns to bonus leech.
+    const base = BASE_GRIM_STATS.soulHeal;
+    const bonusRaw = Math.max(0, out.soulHeal - base);
+    const bonusEff = this._diminishTowardsCap(
+      bonusRaw,
+      GrimVaultImpl.SOUL_HEAL_BONUS_CAP,
+      GrimVaultImpl.SOUL_HEAL_BONUS_K,
+    );
+    out.soulHeal = base + bonusEff;
+
+    return out;
+  }
+
+  /**
+   * Hyperbola diminishing returns curve:
+   * effective = cap * raw / (raw + k)
+   */
+  private _diminishTowardsCap(raw: number, cap: number, k: number): number {
+    if (raw <= 0 || cap <= 0 || k <= 0 || !Number.isFinite(raw)) {
+      return 0;
+    }
+    const eff = cap * (raw / (raw + k));
+    return Math.max(0, Math.min(cap, eff));
   }
 
   /** Reset profile (debug / template testing). */

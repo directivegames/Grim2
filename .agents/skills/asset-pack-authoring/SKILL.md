@@ -26,7 +26,7 @@ description: 'Move an existing class, prefab, or set of assets into a self-conta
    - Confirm `<project>/packs/<name>/{config.json, src/, assets/}` exists.
 
 3. Build the dependency closure (full transitive — see
-   `SKILL_DIR/references/migration-checklist.md`)
+   ./references/migration-checklist.md)
    - Scan each input file for `@project/...` references.
    - For prefabs/materials walk the JSON tree, every string value.
    - Recurse into any referenced prefab or material.
@@ -40,7 +40,7 @@ description: 'Move an existing class, prefab, or set of assets into a self-conta
 5. Move files (physical relocation; preserve sub-folder structure).
 
 6. Rewrite references in moved code/prefabs/materials — see
-   `SKILL_DIR/references/path-rewrite-rules.md`. Summary:
+   ./references/path-rewrite-rules.md. Summary:
    - `@project/assets/<sub>` referenced from inside the pack →
      `@project/packs/<name>/assets/<sub>` only if the file was moved with the
      pack.
@@ -89,6 +89,6 @@ description: 'Move an existing class, prefab, or set of assets into a self-conta
 
 ## References
 
-- `SKILL_DIR/references/pack-structure.md`
-- `SKILL_DIR/references/migration-checklist.md`
-- `SKILL_DIR/references/path-rewrite-rules.md`
+- ./references/pack-structure.md
+- ./references/migration-checklist.md
+- ./references/path-rewrite-rules.md

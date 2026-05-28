@@ -8,6 +8,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
+import { gameSettings } from '../utils/game-settings.js';
 
 const READY_URL = '@project/assets/VFX/readyto.png';
 const REAP_URL = '@project/assets/VFX/REAP.png';
@@ -48,6 +49,11 @@ export class ReadyToReapUI {
     const w = world as GameContainerWorld;
     const container = w.gameContainer;
     if (!container || w.options?.headless) {
+      onComplete();
+      return;
+    }
+
+    if (gameSettings.skipAllCutscenes) {
       onComplete();
       return;
     }

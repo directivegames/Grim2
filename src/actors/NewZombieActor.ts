@@ -5,8 +5,8 @@
  *   idle    → "Gunshot_Reaction"         (standing still, no aggro)
  *   walk    → "Limping_Walk_3_inplace"   (chasing player)
  *   attack  → "run_fast_6_inplace"       (melee range)
- *   hit     → "Walking"                  (taking damage, looped while held)
- *   death   → "run_fast_10_inplace"      (on death, 2.0s then destroy)
+ *   hit     → "NewZombie_Hit"            (taking damage, looped while held)
+ *   death   → "run_fast_10_inplace"      (on death, 2.0s then park for reset)
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -18,10 +18,13 @@ import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { KOSignUI } from '../ui/KOSignUI.js';
-import { SoulCounterUI } from '../ui/SoulCounterUI.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
+import { ENEMY_TYPE_ZOMBIE } from '../data/items.js';
+import { awardSoulFromEnemyKill } from '../utils/award-soul.js';
+import { tryRollMissionItemDropOnEnemyKill } from '../utils/mission-enemy-drops.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
+import { ZOMBIE_BASE_ATTACK_DAMAGE } from '../data/combat-balance.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
@@ -253,6 +256,9 @@ export class NewZombieActor extends ENGINE.Actor {
   public isPooled = false;
   public onDied: (() => void) | null = null;
   private _pooledHidden = false;
+  /** Scene-placed start transform — restored between mission attempts. */
+  private _placedStartPosition: THREE.Vector3 | null = null;
+  private _placedStartRotation: THREE.Euler | null = null;
 
   private _tickOffset = 0;
   private static readonly TICK_INTERVAL = 2;
@@ -297,6 +303,10 @@ export class NewZombieActor extends ENGINE.Actor {
         audioManager.play(hitSound, 1.0, true);
       }
     }
+
+    // Cancel idle/walk/attack debounce so syncAnimationState cannot override hit (BigUndead has no debounce).
+    this._pendingAnimState = null;
+    this._idleWalkDebounceTimer = 0;
 
     const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
     if (anim?.isReady()) {
@@ -443,6 +453,13 @@ export class NewZombieActor extends ENGINE.Actor {
     }
 
     this.rootComponent.getWorldPosition(this._stuckCheckPosition);
+
+    if (!this.isPooled) {
+      if (!this._placedStartPosition) {
+        this._placedStartPosition = this._stuckCheckPosition.clone();
+        this._placedStartRotation = this.rootComponent.rotation.clone();
+      }
+    }
 
     this.blackboard = new ENGINE.Blackboard(this);
     this.buildBehaviorTree();
@@ -635,6 +652,8 @@ export class NewZombieActor extends ENGINE.Actor {
 
     const w = this.getWorld();
     if (w && w.getGameTime() < this._hitAnimEndTime) {
+      this._pendingAnimState = null;
+      this._idleWalkDebounceTimer = 0;
       anim.setParameter('state', 'hit');
       return;
     }
@@ -793,6 +812,8 @@ export class NewZombieActor extends ENGINE.Actor {
     if (world) {
       killStreakTracker.recordKill(world);
       void comboMeterTracker.recordKill(world);
+      awardSoulFromEnemyKill(world);
+      tryRollMissionItemDropOnEnemyKill(ENEMY_TYPE_ZOMBIE);
 
       // Camera FOV punch on individual kill for visceral feedback
       const player = world.getFirstPlayerPawn();
@@ -866,6 +887,110 @@ export class NewZombieActor extends ENGINE.Actor {
 
     // Cleanup is driven by game-time accumulator in tickRagdoll so slow-mo doesn't cause
     // premature vanishing (globalThis.setTimeout uses wall-clock time, not game time).
+  }
+
+  /**
+   * Restore a scene-placed zombie to its initial spot and pre-aggro state.
+   * Horde-pooled zombies are skipped.
+   */
+  public restorePlacedForMissionReset(): void {
+    if (this.isPooled || !this._placedStartPosition || !this._placedStartRotation) {
+      return;
+    }
+
+    this._deathSequenceStarted = false;
+    this._deathPosition = null;
+    this._ragdollLandPos = null;
+    this._ragdollTimer = 0;
+    this._ragdollVelocity.set(0, 0, 0);
+    this._wasInHitReaction = false;
+    this._navRestoreRemainingSec = 0;
+
+    // Position must be set BEFORE re-enabling physics. overridePhysicsOptions
+    // destroys and recreates the Rapier body at the component's current world
+    // position, so moving the component afterwards leaves the body at the old
+    // (death) location and physics will snap the zombie back there next tick.
+    this.rootComponent.position.copy(this._placedStartPosition);
+    this.rootComponent.rotation.copy(this._placedStartRotation);
+    this.rootComponent.updateWorldMatrix(true, false);
+
+    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
+      enabled: true,
+      motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
+    });
+
+    this.setHiddenInGame(false);
+
+    this._hasAggro = false;
+    this._attackZoneLatched = false;
+    this._btBranch = 'wander';
+    this._hitAnimEndTime = -Infinity;
+    this._consecutiveStuckChecks = 0;
+    this._stuckCheckPosition.copy(this._placedStartPosition);
+    this._animStateChangeTimer = 0;
+    this._pendingAnimState = null;
+    this._idleWalkDebounceTimer = 0;
+    this._animInitTimer = 0;
+    this._startupTimer = 0;
+    this._animTimer = 0;
+    this._animationInitialized = false;
+    this._startupComplete = false;
+    this._isActuallyMoving = false;
+    this._lastAnimPosition.copy(this._placedStartPosition);
+
+    if (this.blackboard) {
+      this.blackboard.clear();
+      this.blackboard.setValue('HasAggro', false);
+      const player = this.getWorld()?.getFirstPlayerPawn();
+      if (player) {
+        const dist = this.rootComponent.position.distanceTo(player.rootComponent.position);
+        this.blackboard.setValue('DistanceToPlayer', dist);
+      }
+    }
+
+    this.behaviorRoot?.reset();
+
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (stats) {
+      const mutableStats = stats as unknown as {
+        maxHealth: number;
+        currentHealth: number;
+        isDead: boolean;
+        onHealthChanged: { invoke(current: number, max: number): void };
+      };
+      mutableStats.maxHealth = this.maxHealth;
+      mutableStats.currentHealth = this.maxHealth;
+      mutableStats.isDead = false;
+      this._lastTrackedHealth = this.maxHealth;
+      mutableStats.onHealthChanged.invoke(this.maxHealth, this.maxHealth);
+    }
+
+    const npc = this.getComponent(ENGINE.NpcMovementComponent) as unknown as {
+      enabled: boolean;
+      hasCharacterController: boolean;
+      maxSpeed: number;
+      useNavigationServer: boolean;
+    } | null;
+    if (npc) {
+      npc.enabled = true;
+      npc.hasCharacterController = true;
+      npc.maxSpeed = this._jitteredSpeed;
+      npc.useNavigationServer = true;
+    }
+    this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+
+    zombieSpatialManager.unregisterZombie(this);
+    zombieSpatialManager.registerZombie(this);
+
+    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    if (anim?.isReady()) {
+      anim.transitionGraphToState('base', 'idle');
+      anim.setParameter('state', 'idle');
+      this._animationInitialized = true;
+      this._startupComplete = true;
+    }
+
+    this._showBlobShadow();
   }
 
   /** Force-hide when quitting to the main menu (horde reset). */
@@ -948,11 +1073,10 @@ export class NewZombieActor extends ENGINE.Actor {
       }
       this.spawnDeathObjects(this._ragdollLandPos ?? this.rootComponent.position.clone());
       this.onDied?.();
-      if (this.isPooled) {
-        this.recycle();
-      } else {
-        this.destroy();
-      }
+      // Scene-placed zombies are part of the authored level layout. Keep them
+      // parked instead of destroying them so mission replay/rank changes can
+      // restore the same level state from their captured editor positions.
+      this.recycle();
     }
   }
 
@@ -1113,15 +1237,6 @@ export class NewZombieActor extends ENGINE.Actor {
       smokeActor.destroy();
     }, 3000);
 
-    this._awardSoul(world);
-  }
-
-  private _awardSoul(world: ENGINE.World): void {
-    const player = world.getFirstPlayerPawn();
-    if (player instanceof IsometricPlayerPawn) {
-      player.soulsCollected++;
-    }
-    void SoulCounterUI.getInstance(world).then(ui => ui.increment());
   }
 
   // ─── Internal helpers ──────────────────────────────────────────────────────
@@ -1234,7 +1349,7 @@ export class NewZombieActor extends ENGINE.Actor {
   }
 
   private static readonly BASE_MAX_HEALTH = 100;
-  private static readonly BASE_ATTACK_DAMAGE = 10;
+  private static readonly BASE_ATTACK_DAMAGE = ZOMBIE_BASE_ATTACK_DAMAGE;
 
   /** Apply mission risk multipliers to this zombie's combat stats. */
   public applyMissionRiskMultipliers(healthMult: number, damageMult: number): void {
@@ -1357,6 +1472,8 @@ export class NewZombieActor extends ENGINE.Actor {
 
     const w = this.getWorld();
     if (w && w.getGameTime() < this._hitAnimEndTime) {
+      this._pendingAnimState = null;
+      this._idleWalkDebounceTimer = 0;
       anim.setParameter('state', 'hit');
       return;
     }

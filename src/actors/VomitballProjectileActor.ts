@@ -86,7 +86,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
   ): VomitballProjectileActor {
     const projectile = VomitballProjectileActor.create();
     projectile._damage = damage;
-    projectile._ignoredActors = VomitballProjectileActor._buildIgnoreList(owner);
+    projectile._ignoredActors = VomitballProjectileActor._buildIgnoreList(world, owner);
 
     projectile.rootComponent.position.copy(from);
 
@@ -111,10 +111,14 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     return projectile;
   }
 
-  private static _buildIgnoreList(owner: ENGINE.Actor | null): ENGINE.Actor[] {
+  private static _buildIgnoreList(world: ENGINE.World, owner: ENGINE.Actor | null): ENGINE.Actor[] {
     const ignored = zombieSpatialManager.getAllRegisteredZombies();
     if (owner && !ignored.includes(owner)) {
       ignored.push(owner);
+    }
+    const player = world.getFirstPlayerPawn();
+    if (player && !ignored.includes(player)) {
+      ignored.push(player);
     }
     return ignored;
   }
@@ -197,17 +201,12 @@ export class VomitballProjectileActor extends ENGINE.Actor {
 
     this._rayDir.copy(this._direction);
 
-    const player = world.getFirstPlayerPawn();
-    const ignored = this._ignoredActors;
-    const ignoreList =
-      player && !ignored.includes(player) ? [...ignored, player] : ignored;
-
     const hits = physics.performHitTest({
       origin: this._prevPos,
       direction: this._rayDir,
       maxDistance: step,
       stopOnFirstHit: true,
-      ignoredActors: ignoreList,
+      ignoredActors: this._ignoredActors,
     });
 
     if (!hits || hits.length === 0) return false;

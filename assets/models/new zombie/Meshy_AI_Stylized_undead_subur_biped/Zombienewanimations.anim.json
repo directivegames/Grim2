@@ -80,7 +80,7 @@
       ]
     },
     "hit": {
-      "clip": "Walking",
+      "clip": "NewZombie_Hit",
       "transitions": [
         {
           "to": "death",
@@ -106,7 +106,13 @@
     },
     "death": {
       "clip": "run_fast_10_inplace",
-      "transitions": []
+      "transitions": [
+        {
+          "to": "idle",
+          "condition": { "state": { "equalTo": "idle" } },
+          "blendDuration": 0.05
+        }
+      ]
     }
   },
   "clipOptions": {
@@ -119,7 +125,7 @@
     "run_fast_6_inplace": {
       "loop": "LoopRepeat"
     },
-    "Walking": {
+    "NewZombie_Hit": {
       "loop": "LoopRepeat"
     },
     "run_fast_10_inplace": {

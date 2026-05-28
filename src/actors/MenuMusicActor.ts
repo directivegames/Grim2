@@ -11,6 +11,7 @@ const MENU_TRACKS = [
 @ENGINE.GameClass()
 export class MenuMusicActor extends ENGINE.Actor {
   private _sound: ENGINE.SoundComponent | null = null;
+  private _musicVolumeScale = gameSettings.musicVolume;
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
@@ -38,11 +39,21 @@ export class MenuMusicActor extends ENGINE.Actor {
     this._sound?.stopAll();
   }
 
+  public setMusicVolume(scale: number): void {
+    this._musicVolumeScale = Math.max(0, Math.min(1, scale));
+    this._sound?.setVolumeAll(BASE_MENU_MUSIC_VOLUME * this._musicVolumeScale);
+  }
+
   public static stopAll(world: ENGINE.World): void {
+    const toRemove: MenuMusicActor[] = [];
     for (const a of world.getActors()) {
       if (a instanceof MenuMusicActor) {
         a.stopNow();
+        toRemove.push(a);
       }
+    }
+    if (toRemove.length > 0) {
+      world.removeActors(...toRemove);
     }
   }
 

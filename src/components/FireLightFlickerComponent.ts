@@ -15,6 +15,8 @@ const INTENSITY_MAX = 1.55;
 /** Skip light updates when farther than this from the player (world units). */
 const UPDATE_DISTANCE = 25;
 const UPDATE_DISTANCE_SQ = UPDATE_DISTANCE * UPDATE_DISTANCE;
+/** Flicker update rate when in range (seconds between intensity updates). */
+const UPDATE_INTERVAL = 0.1;
 
 @ENGINE.GameClass()
 export class FireLightFlickerComponent extends ENGINE.SceneComponent {
@@ -33,6 +35,8 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
   private _surgeTimer = 0;
   private _surgeBoost = 0;
   private _bound = false;
+  private _updateAccumulator = 0;
+  private _lightActive = false;
   private readonly _myPos = new THREE.Vector3();
   private readonly _playerPos = new THREE.Vector3();
 
@@ -52,19 +56,31 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
       this.getWorldPosition(this._myPos);
       player.rootComponent.getWorldPosition(this._playerPos);
       if (this._myPos.distanceToSquared(this._playerPos) > UPDATE_DISTANCE_SQ) {
+        if (this._lightActive) {
+          this._light.intensity = 0;
+          this._lightActive = false;
+        }
         return;
       }
+      this._lightActive = true;
     }
 
-    this._elapsed += deltaTime;
+    this._updateAccumulator += deltaTime;
+    if (this._updateAccumulator < UPDATE_INTERVAL) {
+      return;
+    }
+    const step = this._updateAccumulator;
+    this._updateAccumulator = 0;
 
-    if (Math.random() < deltaTime * NOISE_REPICK_RATE) {
+    this._elapsed += step;
+
+    if (Math.random() < step * NOISE_REPICK_RATE) {
       this._noiseTarget = 0.25 + Math.random() * 0.75;
     }
-    const noiseBlend = Math.min(1, deltaTime * NOISE_BLEND_SPEED);
+    const noiseBlend = Math.min(1, step * NOISE_BLEND_SPEED);
     this._noise += (this._noiseTarget - this._noise) * noiseBlend;
 
-    this._surgeTimer -= deltaTime;
+    this._surgeTimer -= step;
     if (this._surgeTimer <= 0) {
       this._surgeTimer =
         SURGE_INTERVAL_MIN + Math.random() * (SURGE_INTERVAL_MAX - SURGE_INTERVAL_MIN);
@@ -72,7 +88,7 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
         this._surgeBoost = 0.18 + Math.random() * 0.32;
       }
     }
-    this._surgeBoost *= Math.exp(-deltaTime * 6);
+    this._surgeBoost *= Math.exp(-step * 6);
 
     const t = this._elapsed;
     const flicker =

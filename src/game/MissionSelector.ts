@@ -1,11 +1,18 @@
-import {
-  formatMissionGoalPreview,
-  getMissionPoolById,
-  type MissionPoolDef,
-} from '../data/mission-pools.js';
+import { getMissionPoolById } from '../data/mission-pools.js';
 import type { MissionConfig } from '../data/mission-types.js';
 import { createReapAndSaveMissionConfig } from '../data/mission-types.js';
 import type { RiskLevel } from '../data/risk-levels.js';
+import {
+  formatMissionConfigBriefing,
+  rollMissionBoard,
+  rollRandomMissionForPool,
+} from './mission-roll.js';
+
+export {
+  formatMissionConfigBriefing,
+  rollMissionBoard,
+  type MissionBoard,
+} from './mission-roll.js';
 
 function randomIntInclusive(min: number, max: number): number {
   const lo = Math.min(min, max);
@@ -13,34 +20,36 @@ function randomIntInclusive(min: number, max: number): number {
   return Math.floor(lo + Math.random() * (hi - lo + 1));
 }
 
-/**
- * Roll souls/innocent targets for the chosen risk tier.
- * Called when the player confirms START on the map briefing.
- */
-export function rollMissionConfig(pool: MissionPoolDef, riskLevel: RiskLevel): MissionConfig {
-  const range = pool.riskRanges[riskLevel];
-  return createReapAndSaveMissionConfig({
-    soulsRequired: randomIntInclusive(range.soulsRequired[0], range.soulsRequired[1]),
-    innocentsToSave: randomIntInclusive(range.innocentsToSave[0], range.innocentsToSave[1]),
-    riskLevel,
-  });
+/** Legacy roll for reap-and-save pool only. */
+export function rollMissionConfig(poolId: string, riskLevel: RiskLevel): MissionConfig {
+  const pool = getMissionPoolById(poolId);
+  if (pool?.type === 'reap-and-save') {
+    const range = pool.riskRanges[riskLevel];
+    return createReapAndSaveMissionConfig({
+      soulsRequired: randomIntInclusive(range.soulsRequired[0], range.soulsRequired[1]),
+      innocentsToSave: randomIntInclusive(range.innocentsToSave[0], range.innocentsToSave[1]),
+      riskLevel,
+    });
+  }
+  return rollRandomMissionForPool(poolId, riskLevel);
 }
 
 export function rollMissionConfigForPoolId(
   poolId: string,
   riskLevel: RiskLevel,
 ): MissionConfig | undefined {
-  const pool = getMissionPoolById(poolId);
-  if (!pool) {
-    return undefined;
-  }
-  return rollMissionConfig(pool, riskLevel);
+  const board = rollMissionBoard(poolId);
+  return board[riskLevel];
 }
 
-export function getMissionGoalPreview(poolId: string, riskLevel: RiskLevel): string | undefined {
-  const pool = getMissionPoolById(poolId);
-  if (!pool) {
+export function getMissionGoalPreview(
+  poolId: string,
+  riskLevel: RiskLevel,
+): string | undefined {
+  const board = rollMissionBoard(poolId);
+  const config = board[riskLevel];
+  if (!config) {
     return undefined;
   }
-  return formatMissionGoalPreview(pool, riskLevel);
+  return formatMissionConfigBriefing(config);
 }

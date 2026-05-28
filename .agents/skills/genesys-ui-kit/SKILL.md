@@ -6,17 +6,17 @@ description: Build screen-space UI in a Genesys project using the engine's BaseU
 # Genesys UI Kit
 
 The engine ships a curated set of `BaseUIComponent` widgets derived from the
-Game UI Kit. **Prefer these widgets over hand-rolling HTML / CSS.** Drop down
+Game UI Kit. Prefer these widgets over hand-rolling HTML / CSS. Drop down
 to raw HTML only when the user explicitly asks for a custom look or no
 existing widget matches.
 
 ## Decision flow
 
-1. Read `SKILL_DIR/references/catalog.md`. Match the user's request against
+1. Read `./references/catalog.md`. Match the user's request against
    the widget summaries and `useCases`.
 2. If exactly one widget matches → use it.
 3. If several match → pick the closest, or ask the user which one.
-4. If no single widget matches → **compose existing widgets** before writing
+4. If no single widget matches → compose existing widgets before writing
    anything custom. Most "missing" UI is just a layout of widgets that
    already exist. Example: a confirmation dialog is a `Card` (frame) with a
    `Message` or `CenterMessage` (body text) and one or two `Button`s
@@ -63,16 +63,15 @@ Every widget:
 - Asset paths inside templates use `@engine/...` / `@project/...` prefixes
   and must be resolved with `ENGINE.resolveAssetPathsInText` when injected
   into raw HTML.
-- The catalog in `SKILL_DIR/references/catalog.md` is auto-generated from
-  the engine source by `pnpm --filter @gnsx/genesys.js generate-ui-catalog`.
-  Do not edit it by hand.
+- The catalog in `./references/catalog.md` is auto-generated from
+  the engine source. Do not edit it by hand.
 
 ## Deprecated widgets
 
-The catalog has a **Deprecated** section at the bottom listing widgets
+The catalog has a Deprecated section at the bottom listing widgets
 that have been superseded. The rules are simple:
 
-- **Never** pick a deprecated widget for new work. The catalog lists the
+- Never pick a deprecated widget for new work. The catalog lists the
   replacement class in the `Replaced By` column — use it instead.
 - Existing projects may still construct deprecated widgets. Don't
   rewrite working code unless the user asks you to migrate; if they do,
@@ -85,11 +84,11 @@ that have been superseded. The rules are simple:
 
 - Prefer overriding via the widget's options (`variant`, `theme`, `style`,
   `customClasses`, `customStyles`) before swapping templates.
-- See `SKILL_DIR/references/customization.md` for the per-widget knobs.
+- See ./references/customization.md for the per-widget knobs.
 - Only as a last resort, author a new `BaseUIComponent` subclass — keep
   it inside the project (`src/ui/`), don't modify the engine package.
 
 ## References
 
-- `SKILL_DIR/references/catalog.md` — generated widget index.
-- `SKILL_DIR/references/customization.md` — styling and theming knobs.
+- ./references/catalog.md — generated widget index.
+- ./references/customization.md — styling and theming knobs.

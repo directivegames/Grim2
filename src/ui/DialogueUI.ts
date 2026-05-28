@@ -7,6 +7,8 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { DialogueLine, DialogueScript } from '../dialogue/DialogueTypes.js';
+import { gameSettings } from '../utils/game-settings.js';
+import { mountCutsceneSkipButton } from './CutsceneSkipUI.js';
 
 const SPEAKER_PANEL_URL = '@project/assets/UI/SpeakerUI.png';
 /** Matches assets/UI/SpeakerUI.png (1536×1024) */
@@ -79,6 +81,7 @@ export class DialogueUI {
   private _typewriterDone = true;
   private _typewriterTimer: ReturnType<typeof setInterval> | null = null;
   private _closing = false;
+  private _removeSkipButton: (() => void) | null = null;
 
   private constructor(world: ENGINE.World, lines: DialogueScript, onComplete: () => void) {
     this._world = world;
@@ -106,6 +109,11 @@ export class DialogueUI {
         return;
       }
 
+      if (gameSettings.skipAllCutscenes) {
+        done();
+        return;
+      }
+
       DialogueUI.close();
 
       const ui = new DialogueUI(world, lines, done);
@@ -117,6 +125,15 @@ export class DialogueUI {
   public static close(): void {
     DialogueUI._active?._destroy(false);
     DialogueUI._active = null;
+  }
+
+  /** End the active dialogue and run its completion callback. */
+  public static completeActive(): void {
+    const active = DialogueUI._active;
+    if (!active) {
+      return;
+    }
+    void active._closeAndComplete();
   }
 
   public static isPlaying(): boolean {
@@ -144,6 +161,10 @@ export class DialogueUI {
 
     DialogueUI._injectKeyframes(container);
     this._mount(container);
+
+    this._removeSkipButton = mountCutsceneSkipButton(this._world, () => {
+      void this._closeAndComplete();
+    }, 'SKIP DIALOGUE');
 
     await delay(50);
     if (this._panel) {
@@ -486,6 +507,8 @@ export class DialogueUI {
 
   private _destroy(callComplete: boolean): void {
     void callComplete;
+    this._removeSkipButton?.();
+    this._removeSkipButton = null;
     this._stopTypewriter();
     this._measurer?.remove();
     this._measurer = null;

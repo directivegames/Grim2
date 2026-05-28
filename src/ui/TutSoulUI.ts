@@ -4,6 +4,7 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { injectBreeSerifFont } from './uiTypography.js';
+import { gameSettings } from '../utils/game-settings.js';
 import { markTutSoulSeen } from '../utils/tut-progress.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { pauseGame, resumeGame } from '../utils/game-pause.js';
@@ -35,6 +36,12 @@ export class TutSoulUI {
     const { resumeOnClose = true } = options;
     const gc = (world as GameContainerWorld).gameContainer;
     if (!gc || (world as GameContainerWorld).options?.headless) {
+      onComplete();
+      return;
+    }
+
+    if (gameSettings.skipAllCutscenes) {
+      markTutSoulSeen();
       onComplete();
       return;
     }

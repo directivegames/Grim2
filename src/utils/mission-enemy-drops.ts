@@ -1,5 +1,4 @@
 import { ENEMY_TYPE_ZOMBIE } from '../data/items.js';
-import { isReapAndSaveMission } from '../data/mission-types.js';
 import { grimVault } from '../game/GrimVault.js';
 import { missionState } from '../mission/MissionState.js';
 import { rollExclusiveItemDrop, rollGeneralItemDrop } from './item-drop.js';
@@ -16,7 +15,7 @@ export function tryRollMissionItemDropOnEnemyKill(
   }
 
   const config = missionState.config;
-  if (!config || !isReapAndSaveMission(config)) {
+  if (!config) {
     return;
   }
 

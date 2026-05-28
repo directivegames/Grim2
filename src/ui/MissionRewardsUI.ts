@@ -7,7 +7,6 @@ import { getItemById, itemIconProjectPath } from '../data/items.js';
 import type { ItemRarity } from '../data/items.js';
 import { grimVault } from '../game/GrimVault.js';
 import type { MissionSuccessResult } from '../mission/MissionState.js';
-import { missionState } from '../mission/MissionState.js';
 import { returnToMap } from '../utils/return-to-map.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeToBlackThen } from '../utils/screen-transition.js';
@@ -34,6 +33,7 @@ const RARITY_STAGGER_MS: Record<ItemRarity, number> = {
 
 export class MissionRewardsUI {
   private static _overlay: HTMLDivElement | null = null;
+  private static _collected = false;
 
   public static async show(world: ENGINE.World, result: MissionSuccessResult): Promise<void> {
     const gc = (world as GameContainerWorld).gameContainer;
@@ -42,10 +42,11 @@ export class MissionRewardsUI {
     }
 
     MissionRewardsUI.close();
+    MissionRewardsUI._collected = false;
     pauseGame(world);
     await injectBreeSerifFont();
 
-    const itemDrops = MissionRewardsUI._aggregateDrops(missionState.pendingItemDrops);
+    const itemDrops = MissionRewardsUI._aggregateDrops(result.itemDrops);
 
     const [panelUrl, frameUrl, iconUrls] = await Promise.all([
       MissionRewardsUI._resolveUrl(PANEL_URL),
@@ -194,6 +195,12 @@ export class MissionRewardsUI {
       btn.style.filter = 'brightness(1)';
     });
     btn.addEventListener('click', () => {
+      if (MissionRewardsUI._collected) {
+        return;
+      }
+      MissionRewardsUI._collected = true;
+      btn.style.pointerEvents = 'none';
+      btn.style.opacity = '0.65';
       playMenuSelectSound(world);
       MissionRewardsUI._bankRewards(result, itemDrops);
       void fadeToBlackThen(
@@ -227,7 +234,24 @@ export class MissionRewardsUI {
     for (const drop of drops) {
       grimVault.addItem(drop.itemId, drop.qty);
     }
-    grimVault.unlockNextRiskLevel();
+    if (!grimVault.isTutorialCompleted()) {
+      grimVault.markTutorialCompleted();
+    }
+    // Progression: unlock next tier only when the player completes the highest-unlocked tier.
+    // e.g. to unlock Risk 3 you must complete Risk 2 at least once.
+    const unlocked = grimVault.getUnlockedRiskLevel();
+    if (result.risk5PlusTier === 0 && result.riskLevel === unlocked) {
+      grimVault.unlockNextRiskLevel();
+    }
+
+    // Risk 5+ unlock: one successful normal Risk 5 run.
+    if (result.riskLevel >= 5 && result.risk5PlusTier === 0) {
+      grimVault.unlockRisk5Plus();
+    }
+
+    if ((result.risk5PlusTier ?? 0) > 0) {
+      grimVault.incrementRisk5PlusCompletions();
+    }
   }
 
   private static _aggregateDrops(ids: readonly string[]): AggregatedDrop[] {

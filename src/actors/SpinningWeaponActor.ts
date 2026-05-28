@@ -23,9 +23,12 @@ import { WeaponSummonVFXComponent, APPEAR_COUNT, DISMISS_COUNT } from '../compon
 import { BloodSplatterComponent } from '../components/vfx/BloodSplatterComponent.js';
 import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailComponent.js';
 import { grimVault } from '../game/GrimVault.js';
+import { getPlayerWeaponDamage } from '../utils/player-combat-stats.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
+import { missionState } from '../mission/MissionState.js';
+import { collectSceneWeapons } from '../utils/scene-visual-pool.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
 
@@ -69,7 +72,6 @@ const HANDLE_OFFSET    = 2.7;
 const BLADE_REACH      = 4.0;
 const BLADE_ANGLE_OFFSET = Math.PI / 2;
 const HIT_RADIUS       = 1.2;
-const WEAPON_DAMAGE    = 25;
 const HIT_COOLDOWN     = 0.4;
 
 /** Duration (seconds) of the swing arc per combo hit (after wind-up). */
@@ -137,7 +139,8 @@ const enum AttackIndex {
 @ENGINE.GameClass()
 export class SpinningWeaponActor extends ENGINE.Actor {
 
-  private _sceneWeaponActor: ENGINE.Actor | null = null;
+  /** Editor-placed weapons: "weapon", "weapon 02", "weapon 03" (slot 0 = melee). */
+  private _sceneWeaponActors: ENGINE.Actor[] = [];
   private _slashComponent:    WeaponSlashComponent | null = null;
   private _slashParticles:    WeaponSlashParticleComponent | null = null;
   private _swingLight:        WeaponSwingLightComponent | null = null;
@@ -172,8 +175,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Visual orbit angle — lags behind hit arc during swing. */
   private _displayOrbitAngle = 0;
 
-  private _baseQuat = new THREE.Quaternion();
-  private _baseQuatCaptured = false;
+  private readonly _weaponBaseQuats: THREE.Quaternion[] = [];
 
   private _orbitQuat = new THREE.Quaternion();
   private _pitchQuat = new THREE.Quaternion();
@@ -202,6 +204,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _scratchPos        = new THREE.Vector3();
   private _scratchPlayerPos  = new THREE.Vector3();
   private _scratchZombiePos  = new THREE.Vector3();
+  private readonly _fistTargetScratch = new THREE.Vector3();
+  private readonly _soulBladeDirScratch = new THREE.Vector3();
+  private readonly _soulBladeLaunchScratch = new THREE.Vector3();
   private readonly _hitNormalScratch = new THREE.Vector3();
   private readonly _hitLocationScratch = new THREE.Vector3();
   private _weaponStart       = new THREE.Vector3();
@@ -251,33 +256,24 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    // Find editor-placed weapon actor
-    for (const actor of world.getActors()) {
-      if (actor.name.toLowerCase() === WEAPON_ACTOR_NAME.toLowerCase()) {
-        this._sceneWeaponActor = actor;
-        break;
-      }
-    }
+    this._sceneWeaponActors = collectSceneWeapons(world);
 
-    if (this._sceneWeaponActor) {
+    if (this._sceneWeaponActors.length > 0) {
       ensureWeaponCollisionProfile();
 
-      const root = this._sceneWeaponActor.rootComponent;
-      if (root instanceof ENGINE.MeshComponent) {
-        root.overridePhysicsOptions({
-          enabled: false,
-          collisionProfile: WEAPON_COLLISION_PROFILE,
-        });
+      for (const weaponActor of this._sceneWeaponActors) {
+        const root = weaponActor.rootComponent;
+        if (root instanceof ENGINE.MeshComponent) {
+          root.overridePhysicsOptions({
+            enabled: false,
+            collisionProfile: WEAPON_COLLISION_PROFILE,
+          });
+        }
+        weaponActor.rootComponent.visible = false;
+        this._weaponBaseQuats.push(weaponActor.rootComponent.quaternion.clone());
       }
-
-      // Start hidden
-      this._setWeaponVisible(false);
-
-      // Capture base rotation once so weapon orbits correctly
-      this._baseQuat.copy(this._sceneWeaponActor.rootComponent.quaternion);
-      this._baseQuatCaptured = true;
     } else {
-      console.warn(`[SpinningWeaponActor] No scene actor named "${WEAPON_ACTOR_NAME}" found.`);
+      console.warn(`[SpinningWeaponActor] No scene actors named "${WEAPON_ACTOR_NAME}" (or "weapon 02", etc.) found.`);
     }
 
     // Input handler
@@ -321,6 +317,22 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     super.doEndPlay();
   }
 
+  private _meleeWeapon(): ENGINE.Actor | null {
+    return this._sceneWeaponActors[0] ?? null;
+  }
+
+  private _getSceneWeapon(slot: number): ENGINE.Actor | null {
+    return this._sceneWeaponActors[slot] ?? null;
+  }
+
+  private _getWeaponBaseQuat(slot: number): THREE.Quaternion {
+    return this._weaponBaseQuats[slot] ?? this._weaponBaseQuats[0] ?? new THREE.Quaternion();
+  }
+
+  private _isWeaponSlotUsedBySoulBlade(slot: number): boolean {
+    return this._soulBlades.some((b) => b.visualSlot === slot);
+  }
+
   // ── Tick ─────────────────────────────────────────────────────────────────
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -332,7 +344,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._tickSoulBlades(deltaTime, player);
     }
 
-    if (!this._sceneWeaponActor || !player) return;
+    if (!this._meleeWeapon() || !player) return;
 
     if (this._meleePhase === 'recovery') {
       this._recoveryRemainingSec -= deltaTime;
@@ -347,11 +359,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
 
     if (this._meleePhase === 'idle') return;
-
-    if (!this._baseQuatCaptured) {
-      this._baseQuat.copy(this._sceneWeaponActor.rootComponent.quaternion);
-      this._baseQuatCaptured = true;
-    }
+    if (this._isWeaponSlotUsedBySoulBlade(0)) return;
 
     if (this._meleePhase === 'windup') {
       this._orbitAngle = this._attackStartAngle;
@@ -441,20 +449,18 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       [-1.3, -1.0],
     ];
 
-    const playerPos = new THREE.Vector3();
-    player.rootComponent.getWorldPosition(playerPos);
+    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
 
     for (let i = 0; i < targets.length; i++) {
-      const targetPos = new THREE.Vector3();
-      targets[i]!.rootComponent.getWorldPosition(targetPos);
+      targets[i]!.rootComponent.getWorldPosition(this._fistTargetScratch);
       const off = offsets[i] ?? [0, 0];
-      targetPos.x += off[0];
-      targetPos.z += off[1];
-      FistOfAnnoyanceActor.spawnAt(world, targetPos);
+      this._fistTargetScratch.x += off[0];
+      this._fistTargetScratch.z += off[1];
+      FistOfAnnoyanceActor.spawnAt(world, this._fistTargetScratch);
       getGameAudioManager(world).playAtDistance(
         'fistImpact',
-        targetPos,
-        playerPos,
+        this._fistTargetScratch,
+        this._scratchPlayerPos,
         FIST_MAX_RANGE,
         0.15,
       );
@@ -468,19 +474,17 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _pickFistTargets(player: ENGINE.Pawn, maxCount: number): ENGINE.Actor[] {
-    const playerPos = new THREE.Vector3();
-    player.rootComponent.getWorldPosition(playerPos);
+    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
 
-    const nearby = zombieSpatialManager.getNearbyZombies(playerPos, FIST_MAX_RANGE);
+    const nearby = zombieSpatialManager.getNearbyZombies(this._scratchPlayerPos, FIST_MAX_RANGE);
     const candidates: ENGINE.Actor[] = [];
-    const zPos = new THREE.Vector3();
 
     for (const zombie of nearby) {
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
-      zombie.rootComponent.getWorldPosition(zPos);
-      const dx = zPos.x - playerPos.x;
-      const dz = zPos.z - playerPos.z;
+      zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+      const dx = this._scratchZombiePos.x - this._scratchPlayerPos.x;
+      const dz = this._scratchZombiePos.z - this._scratchPlayerPos.z;
       const distSq = dx * dx + dz * dz;
 
       if (distSq < FIST_MIN_RANGE * FIST_MIN_RANGE) continue;
@@ -608,12 +612,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _updateWeaponPose(player: ENGINE.Pawn, bladePitch: number): void {
-    if (!this._sceneWeaponActor) return;
+    const weapon = this._meleeWeapon();
+    if (!weapon) return;
 
     player.rootComponent.getWorldPosition(this._scratchPlayerPos);
     const weaponY = this._scratchPlayerPos.y + WEAPON_HEIGHT;
 
-    this._sceneWeaponActor.rootComponent.position.set(
+    weapon.rootComponent.position.set(
       this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * HANDLE_OFFSET,
       weaponY,
       this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * HANDLE_OFFSET,
@@ -621,11 +626,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const visualAngle = this._meleePhase === 'swing' ? this._displayOrbitAngle : this._orbitAngle;
     this._orbitQuat.setFromAxisAngle(SpinningWeaponActor._Y_AXIS, -visualAngle + BLADE_ANGLE_OFFSET);
-    this._sceneWeaponActor.rootComponent.quaternion.copy(this._baseQuat).premultiply(this._orbitQuat);
+    weapon.rootComponent.quaternion.copy(this._getWeaponBaseQuat(0)).premultiply(this._orbitQuat);
 
     if (bladePitch !== 0) {
       this._pitchQuat.setFromAxisAngle(SpinningWeaponActor._PITCH_AXIS, bladePitch);
-      this._sceneWeaponActor.rootComponent.quaternion.multiply(this._pitchQuat);
+      weapon.rootComponent.quaternion.multiply(this._pitchQuat);
     }
 
     this._weaponStart.set(
@@ -641,11 +646,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _setWeaponVisible(visible: boolean): void {
-    if (!this._sceneWeaponActor) return;
-    this._sceneWeaponActor.rootComponent.visible = visible;
+    const weapon = this._meleeWeapon();
+    if (!weapon || this._isWeaponSlotUsedBySoulBlade(0)) return;
+    weapon.rootComponent.visible = visible;
 
     if (this._summonVFX) {
-      this._sceneWeaponActor.rootComponent.getWorldPosition(this._scratchPos);
+      weapon.rootComponent.getWorldPosition(this._scratchPos);
       this._summonVFX.burst(this._scratchPos, visible ? APPEAR_COUNT : DISMISS_COUNT);
     }
   }
@@ -672,10 +678,15 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     return world.getGameTime() - this._lastSoulThrowTime < SOUL_THROW_COOLDOWN_L3;
   }
 
+  private _getWeaponDamage(): number {
+    return getPlayerWeaponDamage();
+  }
+
   private _soulThrowDamage(): number {
+    const base = this._getWeaponDamage();
     return this._getSoulThrowLevel() >= 3
-      ? WEAPON_DAMAGE * SOUL_THROW_DAMAGE_MULT_L3
-      : WEAPON_DAMAGE;
+      ? Math.max(1, Math.round(base * SOUL_THROW_DAMAGE_MULT_L3))
+      : base;
   }
 
   private _rotateDirAroundY(dir: THREE.Vector3, yaw: number, out: THREE.Vector3): void {
@@ -730,8 +741,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         : [-SOUL_THROW_ARC_HALF_SPREAD, 0, SOUL_THROW_ARC_HALF_SPREAD];
 
     for (let i = 0; i < bladeCount; i++) {
-      this._rotateDirAroundY(this._bladeDirScratch, yawOffsets[i]!, this._scratchPos);
-      this._spawnSoulBlade(player, this._scratchPos, i);
+      this._rotateDirAroundY(this._bladeDirScratch, yawOffsets[i]!, this._soulBladeDirScratch);
+      this._spawnSoulBlade(player, this._soulBladeDirScratch, i);
     }
 
     if (level >= 3) {
@@ -742,10 +753,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _spawnSoulBlade(player: ENGINE.Pawn, dir: THREE.Vector3, visualSlot: number): void {
-    const launchPos = new THREE.Vector3();
-    player.rootComponent.getWorldPosition(launchPos);
-    launchPos.y += BOOMERANG_HEIGHT;
-    launchPos.addScaledVector(dir, BOOMERANG_LAUNCH_OFFSET);
+    player.rootComponent.getWorldPosition(this._soulBladeLaunchScratch);
+    this._soulBladeLaunchScratch.y += BOOMERANG_HEIGHT;
+    this._soulBladeLaunchScratch.addScaledVector(dir, BOOMERANG_LAUNCH_OFFSET);
+    const launchPos = this._soulBladeLaunchScratch.clone();
 
     const trail =
       visualSlot === 0
@@ -765,10 +776,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._soulBlades.push(blade);
     trail?.start();
 
-    if (visualSlot === 0 && this._sceneWeaponActor) {
-      this._sceneWeaponActor.rootComponent.position.copy(launchPos);
-      this._sceneWeaponActor.rootComponent.visible = true;
-      if (this._summonVFX) {
+    const weapon = this._getSceneWeapon(visualSlot);
+    if (weapon) {
+      weapon.rootComponent.position.copy(launchPos);
+      weapon.rootComponent.visible = true;
+      if (visualSlot === 0 && this._summonVFX) {
         this._summonVFX.burst(launchPos, APPEAR_COUNT);
       }
     }
@@ -805,12 +817,13 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       blade.pos.addScaledVector(this._scratchPos.normalize(), BOOMERANG_RETURN_SPEED * deltaTime);
     }
 
-    if (blade.visualSlot === 0 && this._sceneWeaponActor) {
+    const weapon = this._getSceneWeapon(blade.visualSlot);
+    if (weapon) {
       this._boomerangSpinQuat.setFromAxisAngle(SpinningWeaponActor._SPIN_AXIS, blade.spinAngle);
-      this._sceneWeaponActor.rootComponent.quaternion
-        .copy(this._baseQuat)
+      weapon.rootComponent.quaternion
+        .copy(this._getWeaponBaseQuat(blade.visualSlot))
         .premultiply(this._boomerangSpinQuat);
-      this._sceneWeaponActor.rootComponent.position.copy(blade.pos);
+      weapon.rootComponent.position.copy(blade.pos);
     }
 
     void blade.trail?.addPoint(blade.pos);
@@ -825,9 +838,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     blade.trail?.stop();
 
-    if (blade.visualSlot === 0 && this._sceneWeaponActor) {
-      this._sceneWeaponActor.rootComponent.visible = false;
-      if (this._summonVFX) {
+    const weapon = this._getSceneWeapon(blade.visualSlot);
+    if (weapon) {
+      weapon.rootComponent.visible = false;
+      if (blade.visualSlot === 0 && this._summonVFX) {
         this._summonVFX.burst(blade.pos, DISMISS_COUNT);
       }
     }
@@ -877,6 +891,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
       if (stats) {
         stats.takeDamage(damage, hitInfo);
+        missionState.onDamageDealt(damage);
       }
       (zombie as unknown as { flashYellow(): void }).flashYellow();
 
@@ -894,7 +909,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _showHitNumber(
     world: ENGINE.World,
     pos: THREE.Vector3,
-    damage: number = WEAPON_DAMAGE,
+    damage: number = this._getWeaponDamage(),
   ): void {
     HitNumberUI.getInstance(world).showDamage(damage, pos);
   }
@@ -1023,12 +1038,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       hitNormal: this._hitNormalScratch,
     };
 
+    const damage = this._getWeaponDamage();
     const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
-    let isFatal = false;
     if (stats) {
-      const healthBefore = stats.getCurrentHealth();
-      stats.takeDamage(WEAPON_DAMAGE, hitInfo);
-      isFatal = healthBefore > 0 && stats.getCurrentHealth() <= 0;
+      stats.takeDamage(damage, hitInfo);
+      missionState.onDamageDealt(damage);
     }
 
     (zombie as unknown as { flashYellow(): void }).flashYellow();
@@ -1039,7 +1053,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Show hit number with background
     const world = this.getWorld();
     if (world) {
-      this._showHitNumber(world, this._scratchZombiePos);
+      this._showHitNumber(world, this._scratchZombiePos, damage);
     }
 
     if (player instanceof IsometricPlayerPawn) {

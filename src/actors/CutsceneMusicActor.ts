@@ -7,6 +7,7 @@ const CUTSCENE_TRACK = '@project/assets/sounds/cutscenemusic.wav';
 @ENGINE.GameClass()
 export class CutsceneMusicActor extends ENGINE.Actor {
   private _sound: ENGINE.SoundComponent | null = null;
+  private _musicVolumeScale = gameSettings.musicVolume;
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
@@ -32,11 +33,21 @@ export class CutsceneMusicActor extends ENGINE.Actor {
     this._sound?.stopAll();
   }
 
+  public setMusicVolume(scale: number): void {
+    this._musicVolumeScale = Math.max(0, Math.min(1, scale));
+    this._sound?.setVolumeAll(BASE_CUTSCENE_MUSIC_VOLUME * this._musicVolumeScale);
+  }
+
   public static stopAll(world: ENGINE.World): void {
+    const toRemove: CutsceneMusicActor[] = [];
     for (const a of world.getActors()) {
       if (a instanceof CutsceneMusicActor) {
         a.stopNow();
+        toRemove.push(a);
       }
+    }
+    if (toRemove.length > 0) {
+      world.removeActors(...toRemove);
     }
   }
 

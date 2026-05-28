@@ -19,8 +19,10 @@ import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { KOSignUI } from '../ui/KOSignUI.js';
-import { SoulCounterUI } from '../ui/SoulCounterUI.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
+import { ENEMY_TYPE_ZOMBIE } from '../data/items.js';
+import { awardSoulFromEnemyKill } from '../utils/award-soul.js';
+import { tryRollMissionItemDropOnEnemyKill } from '../utils/mission-enemy-drops.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
@@ -770,6 +772,8 @@ export class ZombieActor extends ENGINE.Actor {
     if (world) {
       killStreakTracker.recordKill(world);
       void comboMeterTracker.recordKill(world);
+      awardSoulFromEnemyKill(world);
+      tryRollMissionItemDropOnEnemyKill(ENEMY_TYPE_ZOMBIE);
     }
 
     const npc = this.getComponent(ENGINE.NpcMovementComponent);
@@ -879,16 +883,6 @@ export class ZombieActor extends ENGINE.Actor {
     const landPos = this._ragdollLandPos ?? deathPos;
     const gravePos = landPos.clone().add(new THREE.Vector3(0, 0.5, 0));
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
-
-    this._awardSoul(world);
-  }
-
-  private _awardSoul(world: ENGINE.World): void {
-    const player = world.getFirstPlayerPawn();
-    if (player instanceof IsometricPlayerPawn) {
-      player.soulsCollected++;
-    }
-    void SoulCounterUI.getInstance(world).then(ui => ui.increment());
   }
 
   // ─── Internal helpers ──────────────────────────────────────────────────────

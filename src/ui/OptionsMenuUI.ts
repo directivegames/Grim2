@@ -3,7 +3,9 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
+import { grimVault } from '../game/GrimVault.js';
+import { FilmGrainUI } from './FilmGrainUI.js';
+import { applyMusicVolumeToWorld } from '../utils/apply-music-volume.js';
 import { GAME_SETTINGS_DEFAULTS, gameSettings } from '../utils/game-settings.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
@@ -22,12 +24,15 @@ export class OptionsMenuUI {
 
   private readonly _world: ENGINE.World;
   private _root: HTMLDivElement | null = null;
+  private _mounting = false;
   private _onClose: (() => void) | null = null;
   private _resolvedPanelUrl = '';
 
   private _sfxValueLabel: HTMLSpanElement | null = null;
   private _musicValueLabel: HTMLSpanElement | null = null;
   private _spinValueLabel: HTMLSpanElement | null = null;
+  private _skipCutscenesValueLabel: HTMLSpanElement | null = null;
+  private _filmGrainValueLabel: HTMLSpanElement | null = null;
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -46,8 +51,8 @@ export class OptionsMenuUI {
     }
 
     let inst = OptionsMenuUI.byWorld.get(world);
-    if (inst?._root) {
-      return inst;
+    if (inst?._root || inst?._mounting) {
+      return inst ?? new OptionsMenuUI(world);
     }
 
     if (!inst) {
@@ -65,11 +70,6 @@ export class OptionsMenuUI {
     return w.gameContainer ?? null;
   }
 
-  private _getMusicActor(): BackgroundMusicActor | null {
-    const actor = this._world.getActors().find(a => a instanceof BackgroundMusicActor);
-    return actor instanceof BackgroundMusicActor ? actor : null;
-  }
-
   private _applySfxVolume(): void {
     try {
       getGameAudioManager(this._world).applySfxVolume(gameSettings.sfxVolume);
@@ -79,7 +79,7 @@ export class OptionsMenuUI {
   }
 
   private _applyMusicVolume(): void {
-    this._getMusicActor()?.setMusicVolume(gameSettings.musicVolume);
+    applyMusicVolumeToWorld(this._world, gameSettings.musicVolume);
   }
 
   private _ensureStyles(container: HTMLElement): void {
@@ -311,6 +311,18 @@ export class OptionsMenuUI {
   }
 
   private async _mount(): Promise<void> {
+    if (this._root || this._mounting) {
+      return;
+    }
+    this._mounting = true;
+    try {
+      await this._mountInner();
+    } finally {
+      this._mounting = false;
+    }
+  }
+
+  private async _mountInner(): Promise<void> {
     const gameContainer = this._gameContainer();
     const w = this._world as GameContainerWorld;
     if (!gameContainer || w.options?.headless) {
@@ -339,11 +351,12 @@ export class OptionsMenuUI {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       background: rgba(5, 5, 8, 0.85);
       box-sizing: border-box;
       user-select: none;
-      padding: clamp(4vh, 6vh, 72px) clamp(12px, 3vw, 28px) clamp(12px, 3vh, 28px);
+      padding: clamp(16px, 3vh, 32px) clamp(12px, 3vw, 28px);
+      overflow-y: auto;
     `;
 
     const menuStack = document.createElement('div');
@@ -391,6 +404,9 @@ export class OptionsMenuUI {
       ${panelBg}
       box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
       padding: clamp(48px, 7vh, 56px) clamp(32px, 5vw, 44px) clamp(40px, 5.5vh, 48px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
     `;
 
     panel.appendChild(this._createSectionHeader('AUDIO'));
@@ -416,6 +432,84 @@ export class OptionsMenuUI {
     });
     this._spinValueLabel = spinRow.valueLabel;
     panel.appendChild(spinRow.row);
+
+    const tutRow = this._createToggleRow(
+      'ALWAYS SHOW TUTORIALS',
+      gameSettings.alwaysShowTutorials,
+      value => {
+        gameSettings.alwaysShowTutorials = value;
+      },
+    );
+    panel.appendChild(tutRow.row);
+
+    const skipCutscenesRow = this._createToggleRow(
+      'SKIP ALL CUTSCENES',
+      gameSettings.skipAllCutscenes,
+      value => {
+        gameSettings.skipAllCutscenes = value;
+      },
+    );
+    this._skipCutscenesValueLabel = skipCutscenesRow.valueLabel;
+    panel.appendChild(skipCutscenesRow.row);
+
+    panel.appendChild(this._createSectionHeader('PERFORMANCE'));
+
+    const filmGrainRow = this._createToggleRow(
+      'FILM GRAIN',
+      gameSettings.filmGrainEnabled,
+      value => {
+        gameSettings.filmGrainEnabled = value;
+        FilmGrainUI.attach(this._world, { enabled: value });
+      },
+    );
+    this._filmGrainValueLabel = filmGrainRow.valueLabel;
+    panel.appendChild(filmGrainRow.row);
+
+    panel.appendChild(this._createSectionHeader('DATA'));
+
+    const resetWrap = document.createElement('div');
+    resetWrap.style.cssText = `
+      position: relative;
+      width: min(280px, 72%);
+      aspect-ratio: 3.4 / 1;
+      margin: 8px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.2s ease;
+    `;
+    if (this._resolvedPanelUrl) {
+      resetWrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
+      resetWrap.style.backgroundSize = '100% auto';
+      resetWrap.style.backgroundRepeat = 'no-repeat';
+      resetWrap.style.backgroundPosition = 'center';
+    }
+    const resetLabel = document.createElement('span');
+    resetLabel.textContent = 'RESET ALL PROGRESS';
+    resetLabel.style.cssText = `
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(0.55rem, 1.4vw, 0.72rem);
+      letter-spacing: 0.14em;
+      color: rgba(255, 180, 160, 0.95);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.95);
+      pointer-events: none;
+      text-align: center;
+    `;
+    resetWrap.appendChild(resetLabel);
+    resetWrap.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
+      const ok = window.confirm(
+        'Reset all progress? Souls, upgrades, items, risk unlocks, and the tutorial will be wiped. This cannot be undone.',
+      );
+      if (ok) {
+        grimVault.resetAllProgress();
+        gameSettings.resetToDefaults();
+        window.location.reload();
+      }
+    });
+    panel.appendChild(resetWrap);
 
     const backWrap = document.createElement('div');
     backWrap.style.cssText = `
@@ -506,6 +600,7 @@ export class OptionsMenuUI {
     gameSettings.resetToDefaults();
     this._applySfxVolume();
     this._applyMusicVolume();
+    FilmGrainUI.attach(this._world, { enabled: GAME_SETTINGS_DEFAULTS.filmGrainEnabled });
 
     if (this._sfxValueLabel) {
       this._sfxValueLabel.textContent = `${Math.round(GAME_SETTINGS_DEFAULTS.sfxVolume * 100)}%`;
@@ -515,6 +610,14 @@ export class OptionsMenuUI {
     }
     if (this._spinValueLabel) {
       this._spinValueLabel.textContent = GAME_SETTINGS_DEFAULTS.disable360Spin ? 'ON' : 'OFF';
+    }
+    if (this._skipCutscenesValueLabel) {
+      this._skipCutscenesValueLabel.textContent = GAME_SETTINGS_DEFAULTS.skipAllCutscenes
+        ? 'ON'
+        : 'OFF';
+    }
+    if (this._filmGrainValueLabel) {
+      this._filmGrainValueLabel.textContent = GAME_SETTINGS_DEFAULTS.filmGrainEnabled ? 'ON' : 'OFF';
     }
 
     const sliders = this._root?.querySelectorAll<HTMLInputElement>('input[type="range"]');

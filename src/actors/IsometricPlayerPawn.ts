@@ -16,13 +16,13 @@ import { ISO_YAW, IsometricMovementComponent } from '../components/movement/Isom
 import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcComponent.js';
-import { BoneShardIconTestHUDUI } from '../ui/BoneShardIconTestHUDUI.js';
 import { FistAbilityHUDUI } from '../ui/FistAbilityHUDUI.js';
 import { HealthBarUI } from '../ui/HealthBarUI.js';
-import { ItemIconCache } from '../ui/ItemIconCache.js';
+import { ShopItemIconsHUDUI } from '../ui/ShopItemIconsHUDUI.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
 import { grimVault } from '../game/GrimVault.js';
+import { hookPlayerDamageMitigation } from '../utils/player-combat-stats.js';
 import { missionRunner } from '../mission/MissionRunner.js';
 import { missionState } from '../mission/MissionState.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
@@ -98,6 +98,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   /** Souls collected from defeated zombies. */
   public soulsCollected: number = 0;
+
+  /** Fractional heal from soul leech — whole HP applied when buffer reaches 1. */
+  private _soulHealBuffer = 0;
 
   /** Health bar UI reference. */
   private _healthBarUI: HealthBarUI | null = null;
@@ -176,6 +179,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private _vignetteActive    = false;
   private _lastKnownHealth   = -1;
   private _missionDeathReported = false;
+  /** World position when the pawn first begins play (mission restart spawn). */
+  private _missionSpawnPosition: THREE.Vector3 | null = null;
+  private _missionSpawnYaw = 0;
 
   private readonly _onHealthChanged = (current: number, max: number): void => {
     if (this._lastKnownHealth >= 0 && current < this._lastKnownHealth) {
@@ -281,12 +287,122 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
+  /**
+   * Credit fractional heal per kill (base soul leech + upgrades).
+   * Whole HP is applied once the buffer reaches 1.0.
+   */
+  public addSoulHealCredit(amount: number): void {
+    if (amount <= 0 || !Number.isFinite(amount)) {
+      return;
+    }
+
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (!stats) {
+      return;
+    }
+
+    const cur = stats.getCurrentHealth();
+    const max = stats.getMaxHealth();
+    if (cur >= max) {
+      return;
+    }
+
+    this._soulHealBuffer += amount;
+    const whole = Math.floor(this._soulHealBuffer);
+    if (whole < 1) {
+      return;
+    }
+
+    this._soulHealBuffer -= whole;
+    stats.heal(Math.min(whole, max - cur));
+  }
+
+  /** Teleport to scene spawn and restore full health for a new mission attempt. */
+  public prepareForMissionStart(): void {
+    this._missionDeathReported = false;
+    this.setHiddenInGame(false);
+    this.endKillStreakOrbit();
+    this.endSlomoEffect();
+    this._soulHealBuffer = 0;
+
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (stats) {
+      // heal() is gated on isDead, so we must clear private state directly first,
+      // then fire onHealthChanged so the health bar updates before applyGrimVaultStats
+      // calls setMaxHealth() — otherwise that call fires onHealthChanged(0, max) while
+      // _missionDeathReported=false, immediately triggering onGrimDied() at mission start.
+      const mutableStats = stats as unknown as {
+        currentHealth: number;
+        isDead: boolean;
+      };
+      const max = stats.getMaxHealth();
+      mutableStats.isDead = false;
+      mutableStats.currentHealth = max;
+      this._lastKnownHealth = max;
+      stats.onHealthChanged.invoke(max, max);
+    }
+
+    this.applyGrimVaultStats();
+    this.resetToMissionSpawn();
+  }
+
+  /** Return Grim to the position captured at first begin play. */
+  public resetToMissionSpawn(): void {
+    this._captureMissionSpawnFromPlayerStart();
+    if (!this._missionSpawnPosition) {
+      return;
+    }
+
+    const mc = this.movementComponent;
+    if (mc instanceof IsometricMovementComponent) {
+      mc.resetRuntimeMotion();
+
+      // Teleport with ignoreCollision=true puts the kinematic body exactly at
+      // the target. PlayerStart sits at the floor surface (Y=0), so without an
+      // upward offset Grim ends up half-embedded in the road geometry and the
+      // character controller can't push him up out of it. Spawn a few units
+      // above; gravity in the locked Ready-To-Reap branch settles him onto the
+      // floor before gameplay unlocks.
+      const target = IsometricPlayerPawn._spawnTargetScratch.copy(this._missionSpawnPosition);
+      target.y += 2;
+
+      mc.setPawnWorldTransform({
+        position: target,
+        rotation: new THREE.Euler(0, this._missionSpawnYaw, 0),
+      });
+    } else {
+      this.rootComponent.position.copy(this._missionSpawnPosition);
+      this.rootComponent.rotation.y = this._missionSpawnYaw;
+    }
+    this.rootComponent.updateWorldMatrix(true, true);
+  }
+
+  private static readonly _spawnTargetScratch = new THREE.Vector3();
+
+  /** Use the actual ENGINE.PlayerStart actor as the authoritative mission spawn. */
+  private _captureMissionSpawnFromPlayerStart(): void {
+    const world = this.getWorld();
+    if (!world) {
+      return;
+    }
+
+    const playerStart = world.getActors(ENGINE.PlayerStart)[0];
+    if (!playerStart) {
+      return;
+    }
+
+    playerStart.rootComponent.getWorldPosition(this._playerPosScratch);
+    this._missionSpawnPosition = this._playerPosScratch.clone();
+    this._missionSpawnYaw = playerStart.rootComponent.rotation.y;
+  }
+
   /** Apply purchased Grim upgrades to runtime stats (call after vault changes or mission start). */
   public applyGrimVaultStats(): void {
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     if (!stats) {
       return;
     }
+    this._soulHealBuffer = 0;
     const grim = grimVault.computeStats();
     const prevMax = stats.getMaxHealth();
     const ratio = prevMax > 0 ? stats.getCurrentHealth() / prevMax : 1;
@@ -299,10 +415,19 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     }
     stats.setSpeed(grim.moveSpeed);
     stats.setAttackDamage(grim.attackMult);
+    hookPlayerDamageMitigation(stats);
   }
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+
+    this._captureMissionSpawnFromPlayerStart();
+    if (!this._missionSpawnPosition) {
+      this.rootComponent.getWorldPosition(this._playerPosScratch);
+      this._missionSpawnPosition = this._playerPosScratch.clone();
+      this._missionSpawnYaw = this.rootComponent.rotation.y;
+    }
+
     this.applyGrimVaultStats();
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     if (stats) {
@@ -311,12 +436,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       // Initialize health bar UI asynchronously
       void this._initHealthBarUI(stats);
       void this._initFistAbilityHUD();
-      void this._initBoneShardIconTestHUD();
-      const world = this.getWorld();
-      if (world) {
-        // Resolve item icon URLs while the scene is active (same context as fist/health).
-        void ItemIconCache.warm(world);
-      }
+      void this._initShopItemIconsHUD();
       // Initialize hit number UI
       void this._initHitNumberUI();
       // Initialize KO sign UI
@@ -333,8 +453,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._fistAbilityHUD = await FistAbilityHUDUI.getInstance(this.getWorld());
   }
 
-  private async _initBoneShardIconTestHUD(): Promise<void> {
-    await BoneShardIconTestHUDUI.getInstance(this.getWorld());
+  private async _initShopItemIconsHUD(): Promise<void> {
+    await ShopItemIconsHUDUI.getInstance(this.getWorld());
   }
 
   private async _initHitNumberUI(): Promise<void> {

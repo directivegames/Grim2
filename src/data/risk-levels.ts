@@ -15,48 +15,55 @@ export interface RiskLevelConfig {
   collateralTickPerSecond: number;
   /** Collateral jump when an innocent dies (%). */
   collateralJumpOnInnocentDeath: number;
+  /** Max simultaneous horde zombies on the field. */
+  spawnCap: number;
 }
 
 export const RISK_LEVEL_CONFIG: Record<RiskLevel, RiskLevelConfig> = {
   1: {
     enemyHealthMult: 1.0,
-    enemyDamageMult: 1.0,
+    enemyDamageMult: 1.2,
     innocentSaveTimeLimitSec: 90,
     eliteSpawnWeight: 0,
     collateralTickPerSecond: 0.1,
     collateralJumpOnInnocentDeath: 20,
+    spawnCap: 50,
   },
   2: {
     enemyHealthMult: 1.25,
-    enemyDamageMult: 1.15,
+    enemyDamageMult: 1.38,
     innocentSaveTimeLimitSec: 70,
     eliteSpawnWeight: 2,
     collateralTickPerSecond: 0.12,
     collateralJumpOnInnocentDeath: 20,
+    spawnCap: 60,
   },
   3: {
     enemyHealthMult: 1.5,
-    enemyDamageMult: 1.3,
+    enemyDamageMult: 1.55,
     innocentSaveTimeLimitSec: 50,
     eliteSpawnWeight: 4,
     collateralTickPerSecond: 0.15,
     collateralJumpOnInnocentDeath: 22,
+    spawnCap: 70,
   },
   4: {
-    enemyHealthMult: 2.0,
-    enemyDamageMult: 1.5,
+    enemyHealthMult: 2.15,
+    enemyDamageMult: 1.92,
     innocentSaveTimeLimitSec: 35,
-    eliteSpawnWeight: 6,
-    collateralTickPerSecond: 0.18,
+    eliteSpawnWeight: 7,
+    collateralTickPerSecond: 0.19,
     collateralJumpOnInnocentDeath: 25,
+    spawnCap: 85,
   },
   5: {
-    enemyHealthMult: 2.5,
-    enemyDamageMult: 2.0,
+    enemyHealthMult: 2.65,
+    enemyDamageMult: 2.5,
     innocentSaveTimeLimitSec: 20,
-    eliteSpawnWeight: 10,
-    collateralTickPerSecond: 0.22,
-    collateralJumpOnInnocentDeath: 25,
+    eliteSpawnWeight: 11,
+    collateralTickPerSecond: 0.23,
+    collateralJumpOnInnocentDeath: 26,
+    spawnCap: 100,
   },
 };
 

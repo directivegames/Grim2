@@ -80,11 +80,7 @@ export const MISSIONS: readonly MissionDef[] = [
     difficulty: 'Easy',
     description:
       'Reap the souls in the local suburb, where getting the mail and becoming possessed go hand in hand.',
-    objectives: [
-      'Choose a risk level, then start — goals are rolled for that tier.',
-      'Condition: Finish before collateral damage reaches 100%.',
-      'Modifiers: None.',
-    ],
+    objectives: [],
     iconFile: 'sub.png',
     mapX: 0.76,
     mapY: 0.44,

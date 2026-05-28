@@ -4,7 +4,8 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { withMenuSelectSound } from '../utils/menu-audio.js';
-import { resumeGame } from '../utils/game-pause.js';
+import { pauseGame, resumeGame } from '../utils/game-pause.js';
+import { OptionsMenuUI } from './OptionsMenuUI.js';
 import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 
 const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
@@ -20,6 +21,7 @@ export class PauseMenuUI {
 
   private readonly _world: ENGINE.World;
   private _root: HTMLDivElement | null = null;
+  private _mounting = false;
   private _resolvedPanelUrl = '';
   private _resolvedFrameUrl = '';
 
@@ -39,8 +41,8 @@ export class PauseMenuUI {
     }
 
     let inst = PauseMenuUI.byWorld.get(world);
-    if (inst?._root) {
-      return inst;
+    if (inst?._root || inst?._mounting) {
+      return inst ?? new PauseMenuUI(world);
     }
 
     if (!inst) {
@@ -113,6 +115,18 @@ export class PauseMenuUI {
   }
 
   private async _mount(): Promise<void> {
+    if (this._root || this._mounting) {
+      return;
+    }
+    this._mounting = true;
+    try {
+      await this._mountInner();
+    } finally {
+      this._mounting = false;
+    }
+  }
+
+  private async _mountInner(): Promise<void> {
     const gameContainer = this._gameContainer();
     const w = this._world as GameContainerWorld;
     if (!gameContainer || w.options?.headless) {
@@ -137,11 +151,12 @@ export class PauseMenuUI {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       background: rgba(5, 5, 8, 0.72);
       box-sizing: border-box;
       user-select: none;
-      padding: clamp(8vh, 10vh, 12vh) clamp(12px, 3vw, 28px) clamp(12px, 3vh, 28px);
+      padding: clamp(16px, 3vh, 32px) clamp(12px, 3vw, 28px);
+      overflow-y: auto;
     `;
 
     const stack = document.createElement('div');
@@ -228,6 +243,13 @@ export class PauseMenuUI {
 
     buttonCol.appendChild(
       this._createMenuButton('RESUME', () => this._onResume(), true),
+    );
+    buttonCol.appendChild(
+      this._createMenuButton('OPTIONS', () => {
+        OptionsMenuUI.open(this._world, () => {
+          pauseGame(this._world);
+        });
+      }),
     );
     buttonCol.appendChild(
       this._createMenuButton('QUIT', () => this._onQuit()),

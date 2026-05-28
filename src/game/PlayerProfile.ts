@@ -17,6 +17,9 @@ export function defaultProfile(): PlayerProfile {
     discoveredItems: ['bone_shard'],
     shopPurchaseCounts: {},
     unlockedRiskLevel: 1,
+    tutorialCompleted: false,
+    risk5PlusUnlocked: false,
+    risk5PlusCompletions: 0,
   };
 }
 
@@ -112,7 +115,30 @@ export function loadProfile(): PlayerProfile {
         return discovered;
       })(),
       shopPurchaseCounts: sanitizePurchaseCounts(parsed.shopPurchaseCounts),
-      unlockedRiskLevel: clampRiskLevel(parsed.unlockedRiskLevel),
+      ...(() => {
+        const unlockedRiskLevel = clampRiskLevel(parsed.unlockedRiskLevel);
+        const tutorialCompleted =
+          typeof parsed.tutorialCompleted === 'boolean'
+            ? parsed.tutorialCompleted
+            : base.tutorialCompleted;
+        // Older saves may have risk 2+ without tutorialCompleted — treat tutorial as done.
+        const risk5PlusCompletions =
+          typeof parsed.risk5PlusCompletions === 'number' &&
+          parsed.risk5PlusCompletions >= 0 &&
+          Number.isFinite(parsed.risk5PlusCompletions)
+            ? Math.floor(parsed.risk5PlusCompletions)
+            : base.risk5PlusCompletions;
+        const risk5PlusUnlocked =
+          typeof parsed.risk5PlusUnlocked === 'boolean'
+            ? parsed.risk5PlusUnlocked
+            : risk5PlusCompletions > 0 || unlockedRiskLevel >= 5;
+        return {
+          unlockedRiskLevel,
+          tutorialCompleted: tutorialCompleted || unlockedRiskLevel >= 2,
+          risk5PlusUnlocked,
+          risk5PlusCompletions,
+        };
+      })(),
     };
   } catch {
     return defaultProfile();

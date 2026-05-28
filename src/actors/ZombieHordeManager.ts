@@ -32,9 +32,7 @@ import { tryApplyHordeZombieSpawnPointWorldPosition } from '../mission/innocent-
 import { BigUndeadActor } from './BigUndeadActor.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
-import { ENEMY_TYPE_ZOMBIE } from '../data/items.js';
 import type { RiskLevel } from '../data/risk-levels.js';
-import { tryRollMissionItemDropOnEnemyKill } from '../utils/mission-enemy-drops.js';
 
 // Configuration
 const MAX_ACTIVE_ZOMBIES = 65;
@@ -87,6 +85,9 @@ export class ZombieHordeManager extends ENGINE.Actor {
   private _riskDamageMult = 1;
   private _riskEliteSpawnWeightBonus = 0;
   private _missionRiskLevel: RiskLevel = 1;
+  private _maxActiveZombies = MAX_ACTIVE_ZOMBIES;
+  private _resumeSpawnThreshold = RESUME_SPAWN_THRESHOLD;
+  private _waveIntervalSec = WAVE_INTERVAL_SEC;
 
   /** Placed-zombie references — cleared in doEndPlay to avoid dangling callbacks. */
   private _placedZombies: NewZombieActor[] = [];
@@ -154,7 +155,6 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   private onPlacedZombieDied(): void {
     this._totalKills++;
-    tryRollMissionItemDropOnEnemyKill(ENEMY_TYPE_ZOMBIE);
 
     if (!this._hordeActive && this._totalKills >= this.killsToActivate) {
       this.activateHorde();
@@ -169,7 +169,6 @@ export class ZombieHordeManager extends ENGINE.Actor {
    */
   private onPoolZombieDied(zombie: NewZombieActor): void {
     this._totalKills++;
-    tryRollMissionItemDropOnEnemyKill(ENEMY_TYPE_ZOMBIE);
 
     const entry = this._activeZombies.get(zombie);
     if (entry) {
@@ -177,7 +176,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       this._activeZombies.delete(zombie);
     }
 
-    if (this._spawningPaused && this._activeZombies.size <= RESUME_SPAWN_THRESHOLD) {
+    if (this._spawningPaused && this._activeZombies.size <= this._resumeSpawnThreshold) {
       this._spawningPaused = false;
       this._waveTimer = 0;
     }
@@ -232,7 +231,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     let writeIdx = 0;
     for (let i = 0; i < this._respawnQueue.length; i++) {
       const entry = this._respawnQueue[i]!;
-      if (entry.delayRemaining > 0 || this._activeZombies.size >= MAX_ACTIVE_ZOMBIES) {
+      if (entry.delayRemaining > 0 || this._activeZombies.size >= this._maxActiveZombies) {
         // Not ready, or at capacity — keep in queue
         this._respawnQueue[writeIdx++] = entry;
       } else {
@@ -251,7 +250,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
    * Never allocates a new actor.
    */
   private respawnZombie(zombie: NewZombieActor): boolean {
-    if (this._activeZombies.size >= MAX_ACTIVE_ZOMBIES) return false;
+    if (this._activeZombies.size >= this._maxActiveZombies) return false;
 
     const world = this.getWorld();
     const player = world?.getFirstPlayerPawn();
@@ -309,14 +308,14 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   private spawnWave(): void {
-    if (this._activeZombies.size >= MAX_ACTIVE_ZOMBIES) {
+    if (this._activeZombies.size >= this._maxActiveZombies) {
       if (!this._spawningPaused) {
         this._spawningPaused = true;
       }
       return;
     }
 
-    const toSpawn = Math.min(WAVE_SIZE, MAX_ACTIVE_ZOMBIES - this._activeZombies.size);
+    const toSpawn = Math.min(WAVE_SIZE, this._maxActiveZombies - this._activeZombies.size);
     if (toSpawn <= 0) return;
 
     for (let i = 0; i < toSpawn; i++) {
@@ -403,7 +402,6 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._activeEliteActors.get(type.id)?.delete(actor);
 
     this._totalKills++;
-    tryRollMissionItemDropOnEnemyKill(type.id);
 
     if (!this._hordeActive && this._totalKills >= this.killsToActivate) {
       this.activateHorde();
@@ -427,6 +425,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       actor.rootComponent.updateMatrixWorld();
       actor.setHiddenInGame(false);
       if (actor instanceof BigUndeadActor) {
+        actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
         actor.wakeForHordeSpawn();
       }
       ZombieRiseVFXActor.spawnAt(world, finalSpawnPos);
@@ -466,7 +465,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
    * subsequent respawns go through respawnZombie() which reuses the actor.
    */
   private spawnSingleZombie(): NewZombieActor | null {
-    if (this._activeZombies.size >= MAX_ACTIVE_ZOMBIES) return null;
+    if (this._activeZombies.size >= this._maxActiveZombies) return null;
 
     const world = this.getWorld();
     const player = world?.getFirstPlayerPawn();
@@ -644,11 +643,26 @@ export class ZombieHordeManager extends ENGINE.Actor {
     damageMult: number,
     eliteSpawnWeightBonus: number,
     riskLevel: RiskLevel = 1,
+    options?: { spawnCap?: number; aggressiveSpawn?: boolean; waveIntervalMult?: number },
   ): void {
     this._riskHealthMult = healthMult;
     this._riskDamageMult = damageMult;
     this._riskEliteSpawnWeightBonus = eliteSpawnWeightBonus;
     this._missionRiskLevel = riskLevel;
+
+    if (options?.spawnCap !== undefined) {
+      this._maxActiveZombies = options.spawnCap;
+      this._resumeSpawnThreshold = Math.max(20, Math.floor(this._maxActiveZombies * 0.77));
+    } else {
+      this._maxActiveZombies = MAX_ACTIVE_ZOMBIES;
+      this._resumeSpawnThreshold = RESUME_SPAWN_THRESHOLD;
+    }
+
+    const baseInterval = options?.aggressiveSpawn ? 4 : WAVE_INTERVAL_SEC;
+    const mult = options?.waveIntervalMult ?? 1;
+    this.waveInterval = Math.max(2, baseInterval * mult);
+    this._waveIntervalSec = this.waveInterval;
+
     this._applyRiskToAllZombies();
   }
 
@@ -657,6 +671,10 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._riskDamageMult = 1;
     this._riskEliteSpawnWeightBonus = 0;
     this._missionRiskLevel = 1;
+    this._maxActiveZombies = MAX_ACTIVE_ZOMBIES;
+    this._resumeSpawnThreshold = RESUME_SPAWN_THRESHOLD;
+    this.waveInterval = WAVE_INTERVAL_SEC;
+    this._waveIntervalSec = WAVE_INTERVAL_SEC;
     this._applyRiskToAllZombies();
   }
 
@@ -667,6 +685,8 @@ export class ZombieHordeManager extends ENGINE.Actor {
     for (const actor of world.getActors()) {
       if (actor instanceof NewZombieActor) {
         this._applyRiskToZombie(actor);
+      } else if (actor instanceof BigUndeadActor) {
+        actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
       }
     }
   }
@@ -713,6 +733,44 @@ export class ZombieHordeManager extends ENGINE.Actor {
       zombie.onDied = null;
     }
     this._activeZombies.clear();
+  }
+
+  /**
+   * Reset wave state between missions (e.g. replaying same rank).
+   * Parks all live pooled zombies off-screen, disconnects elite actors,
+   * and resets kill/wave counters so the next mission starts fresh.
+   */
+  public resetForMissionStart(): void {
+    this._pendingWaveSpawns.length = 0;
+    this._respawnQueue.length = 0;
+    this._relocateCooldowns.clear();
+    this._eliteRelocateCooldowns.clear();
+    this._relocateTimer = 0;
+
+    for (const [zombie] of this._activeZombies) {
+      zombie.onDied = null;
+      zombie.parkForHordeReset();
+    }
+    this._activeZombies.clear();
+
+    for (const type of this._hordeEnemyTypes) {
+      const active = this._activeEliteActors.get(type.id);
+      if (!active) continue;
+      for (const actor of active) {
+        type.clearDeathHook(actor);
+        actor.setHiddenInGame(true);
+        actor.rootComponent.position.set(0, -1000, 0);
+      }
+      active.clear();
+    }
+
+    this._hordeActive = false;
+    this._totalKills = 0;
+    this._waveTimer = 0;
+    this._spawningPaused = false;
+
+    // Re-hook placed zombies so they count toward activation again
+    this._needsHookPlaced = true;
   }
 
   protected override doEndPlay(): void {

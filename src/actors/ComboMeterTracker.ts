@@ -1,6 +1,7 @@
 import * as ENGINE from '@gnsx/genesys.js';
 import { ComboCounterUI } from '../ui/ComboCounterUI.js';
 import { ComboMilestoneUI } from '../ui/ComboMilestoneUI.js';
+import { missionState } from '../mission/MissionState.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 const RESET_DELAY_SEC = 3.0;
@@ -17,6 +18,7 @@ class ComboMeterTracker {
     this._count++;
     this._idleSec = 0;
     this._fadeSec = -1;
+    missionState.onChainReapEnemyKill(this._count);
     await this._ensureUI(world);
     this._updateDisplay();
     ComboMilestoneUI.getInstance(world).checkAndTrigger(this._count);
@@ -42,6 +44,10 @@ class ComboMeterTracker {
       this._hide();
       this._fadeSec = 0;
     }
+  }
+
+  public getComboCount(): number {
+    return this._count;
   }
 
   public reset(): void {

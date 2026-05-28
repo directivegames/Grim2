@@ -190,6 +190,20 @@ export class DeadGraveActor extends ENGINE.Actor {
   }
 
   /**
+   * Destroy all graves and clear the pool. Call this on every mission reset so
+   * tombstones from the previous attempt do not bleed into the next mission.
+   */
+  public static clearForMissionReset(): void {
+    for (const entry of gravePool) {
+      const world = entry.actor.getWorld();
+      if (world) {
+        entry.actor.destroy();
+      }
+    }
+    gravePool = [];
+  }
+
+  /**
    * Recycle this grave to a new position with new velocity.
    */
   private recycle(position: THREE.Vector3, velocity?: THREE.Vector3): void {

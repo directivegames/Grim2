@@ -12,6 +12,7 @@
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
+import { isGameplayUnlocked } from '../../utils/game-pause.js';
 
 /** Yaw (radians) of the isometric camera – defines the movement axes. */
 export const ISO_YAW = Math.PI / 4; // 45°
@@ -68,6 +69,20 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
     return this._worldVelocity;
   }
 
+  /** Clear cached input/velocity when restarting a mission from a fresh spawn. */
+  public resetRuntimeMotion(): void {
+    this.forwardInput.value = 0;
+    this.rightInput.value = 0;
+    this.lookUpInput.value = 0;
+    this.lookRightInput.value = 0;
+    this.zoomInput.value = 0;
+    this.forwardVelocity = 0;
+    this.rightVelocity = 0;
+    this.verticalVelocity = 0;
+    this.teleportPosition = null;
+    this._worldVelocity.set(0, 0, 0);
+  }
+
   // Jumping disabled.
   public override jump(_strength: number = 1): void { /* no-op */ }
   public override stopJump(): void { /* no-op */ }
@@ -79,6 +94,30 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
     const root  = owner.rootComponent;
 
     if (owner.isSimulatedProxy()) {
+      this._trackNetTransform(owner, root);
+      return;
+    }
+
+    if (!isGameplayUnlocked()) {
+      // Lock planar input but keep the character controller alive: it must run
+      // every frame to (a) execute mission-reset teleports queued via
+      // setPawnWorldTransform and (b) let gravity settle Grim onto the floor
+      // after a teleport spawns him slightly above ground. We deliberately do
+      // NOT call resetRuntimeMotion() — it would clear teleportPosition.
+      this.forwardInput.value = 0;
+      this.rightInput.value = 0;
+      this.lookUpInput.value = 0;
+      this.lookRightInput.value = 0;
+      this.zoomInput.value = 0;
+      this.forwardVelocity = 0;
+      this.rightVelocity = 0;
+      this._worldVelocity.set(0, 0, 0);
+
+      if (this.hasCharacterController && root instanceof ENGINE.PrimitiveComponent) {
+        this._deltaScratch.set(0, 0, 0);
+        this._applyControllerMovement(root, this._deltaScratch, deltaTime);
+      }
+
       this._trackNetTransform(owner, root);
       return;
     }

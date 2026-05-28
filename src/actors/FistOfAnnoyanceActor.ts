@@ -8,15 +8,15 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
+import { PostmanBossActor } from './PostmanBossActor.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
 import { loadSmokeTexture } from '../components/vfx/BillboardSmokePuffs.js';
+import { acquireSceneFist, releaseSceneFist } from '../utils/scene-visual-pool.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-const FIST_ACTOR_NAME = 'fistofannoyance';
 
 const FIST_START_Y = -3.5;
 const FIST_PEAK_Y = -0.1;
@@ -215,15 +215,10 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    for (const actor of world.getActors()) {
-      if (actor.name.toLowerCase() === FIST_ACTOR_NAME.toLowerCase()) {
-        this._sceneFistActor = actor;
-        break;
-      }
-    }
+    this._sceneFistActor = acquireSceneFist(world);
 
     if (!this._sceneFistActor) {
-      console.warn(`[FistOfAnnoyanceActor] No scene actor named "${FIST_ACTOR_NAME}" found.`);
+      console.warn('[FistOfAnnoyanceActor] No free scene fist available (all in use or none placed).');
       this.destroy();
       return;
     }
@@ -343,6 +338,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     const nearby = zombieSpatialManager.getNearbyZombies(this._fistPosScratch, FIST_HIT_RADIUS);
 
     for (const zombie of nearby) {
+      if (zombie instanceof PostmanBossActor) continue;
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
       zombie.rootComponent.getWorldPosition(this._zPosScratch);
@@ -592,6 +588,8 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   }
 
   protected override doEndPlay(): void {
+    releaseSceneFist(this._sceneFistActor);
+    this._sceneFistActor = null;
     this._cleanupVFX();
     super.doEndPlay();
   }

@@ -25,7 +25,9 @@ import { DialogueUI } from '../ui/DialogueUI.js';
 import { MapUI } from '../ui/MapUI.js';
 import type { MissionDef } from '../data/missions.js';
 import { beginMissionFromMap } from '../utils/begin-mission-from-map.js';
+import { gameSettings } from '../utils/game-settings.js';
 import { setGameplayUnlocked } from '../utils/game-pause.js';
+import { mountCutsceneSkipButton, removeCutsceneSkipButton } from '../ui/CutsceneSkipUI.js';
 import { CutsceneMusicActor } from './CutsceneMusicActor.js';
 
 
@@ -130,6 +132,12 @@ export class GrimIntroActor extends ENGINE.Actor {
 
   private _cutsceneCamera: ENGINE.ViewTargetCameraComponent | null = null;
 
+  private _skipRequested = false;
+
+  private _finishing = false;
+
+  private _removeSkipButton: (() => void) | null = null;
+
 
 
   protected override doBeginPlay(): void {
@@ -154,6 +162,12 @@ export class GrimIntroActor extends ENGINE.Actor {
 
 
   protected override doEndPlay(): void {
+    this._removeSkipButton?.();
+    this._removeSkipButton = null;
+    const world = this.getWorld();
+    if (world) {
+      removeCutsceneSkipButton(world);
+    }
     DialogueUI.close();
     // Keep intro black cover in the DOM — MapUI cross-fades it out after mount.
     this._blackCover = null;
@@ -164,37 +178,74 @@ export class GrimIntroActor extends ENGINE.Actor {
 
 
   private async _runIntroSequence(world: ENGINE.World): Promise<void> {
-
     world.inputManager.setInputEnabled(false);
-
     setGameplayUnlocked(false);
 
-
-
-    this._disableSceneViewTargetCameras(world);
-
-    this._setupIsometricCamera(world);
-
-
-
-    for (let i = 0; i < 4; i++) {
-
-      await this._nextFrame();
-
+    if (gameSettings.skipAllCutscenes) {
+      await this._finishIntro();
+      return;
     }
 
+    this._removeSkipButton = mountCutsceneSkipButton(world, () => {
+      void this._requestSkip();
+    });
 
+    this._disableSceneViewTargetCameras(world);
+    this._setupIsometricCamera(world);
+
+    for (let i = 0; i < 4; i++) {
+      if (this._skipRequested) break;
+      await this._nextFrame();
+    }
+
+    if (this._skipRequested) {
+      await this._finishIntro();
+      return;
+    }
 
     await this._fadeOutBlackCover();
+    if (this._skipRequested) {
+      await this._finishIntro();
+      return;
+    }
 
-    await delay(ROOM_DIALOGUE_DELAY_MS);
+    await this._interruptibleDelay(ROOM_DIALOGUE_DELAY_MS);
+    if (this._skipRequested) {
+      await this._finishIntro();
+      return;
+    }
 
-
+    this._removeSkipButton?.();
+    this._removeSkipButton = null;
 
     await DialogueUI.play(world, GRIM_INTRO_DIALOGUE);
+    if (!this._finishing) {
+      await this._finishIntro();
+    }
+  }
 
+  private async _requestSkip(): Promise<void> {
+    if (this._finishing || this._skipRequested) {
+      return;
+    }
+    this._skipRequested = true;
+    this._removeSkipButton?.();
+    this._removeSkipButton = null;
+    DialogueUI.completeActive();
     await this._finishIntro();
+  }
 
+  private async _interruptibleDelay(ms: number): Promise<void> {
+    const stepMs = 50;
+    let elapsed = 0;
+    while (elapsed < ms) {
+      if (this._skipRequested) {
+        return;
+      }
+      const chunk = Math.min(stepMs, ms - elapsed);
+      await delay(chunk);
+      elapsed += chunk;
+    }
   }
 
 
@@ -411,15 +462,22 @@ export class GrimIntroActor extends ENGINE.Actor {
    * Map START → live mission under UI: Tut Soul (if enabled) → Ready To Reap → control.
    */
   private async _finishIntro(): Promise<void> {
+    if (this._finishing) {
+      return;
+    }
+    this._finishing = true;
+
+    this._removeSkipButton?.();
+    this._removeSkipButton = null;
 
     const world = this.getWorld();
+    if (world) {
+      removeCutsceneSkipButton(world);
+    }
 
     if (!world) {
-
       console.error('[GrimIntroActor] No world — cannot finish intro.');
-
       return;
-
     }
 
     CutsceneMusicActor.stopAll(world);

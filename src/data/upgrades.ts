@@ -83,12 +83,12 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
   {
     id: 'health',
     name: 'Vitality',
-    description: 'Increases maximum health.',
+    description: 'Increases maximum health (+10 per level).',
     baseSoulCost: 100,
     costMultiplier: 2,
     itemCostsPerLevel: BONE_SHARD_LADDER,
     statKey: 'maxHealth',
-    statPerLevel: 25,
+    statPerLevel: 10,
   },
   {
     id: 'attack',
@@ -169,6 +169,23 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     itemCostsPerLevel: GRIM_EMBER_LADDER,
     statKey: 'luck',
     statPerLevel: 0.03,
+  },
+  {
+    id: 'soulLeech',
+    name: 'Soul Leech',
+    description: 'Restore more health per kill (+0.15 HP per level, stacks with base leech).',
+    baseSoulCost: 250,
+    costMultiplier: 2.2,
+    itemCostsPerLevel: [
+      [],
+      [{ itemId: 'cursed_vial', qty: 15 }],
+      [{ itemId: 'soul_crystal', qty: 8 }],
+      [{ itemId: 'grim_ember', qty: 5 }],
+      [{ itemId: 'void_relic', qty: 3 }],
+      [{ itemId: 'void_relic', qty: 8 }],
+    ],
+    statKey: 'soulHeal',
+    statPerLevel: 0.15,
   },
 ] as const;
 

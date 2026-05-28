@@ -2,8 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { z } from 'zod';
-
 export const isDev = process.env.NODE_ENV === 'development' ||
   process.env.NODE_ENV === 'dev' ||
   process.argv.includes('--dev');
@@ -31,16 +29,9 @@ export function getProjectRoot() {
   }
 }
 
-export const TransformSchema = z.object({
-  position: z.array(z.number()).length(3).optional().describe('Position as [x, y, z]'),
-  rotation: z.array(z.number()).length(3).optional().describe('Rotation in radians as [x, y, z]'),
-  scale: z.array(z.number()).length(3).optional().describe('Scale as [x, y, z], use this to scale the actor up or down'),
-});
-
-export type Transform = z.infer<typeof TransformSchema>;
-
-export const ActorInfoSchema = z.object({
-  name: z.string().describe('Name of the actor'),
-  description: z.string().optional().describe('Description of the actor, including its purpose, how to use it, etc.'),
-});
+export type Transform = {
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number, number];
+};
 

@@ -10,8 +10,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 import type { ActorOptions } from '@gnsx/genesys.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
-import { SoulActor } from './SoulActor.js';
 import { GameAudioManager } from './GameAudioManager.js';
+import { parkAllSceneFists, parkAllSceneWeapons } from '../utils/scene-visual-pool.js';
 
 /** Off-screen position for warmup actors - far enough to never be visible. */
 const HIDDEN_POS = new THREE.Vector3(0, -1000, 0);
@@ -77,25 +77,14 @@ export class WarmupActor extends ENGINE.Actor {
       this._warmupActors.push(gore);
     }
 
-    // 4. Pre-warm soul actors
-    for (let i = 0; i < 2; i++) {
-      const soul = SoulActor.create({ position: HIDDEN_POS.clone() });
-      world.addActor(soul);
-      this._warmupActors.push(soul);
-    }
+    // 4. Park all scene fists / hide weapons until abilities use them
+    parkAllSceneFists(world);
+    parkAllSceneWeapons(world);
 
-    // 5. Park fist underground if it exists
-    for (const actor of world.getActors()) {
-      if (actor.name.toLowerCase() === 'fistofannoyance') {
-        actor.rootComponent.position.y = -1000;
-        break;
-      }
-    }
-
-    // 6. Force shader compilation by rendering frames
+    // 5. Force shader compilation by rendering frames
     this._forceShaderCompilation();
 
-    // 7. Schedule cleanup and completion check
+    // 6. Schedule cleanup and completion check
     setTimeout(() => this._checkComplete(), WARMUP_HOLD_MS + CHECK_INTERVAL_MS);
   }
 

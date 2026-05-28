@@ -20,6 +20,8 @@ const STUTTER_DURATION_MAX = 0.055;
 /** Skip light updates when farther than this from the player (world units). */
 const UPDATE_DISTANCE = 25;
 const UPDATE_DISTANCE_SQ = UPDATE_DISTANCE * UPDATE_DISTANCE;
+/** Flicker update rate when in range (seconds between intensity updates). */
+const UPDATE_INTERVAL = 0.1;
 
 @ENGINE.GameClass()
 export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
@@ -32,6 +34,8 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
   private _stutterCountdown = 0;
   private _stutterHold = 0;
   private _bound = false;
+  private _updateAccumulator = 0;
+  private _lightsActive = false;
   private readonly _myPos = new THREE.Vector3();
   private readonly _playerPos = new THREE.Vector3();
 
@@ -51,17 +55,29 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
       this.getWorldPosition(this._myPos);
       player.rootComponent.getWorldPosition(this._playerPos);
       if (this._myPos.distanceToSquared(this._playerPos) > UPDATE_DISTANCE_SQ) {
+        if (this._lightsActive) {
+          this._setIntensities(0, 0);
+          this._lightsActive = false;
+        }
         return;
       }
+      this._lightsActive = true;
     }
 
+    this._updateAccumulator += deltaTime;
+    if (this._updateAccumulator < UPDATE_INTERVAL) {
+      return;
+    }
+    const step = this._updateAccumulator;
+    this._updateAccumulator = 0;
+
     if (this._stutterHold > 0) {
-      this._stutterHold -= deltaTime;
+      this._stutterHold -= step;
       this._setIntensities(0, 0);
       return;
     }
 
-    this._stutterCountdown -= deltaTime;
+    this._stutterCountdown -= step;
     if (this._stutterCountdown <= 0) {
       if (Math.random() < STUTTER_CHANCE) {
         this._stutterHold =
@@ -72,7 +88,7 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
         Math.random() * (STUTTER_INTERVAL_MAX - STUTTER_INTERVAL_MIN);
     }
 
-    this._elapsed += deltaTime;
+    this._elapsed += step;
     const cycle = HALF_CYCLE * 2;
     let phase = ((this._elapsed + this._phaseOffset) % cycle) / cycle;
 

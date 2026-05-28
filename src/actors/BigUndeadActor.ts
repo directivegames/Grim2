@@ -18,12 +18,16 @@ import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { KOSignUI } from '../ui/KOSignUI.js';
-import { SoulCounterUI } from '../ui/SoulCounterUI.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
+import { awardSoulFromEnemyKill } from '../utils/award-soul.js';
+import { tryRollMissionItemDropOnEnemyKill } from '../utils/mission-enemy-drops.js';
+
+const ENEMY_TYPE_BIG_UNDEAD = 'big_undead';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { VomitballProjectileActor } from './VomitballProjectileActor.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
+import { BIG_UNDEAD_BASE_PROJECTILE_DAMAGE } from '../data/combat-balance.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -607,6 +611,8 @@ export class BigUndeadActor extends ENGINE.Actor {
     if (world) {
       killStreakTracker.recordKill(world);
       void comboMeterTracker.recordKill(world);
+      awardSoulFromEnemyKill(world);
+      tryRollMissionItemDropOnEnemyKill(ENEMY_TYPE_BIG_UNDEAD);
       const player = world.getFirstPlayerPawn();
       if (player && 'triggerFOVPunch' in player) {
         (player as unknown as { triggerFOVPunch(intensity: number): void }).triggerFOVPunch(0.5);
@@ -721,12 +727,6 @@ export class BigUndeadActor extends ENGINE.Actor {
     setTimeout(() => {
       smokeActor.destroy();
     }, 3000);
-
-    const player = world.getFirstPlayerPawn();
-    if (player instanceof IsometricPlayerPawn) {
-      player.soulsCollected++;
-    }
-    void SoulCounterUI.getInstance(world).then(ui => ui.increment());
   }
 
   private _ensureBlobShadowAtFeet(): void {
@@ -748,6 +748,29 @@ export class BigUndeadActor extends ENGINE.Actor {
     if (!shadow) return;
     this._blobShadow = shadow;
     shadow.visible = false;
+  }
+
+  private static readonly BASE_MAX_HEALTH = 150;
+
+  /** Apply mission risk multipliers (health + vomitball damage). */
+  public applyMissionRiskMultipliers(healthMult: number, damageMult: number): void {
+    this.maxHealth = BigUndeadActor.BASE_MAX_HEALTH * healthMult;
+    this.projectileDamage = Math.round(BIG_UNDEAD_BASE_PROJECTILE_DAMAGE * damageMult);
+
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (!stats || this._deathSequenceStarted) {
+      return;
+    }
+
+    stats.setMaxHealth(this.maxHealth);
+    const mutableStats = stats as unknown as {
+      maxHealth: number;
+      currentHealth: number;
+      onHealthChanged: { invoke(current: number, max: number): void };
+    };
+    mutableStats.currentHealth = this.maxHealth;
+    this._lastTrackedHealth = this.maxHealth;
+    mutableStats.onHealthChanged.invoke(this.maxHealth, this.maxHealth);
   }
 
   private _tickFlash(deltaTime: number): void {

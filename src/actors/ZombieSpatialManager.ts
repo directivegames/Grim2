@@ -2,17 +2,22 @@
  * Spatial partitioning manager for zombies.
  *
  * PERFORMANCE: Replaces O(n) zombie scans with O(1) cell-based lookups.
- * This dramatically improves performance with large hordes (50-100+ zombies).
+ * Uses numeric cell keys and Sets to avoid string allocation and array scans.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 const CELL_SIZE = 4; // Units - adjust based on separation radius (0.88) * ~4
 
+/** Pack cell coordinates into a single integer key (no string allocation). */
+function cellKey(cellX: number, cellZ: number): number {
+  return cellX * 65536 + cellZ;
+}
+
 export class ZombieSpatialManager {
   private static instance: ZombieSpatialManager;
-  private grid = new Map<string, ENGINE.Actor[]>();
-  private zombieToCell = new Map<ENGINE.Actor, string>();
+  private grid = new Map<number, Set<ENGINE.Actor>>();
+  private zombieToCell = new Map<ENGINE.Actor, number>();
 
   /** Scratch vector reused for all position queries — avoids per-call GC. */
   private readonly _zPos = new THREE.Vector3();
@@ -34,22 +39,19 @@ export class ZombieSpatialManager {
    */
   registerZombie(zombie: ENGINE.Actor): void {
     zombie.rootComponent.getWorldPosition(this._zPos);
-    const cell = this.getCell(this._zPos);
+    const cell = this.getCellKey(this._zPos);
 
-    // Remove from old cell if present
     const oldCell = this.zombieToCell.get(zombie);
-    if (oldCell && oldCell !== cell) {
+    if (oldCell !== undefined && oldCell !== cell) {
       this.removeFromCell(zombie, oldCell);
     }
 
-    // Add to new cell
-    if (!this.grid.has(cell)) {
-      this.grid.set(cell, []);
+    let cellSet = this.grid.get(cell);
+    if (!cellSet) {
+      cellSet = new Set();
+      this.grid.set(cell, cellSet);
     }
-    const cellArray = this.grid.get(cell)!;
-    if (!cellArray.includes(zombie)) {
-      cellArray.push(zombie);
-    }
+    cellSet.add(zombie);
 
     this.zombieToCell.set(zombie, cell);
   }
@@ -60,18 +62,19 @@ export class ZombieSpatialManager {
    */
   updateZombiePosition(zombie: ENGINE.Actor): void {
     zombie.rootComponent.getWorldPosition(this._zPos);
-    const newCell = this.getCell(this._zPos);
+    const newCell = this.getCellKey(this._zPos);
     const oldCell = this.zombieToCell.get(zombie);
 
     if (oldCell !== newCell) {
-      // Move to new cell
-      if (oldCell) {
+      if (oldCell !== undefined) {
         this.removeFromCell(zombie, oldCell);
       }
-      if (!this.grid.has(newCell)) {
-        this.grid.set(newCell, []);
+      let cellSet = this.grid.get(newCell);
+      if (!cellSet) {
+        cellSet = new Set();
+        this.grid.set(newCell, cellSet);
       }
-      this.grid.get(newCell)!.push(zombie);
+      cellSet.add(zombie);
       this.zombieToCell.set(zombie, newCell);
     }
   }
@@ -82,7 +85,7 @@ export class ZombieSpatialManager {
    */
   unregisterZombie(zombie: ENGINE.Actor): void {
     const cell = this.zombieToCell.get(zombie);
-    if (cell) {
+    if (cell !== undefined) {
       this.removeFromCell(zombie, cell);
       this.zombieToCell.delete(zombie);
     }
@@ -93,8 +96,6 @@ export class ZombieSpatialManager {
    * PERFORMANCE: O(1) lookup - only checks 9 cells max.
    */
   getNearbyZombies(position: THREE.Vector3, radius: number): ENGINE.Actor[] {
-    // Reuse scratch array — caller must not hold the reference across frames,
-    // and must use it synchronously before the next getNearbyZombies call.
     this._scratchResultsLength = 0;
     const radiusSq = radius * radius;
 
@@ -104,8 +105,7 @@ export class ZombieSpatialManager {
 
     for (let dx = -cellRange; dx <= cellRange; dx++) {
       for (let dz = -cellRange; dz <= cellRange; dz++) {
-        const cell = `${cellX + dx},${cellZ + dz}`;
-        const zombies = this.grid.get(cell);
+        const zombies = this.grid.get(cellKey(cellX + dx, cellZ + dz));
         if (!zombies) continue;
 
         for (const zombie of zombies) {
@@ -117,7 +117,6 @@ export class ZombieSpatialManager {
       }
     }
 
-    // Truncate in-place (O(1), no allocation) so callers get correct .length
     this._scratchResults.length = this._scratchResultsLength;
     return this._scratchResults;
   }
@@ -129,7 +128,7 @@ export class ZombieSpatialManager {
     return this.zombieToCell.size;
   }
 
-  /** All zombies currently registered (for projectile ignore lists). */
+  /** All zombies currently registered (for projectile ignore lists). Returns a new array. */
   getAllRegisteredZombies(): ENGINE.Actor[] {
     return Array.from(this.zombieToCell.keys());
   }
@@ -142,26 +141,23 @@ export class ZombieSpatialManager {
     this.zombieToCell.clear();
   }
 
-  private getCell(pos: THREE.Vector3): string {
+  private getCellKey(pos: THREE.Vector3): number {
     const x = Math.floor(pos.x / CELL_SIZE);
     const z = Math.floor(pos.z / CELL_SIZE);
-    return `${x},${z}`;
+    return cellKey(x, z);
   }
 
-  private removeFromCell(zombie: ENGINE.Actor, cell: string): void {
-    const cellArray = this.grid.get(cell);
-    if (cellArray) {
-      const index = cellArray.indexOf(zombie);
-      if (index >= 0) {
-        cellArray.splice(index, 1);
-      }
-      // Clean up empty cells
-      if (cellArray.length === 0) {
-        this.grid.delete(cell);
-      }
+  private removeFromCell(zombie: ENGINE.Actor, cell: number): void {
+    const cellSet = this.grid.get(cell);
+    if (!cellSet) {
+      return;
+    }
+
+    cellSet.delete(zombie);
+    if (cellSet.size === 0) {
+      this.grid.delete(cell);
     }
   }
 }
 
-// Export singleton instance
 export const zombieSpatialManager = ZombieSpatialManager.getInstance();

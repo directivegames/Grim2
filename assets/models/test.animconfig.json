@@ -1,0 +1,6 @@
+{
+  "$root": {
+    "$bc": "ENGINE.AnimationConfigResource"
+  },
+  "$version": 2
+}

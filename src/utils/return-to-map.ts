@@ -10,6 +10,7 @@ import type { MissionConfig } from '../data/mission-types.js';
 import type { MissionDef } from '../data/missions.js';
 import { missionRunner } from '../mission/MissionRunner.js';
 import { MapUI } from '../ui/MapUI.js';
+import { ItemCollectedToastUI } from '../ui/ItemCollectedToastUI.js';
 import { MissionResultUI } from '../ui/MissionResultUI.js';
 import { MissionRewardsUI } from '../ui/MissionRewardsUI.js';
 import { UpgradeShopUI } from '../ui/UpgradeShopUI.js';
@@ -18,6 +19,7 @@ import { beginMissionFromMap } from './begin-mission-from-map.js';
 import { resumeGame, setGameplayUnlocked } from './game-pause.js';
 import { PauseMenuUI } from '../ui/PauseMenuUI.js';
 import { removeAllBlockingOverlays } from './screen-transition.js';
+import { resetMissionWorld } from './reset-mission-world.js';
 
 /** Shared cleanup after a mission ends (win or fail). */
 export function cleanupAfterMission(world: ENGINE.World): void {
@@ -30,6 +32,7 @@ export function cleanupAfterMission(world: ENGINE.World): void {
   comboMeterTracker.reset();
   MissionResultUI.close();
   MissionRewardsUI.close();
+  ItemCollectedToastUI.hideForWorld(world);
   UpgradeShopUI.close(world);
   TutSoulUI.close();
   removeAllBlockingOverlays(world);
@@ -52,6 +55,8 @@ export function cleanupAfterMission(world: ENGINE.World): void {
       actor.parkForHordeReset();
     }
   }
+
+  resetMissionWorld(world, { restorePlacedEnemies: false });
 }
 
 /** Return to the Burdenville map to pick another mission. */

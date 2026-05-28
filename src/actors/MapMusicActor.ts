@@ -7,6 +7,7 @@ const MAP_TRACK = '@project/assets/sounds/Mapmusic.wav';
 @ENGINE.GameClass()
 export class MapMusicActor extends ENGINE.Actor {
   private _sound: ENGINE.SoundComponent | null = null;
+  private _musicVolumeScale = gameSettings.musicVolume;
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
@@ -30,6 +31,11 @@ export class MapMusicActor extends ENGINE.Actor {
 
   public stopNow(): void {
     this._sound?.stopAll();
+  }
+
+  public setMusicVolume(scale: number): void {
+    this._musicVolumeScale = Math.max(0, Math.min(1, scale));
+    this._sound?.setVolumeAll(BASE_MAP_MUSIC_VOLUME * this._musicVolumeScale);
   }
 
   public static stopAll(world: ENGINE.World): void {

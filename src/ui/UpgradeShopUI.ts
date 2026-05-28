@@ -4,7 +4,7 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import { getItemById, itemIconProjectPath } from '../data/items.js';
+import { getItemById } from '../data/items.js';
 import { SHOP_ITEMS, type ShopItemDef } from '../data/shop-items.js';
 import {
   GRIM_STAT_UPGRADES,
@@ -17,7 +17,7 @@ import { grimVault } from '../game/GrimVault.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
 import { withMenuSelectSound } from '../utils/menu-audio.js';
 import { injectBreeSerifFont } from './uiTypography.js';
-import { ItemIconCache } from './ItemIconCache.js';
+import { ShopItemIconsHUDUI } from './ShopItemIconsHUDUI.js';
 import {
   formatStatBonusPerLevel,
   skillCurrentDescription,
@@ -89,12 +89,12 @@ export class UpgradeShopUI {
   private _windowFrame: HTMLDivElement | null = null;
   private _listHost: HTMLDivElement | null = null;
   private _soulsEl: HTMLSpanElement | null = null;
+  private _mounting = false;
   private _tab: ShopTab = 'upgrades';
   private _bgUrl = '';
   private _upgradeWindowUrl = '';
   private _shopWindowUrl = '';
   private _btnUrl = '';
-  private readonly _itemIconUrls = new Map<string, string>();
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -107,8 +107,10 @@ export class UpgradeShopUI {
     }
 
     let inst = UpgradeShopUI.byWorld.get(world);
-    if (inst?._overlay) {
-      inst._refresh();
+    if (inst?._overlay || inst?._mounting) {
+      if (inst._overlay) {
+        inst._refresh();
+      }
       return;
     }
 
@@ -124,6 +126,18 @@ export class UpgradeShopUI {
   }
 
   private async _mount(): Promise<void> {
+    if (this._overlay || this._mounting) {
+      return;
+    }
+    this._mounting = true;
+    try {
+      await this._mountInner();
+    } finally {
+      this._mounting = false;
+    }
+  }
+
+  private async _mountInner(): Promise<void> {
     const gc = (this._world as GameContainerWorld).gameContainer;
     if (!gc) {
       return;
@@ -137,8 +151,7 @@ export class UpgradeShopUI {
       resolveAssetUrl(BTN_URL),
     ]);
 
-    // Ensure item icons are already resolved/loaded (MapUI starts this early).
-    await ItemIconCache.warm(this._world);
+    await ShopItemIconsHUDUI.getInstance(this._world);
 
     const backdrop = document.createElement('div');
     backdrop.setAttribute(SHOP_OVERLAY_ATTR, '');
@@ -213,6 +226,7 @@ export class UpgradeShopUI {
       width: min(520px, 92vw);
       aspect-ratio: 520 / 620;
       max-height: min(72vh, 620px);
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
@@ -240,8 +254,9 @@ export class UpgradeShopUI {
     closeBtn.style.cssText += `
       position: relative;
       z-index: 3;
-      margin-top: clamp(8px, 1vh, 14px);
+      margin: clamp(8px, 1vh, 14px) auto 0;
       min-width: 140px;
+      align-self: center;
     `;
 
     const stack = document.createElement('div');
@@ -251,9 +266,10 @@ export class UpgradeShopUI {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       width: 100%;
       max-width: min(560px, 96vw);
-      padding: clamp(40px, 8vh, 72px) 12px clamp(16px, 3vh, 28px);
+      padding: clamp(24px, 4vh, 40px) 12px;
       box-sizing: border-box;
     `;
     stack.append(tabRow, this._windowFrame, closeBtn);
@@ -377,7 +393,10 @@ export class UpgradeShopUI {
     name.style.cssText = this._rowTitleStyle();
 
     const desc = document.createElement('div');
-    desc.textContent = `${def.description} (${formatStatBonusPerLevel(def)} per level)`;
+    const cur = grimVault.computeStats();
+    const next = grimVault.computeStatsWithStatLevelOverride(def.id, level + 1);
+    const preview = this._formatStatPreview(def, cur[def.statKey], next[def.statKey]);
+    desc.textContent = `${def.description}  ${preview}  (${formatStatBonusPerLevel(def)} per level)`;
     desc.style.cssText = this._rowDescStyle();
 
     const cost = document.createElement('div');
@@ -396,6 +415,35 @@ export class UpgradeShopUI {
     });
     row.append(info, buy);
     return row;
+  }
+
+  private _formatStatPreview(def: GrimStatUpgradeDef, cur: number, next: number): string {
+    const clamp = (n: number): number => (Number.isFinite(n) ? n : 0);
+    const a = clamp(cur);
+    const b = clamp(next);
+
+    switch (def.statKey) {
+      case 'maxHealth':
+        return `Max HP: ${Math.round(a)} → ${Math.round(b)}`;
+      case 'moveSpeed':
+        return `Speed: ${a.toFixed(1)} → ${b.toFixed(1)}`;
+      case 'attackMult':
+        return `Damage: ${a.toFixed(2)}× → ${b.toFixed(2)}×`;
+      case 'defence':
+      case 'poisonRes':
+      case 'possessionRes':
+      case 'fearRes':
+      case 'critChance':
+      case 'luck': {
+        const pctA = Math.round(a * 100);
+        const pctB = Math.round(b * 100);
+        return `${def.statKey}: ${pctA}% → ${pctB}%`;
+      }
+      case 'soulHeal':
+        return `Leech: ${a.toFixed(2)} → ${b.toFixed(2)} HP/kill`;
+      default:
+        return `${def.statKey}: ${a} → ${b}`;
+    }
   }
 
   private _buildSkillRow(def: SkillUpgradeDef): HTMLDivElement {
@@ -567,16 +615,9 @@ export class UpgradeShopUI {
     img.alt = alt || item?.name || itemId;
     img.style.cssText =
       'width: 100%; height: 100%; object-fit: contain; display: block;';
-    const url = ItemIconCache.getUrl(this._world, itemId) || this._itemIconUrls.get(itemId);
+    const url = ShopItemIconsHUDUI.getUrl(this._world, itemId);
     if (url) {
       img.src = url;
-    } else if (item) {
-      // Same pattern as FistAbilityHUDUI — assign resolved string directly.
-      void ENGINE.resolveAssetPathsInText(itemIconProjectPath(item.iconFile)).then((src) => {
-        const resolved = (src ?? '').trim();
-        this._itemIconUrls.set(itemId, resolved);
-        img.src = resolved;
-      });
     }
     wrap.appendChild(img);
     return wrap;
@@ -683,7 +724,6 @@ export class UpgradeShopUI {
     this._windowFrame = null;
     this._listHost = null;
     this._soulsEl = null;
-    this._itemIconUrls.clear();
     UpgradeShopUI.byWorld.delete(this._world);
   }
 }

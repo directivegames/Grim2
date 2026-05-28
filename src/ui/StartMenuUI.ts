@@ -24,6 +24,9 @@ const SHATTER_STAGGER_MS = 14;
 /** Sync overlay: covers canvas until real menu DOM is ready (see preflightCover). */
 const BLOCKER_ATTR = 'data-grim-start-menu-blocker';
 
+/** Injected in main() before the game loop starts — removed when the start menu mounts. */
+export const EARLY_LOAD_ATTR = 'data-grim-early-load';
+
 type GameContainerWorld = ENGINE.World & {
   gameContainer?: HTMLElement;
   options?: { headless?: boolean };
@@ -34,6 +37,7 @@ export class StartMenuUI {
 
   private readonly _world: ENGINE.World;
   private _root: HTMLDivElement | null = null;
+  private _mounting = false;
   private _playWrap: HTMLDivElement | null = null;
   private _playLabel: HTMLSpanElement | null = null;
   private _warmupReady = false;
@@ -79,6 +83,35 @@ export class StartMenuUI {
       return;
     }
     container.querySelectorAll(`[${BLOCKER_ATTR}]`).forEach(el => el.remove());
+    container.querySelectorAll(`[${EARLY_LOAD_ATTR}]`).forEach(el => el.remove());
+  }
+
+  /** Cover the host container before the engine finishes booting (call from main()). */
+  public static injectEarlyLoadCover(container: HTMLElement): void {
+    if (container.querySelector(`[${EARLY_LOAD_ATTR}]`)) {
+      return;
+    }
+    if (getComputedStyle(container).position === 'static') {
+      container.style.position = 'relative';
+    }
+    const cover = document.createElement('div');
+    cover.setAttribute(EARLY_LOAD_ATTR, '');
+    cover.style.cssText = `
+      position: absolute;
+      inset: 0;
+      z-index: 99999;
+      background: #050508;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      color: rgba(160, 175, 190, 0.85);
+    `;
+    cover.textContent = 'LOADING';
+    container.appendChild(cover);
   }
 
   public static isVisible(world: ENGINE.World): boolean {
@@ -112,8 +145,8 @@ export class StartMenuUI {
    */
   public static attach(world: ENGINE.World, onPlay?: () => void): StartMenuUI {
     let inst = StartMenuUI.byWorld.get(world);
-    if (inst?._root) {
-      return inst;
+    if (inst?._root || inst?._mounting) {
+      return inst!;
     }
     if (!inst) {
       inst = new StartMenuUI(world);
@@ -160,6 +193,18 @@ export class StartMenuUI {
   }
 
   private async _mount(): Promise<void> {
+    if (this._root || this._mounting) {
+      return;
+    }
+    this._mounting = true;
+    try {
+      await this._mountInner();
+    } finally {
+      this._mounting = false;
+    }
+  }
+
+  private async _mountInner(): Promise<void> {
     const gameContainer = this._gameContainer();
     const w = this._world as GameContainerWorld;
     if (!gameContainer || w.options?.headless) {

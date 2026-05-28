@@ -2,7 +2,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
-import type { MissionConfig } from '../data/mission-types.js';
+import { PostmanBossMusicActor } from '../actors/PostmanBossMusicActor.js';
+import { isBossFightMission, type MissionConfig } from '../data/mission-types.js';
 import type { MissionDef } from '../data/missions.js';
 import { missionRunner } from '../mission/MissionRunner.js';
 import { ReadyToReapUI } from '../ui/ReadyToReapUI.js';
@@ -38,8 +39,25 @@ export function beginMissionFromMap(
   const finishMissionIntro = (): void => {
     removeAllBlockingOverlays(world);
     setGameplayUnlocked(true);
-    BackgroundMusicActor.ensurePlaying(world);
+
+    const bg = world.getActors().find(a => a instanceof BackgroundMusicActor);
+    if (bg instanceof BackgroundMusicActor) {
+      bg.stop();
+    }
+
+    if (isBossFightMission(config)) {
+      missionRunner.revealBossFight(world);
+      PostmanBossMusicActor.ensurePlaying(world);
+    } else {
+      BackgroundMusicActor.ensurePlaying(world);
+    }
+
     resumeGame(world);
+    // Ready To Reap / map START disable input without pauseGame — ensure slomo runs.
+    const w = world as unknown as { slomo?: number };
+    if (typeof w.slomo === 'number' && w.slomo <= 0) {
+      w.slomo = 1;
+    }
     if (pawn instanceof IsometricPlayerPawn) {
       pawn.applyGrimVaultStats();
     }

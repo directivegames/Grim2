@@ -1,10 +1,7 @@
-const TUT_SOUL_SEEN_KEY = 'grim2-seen-tutsoul';
+import { grimVault } from '../game/GrimVault.js';
+import { gameSettings } from './game-settings.js';
 
-/**
- * When true, TutSoul shows on every mission start (testing / no save yet).
- * Set to false once a save system tracks per-profile tutorial flags.
- */
-export const ALWAYS_SHOW_TUT_SOUL_UNTIL_SAVE = true;
+const TUT_SOUL_SEEN_KEY = 'grim2-seen-tutsoul';
 
 export function hasSeenTutSoul(): boolean {
   if (typeof localStorage === 'undefined') {
@@ -18,7 +15,10 @@ export function hasSeenTutSoul(): boolean {
 }
 
 export function markTutSoulSeen(): void {
-  if (ALWAYS_SHOW_TUT_SOUL_UNTIL_SAVE) {
+  if (gameSettings.alwaysShowTutorials) {
+    return;
+  }
+  if (!grimVault.isTutorialCompleted()) {
     return;
   }
   if (typeof localStorage === 'undefined') {
@@ -31,9 +31,12 @@ export function markTutSoulSeen(): void {
   }
 }
 
-/** Show save-innocents tutorial overlay before first suburbs run (or every run while testing). */
+/** Show save-innocents tutorial before mission gameplay. */
 export function shouldShowTutSoul(): boolean {
-  if (ALWAYS_SHOW_TUT_SOUL_UNTIL_SAVE) {
+  if (gameSettings.alwaysShowTutorials) {
+    return true;
+  }
+  if (!grimVault.isTutorialCompleted()) {
     return true;
   }
   return !hasSeenTutSoul();

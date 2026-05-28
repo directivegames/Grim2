@@ -26,6 +26,11 @@ export class GameAudioManager extends ENGINE.Actor {
     menuSelect:      { path: '@project/assets/sounds/selectsound.wav', volume: 0.42, poolSize: 2 },
     letsReap:        { path: '@project/assets/sounds/Letsreap.mp3', volume: 0.55, poolSize: 1 },
     buying:          { path: '@project/assets/sounds/Buying.mp3', volume: 0.5, poolSize: 1 },
+    postmanDebt:     { path: '@project/assets/sounds/debt.mp3', volume: 0.88, poolSize: 1 },
+    postmanMama:     { path: '@project/assets/sounds/mama.mp3', volume: 0.88, poolSize: 1 },
+    postmanOwnadog:  { path: '@project/assets/sounds/ownadog.mp3', volume: 0.88, poolSize: 1 },
+    postmanLine:     { path: '@project/assets/sounds/postman.mp3', volume: 0.88, poolSize: 1 },
+    postmanXmascard: { path: '@project/assets/sounds/xmascard.mp3', volume: 0.88, poolSize: 1 },
   };
 
   // Global cooldown for hit sounds to prevent audio spam when hitting zombie hordes

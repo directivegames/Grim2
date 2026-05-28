@@ -23,6 +23,7 @@ import { CloudShadowActor } from './cloudShadow/CloudShadowActor.js';
 import { DEFAULT_CLOUD_SHADOW_MAP } from './cloudShadow/CloudShadowState.js';
 import { FilmGrainActor } from './post/FilmGrainActor.js';
 import { DEFAULT_FILM_GRAIN_SETTINGS, FilmGrainUI } from './ui/FilmGrainUI.js';
+import { gameSettings } from './utils/game-settings.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
 import { setGameplayUnlocked } from './utils/game-pause.js';
 import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
@@ -251,7 +252,10 @@ class MyGame extends ENGINE.BaseGameLoop {
     world.addActor(FilmGrainActor.create({
       name: 'FilmGrain',
     }));
-    FilmGrainUI.attach(world, DEFAULT_FILM_GRAIN_SETTINGS);
+    FilmGrainUI.attach(world, {
+      ...DEFAULT_FILM_GRAIN_SETTINGS,
+      enabled: gameSettings.filmGrainEnabled,
+    });
   }
 
   /** Large flowmap fog cards at existing ground-mist cluster positions. */
@@ -289,6 +293,8 @@ class MyGame extends ENGINE.BaseGameLoop {
 }
 
 export function main(container: HTMLElement, options?: Partial<ENGINE.BaseGameLoopOptions>): ENGINE.IGameLoop {
+  StartMenuUI.injectEarlyLoadCover(container);
+
   const mergedOptions: Partial<ENGINE.BaseGameLoopOptions> = {
     ...options,
     // Disable the Three.js GPU-timestamp inspector – it forces a CPU/GPU sync

@@ -8,14 +8,17 @@ import { GRIM_INTRO_BLACK_COVER_ATTR } from '../actors/GrimIntroActor.js';
 import { MapMusicActor } from '../actors/MapMusicActor.js';
 import { MISSIONS, type MissionDef } from '../data/missions.js';
 import type { MissionConfig } from '../data/mission-types.js';
+import { createBossFightMissionConfig } from '../data/mission-types.js';
 import { RISK_LEVELS, type RiskLevel } from '../data/risk-levels.js';
 import {
-  getMissionGoalPreview,
+  formatMissionConfigBriefing,
+  rollMissionBoard,
   rollMissionConfigForPoolId,
+  type MissionBoard,
 } from '../game/MissionSelector.js';
+import { applyRisk5PlusToMission } from '../game/mission-risk5-plus.js';
 import { grimVault } from '../game/GrimVault.js';
 import { UpgradeShopUI } from './UpgradeShopUI.js';
-import { ItemIconCache } from './ItemIconCache.js';
 import { playShopOpenSound, withMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeInElement, fadeOutIntroBlackCover } from '../utils/screen-transition.js';
 
@@ -62,10 +65,12 @@ export class MapUI {
 
   private readonly _world: ENGINE.World;
   private _root: HTMLDivElement | null = null;
+  private _mounting = false;
   private _briefing: HTMLDivElement | null = null;
   private _onMissionStart: ((mission: MissionDef, config: MissionConfig) => void) | null = null;
   private _briefingMission: MissionDef | null = null;
   private _selectedRiskLevel: RiskLevel = 1;
+  private _useRisk5Plus = false;
   private _briefingGoalsEl: HTMLParagraphElement | null = null;
   private _briefingSubEl: HTMLParagraphElement | null = null;
   private _resolvedMapUrl = '';
@@ -74,6 +79,8 @@ export class MapUI {
   private _resolvedFrameUrl = '';
   private _resolvedShopIconUrl = '';
   private readonly _resolvedIconUrls = new Map<string, string>();
+  private _missionBoard: MissionBoard = {};
+  private _activePoolId = 'suburbs';
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -82,6 +89,26 @@ export class MapUI {
   public static isOpen(world: ENGINE.World): boolean {
     const inst = MapUI.byWorld.get(world);
     return Boolean(inst?._root);
+  }
+
+  /** Debug (R): reroll one random mission per unlocked risk tier. */
+  public static debugRerollMissions(world: ENGINE.World): boolean {
+    const inst = MapUI.byWorld.get(world);
+    if (!inst?._root) {
+      return false;
+    }
+    inst._debugRerollMissionBoard();
+    return true;
+  }
+
+  /** Debug (L): force "The Postman Comes" on all unlocked risk tiers. */
+  public static debugForcePostmanMission(world: ENGINE.World): boolean {
+    const inst = MapUI.byWorld.get(world);
+    if (!inst?._root) {
+      return false;
+    }
+    inst._debugForcePostmanMission();
+    return true;
   }
 
   /**
@@ -105,8 +132,11 @@ export class MapUI {
     }
 
     let inst = MapUI.byWorld.get(world);
-    if (inst?._root) {
+    if (inst?._root || inst?._mounting) {
       inst._onMissionStart = onMissionStart;
+      if (inst._root) {
+        inst._refreshMissionBoard(inst._activePoolId);
+      }
       return inst;
     }
 
@@ -129,14 +159,22 @@ export class MapUI {
   }
 
   private async _mount(): Promise<void> {
+    if (this._root || this._mounting) {
+      return;
+    }
+    this._mounting = true;
+    try {
+      await this._mountInner();
+    } finally {
+      this._mounting = false;
+    }
+  }
+
+  private async _mountInner(): Promise<void> {
     const gameContainer = this._gameContainer();
     if (!gameContainer) {
       return;
     }
-
-    // Warm item icons while the map is open (shop uses this cache).
-    // We intentionally do not await to avoid delaying map display.
-    void ItemIconCache.warm(this._world);
 
     try {
       this._world.inputManager.setInputEnabled(false);
@@ -236,6 +274,7 @@ export class MapUI {
     mapWrap.appendChild(compass);
 
     root.appendChild(mapWrap);
+    root.appendChild(this._createDebugRerollHint());
     gameContainer.appendChild(root);
     this._root = root;
 
@@ -249,8 +288,69 @@ export class MapUI {
       introCover.style.transition = 'opacity 0.52s ease';
     }
 
+    this._refreshMissionBoard('suburbs');
+
     fadeInElement(root, 480);
     void fadeOutIntroBlackCover(this._world, 520);
+  }
+
+  /** Fresh random mission per unlocked risk tier (each map visit). */
+  private _refreshMissionBoard(poolId: string): void {
+    grimVault.syncTutorialFromProgress();
+    this._activePoolId = poolId;
+    this._missionBoard = rollMissionBoard(poolId);
+  }
+
+  private _debugRerollMissionBoard(): void {
+    const poolId = this._briefingMission?.missionPoolId ?? this._activePoolId;
+    this._refreshMissionBoard(poolId);
+    this._refreshBriefingRiskCopy();
+    const summary = Object.entries(this._missionBoard)
+      .map(([risk, cfg]) => `R${risk}: ${cfg?.type ?? '?'}`)
+      .join(' · ');
+    console.info(`[Debug] Map missions rerolled (R) — ${summary}`);
+  }
+
+  private _debugForcePostmanMission(): void {
+    const unlocked = grimVault.getUnlockedRiskLevel();
+    for (const risk of RISK_LEVELS) {
+      if (risk <= unlocked) {
+        this._missionBoard[risk] = createBossFightMissionConfig(risk);
+      }
+    }
+
+    const postmanRisk: RiskLevel = unlocked >= 2 ? 2 : 1;
+    if (grimVault.canSelectRiskLevel(postmanRisk)) {
+      this._selectedRiskLevel = postmanRisk;
+      this._useRisk5Plus = false;
+    }
+
+    this._refreshBriefingRiskCopy();
+    console.info(
+      `[Debug] Forced Postman boss fight on unlocked risks (L). Select risk ${postmanRisk} and START.`,
+    );
+  }
+
+  private _createDebugRerollHint(): HTMLDivElement {
+    const hint = document.createElement('div');
+    hint.setAttribute('data-grim-map-debug-reroll', '');
+    hint.textContent = 'DEBUG · R — reroll · L — Postman mission';
+    hint.style.cssText = `
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      z-index: 20;
+      padding: 6px 10px;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: rgba(255, 220, 140, 0.95);
+      background: rgba(0, 0, 0, 0.72);
+      border: 1px solid rgba(255, 200, 80, 0.45);
+      pointer-events: none;
+    `;
+    return hint;
   }
 
   private _createMarker(mission: MissionDef, markerIndex: number): HTMLDivElement {
@@ -513,6 +613,9 @@ export class MapUI {
 
     this._closeBriefing();
     this._briefingMission = mission;
+    if (mission.missionPoolId) {
+      this._refreshMissionBoard(mission.missionPoolId);
+    }
     this._selectedRiskLevel = grimVault.getUnlockedRiskLevel();
     this._briefingGoalsEl = null;
     this._briefingSubEl = null;
@@ -599,12 +702,7 @@ export class MapUI {
     `;
 
     const unlockedMax = grimVault.getUnlockedRiskLevel();
-    for (const risk of RISK_LEVELS) {
-      const enabled = risk <= unlockedMax;
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = String(risk);
-      btn.disabled = !enabled;
+    const styleRiskBtn = (btn: HTMLButtonElement, selected: boolean, enabled: boolean): void => {
       btn.style.cssText = `
         min-width: 2.4rem;
         padding: 6px 10px;
@@ -615,32 +713,59 @@ export class MapUI {
         cursor: ${enabled ? 'pointer' : 'not-allowed'};
         opacity: ${enabled ? '1' : '0.35'};
         border-radius: 4px;
-        border: 1px solid rgba(100, 180, 220, 0.45);
+        border: 1px solid ${selected ? 'rgba(0, 220, 255, 0.9)' : 'rgba(100, 180, 220, 0.45)'};
         background: rgba(10, 20, 30, 0.75);
         color: rgba(200, 230, 255, 0.95);
+        box-shadow: ${selected ? '0 0 12px rgba(0, 220, 255, 0.45)' : 'none'};
       `;
-      if (risk === this._selectedRiskLevel) {
-        btn.style.borderColor = 'rgba(0, 220, 255, 0.9)';
-        btn.style.boxShadow = '0 0 12px rgba(0, 220, 255, 0.45)';
+    };
+
+    const selectRisk = (risk: RiskLevel, use5Plus: boolean): void => {
+      this._selectedRiskLevel = risk;
+      this._useRisk5Plus = use5Plus;
+      for (const child of riskRow.children) {
+        const el = child as HTMLButtonElement;
+        const tier = Number(el.dataset.riskTier ?? '0');
+        const plus = el.dataset.risk5Plus === '1';
+        styleRiskBtn(el, tier === risk && plus === use5Plus, !el.disabled);
       }
+      this._refreshBriefingRiskCopy();
+    };
+
+    for (const risk of RISK_LEVELS) {
+      const enabled = risk <= unlockedMax;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = String(risk);
+      btn.dataset.riskTier = String(risk);
+      btn.dataset.risk5Plus = '0';
+      btn.disabled = !enabled;
+      styleRiskBtn(btn, this._selectedRiskLevel === risk && !this._useRisk5Plus, enabled);
       if (enabled) {
         btn.addEventListener('click', withMenuSelectSound(this._world, () => {
-          this._selectedRiskLevel = risk;
-          for (const child of riskRow.children) {
-            const el = child as HTMLButtonElement;
-            const n = Number(el.textContent);
-            const selected = n === risk;
-            el.style.borderColor = selected
-              ? 'rgba(0, 220, 255, 0.9)'
-              : 'rgba(100, 180, 220, 0.45)';
-            el.style.boxShadow = selected
-              ? '0 0 12px rgba(0, 220, 255, 0.45)'
-              : 'none';
-          }
-          this._refreshBriefingRiskCopy();
+          selectRisk(risk, false);
         }));
       }
       riskRow.appendChild(btn);
+    }
+
+    if (grimVault.canSelectRisk5Plus()) {
+      const plusBtn = document.createElement('button');
+      plusBtn.type = 'button';
+      const completed = grimVault.getRisk5PlusCompletions();
+      plusBtn.textContent = `5+ (+${completed})`;
+      plusBtn.dataset.riskTier = '5';
+      plusBtn.dataset.risk5Plus = '1';
+      plusBtn.disabled = false;
+      styleRiskBtn(plusBtn, this._useRisk5Plus, true);
+      plusBtn.style.minWidth = '5.5rem';
+      plusBtn.style.borderColor = this._useRisk5Plus
+        ? 'rgba(255, 200, 80, 0.95)'
+        : 'rgba(255, 180, 60, 0.55)';
+      plusBtn.addEventListener('click', withMenuSelectSound(this._world, () => {
+        selectRisk(5, true);
+      }));
+      riskRow.appendChild(plusBtn);
     }
 
     const goalsPreview = document.createElement('p');
@@ -652,6 +777,7 @@ export class MapUI {
       line-height: 1.45;
       color: rgba(160, 245, 255, 0.92);
       text-align: center;
+      white-space: pre-line;
     `;
 
     const desc = document.createElement('p');
@@ -729,13 +855,19 @@ export class MapUI {
     }
 
     if (this._briefingSubEl) {
-      this._briefingSubEl.textContent = `Risk Level ${this._selectedRiskLevel} · ${mission.difficulty}`;
+      const riskLabel = this._useRisk5Plus
+        ? `Risk 5+ (+${grimVault.getRisk5PlusCompletions()})`
+        : `Risk Level ${this._selectedRiskLevel}`;
+      this._briefingSubEl.textContent = `${riskLabel} · ${mission.difficulty}`;
     }
 
     if (this._briefingGoalsEl && mission.missionPoolId) {
-      const preview = getMissionGoalPreview(mission.missionPoolId, this._selectedRiskLevel);
-      this._briefingGoalsEl.textContent = preview
-        ? `Mission: ${preview}`
+      let config = this._missionBoard[this._selectedRiskLevel];
+      if (config && this._useRisk5Plus) {
+        config = applyRisk5PlusToMission(config, grimVault.getRisk5PlusCompletions());
+      }
+      this._briefingGoalsEl.textContent = config
+        ? formatMissionConfigBriefing(config)
         : '';
     }
   }
@@ -795,7 +927,10 @@ export class MapUI {
       if (!grimVault.canSelectRiskLevel(this._selectedRiskLevel)) {
         return;
       }
-      config = rollMissionConfigForPoolId(mission.missionPoolId, this._selectedRiskLevel);
+      config = this._missionBoard[this._selectedRiskLevel];
+      if (config && this._useRisk5Plus) {
+        config = applyRisk5PlusToMission(config, grimVault.getRisk5PlusCompletions());
+      }
     } else {
       config = mission.missionConfig;
     }
@@ -818,7 +953,6 @@ export class MapUI {
 
   public destroy(): void {
     UpgradeShopUI.close(this._world);
-    ItemIconCache.dispose(this._world);
     this._closeBriefing();
     if (this._root?.parentNode) {
       this._root.parentNode.removeChild(this._root);

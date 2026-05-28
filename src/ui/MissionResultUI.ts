@@ -26,11 +26,19 @@ function formatElapsed(sec: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function failReasonText(reason: 'collateral' | 'grim-defeated'): string {
-  if (reason === 'grim-defeated') {
-    return 'Grim was defeated';
+function failReasonText(
+  reason: 'collateral' | 'grim-defeated' | 'time-expired' | 'combo-lost',
+): string {
+  switch (reason) {
+    case 'grim-defeated':
+      return 'Grim was defeated';
+    case 'time-expired':
+      return 'Time ran out';
+    case 'combo-lost':
+      return 'Combo chain broken';
+    default:
+      return 'Collateral damage too high';
   }
-  return 'Collateral damage too high';
 }
 
 export class MissionResultUI {
@@ -125,7 +133,7 @@ export class MissionResultUI {
       text-align: center;
     `;
     const lines = [
-      `Souls reaped: ${result.soulsCollected}`,
+      `Souls from kills: ${result.soulsCollected}`,
       `Innocents saved: ${result.innocentsSaved}`,
       `Time: ${formatElapsed(result.elapsedSec)}`,
     ];
@@ -136,6 +144,7 @@ export class MissionResultUI {
           ? `Souls saved to vault (10%): ${soulsBanked}`
           : 'Souls saved to vault (10%): 0',
       );
+      lines.push('Items from this run are lost.');
     }
     stats.innerHTML = lines.map((l) => `<div>${l}</div>`).join('');
 

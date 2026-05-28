@@ -1,5 +1,5 @@
 /**
- * Development cheat keys (P = instant mission win, O = vault resources).
+ * Development cheat keys (P = mission win, O = vault resources, R = reroll map missions, L = Postman).
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
@@ -9,6 +9,7 @@ import { missionRunner } from '../mission/MissionRunner.js';
 import { missionState } from '../mission/MissionState.js';
 import { OptionsMenuUI } from '../ui/OptionsMenuUI.js';
 import { StartMenuUI } from '../ui/StartMenuUI.js';
+import { MapUI } from '../ui/MapUI.js';
 import { UpgradeShopUI } from '../ui/UpgradeShopUI.js';
 
 const DEBUG_SOUL_GRANT = 2000;
@@ -57,6 +58,31 @@ export function debugWinMission(world: ENGINE.World): boolean {
   missionState.debugForceSuccess();
   console.info('[Debug] Mission forced to success (P).');
   return true;
+}
+
+/** True when the Burdenville map is open. */
+export function canDebugRerollMapMissions(world: ENGINE.World): boolean {
+  return MapUI.isOpen(world);
+}
+
+export function debugRerollMapMissions(world: ENGINE.World): boolean {
+  if (!canDebugRerollMapMissions(world)) {
+    return false;
+  }
+
+  return MapUI.debugRerollMissions(world);
+}
+
+export function debugForcePostmanMission(world: ENGINE.World): boolean {
+  if (!canDebugRerollMapMissions(world)) {
+    return false;
+  }
+
+  const ok = MapUI.debugForcePostmanMission(world);
+  if (ok) {
+    console.info('[Debug] Postman boss mission forced on map board (L).');
+  }
+  return ok;
 }
 
 export function debugGrantVaultResources(world: ENGINE.World): boolean {

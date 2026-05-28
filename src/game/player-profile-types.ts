@@ -14,6 +14,8 @@ export interface GrimStats {
   critChance: number;
   /** Bonus to item drop roll weight (0–1 per level stacks additively in compute). */
   luck: number;
+  /** HP restored per enemy kill (base + Soul Leech upgrade). */
+  soulHeal: number;
 }
 
 export const BASE_GRIM_STATS: GrimStats = {
@@ -26,6 +28,8 @@ export const BASE_GRIM_STATS: GrimStats = {
   fearRes: 0,
   critChance: 0,
   luck: 0,
+  /** Fractional HP per kill — applied via accumulator in {@link applySoulHealOnPickup}. */
+  soulHeal: 0.2,
 };
 
 export interface PlayerProfile {
@@ -41,8 +45,14 @@ export interface PlayerProfile {
   shopPurchaseCounts: Partial<Record<string, number>>;
   /** Highest risk tier the player may select on the map (1–5). */
   unlockedRiskLevel: RiskLevel;
+  /** First suburbs tutorial mission completed successfully. */
+  tutorialCompleted: boolean;
+  /** Unlocked after one successful Risk 5 mission. */
+  risk5PlusUnlocked: boolean;
+  /** Completed Risk 5+ runs (shown as +N in UI). */
+  risk5PlusCompletions: number;
 }
 
 export const PROFILE_STORAGE_KEY = 'grim2-player-profile';
 
-export const PROFILE_VERSION = 1;
+export const PROFILE_VERSION = 3;
