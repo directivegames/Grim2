@@ -72,6 +72,20 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
     return actor;
   }
 
+  /** Remove active rise VFX when a mission ends or resets. */
+  public static destroyAllRuntime(world: ENGINE.World): void {
+    const toDestroy: ZombieRiseVFXActor[] = [];
+    for (const actor of world.getActors()) {
+      if (actor instanceof ZombieRiseVFXActor) {
+        toDestroy.push(actor);
+      }
+    }
+    for (const actor of toDestroy) {
+      actor.destroy();
+    }
+    activeCount = 0;
+  }
+
   private _createGroundRipples(root: ENGINE.SceneComponent): void {
     const mat1 = new THREE.MeshBasicMaterial({
       color: 0x5d3f7c,

@@ -1,121 +1,72 @@
 # Three.js Extension
 
-## Overview
+The engine augments native Three.js classes with world-space operations, component discovery, and lifecycle hooks.
 
-The **Three.js Extension** augments native Three.js classes with convenience methods tailored for the Genesys engine. It adds world-space transform operations, component discovery, lifecycle hooks, and serialization support directly to `THREE.Object3D` and related classes.
+Reference: See ThreeJsExtensions.ts in engine source.
 
-**Source:** See full implementation in `node_modules/@gnsx/genesys.js/src/utils/ThreeJsExtensions.ts`
+## World-Space Transform Operations
 
-## Key Concepts
+Native Three.js only provides local-space transform manipulation. The extension adds world-space setters:
 
-### World-Space Transform Operations
+- setWorldPosition(pos)
+- setWorldRotation(rot)
+- setWorldQuaternion(quat)
+- setWorldScale(scale)
+- setWorldTransform({position, rotation, scale})
 
-Standard Three.js only provides local-space transform manipulation. The extension adds world-space setters that automatically handle the matrix math for converting between coordinate spaces.
+## World-Space Transform Queries
 
-- **`setWorldPosition(pos)`** — Set world position regardless of parent hierarchy
-- **`setWorldRotation(rot)`** — Set world rotation using Euler angles
-- **`setWorldQuaternion(quat)`** — Set world rotation using quaternions
-- **`setWorldScale(scale)`** — Set world scale compensating for parent transforms
-- **`setWorldTransform({position, rotation, scale})`** — Set multiple properties at once
+- getWorldTransform()
+- getWorldPosition(target?)
+- getWorldRotation(target?)
+- getWorldScale(target?)
 
-### World-Space Transform Queries
+## Absolute Transform Flags
 
-Convenience getters that retrieve world-space values without manual matrix calculations.
+Flags that ensure objects maintain fixed world positions regardless of parent movement:
 
-- **`getWorldTransform()`** — Get all transform components as a single object
-- **`getWorldPosition(target?)`** — Get world position
-- **`getWorldRotation(target?)`** — Get world rotation as Euler angles
-- **`getWorldScale(target?)`** — Get world scale
-- **`getWorldQuaternion(target?)`** — Get world rotation as quaternion
+- useAbsolutePosition
+- useAbsoluteRotation
+- useAbsoluteScale
 
-### Absolute Transform Flags
+The updateWorldMatrix() and updateMatrixWorld() methods respect these flags.
 
-Special flags that change how transforms are interpreted, useful for objects that need fixed world positions regardless of parent movement.
+## Component Discovery
 
-- **`useAbsolutePosition`** — Position is stored and used directly as world position
-- **`useAbsoluteRotation`** — Rotation is stored and used directly as world rotation
-- **`useAbsoluteScale`** — Scale is stored and used directly as world scale
+Methods for finding components within the scene graph hierarchy:
 
-When enabled, the object maintains its world transform even when parented to moving objects. The `updateWorldMatrix()` and `updateMatrixWorld()` methods respect these flags.
+- getComponent(Type) — Find first object of specified type in this subtree (depth-first).
+- getComponents(Type) — Find all objects of specified type in this subtree.
 
-### Component Discovery
+## Lifecycle Hooks
 
-Methods for finding components within the scene graph hierarchy, similar to Unity's GetComponent pattern.
+Standardized methods propagated through the scene graph:
 
-- **`getComponent(Type)`** — Find first object of specified type in this subtree (depth-first search)
-- **`getComponents(Type)`** — Find all objects of specified type in this subtree
+- beginPlay() — Called when object enters an active world.
+- endPlay() — Called when object exits an active world.
+- tickPrePhysics(deltaTime) — Update called before physics.
+- tickPostPhysics(deltaTime) — Update called after physics.
 
-These methods work with any class that extends `THREE.Object3D`, including Genesys components.
+## Actor Association
 
-### Lifecycle Hooks
+- getActor() — Traverse up parent hierarchy to find the owning Actor.
 
-Standardized lifecycle methods that propagate through the scene graph, called automatically by the engine.
+## Serialization Support
 
-- **`beginPlay()`** — Called when object enters play mode (added to active world)
-- **`endPlay()`** — Called when object exits play mode
-- **`tickPrePhysics(deltaTime)`** — Update called before physics simulation
-- **`tickPostPhysics(deltaTime)`** — Update called after physics simulation
+- asExportedObject() — Serialize to JSON format.
+- describe(options?) — Generate structured debug description.
+- isTransient() / setTransient(boolean) — Mark object as non-persistent.
 
-These methods recursively call through all children, allowing components to react to world state changes.
+## Visibility Utilities
 
-### Actor Association
+- isHidden()
+- setHidden(hidden, propagateToChildren?)
 
-Trace ownership through the scene graph hierarchy.
+## Local Transform Setters
 
-- **`getActor()`** — Traverse up parent hierarchy to find the owning Actor, returns null if not part of an Actor
+Fluent API for setting local transforms:
 
-### Serialization Support
-
-Integration with the Genesys serialization system.
-
-- **`asExportedObject(includeDefaults?)`** — Serialize to a format suitable for saving/loading
-- **`describe(options?)`** — Generate structured description for debugging and AI assistants
-- **`isTransient()`** — Check if object is marked as non-persistent
-- **`setTransient(boolean)`** — Mark object as temporary (excluded from serialization)
-
-### Visibility Utilities
-
-Enhanced visibility controls with propagation.
-
-- **`isHidden()`** — Check if object is not visible
-- **`setHidden(hidden, propagateToChildren?)`** — Set visibility and optionally apply to all descendants
-
-### Debug and Development Tools
-
-Utilities for debugging and inspecting scene graphs.
-
-- **`getPathName()`** — Get dot-separated hierarchical path (e.g., "Actor.RootComponent.Mesh")
-- **`printHierarchy(depth?, printTransform?)`** — Generate string representation of hierarchy
-- **`generateDebugNode()`** — Create structured data for scene graph visualization tools
-
-### Local Transform Setters
-
-Fluent API for setting local transforms, returning `this` for method chaining.
-
-- **`setLocalPosition(pos)`** — Set position relative to parent
-- **`setLocalRotation(rot)`** — Set rotation using Euler angles
-- **`setLocalQuaternion(quat)`** — Set rotation using quaternion
-- **`setLocalScale(scale)`** — Set scale relative to parent
-- **`setLocalTransform({position, rotation, scale})`** — Set multiple properties at once
-- **`addLocalPosition(delta)`** — Add offset to current local position
-- **`addLocalRotation(delta)`** — Add rotation offset to current local rotation
-
-## Material Extensions
-
-`THREE.Material` gains serialization support.
-
-- **`asExportedObject(includeDefaults?)`** — Serialize material for saving/loading
-
-## Math Extensions
-
-Approximate equality comparisons for vectors and rotations, useful for testing if transforms have reached target values.
-
-- **`Vector3.almostEquals(other, epsilon?)`** — Check if vectors are approximately equal
-- **`Euler.almostEquals(other, epsilon?)`** — Check if rotations are approximately equal
-
-## Scene Extensions
-
-`THREE.Scene` gains world association.
-
-- **`getWorld()`** — Get the World instance that owns this scene
-- **`setWorld(world)`** — Associate this scene with a World instance
+- setLocalPosition(pos)
+- setLocalRotation(rot)
+- setLocalScale(scale)
+- addLocalPosition(delta)

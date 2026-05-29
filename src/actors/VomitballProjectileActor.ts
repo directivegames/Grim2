@@ -220,4 +220,17 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     this._retire();
     return true;
   }
+
+  /** Remove active vomitballs when a mission ends or resets. */
+  public static destroyAllRuntime(world: ENGINE.World): void {
+    const toDestroy: VomitballProjectileActor[] = [];
+    for (const actor of world.getActors()) {
+      if (actor instanceof VomitballProjectileActor) {
+        toDestroy.push(actor);
+      }
+    }
+    for (const projectile of toDestroy) {
+      projectile._retire();
+    }
+  }
 }

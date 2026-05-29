@@ -20,6 +20,7 @@ import { applyRisk5PlusToMission } from '../game/mission-risk5-plus.js';
 import { grimVault } from '../game/GrimVault.js';
 import { UpgradeShopUI } from './UpgradeShopUI.js';
 import { playShopOpenSound, withMenuSelectSound } from '../utils/menu-audio.js';
+import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 import { fadeInElement, fadeOutIntroBlackCover } from '../utils/screen-transition.js';
 
 const MAP_BG_URL = '@project/assets/UI/Burdenvillemaponly.png';
@@ -81,6 +82,27 @@ export class MapUI {
   private readonly _resolvedIconUrls = new Map<string, string>();
   private _missionBoard: MissionBoard = {};
   private _activePoolId = 'suburbs';
+
+  private readonly _escapeKeyHandler = (e: KeyboardEvent): void => {
+    if (e.key !== 'Escape' || !this._root) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (UpgradeShopUI.isOpen(this._world)) {
+      UpgradeShopUI.close(this._world);
+      return;
+    }
+
+    if (this._briefing) {
+      this._closeBriefing();
+      return;
+    }
+
+    returnToMainMenu(this._world);
+  };
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -277,6 +299,7 @@ export class MapUI {
     root.appendChild(this._createDebugRerollHint());
     gameContainer.appendChild(root);
     this._root = root;
+    document.addEventListener('keydown', this._escapeKeyHandler, true);
 
     MapUI._injectStyles(gameContainer);
     MapMusicActor.ensurePlaying(this._world);
@@ -952,6 +975,7 @@ export class MapUI {
   }
 
   public destroy(): void {
+    document.removeEventListener('keydown', this._escapeKeyHandler, true);
     UpgradeShopUI.close(this._world);
     this._closeBriefing();
     if (this._root?.parentNode) {

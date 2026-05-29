@@ -1,63 +1,48 @@
 # Genesys Project Structure
 
-A Genesys game project follows a standard folder structure that separates code, assets, and configuration.
-
 ## Folder Layout
 
 ```
 my-game/
-├── assets/                      # Game assets (scenes, materials, textures, models, audio)
-│   ├── default.genesys-scene    # Default level/scene file
-│   ├── materials/               # Material definition files (.material.json)
-│   ├── textures/                # Texture images
-│   ├── models/                  # 3D models (.glb, .gltf)
-│   └── audio/                   # Sound files
+├── assets/                      # Scenes, materials, textures, models, audio, prefabs
+│   └── default.genesys-scene    # Default level file (more assets are added as you create them)
 ├── src/                         # TypeScript source code
-│   ├── game.ts                  # Main entry point - GameMode + GameLoop + main()
-│   ├── player.ts                # Player pawn class (optional, recommended)
-│   ├── auto-imports.ts          # Auto-generated: imports all source files (DO NOT MODIFY)
-│   └── game-data.ts             # Auto-generated: custom property metadata (DO NOT MODIFY)
-├── scripts/                     # Utility/build scripts (optional)
-├── package.json                 # NPM dependencies
-├── tsconfig.json                # TypeScript configuration
-└── my-game.genesys-project      # Project configuration file
+│   ├── game.ts                  # Entry point - GameMode + GameLoop + main()
+│   ├── player.ts                # Player pawn class
+│   ├── auto-imports.ts          # Auto-generated: imports all source (DO NOT MODIFY)
+│   └── game-data.ts             # Auto-generated: property metadata (DO NOT MODIFY)
+├── .engine/                     # Read-only engine source mirror — use as the primary API reference
+├── .agents/                     # Skill files (including this one) consumed by AI tooling
+├── .genesys/                    # SDK base files (configs, scripts) — do not modify
+├── scripts/genesys/             # Build, manifest, prefab-validation, and MCP helper scripts
+├── packs/                       # In-project asset packs (optional)
+├── package.json                 # Dependencies
+├── tsconfig.json                # TS config (extends .genesys/sdk/tsconfig.json)
+├── vite.config.ts               # Vite config (merges with .genesys/sdk/vite.config.js)
+├── eslint.config.js             # ESLint config (extends .genesys/sdk/eslint.config.js)
+├── AGENTS.md                    # AI-agent rules
+└── my-game.genesys-project      # Project metadata file (extension is the project marker)
 ```
 
-## The `src/game.ts` File
+The engine source under .engine/ is the primary reference for class hierarchies, method signatures, and conventions when extending or composing engine APIs.
 
-Every Genesys game requires a `game.ts` file that exports a `main()` function. This file defines your custom GameMode and GameLoop.
+## The src/game.ts File
+
+Every game requires a game.ts file exporting a main() function.
 
 ### Structure
 
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
 
-// ============================================================================
-// 1. CUSTOM GAME MODE
-// ============================================================================
-// The GameMode defines game rules, player spawning logic, and default classes.
-// It is transient (not saved in levels) and manages the game flow.
-
 @ENGINE.GameClass()
 class MyGameMode extends ENGINE.GameMode {
-  // your custom implementation...
+  // Game rules and player spawning
 }
-
-// ============================================================================
-// 2. CUSTOM GAME LOOP
-// ============================================================================
-// The GameLoop drives the frame-by-frame execution, manages the World/Level
-// lifecycle, and handles loading screens. Extend BaseGameLoop to customize.
 
 class MyGame extends ENGINE.BaseGameLoop {
-  // your custom implementation...
+  // World/Level lifecycle management
 }
-
-// ============================================================================
-// 3. MAIN FUNCTION
-// ============================================================================
-// This is the entry point called by the Genesys framework to start the game.
-// It creates the GameLoop instance and wires up the GameMode.
 
 export function main(
   container: HTMLElement,
@@ -67,55 +52,32 @@ export function main(
     ...options,
     gameContextConfig: {
       ...options?.gameContextConfig,
-      // make sure the custom game mode is used
       defaultGameModeClass: MyGameMode,
     },
   };
-  const game = new MyGame(container, mergedOptions);
-  return game;
+  return new MyGame(container, mergedOptions);
 }
 ```
 
-### Key Components Explained
+### Core Components
 
-| Component | Purpose |
-|-----------|---------|
-| **GameMode** | Defines game rules, player spawning, win/lose conditions. Sets default classes (Pawn, PlayerController). Not saved in levels (transient). |
-| **GameLoop** | Drives the engine tick, manages World/Level lifecycle, loading screens, and game state persistence. One per running game instance. |
-| **main()** | Entry point function called by the framework. Creates and returns the GameLoop instance configured with your GameMode. |
+GameMode — Defines rules, player spawning, and default classes (Pawn, PlayerController). Transient (not saved).
+
+GameLoop — Drives engine tick, manages World/Level lifecycle and state persistence.
+
+main() — Entry point function called by the framework.
 
 ## Auto-Generated Files
 
-### `src/auto-imports.ts`
-- **Generated by**: Build pipeline
-- **Purpose**: Imports all source files to ensure they are included in compilation
-- **Rule**: Do not modify manually
+src/auto-imports.ts — Imports all source files for compilation. Do not modify.
 
-### `src/game-data.ts`
-- **Generated by**: Build pipeline
-- **Purpose**: Contains metadata for all `@ENGINE.Property()` decorated fields (for serialization)
-- **Rule**: Do not modify manually
+src/game-data.ts — Metadata for @ENGINE.property() decorated fields. Do not modify.
 
-## Project Configuration File
+## Project Configuration
 
-The `.genesys-project` file in the project root configures engine settings and default scenes.
+The .genesys-project file in the root configures engine settings and default scenes.
 
-### Structure
-
-```json
-{
-  "defaultScene": "./assets/default.genesys-scene",
-  "defaultEditorScene": "./assets/default.genesys-scene",
-  "engineVersion": "8.0.4"
-}
-```
-
-### Fields
-
-| Field | Description |
-|-------|-------------|
-| `defaultScene` | Path to the scene file loaded when the game starts at runtime |
-| `defaultEditorScene` | Path to the scene file loaded when opening the project in the editor |
-| `engineVersion` | The Genesys engine version this project is compatible with |
-
-The file is named after your project (e.g., `my-game.genesys-project`) and should be committed to version control.
+Fields:
+- defaultScene — Scene loaded at runtime.
+- defaultEditorScene — Scene loaded in editor.
+- engineVersion — Compatible engine version.

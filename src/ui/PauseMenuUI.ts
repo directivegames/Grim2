@@ -6,7 +6,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { withMenuSelectSound } from '../utils/menu-audio.js';
 import { pauseGame, resumeGame } from '../utils/game-pause.js';
 import { OptionsMenuUI } from './OptionsMenuUI.js';
-import { returnToMainMenu } from '../utils/return-to-main-menu.js';
+import { returnToMap } from '../utils/return-to-map.js';
 
 const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
 const PAUSE_FRAME_URL = '@project/assets/UI/optionsbackground.png';
@@ -271,7 +271,7 @@ export class PauseMenuUI {
   }
 
   private _onQuit(): void {
-    returnToMainMenu(this._world);
+    returnToMap(this._world);
   }
 
   public close(): void {

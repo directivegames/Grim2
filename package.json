@@ -4,7 +4,7 @@
     "turbo:build": "turbo run build",
     "generate-property-metadata": "pnpm exec tsx node_modules/@gnsx/genesys.js/scripts/generate-property-metadata.ts src/game-data.ts",
     "build-project": "pnpm exec tsx ./scripts/genesys/build-project.ts",
-    "postinstall": "pnpm exec tsx ./scripts/genesys/post-install.ts && pnpm rebuild @gnsx/genesys.harness",
+    "postinstall": "pnpm exec tsx ./scripts/genesys/post-install.ts",
     "lint": "eslint . --fix --ext .ts,.tsx",
     "remove-engine-comments": "pnpm exec tsx ./scripts/genesys/remove-engine-comments.ts",
     "sync-assets": "pnpm exec tsx ./scripts/genesys/sync-project-assets-to-dist.ts",
@@ -15,19 +15,17 @@
     "apply-lightmaps": "pnpm exec tsx ./tools/apply-lightmaps-cli.ts",
     "add-uv2": "pnpm exec tsx ./tools/add-uv2-to-glbs-cli.ts",
     "check-pack-isolation": "pnpm exec tsx ./scripts/genesys/check-pack-isolation.ts",
-    "export-pack": "pnpm exec tsx ./scripts/genesys/export-pack.ts"
+    "export-pack": "pnpm exec tsx ./scripts/genesys/export-pack.ts",
+    "preinstall": "node -e \"try{require('child_process').execSync('pnpm remove @gnsx/genesys.harness',{stdio:'pipe'})}catch(e){}\""
   },
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
-    "@gnsx/genesys.harness": "latest",
-    "@gnsx/genesys.js": "10.19.2",
+    "@gnsx/genesys.js": "10.19.5",
     "three": "npm:@gnsx/three@0.184.11"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@gnsx/genesys.harness"
-    ]
+    "onlyBuiltDependencies": []
   },
   "devDependencies": {
     "@gltf-transform/core": "^4.3.0",
@@ -36,27 +34,28 @@
     "@modelcontextprotocol/sdk": "1.22.0",
     "@types/adm-zip": "0.5.8",
     "@types/jsdom": "21.1.7",
-    "@types/node": "24.12.0",
+    "@types/node": "25.6.2",
     "@types/three": "npm:@gnsx/three-types@0.184.6",
     "@types/ws": "8.18.1",
-    "@typescript-eslint/parser": "8.29.1",
-    "@typescript-eslint/utils": "8.38.0",
+    "@typescript-eslint/eslint-plugin": "8.59.2",
+    "@typescript-eslint/parser": "8.59.2",
+    "@typescript-eslint/utils": "8.59.2",
     "adm-zip": "0.5.17",
     "ajv": "8.20.0",
     "canvas": "3.1.0",
     "esbuild": "0.28.0",
-    "eslint": "9.24.0",
+    "eslint": "9.39.4",
     "get-port": "7.1.0",
     "jsdom": "26.1.0",
     "nanoid": "5.1.11",
     "sharp": "^0.34.5",
     "ts-morph": "26.0.0",
-    "tsx": "4.20.3",
-    "turbo": "2.8.11",
-    "typescript": "5.8.3",
-    "vite": "7.1.7",
-    "vite-plugin-mkcert": "1.17.8",
-    "vite-plugin-node-polyfills": "0.24.0",
+    "tsx": "4.21.0",
+    "turbo": "2.9.14",
+    "typescript": "5.9.3",
+    "vite": "8.0.12",
+    "vite-plugin-mkcert": "2.0.0",
+    "vite-plugin-node-polyfills": "0.26.0",
     "ws": "8.18.2",
     "zod": "3.25.76",
     "zod-to-json-schema": "3.25.2"

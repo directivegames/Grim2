@@ -43,6 +43,10 @@ export class OptionsMenuUI {
     return Boolean(inst?._root);
   }
 
+  public static close(world: ENGINE.World): void {
+    OptionsMenuUI.byWorld.get(world)?.close();
+  }
+
   public static open(world: ENGINE.World, onClose?: () => void): OptionsMenuUI {
     const w = world as GameContainerWorld;
     if (!w.gameContainer || w.options?.headless) {

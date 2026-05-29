@@ -8,12 +8,9 @@ import * as THREE from 'three';
 // Must run before any actor ticks — harness bundle may omit patched `NpcMovementComponent` from `node_modules`.
 import './apply-actor-movement-predictor-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
-import './apply-grass-shader-engine-patch.js';
 import './apply-cloud-shadow-engine-patch.js';
 import './auto-imports.js';
 import './fog/FogSystemActor.js';
-// PERFORMANCE: Import grass uniform manager to enable batched uniform updates
-import './materials/grass/GrassUniformManager.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { SpinningWeaponActor } from './actors/SpinningWeaponActor.js';
 import { WarmupActor } from './actors/WarmupActor.js';

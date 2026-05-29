@@ -38856,31 +38856,6 @@
         "uuid": "1759e19985340c53"
       },
       "339": {
-        "$bc": "ENGINE.Actor",
-        "$initOptions": {},
-        "editorData": {
-          "hidden": true
-        },
-        "name": "Fog",
-        "rootComponent": {
-          "$bc": "ENGINE.FogComponent",
-          "fogColor": {
-            "$bc": "c",
-            "_": [
-              0.068478,
-              0.08022,
-              0.116971
-            ]
-          },
-          "fogFar": 0,
-          "fogMode": "exponential",
-          "fogNear": 0.4,
-          "name": "FogComponent",
-          "uuid": "02c48c24-91c3-4101-bb96-517b2ae49c5e"
-        },
-        "uuid": "1894782cd4655928"
-      },
-      "340": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "lamp for chrcu 11",
         "rootComponent": {
@@ -38923,11 +38898,11 @@
         },
         "uuid": "edab77c85e374122"
       },
-      "341": {
+      "340": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "editorData": {
-          "hidden": true
+          "hidden": false
         },
         "name": "Fog System 05",
         "rootComponent": {
@@ -41880,13 +41855,91 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "139f60dc-33dd-483d-a60d-408faf23c160"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fb5b6874-960d-4e4e-933a-77104008a09f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b4b2d6c2-b6b3-4f55-992e-c39fc2e7c5ab"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cae392e7-ae72-470e-9534-1adafbf08549"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bbea5358-6589-4fd6-b755-cabb8c05719e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b8fc71a8-bf39-4f3b-a1d6-4509efe26645"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "23130cf9-302c-4bcd-81ca-d6f31a540f41"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8939a33c-1fde-418c-b14a-bdb13336351f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "716021c7-874f-4686-a89a-e95349732ba8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ca19a358-7e4a-462e-a407-eaa7598ca49c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2a8142e8-ca60-465b-a57b-4768e1d5af1b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f87f9902-3050-497d-81d0-c51ba236986c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9f56114a-a953-4fd9-96f1-0673923f2864"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ad5e7c64-f28d-4e40-a1f4-80ca87d5b94e"
             }
           ],
           "emissiveIntensity": 0.49,
           "flowMapDirection": 0.28,
           "flowMapSpeed": 0.18,
           "flowMapTiling": 3.15,
-          "fogDensity": 0.34,
+          "fogDensity": 0.52,
           "name": "FogSystemComponent",
           "position": {
             "$bc": "v3",
@@ -41920,7 +41973,7 @@
         },
         "uuid": "f4d1de2db43774dc"
       },
-      "342": {
+      "341": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "name": "Smokevfx",
@@ -41943,7 +41996,7 @@
         },
         "uuid": "306826782085ff8e"
       },
-      "343": {
+      "342": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -41976,7 +42029,7 @@
         },
         "uuid": "0eb90f9f9fc1a94d"
       },
-      "344": {
+      "343": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 480",
         "rootComponent": {
@@ -42014,7 +42067,7 @@
         },
         "uuid": "76b816b2d93feb49"
       },
-      "345": {
+      "344": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42047,7 +42100,7 @@
         },
         "uuid": "767f209a1ff5b45d"
       },
-      "346": {
+      "345": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -42085,7 +42138,7 @@
         },
         "uuid": "4a814305cdb5b9b8"
       },
-      "347": {
+      "346": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42126,7 +42179,7 @@
         },
         "uuid": "4676ad7aac8020f8"
       },
-      "348": {
+      "347": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42167,7 +42220,7 @@
         },
         "uuid": "5a50fee92821cef3"
       },
-      "349": {
+      "348": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 481",
         "rootComponent": {
@@ -42205,7 +42258,7 @@
         },
         "uuid": "a6f1043771bee9a9"
       },
-      "350": {
+      "349": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 487",
         "rootComponent": {
@@ -42243,7 +42296,7 @@
         },
         "uuid": "52c84e2efeb196ec"
       },
-      "351": {
+      "350": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 493",
         "rootComponent": {
@@ -42281,7 +42334,7 @@
         },
         "uuid": "6e60e7b9e4778d7f"
       },
-      "352": {
+      "351": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -42322,7 +42375,7 @@
         },
         "uuid": "3f564a542615c783"
       },
-      "353": {
+      "352": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -42363,7 +42416,7 @@
         },
         "uuid": "cc9e4b3a3c092512"
       },
-      "354": {
+      "353": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -42403,7 +42456,7 @@
         },
         "uuid": "b67bc7833ca5a131"
       },
-      "355": {
+      "354": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -42443,7 +42496,7 @@
         },
         "uuid": "b442332dc3aabe43"
       },
-      "356": {
+      "355": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -42483,7 +42536,7 @@
         },
         "uuid": "3d20439604e09b0e"
       },
-      "357": {
+      "356": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42524,7 +42577,7 @@
         },
         "uuid": "ddf20939a2f9b382"
       },
-      "358": {
+      "357": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42565,7 +42618,7 @@
         },
         "uuid": "de30187e9f928e1c"
       },
-      "359": {
+      "358": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42606,7 +42659,7 @@
         },
         "uuid": "6f0a4770e057e66b"
       },
-      "360": {
+      "359": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/newhouse.glb"
@@ -42637,7 +42690,7 @@
         },
         "uuid": "22d07e467198b4ec"
       },
-      "361": {
+      "360": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42678,7 +42731,7 @@
         },
         "uuid": "702532ffbce55d63"
       },
-      "362": {
+      "361": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 473",
         "rootComponent": {
@@ -42716,7 +42769,7 @@
         },
         "uuid": "b621d60157c250a9"
       },
-      "363": {
+      "362": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 497",
         "rootComponent": {
@@ -42754,7 +42807,7 @@
         },
         "uuid": "6b030d0e5683ac91"
       },
-      "364": {
+      "363": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 501",
         "rootComponent": {
@@ -42792,7 +42845,7 @@
         },
         "uuid": "c187ab7d02bf0940"
       },
-      "365": {
+      "364": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -42833,7 +42886,7 @@
         },
         "uuid": "388e32511f76e88d"
       },
-      "366": {
+      "365": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/2ndnewhouse.glb"
@@ -42864,7 +42917,7 @@
         },
         "uuid": "8efbd5db924079a5"
       },
-      "367": {
+      "366": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 502",
         "rootComponent": {
@@ -42902,7 +42955,7 @@
         },
         "uuid": "97c4e9a960bdbc87"
       },
-      "368": {
+      "367": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 503",
         "rootComponent": {
@@ -42940,7 +42993,7 @@
         },
         "uuid": "6ef0504ced38d774"
       },
-      "369": {
+      "368": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 504",
         "rootComponent": {
@@ -42978,7 +43031,7 @@
         },
         "uuid": "680fc4226bb79173"
       },
-      "370": {
+      "369": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -43019,7 +43072,7 @@
         },
         "uuid": "7fe04b0a0658d650"
       },
-      "371": {
+      "370": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -43060,7 +43113,7 @@
         },
         "uuid": "60f09953a86d06e1"
       },
-      "372": {
+      "371": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -43101,7 +43154,7 @@
         },
         "uuid": "b3ba508509218029"
       },
-      "373": {
+      "372": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -43142,7 +43195,7 @@
         },
         "uuid": "0255141dd5274690"
       },
-      "374": {
+      "373": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -43183,7 +43236,7 @@
         },
         "uuid": "d2f3991a35b43259"
       },
-      "375": {
+      "374": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -43224,7 +43277,7 @@
         },
         "uuid": "1c7dc78d5824c01b"
       },
-      "376": {
+      "375": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -43265,7 +43318,7 @@
         },
         "uuid": "a2be366fb92a1b13"
       },
-      "377": {
+      "376": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/policerdone.glb"
@@ -43349,7 +43402,7 @@
         },
         "uuid": "69dd7d1852e041eb"
       },
-      "378": {
+      "377": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 14",
         "rootComponent": {
@@ -43377,7 +43430,7 @@
         },
         "uuid": "d42e28941a61d64a"
       },
-      "379": {
+      "378": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 15",
         "rootComponent": {
@@ -43405,7 +43458,7 @@
         },
         "uuid": "0a3886a483c86e95"
       },
-      "380": {
+      "379": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43445,7 +43498,7 @@
         },
         "uuid": "af5d8e23f2dcc9e4"
       },
-      "381": {
+      "380": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/spookytree.glb"
@@ -43483,7 +43536,7 @@
         },
         "uuid": "40fa86cd465480d4"
       },
-      "382": {
+      "381": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/spookytree.glb"
@@ -43521,7 +43574,7 @@
         },
         "uuid": "873741557721b9a4"
       },
-      "383": {
+      "382": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43561,7 +43614,7 @@
         },
         "uuid": "3325b29322b8ecaa"
       },
-      "384": {
+      "383": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43601,7 +43654,7 @@
         },
         "uuid": "ce55f0f6adae2b0c"
       },
-      "385": {
+      "384": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43641,7 +43694,7 @@
         },
         "uuid": "90b31ff58c8c2c4a"
       },
-      "386": {
+      "385": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43681,7 +43734,7 @@
         },
         "uuid": "73e42a8b8b55efdf"
       },
-      "387": {
+      "386": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43721,7 +43774,7 @@
         },
         "uuid": "5b7e55a7a806db99"
       },
-      "388": {
+      "387": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43761,7 +43814,7 @@
         },
         "uuid": "cee6e204b14a66ce"
       },
-      "389": {
+      "388": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -43801,7 +43854,7 @@
         },
         "uuid": "90b7692e75e861cd"
       },
-      "390": {
+      "389": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 505",
         "rootComponent": {
@@ -43839,7 +43892,7 @@
         },
         "uuid": "63b29f6546253726"
       },
-      "391": {
+      "390": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 506",
         "rootComponent": {
@@ -43877,7 +43930,7 @@
         },
         "uuid": "3d477ffbd357a909"
       },
-      "392": {
+      "391": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 507",
         "rootComponent": {
@@ -43915,7 +43968,7 @@
         },
         "uuid": "ba87ea56739dba0c"
       },
-      "393": {
+      "392": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 508",
         "rootComponent": {
@@ -43953,7 +44006,7 @@
         },
         "uuid": "9aaf3542c8cf9fb7"
       },
-      "394": {
+      "393": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -43984,7 +44037,7 @@
         },
         "uuid": "bac6d37a3027b67e"
       },
-      "395": {
+      "394": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -44022,7 +44075,7 @@
         },
         "uuid": "fb5fb7aae188eee3"
       },
-      "396": {
+      "395": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 509",
         "rootComponent": {
@@ -44060,7 +44113,7 @@
         },
         "uuid": "75dc7e363362df89"
       },
-      "397": {
+      "396": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44101,7 +44154,7 @@
         },
         "uuid": "ca91925d12d56faf"
       },
-      "398": {
+      "397": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -44141,7 +44194,7 @@
         },
         "uuid": "c82886958aa25e41"
       },
-      "399": {
+      "398": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -44181,7 +44234,7 @@
         },
         "uuid": "c5f1305ba6fe3b67"
       },
-      "400": {
+      "399": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 510",
         "rootComponent": {
@@ -44219,7 +44272,7 @@
         },
         "uuid": "e41029a930e11a00"
       },
-      "401": {
+      "400": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 511",
         "rootComponent": {
@@ -44257,7 +44310,7 @@
         },
         "uuid": "3bf507558c3c0ffc"
       },
-      "402": {
+      "401": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 512",
         "rootComponent": {
@@ -44295,7 +44348,7 @@
         },
         "uuid": "daeac05f1660d44a"
       },
-      "403": {
+      "402": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 513",
         "rootComponent": {
@@ -44333,7 +44386,7 @@
         },
         "uuid": "7b271d4e7f49086e"
       },
-      "404": {
+      "403": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 514",
         "rootComponent": {
@@ -44371,7 +44424,7 @@
         },
         "uuid": "5798da10bdf4c13e"
       },
-      "405": {
+      "404": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 515",
         "rootComponent": {
@@ -44409,7 +44462,7 @@
         },
         "uuid": "3482b8954931d2fa"
       },
-      "406": {
+      "405": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 429",
         "rootComponent": {
@@ -44447,7 +44500,7 @@
         },
         "uuid": "ca77c181d574ff2a"
       },
-      "407": {
+      "406": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 430",
         "rootComponent": {
@@ -44485,7 +44538,7 @@
         },
         "uuid": "418cf221edd9604d"
       },
-      "408": {
+      "407": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44526,7 +44579,7 @@
         },
         "uuid": "ca9c59fce785d842"
       },
-      "409": {
+      "408": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44567,7 +44620,7 @@
         },
         "uuid": "90f90e73cbc4d2ae"
       },
-      "410": {
+      "409": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44608,7 +44661,7 @@
         },
         "uuid": "30a2b2d9323738de"
       },
-      "411": {
+      "410": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44649,7 +44702,7 @@
         },
         "uuid": "c50580be1b589640"
       },
-      "412": {
+      "411": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44690,7 +44743,7 @@
         },
         "uuid": "b6a9073c2857fb36"
       },
-      "413": {
+      "412": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44731,7 +44784,7 @@
         },
         "uuid": "3c88cd607ee20f73"
       },
-      "414": {
+      "413": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/tunnelredone.glb"
@@ -44770,7 +44823,7 @@
         },
         "uuid": "8c845a32794d7d0c"
       },
-      "415": {
+      "414": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44803,7 +44856,7 @@
         },
         "uuid": "38fb79e9c5cba5f0"
       },
-      "416": {
+      "415": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44844,7 +44897,7 @@
         },
         "uuid": "d77932e896cdeb4f"
       },
-      "417": {
+      "416": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44877,7 +44930,7 @@
         },
         "uuid": "9eab79a047486534"
       },
-      "418": {
+      "417": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44918,7 +44971,7 @@
         },
         "uuid": "f4e092871764ac1d"
       },
-      "419": {
+      "418": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44959,7 +45012,7 @@
         },
         "uuid": "b552d5d87dcdcb44"
       },
-      "420": {
+      "419": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -44992,7 +45045,7 @@
         },
         "uuid": "8c6d3064fd564a32"
       },
-      "421": {
+      "420": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -45025,7 +45078,7 @@
         },
         "uuid": "5389c87900cf7785"
       },
-      "422": {
+      "421": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 431",
         "rootComponent": {
@@ -45063,7 +45116,7 @@
         },
         "uuid": "d7beb8599ac4211a"
       },
-      "423": {
+      "422": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/newhouse.glb"
@@ -45094,7 +45147,7 @@
         },
         "uuid": "aee65952b2faa303"
       },
-      "424": {
+      "423": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/newhouse.glb"
@@ -45133,7 +45186,7 @@
         },
         "uuid": "eb0e0c2973abe9f0"
       },
-      "425": {
+      "424": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/2ndnewhouse.glb"
@@ -45172,7 +45225,7 @@
         },
         "uuid": "5ef9e12321dc6a7b"
       },
-      "426": {
+      "425": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grim2.glb",
@@ -45253,7 +45306,7 @@
         },
         "uuid": "7e97a710b8d5f00b"
       },
-      "427": {
+      "426": {
         "$bc": "GAME.CloudShadowActor",
         "$initOptions": {},
         "editorData": {
@@ -54438,6 +54491,409 @@
                 ]
               },
               "uuid": "08e0020f-f3f7-42ea-ba1f-5c81af56e93e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "dc7b7b05-0592-47ee-80cb-6289c8ba2e3f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "be133604-c144-47d9-a101-e6851a42f79a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "6f05b5d5-a066-466a-bbbb-b9544add08d4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "d773d80c-b23c-4362-80b1-de941389fad8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "4a9399a9-9947-4181-a9bc-3e65c1008f84"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "9a490ed6-f96c-40df-82a0-bd08561d507c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "ee285f35-8476-4121-b795-8bef28b3fd56"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "bd61c7f7-eea0-4715-bc61-ef7ebf457d89"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "771e00cd-54ee-4ef5-bec2-a1e8bbfaf454"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "b2199469-1df4-4ca7-a189-ee2aa900e78c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "c1e2b58a-2093-40f7-86be-e4672747861c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "41e3123a-b8ee-46d0-83fa-4bb43e207884"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "2a39c88d-1553-474f-8897-0c5bc61336f0"
             }
           ],
           "cloudHigh": 0.81,
@@ -54463,7 +54919,7 @@
         },
         "uuid": "2c0d91529ae7f3d6"
       },
-      "428": {
+      "427": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Bigundead/Meshy_AI_Oozebound_Office_Zomb_biped/Meshy_AI_Oozebound_Office_Zomb_biped_Character_output.glb"
@@ -54485,7 +54941,7 @@
         },
         "uuid": "9afd1259e26dbeba"
       },
-      "429": {
+      "428": {
         "$bc": "GAME.BigUndeadActor",
         "$initOptions": {},
         "name": "Big Undead Actor 2",
@@ -54665,7 +55121,7 @@
         },
         "uuid": "784bf959062b1c76"
       },
-      "430": {
+      "429": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Vomitball.glb"
@@ -54695,7 +55151,7 @@
         },
         "uuid": "a050cf4d9303be6b"
       },
-      "431": {
+      "430": {
         "$bc": "GAME.VomitballProjectileActor",
         "$initOptions": {},
         "name": "Vomitball Projectile Actor 7",
@@ -54730,7 +55186,7 @@
         },
         "uuid": "2447f0d5b8606171"
       },
-      "432": {
+      "431": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grimsroom.glb"
@@ -54786,7 +55242,7 @@
         },
         "uuid": "8dd21c0b763e30f6"
       },
-      "433": {
+      "432": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Grim2.glb"
@@ -54819,7 +55275,7 @@
         },
         "uuid": "72273edeba29a5ac"
       },
-      "434": {
+      "433": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "name": "Cube",
@@ -54850,11 +55306,11 @@
         },
         "uuid": "dc7f45f8fde6698a"
       },
-      "435": {
+      "434": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "editorData": {
-          "hidden": true
+          "hidden": false
         },
         "name": "Fog System 07",
         "rootComponent": {
@@ -57813,19 +58269,97 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "14e620e2-a084-4500-9be3-b12fd1463369"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2afd5a43-f119-441c-810b-df574f0d9b64"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6c16decc-690e-4276-b5b8-a9323207ef65"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "69b26373-d0ca-44f4-b748-310c32a17ab1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b564ab36-7d8e-445f-bdb4-3e466299b391"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2056f373-39dd-431e-84bf-ab2bfca71308"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "553ce4a5-7d2d-45cc-9ed7-69f6b0900cb5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f5d06a1b-5248-4f52-a975-ecab23ce7a67"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b24851af-b163-40c5-9659-32e296404411"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8072f646-c458-45f4-a38c-49e0b139dbd1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "16ce214d-d528-48fa-8e18-74580c420086"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f6aadf6f-7e4f-44f3-8ff3-90da8c437229"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "21643f83-a3d1-43f4-84d0-084e534f00f3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9c7c7fcb-a85f-421e-b6e3-ab16f03b17ed"
             }
           ],
           "emissiveIntensity": 0.9,
           "flowMapDirection": 0.28,
           "flowMapSpeed": 0.18,
           "flowMapTiling": 3.15,
-          "fogDensity": 0.3,
+          "fogDensity": 0.52,
           "name": "FogSystemComponent",
           "position": {
             "$bc": "v3",
             "_": [
               -0.4,
-              -1.2,
+              -1.1,
               6.7
             ]
           },
@@ -57853,7 +58387,7 @@
         },
         "uuid": "c20ed2f6c4fed04b"
       },
-      "436": {
+      "435": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 516",
         "rootComponent": {
@@ -57891,7 +58425,7 @@
         },
         "uuid": "59c5935afb967d17"
       },
-      "437": {
+      "436": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 517",
         "rootComponent": {
@@ -57929,7 +58463,7 @@
         },
         "uuid": "8aad4c1a29e8e3e4"
       },
-      "438": {
+      "437": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 518",
         "rootComponent": {
@@ -57967,7 +58501,7 @@
         },
         "uuid": "577895f41df03e84"
       },
-      "439": {
+      "438": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 519",
         "rootComponent": {
@@ -58005,7 +58539,7 @@
         },
         "uuid": "0aecab001985cc46"
       },
-      "440": {
+      "439": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 520",
         "rootComponent": {
@@ -58043,7 +58577,7 @@
         },
         "uuid": "4ddb41499f895675"
       },
-      "441": {
+      "440": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 521",
         "rootComponent": {
@@ -58081,7 +58615,7 @@
         },
         "uuid": "34a949243d1b8a52"
       },
-      "442": {
+      "441": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 522",
         "rootComponent": {
@@ -58119,7 +58653,7 @@
         },
         "uuid": "6477b70153862e0a"
       },
-      "443": {
+      "442": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 523",
         "rootComponent": {
@@ -58157,7 +58691,7 @@
         },
         "uuid": "a351b9f426137805"
       },
-      "444": {
+      "443": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 524",
         "rootComponent": {
@@ -58195,7 +58729,7 @@
         },
         "uuid": "ab4f1a83da42bbee"
       },
-      "445": {
+      "444": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -58228,7 +58762,7 @@
         },
         "uuid": "2dbecc4696bfff9c"
       },
-      "446": {
+      "445": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -58267,7 +58801,7 @@
         },
         "uuid": "25fd3426e8dd52b2"
       },
-      "447": {
+      "446": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -58300,7 +58834,7 @@
         },
         "uuid": "d689076ff033862c"
       },
-      "448": {
+      "447": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 573",
         "rootComponent": {
@@ -58338,7 +58872,7 @@
         },
         "uuid": "a7519bb8086da768"
       },
-      "449": {
+      "448": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 574",
         "rootComponent": {
@@ -58376,7 +58910,7 @@
         },
         "uuid": "465a7d0b6136cb65"
       },
-      "450": {
+      "449": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -58409,7 +58943,7 @@
         },
         "uuid": "85c7b58f43fd5090"
       },
-      "451": {
+      "450": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/rocksredone.glb"
@@ -58448,7 +58982,7 @@
         },
         "uuid": "8fdb07a59f547183"
       },
-      "452": {
+      "451": {
         "$bc": "ENGINE.Actor",
         "editorData": {
           "hidden": false
@@ -58481,7 +59015,7 @@
         },
         "uuid": "0da51255e6fae16f"
       },
-      "453": {
+      "452": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 588",
         "rootComponent": {
@@ -58519,7 +59053,7 @@
         },
         "uuid": "9716fed5472d5256"
       },
-      "454": {
+      "453": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 589",
         "rootComponent": {
@@ -58557,7 +59091,7 @@
         },
         "uuid": "5f63c61fdd5d05b4"
       },
-      "455": {
+      "454": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/2ndnewhouse.glb"
@@ -58596,7 +59130,7 @@
         },
         "uuid": "0562a1e0fd4e27fa"
       },
-      "456": {
+      "455": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 590",
         "rootComponent": {
@@ -58634,7 +59168,7 @@
         },
         "uuid": "25a86250e5ae885c"
       },
-      "457": {
+      "456": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 591",
         "rootComponent": {
@@ -58672,7 +59206,7 @@
         },
         "uuid": "2e88f46e77354682"
       },
-      "458": {
+      "457": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 592",
         "rootComponent": {
@@ -58710,7 +59244,7 @@
         },
         "uuid": "d8bdd975beb9a57f"
       },
-      "459": {
+      "458": {
         "$bc": "ENGINE.Actor",
         "name": "Actor 593",
         "rootComponent": {
@@ -58748,7 +59282,7 @@
         },
         "uuid": "b0c5cf23b9291066"
       },
-      "460": {
+      "459": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -58789,7 +59323,7 @@
         },
         "uuid": "5a032412d8df79e9"
       },
-      "461": {
+      "460": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -58830,7 +59364,7 @@
         },
         "uuid": "41421dc8e581bfcc"
       },
-      "462": {
+      "461": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -58871,7 +59405,7 @@
         },
         "uuid": "f537f6715ef0f20f"
       },
-      "463": {
+      "462": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -58912,7 +59446,7 @@
         },
         "uuid": "af8ddedc5410edfc"
       },
-      "464": {
+      "463": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -58950,7 +59484,7 @@
         },
         "uuid": "402b4fcf0ba25b12"
       },
-      "465": {
+      "464": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -58988,7 +59522,7 @@
         },
         "uuid": "33a9b2c57d851c3f"
       },
-      "466": {
+      "465": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59026,7 +59560,7 @@
         },
         "uuid": "1b600604b14b3fa0"
       },
-      "467": {
+      "466": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -59085,7 +59619,7 @@
         },
         "uuid": "f9eb0d8690093dab"
       },
-      "468": {
+      "467": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Car1redon.glb"
@@ -59125,7 +59659,7 @@
         },
         "uuid": "e9d6243f5df6911a"
       },
-      "469": {
+      "468": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59166,7 +59700,7 @@
         },
         "uuid": "5f91f4d9a2b7e12e"
       },
-      "470": {
+      "469": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59207,7 +59741,7 @@
         },
         "uuid": "cf2eba922bc45d71"
       },
-      "471": {
+      "470": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59248,7 +59782,7 @@
         },
         "uuid": "87c4172d72c11ce7"
       },
-      "472": {
+      "471": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59289,7 +59823,7 @@
         },
         "uuid": "62a67d58aa5bf84d"
       },
-      "473": {
+      "472": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -59329,7 +59863,7 @@
         },
         "uuid": "b6733d924778f5d7"
       },
-      "474": {
+      "473": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -59369,7 +59903,7 @@
         },
         "uuid": "91af889593e65c1d"
       },
-      "475": {
+      "474": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -59409,7 +59943,7 @@
         },
         "uuid": "c3dd489a82e96cce"
       },
-      "476": {
+      "475": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -59449,7 +59983,7 @@
         },
         "uuid": "199a6f9350063e77"
       },
-      "477": {
+      "476": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59490,7 +60024,7 @@
         },
         "uuid": "ca0eaddc3079b3d6"
       },
-      "478": {
+      "477": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59531,7 +60065,7 @@
         },
         "uuid": "1c8c364dfdbadc12"
       },
-      "479": {
+      "478": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59572,7 +60106,7 @@
         },
         "uuid": "4a6913a2da226aaf"
       },
-      "480": {
+      "479": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59610,7 +60144,7 @@
         },
         "uuid": "8961ba87b7329a62"
       },
-      "481": {
+      "480": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "tombs 04",
         "rootComponent": {
@@ -59638,7 +60172,7 @@
         },
         "uuid": "265c76968657fdbc"
       },
-      "482": {
+      "481": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "tombs 05",
         "rootComponent": {
@@ -59666,7 +60200,7 @@
         },
         "uuid": "d245fbe3ae9fc1cd"
       },
-      "483": {
+      "482": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "tombs 06",
         "rootComponent": {
@@ -59694,7 +60228,7 @@
         },
         "uuid": "6d30685d7ab992f2"
       },
-      "484": {
+      "483": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/spookytree.glb"
@@ -59733,7 +60267,7 @@
         },
         "uuid": "bb00e706ecbffcc9"
       },
-      "485": {
+      "484": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59771,7 +60305,7 @@
         },
         "uuid": "3994af91d591da40"
       },
-      "486": {
+      "485": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59809,7 +60343,7 @@
         },
         "uuid": "eb3129cbc77948db"
       },
-      "487": {
+      "486": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59847,7 +60381,7 @@
         },
         "uuid": "493cca524fc56d20"
       },
-      "488": {
+      "487": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59885,7 +60419,7 @@
         },
         "uuid": "eb5b04d1c9a72ae0"
       },
-      "489": {
+      "488": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59926,7 +60460,7 @@
         },
         "uuid": "368c776c1f4302af"
       },
-      "490": {
+      "489": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -59967,7 +60501,7 @@
         },
         "uuid": "5d41d47148f1b61f"
       },
-      "491": {
+      "490": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60008,7 +60542,7 @@
         },
         "uuid": "ba471e6edfb55b08"
       },
-      "492": {
+      "491": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60049,7 +60583,7 @@
         },
         "uuid": "11c333258087a786"
       },
-      "493": {
+      "492": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/newhouse.glb"
@@ -60088,7 +60622,7 @@
         },
         "uuid": "4954326c8d41f52c"
       },
-      "494": {
+      "493": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60129,7 +60663,7 @@
         },
         "uuid": "8b761358f4c81ed6"
       },
-      "495": {
+      "494": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60170,7 +60704,7 @@
         },
         "uuid": "24c23d1eb8e51b77"
       },
-      "496": {
+      "495": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60211,7 +60745,7 @@
         },
         "uuid": "2dcbf11fc2fade2c"
       },
-      "497": {
+      "496": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60252,7 +60786,7 @@
         },
         "uuid": "1d6addd8c86030f3"
       },
-      "498": {
+      "497": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60293,7 +60827,7 @@
         },
         "uuid": "0c282ea268c4f3d4"
       },
-      "499": {
+      "498": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60334,7 +60868,7 @@
         },
         "uuid": "36ebdbf221dbd77d"
       },
-      "500": {
+      "499": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60375,7 +60909,7 @@
         },
         "uuid": "3d9d9f8568e7ab01"
       },
-      "501": {
+      "500": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/woodenfence.glb"
@@ -60416,7 +60950,7 @@
         },
         "uuid": "543162ee62ed9fbb"
       },
-      "502": {
+      "501": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -60456,7 +60990,7 @@
         },
         "uuid": "6189d79d5f7dd682"
       },
-      "503": {
+      "502": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -60496,7 +61030,7 @@
         },
         "uuid": "42bf30c8837328ff"
       },
-      "504": {
+      "503": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -60536,7 +61070,7 @@
         },
         "uuid": "b5dda4d3a42a1a07"
       },
-      "505": {
+      "504": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Newtree.glb"
@@ -60576,7 +61110,7 @@
         },
         "uuid": "d500eb05e63375db"
       },
-      "506": {
+      "505": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Wall.glb"
@@ -60611,7 +61145,7 @@
         },
         "uuid": "f47077116b66f93a"
       },
-      "507": {
+      "506": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/spookytree.glb"
@@ -60650,7 +61184,7 @@
         },
         "uuid": "34bfbdf47fe2e15e"
       },
-      "508": {
+      "507": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/spookytree.glb"
@@ -60689,7 +61223,7 @@
         },
         "uuid": "cf33a1f6eaad35c7"
       },
-      "509": {
+      "508": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/spookytree.glb"
@@ -60728,7 +61262,7 @@
         },
         "uuid": "d8caeb5da72c710d"
       },
-      "510": {
+      "509": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/spookytree.glb"
@@ -60767,11 +61301,11 @@
         },
         "uuid": "b6b3ae073d27d3dc"
       },
-      "511": {
+      "510": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "editorData": {
-          "hidden": true
+          "hidden": false
         },
         "name": "Fog System 06",
         "rootComponent": {
@@ -63730,13 +64264,91 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "33ae7f3d-f715-4cea-b39e-4c8b60e115f5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ef34b2a3-50ef-4b97-a466-6121b5f6ebea"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "59900355-b32b-48e3-8b38-4ac5c6fef385"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a0f6ced4-b236-418a-8f33-f45db0efd0f9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8c595886-94c1-4798-b9a3-ce3499c19967"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a1c4285f-5662-438e-8301-888dfdbd0305"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1071a0be-2511-42d4-b71f-5db19a9a7e0e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8ea76076-2fbf-49c9-b9da-738e41ca85e3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "aa413eb5-96e0-416b-b942-b95949bc94f6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "64811b47-55b2-4813-86e4-b26f6a847b85"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6412d211-f24c-482d-be48-359dd7339b8b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "682fa3e4-3eab-4d0f-8a08-032f92b78d68"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0c416a82-14f5-4313-bccf-0bb4276d7774"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3806376e-0a84-409d-aa84-c5b511975aa1"
             }
           ],
           "emissiveIntensity": 0.49,
           "flowMapDirection": 0.28,
           "flowMapSpeed": 0.18,
           "flowMapTiling": 3.15,
-          "fogDensity": 0.34,
+          "fogDensity": 0.52,
           "name": "FogSystemComponent",
           "position": {
             "$bc": "v3",
@@ -63770,11 +64382,11 @@
         },
         "uuid": "25549341d72d3eaa"
       },
-      "512": {
+      "511": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
         "editorData": {
-          "hidden": true
+          "hidden": false
         },
         "name": "Fog System 08",
         "rootComponent": {
@@ -66739,13 +67351,91 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "a69bd485-d166-41d2-9df1-551b335f5af5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3fb548c9-cc70-4477-9700-e6b1315e6461"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "40bb7ee1-d983-452a-bd3e-d36be207d54f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1e455d30-0f93-4fc7-ae3d-434dd45d3960"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a3138079-4840-4b96-8aea-b3d615d73fc7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ffc931a0-a722-459a-9396-34c42558dd96"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a6bd8d0c-b59f-4d16-95c9-dc8e2f7339c0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "da9147cf-13b3-4659-a562-a11afd622b3c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4b55bd7d-2b36-4087-8fb2-9cd1ac8747ef"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0a5b008f-e771-449f-bb62-96cf182acb24"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3df82333-345e-41ac-b58f-c33cd99e861c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "194fdce6-9734-485b-ae67-c14538cb1f7e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4cbc1d05-2135-419c-a313-39e2f86de340"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ef40e021-e610-45ae-97ec-07a261ecf536"
             }
           ],
           "emissiveIntensity": 0.49,
           "flowMapDirection": 0.28,
           "flowMapSpeed": 0.18,
           "flowMapTiling": 3.15,
-          "fogDensity": 0.34,
+          "fogDensity": 0.52,
           "name": "FogSystemComponent",
           "position": {
             "$bc": "v3",
@@ -66779,7 +67469,7 @@
         },
         "uuid": "8bf613650330c6f4"
       },
-      "513": {
+      "512": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/Innocent.glb"
@@ -66817,7 +67507,7 @@
         },
         "uuid": "864af731a9b9560f"
       },
-      "514": {
+      "513": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 16",
         "rootComponent": {
@@ -66845,7 +67535,7 @@
         },
         "uuid": "3d71138992fa0a99"
       },
-      "515": {
+      "514": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "Police block 17",
         "rootComponent": {
@@ -66873,7 +67563,7 @@
         },
         "uuid": "8fc27a24ab1302af"
       },
-      "516": {
+      "515": {
         "$bc": "GAME.SpawnBlockerActor",
         "$initOptions": {},
         "name": "Spawn Blocker Actor 3",
@@ -66904,7 +67594,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "0861da3a-a423-498c-9881-c09cba43b9ea"
+            "uuid": "f15a0076-2337-4c0d-b93c-b51b49bc3431"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -66933,7 +67623,7 @@
         },
         "uuid": "888032a84071de58"
       },
-      "517": {
+      "516": {
         "$bc": "GAME.SpawnBlockerActor",
         "$initOptions": {},
         "name": "Spawn Blocker Actor 04",
@@ -66964,7 +67654,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "71815a99-21e9-47bb-b884-fa5e0f93bbc7"
+            "uuid": "328c30fb-2163-483b-8c1c-683623f6a9e5"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -66993,7 +67683,7 @@
         },
         "uuid": "5a9c87e8565bf242"
       },
-      "518": {
+      "517": {
         "$bc": "GAME.SpawnBlockerActor",
         "$initOptions": {},
         "name": "Spawn Blocker Actor 05",
@@ -67024,7 +67714,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "c129b766-52c1-4f75-a2ef-2810ce802f53"
+            "uuid": "d5720212-0b08-4252-bc64-b79e6c86a451"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67053,7 +67743,7 @@
         },
         "uuid": "a40d7a555ec2cb2b"
       },
-      "519": {
+      "518": {
         "$bc": "GAME.SpawnBlockerActor",
         "$initOptions": {},
         "name": "Spawn Blocker Actor 06",
@@ -67084,7 +67774,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "8f79050b-20ea-48c7-b8de-60109b934d97"
+            "uuid": "eac48019-2369-483b-826d-c1a14f57077f"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67113,7 +67803,7 @@
         },
         "uuid": "987c32cca2889219"
       },
-      "520": {
+      "519": {
         "$bc": "GAME.SpawnBlockerActor",
         "$initOptions": {},
         "name": "Spawn Blocker Actor 07",
@@ -67144,7 +67834,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "b1090bab-786b-424f-a3e5-ce72c1cb7744"
+            "uuid": "139cf3d2-b6b7-45ce-b58a-825e41d85cad"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67173,7 +67863,7 @@
         },
         "uuid": "25515638e4556b06"
       },
-      "521": {
+      "520": {
         "$bc": "GAME.SpawnBlockerActor",
         "$initOptions": {},
         "name": "Spawn Blocker Actor 08",
@@ -67204,7 +67894,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "820cd210-4919-4c27-acea-238e1b487b74"
+            "uuid": "7e9e7d8e-e299-48ca-9f80-7aec6ef77b49"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67233,7 +67923,7 @@
         },
         "uuid": "ab49f00fb48bb8dc"
       },
-      "522": {
+      "521": {
         "$bc": "GAME.SpawnBlockerActor",
         "$initOptions": {},
         "name": "Spawn Blocker Actor 09",
@@ -67264,7 +67954,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "89119222-fc71-44a7-81b1-05e4ccb40096"
+            "uuid": "ab412932-daee-4355-a98a-c73e8a43899e"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67293,7 +67983,7 @@
         },
         "uuid": "0ad209eec6e33fac"
       },
-      "523": {
+      "522": {
         "$bc": "GAME.InnocentSpawnPointActor",
         "$initOptions": {},
         "name": "Innocent Spawn Point Actor 1",
@@ -67325,7 +68015,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8743a1f5-7d37-41ad-94cc-59c11ae65b09"
+            "uuid": "f166b1e3-639c-4197-b08b-caeca6d8f344"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67346,7 +68036,7 @@
         },
         "uuid": "e63902ac04f3af80"
       },
-      "524": {
+      "523": {
         "$bc": "GAME.InnocentSpawnPointActor",
         "$initOptions": {},
         "name": "Innocent Spawn Point Actor 02",
@@ -67378,7 +68068,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "fdcc7bc7-5ac4-42ee-b5fa-380e6c1b3a55"
+            "uuid": "c931b9fc-7504-4996-bd7b-1139f24e061b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67399,7 +68089,7 @@
         },
         "uuid": "d377f2cb7c67917d"
       },
-      "525": {
+      "524": {
         "$bc": "GAME.InnocentSpawnPointActor",
         "$initOptions": {},
         "name": "Innocent Spawn Point Actor 03",
@@ -67431,7 +68121,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "06b9ddc9-dfc9-41a4-8b20-f28051b7fc44"
+            "uuid": "46911f05-2293-4f38-87b1-954fc0f08abc"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67452,7 +68142,7 @@
         },
         "uuid": "64e717f3c7e9337b"
       },
-      "526": {
+      "525": {
         "$bc": "GAME.InnocentSpawnPointActor",
         "$initOptions": {},
         "name": "Innocent Spawn Point Actor 04",
@@ -67484,7 +68174,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "324d9894-f3ca-4dc1-b6ba-89895a8c2969"
+            "uuid": "4c46ee6e-f270-4e17-bcbf-f0e6223819de"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67505,7 +68195,7 @@
         },
         "uuid": "12dc9ad09d8dc6d6"
       },
-      "527": {
+      "526": {
         "$bc": "GAME.InnocentSpawnPointActor",
         "$initOptions": {},
         "name": "Innocent Spawn Point Actor 05",
@@ -67537,7 +68227,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "f42588d6-6633-4301-bcc3-b56d5af31fc6"
+            "uuid": "d39a6ad1-1876-4de7-8581-b7f920ea5702"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67558,7 +68248,7 @@
         },
         "uuid": "63894ab8b20de252"
       },
-      "528": {
+      "527": {
         "$bc": "GAME.InnocentSpawnPointActor",
         "$initOptions": {},
         "name": "Innocent Spawn Point Actor 06",
@@ -67590,7 +68280,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7e65cd99-78e6-4d0f-9aa9-8b6754dee2ac"
+            "uuid": "1ec12b7a-3419-4812-8376-fa993833832b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67611,7 +68301,7 @@
         },
         "uuid": "1f1f1fb842788827"
       },
-      "529": {
+      "528": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 1",
@@ -67643,7 +68333,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0f54694d-c5c5-4fbf-88af-204e91c4e3a1"
+            "uuid": "f5d8d10f-94c1-4eb9-a920-2f4541d04fed"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67664,7 +68354,7 @@
         },
         "uuid": "6d993ed02e7dc47c"
       },
-      "530": {
+      "529": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 02",
@@ -67696,7 +68386,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "9cb5eb44-59cb-487b-a46c-8084cb9fe135"
+            "uuid": "ca37ad8d-3d30-497d-9a52-a4da2626db93"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67717,7 +68407,7 @@
         },
         "uuid": "ab14d9968d120130"
       },
-      "531": {
+      "530": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 03",
@@ -67749,7 +68439,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "33723413-4843-4211-881d-b15a1acdddd6"
+            "uuid": "289ac88c-3c28-41d3-8acc-a38af30fe8b1"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67770,7 +68460,7 @@
         },
         "uuid": "c9ccd028f9a0aa9a"
       },
-      "532": {
+      "531": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 04",
@@ -67802,7 +68492,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8a428bc6-199f-4260-a1f0-d4429ac04db4"
+            "uuid": "b9da33c6-b3e4-46b6-bc5b-f7ccedfd0a1e"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67823,7 +68513,7 @@
         },
         "uuid": "d0381cd70c71a93c"
       },
-      "533": {
+      "532": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 05",
@@ -67855,7 +68545,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "be70ea90-73a1-4903-99dd-89e0092c3baa"
+            "uuid": "448dd82a-59b7-40d9-857d-13745abf9553"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67876,7 +68566,7 @@
         },
         "uuid": "7a38de0ad68d7b82"
       },
-      "534": {
+      "533": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 06",
@@ -67908,7 +68598,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "562dcb98-275d-47a2-ae08-af307672f050"
+            "uuid": "976b87bb-c081-4848-8b79-8b166a9da60b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67929,7 +68619,7 @@
         },
         "uuid": "df651070fea8447a"
       },
-      "535": {
+      "534": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 07",
@@ -67961,7 +68651,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "d7592b54-fef7-4803-a480-f9a5f525d8ae"
+            "uuid": "696054c8-6c4a-4516-a5be-4360bb9a17ac"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -67982,7 +68672,7 @@
         },
         "uuid": "ee8dae63950a3733"
       },
-      "536": {
+      "535": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 08",
@@ -68014,7 +68704,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "14b15294-8091-402c-9813-288ba64f3c9a"
+            "uuid": "dff8b2bb-20e2-4676-a203-15cda86ebe5b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68035,7 +68725,7 @@
         },
         "uuid": "acfad155b0b801b9"
       },
-      "537": {
+      "536": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 09",
@@ -68067,7 +68757,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7fa83acf-b839-42da-b599-00b76dc7a393"
+            "uuid": "ee253196-31ff-43ed-80e5-59920dd3cf2b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68088,7 +68778,7 @@
         },
         "uuid": "5b90bb6f74e02e15"
       },
-      "538": {
+      "537": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 10",
@@ -68120,7 +68810,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0a29bfef-0ef7-4cb4-8da7-428cd35abc4d"
+            "uuid": "f712bc15-1012-40f1-af79-ef2811196fa0"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68141,7 +68831,7 @@
         },
         "uuid": "646a14201a8f924a"
       },
-      "539": {
+      "538": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 11",
@@ -68172,7 +68862,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0d2891c0-a3a1-4c20-8b66-fbb70e570420"
+            "uuid": "1732246a-f47b-4e03-9254-5a8ff7ff1e90"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68193,7 +68883,7 @@
         },
         "uuid": "97a369e4bbb2947f"
       },
-      "540": {
+      "539": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 12",
@@ -68224,7 +68914,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "66c384b4-3509-432f-ad9a-f6632ce9c7cd"
+            "uuid": "25bb9a6d-f015-49d4-9b98-1ee578684adb"
           },
           "name": "MeshComponent",
           "position": {
@@ -68242,7 +68932,7 @@
         },
         "uuid": "d3db9128b6ee7291"
       },
-      "541": {
+      "540": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 13",
@@ -68273,7 +68963,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "4faf7941-cf5a-420b-b52f-2bc7a5884d1a"
+            "uuid": "aa11cf89-53df-4114-bdca-20ca3085857d"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68294,7 +68984,7 @@
         },
         "uuid": "2a2b5ad5bcc9d150"
       },
-      "542": {
+      "541": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 14",
@@ -68325,7 +69015,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "4d6910d8-9928-40f0-ad7d-9561feb15170"
+            "uuid": "66ac4bdf-7c72-48a0-92dd-ccf83a1da4bb"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68346,7 +69036,7 @@
         },
         "uuid": "a1498b38f66cf1b2"
       },
-      "543": {
+      "542": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 15",
@@ -68377,7 +69067,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "3a7d5c32-9d44-4512-9c77-a86f43ecfb7a"
+            "uuid": "55d4eaf5-120c-4215-bbea-dcae62f286aa"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68398,7 +69088,7 @@
         },
         "uuid": "cc3a696b26ecf424"
       },
-      "544": {
+      "543": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 16",
@@ -68429,7 +69119,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "63d83ae1-edd1-416c-931f-95753f2ba628"
+            "uuid": "cbd17ce9-171f-4573-b946-462b75eb5773"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68450,7 +69140,7 @@
         },
         "uuid": "3bc1d7e9b04a3bd7"
       },
-      "545": {
+      "544": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 17",
@@ -68481,7 +69171,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "fd10ba31-65d8-41fd-afd1-f712c5aad488"
+            "uuid": "9c77e381-ab22-4ec4-af31-19eb788803ea"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68502,7 +69192,7 @@
         },
         "uuid": "be8ef5470be2aca4"
       },
-      "546": {
+      "545": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 18",
@@ -68533,7 +69223,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7cb12ab5-1d00-463b-a3f4-000c4d5d030a"
+            "uuid": "476821ab-2424-45b8-aa8f-fd86d1464979"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68554,7 +69244,7 @@
         },
         "uuid": "2084edc9800d4bd7"
       },
-      "547": {
+      "546": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 19",
@@ -68585,7 +69275,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8f774c26-9daa-408c-9d71-d055bdbfb6a9"
+            "uuid": "f0e9e5ea-5c6e-433f-a506-29e21eb48792"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68606,7 +69296,7 @@
         },
         "uuid": "8a0a12256b895428"
       },
-      "548": {
+      "547": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 20",
@@ -68637,7 +69327,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "25ecd166-2303-4127-9a53-084ff551222b"
+            "uuid": "1b355826-d4e2-4f3e-a44c-900a8a5de60b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68658,7 +69348,7 @@
         },
         "uuid": "e40a2b568d35e0e1"
       },
-      "549": {
+      "548": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 21",
@@ -68689,7 +69379,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "b1576e74-f3fb-482f-b5c3-bc7f228a708c"
+            "uuid": "ffd31601-4811-4952-b001-fe59cef6d96f"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68710,7 +69400,7 @@
         },
         "uuid": "c1f393e5ce10e3d4"
       },
-      "550": {
+      "549": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 22",
@@ -68741,7 +69431,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "74b0bb17-574a-429f-9061-b85f41397cdf"
+            "uuid": "7172efdc-e456-45ba-b011-d3a5a76771b7"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -68762,7 +69452,7 @@
         },
         "uuid": "f967542780999581"
       },
-      "551": {
+      "550": {
         "$bc": "GAME.EnemySpawnPointActor",
         "$initOptions": {},
         "name": "Enemy Spawn Point Actor 23",
@@ -68793,7 +69483,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "27d6eb72-908b-43cc-b10b-16f3fa0cc792"
+            "uuid": "497c85ee-21b0-4a46-8e52-0f409e8d5aaa"
           },
           "name": "MeshComponent",
           "position": {
@@ -68811,7 +69501,7 @@
         },
         "uuid": "bbc31ec7f6115b45"
       },
-      "552": {
+      "551": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/fistofannoyance.glb",
@@ -68857,7 +69547,7 @@
         },
         "uuid": "c91ba483f2b4df9a"
       },
-      "553": {
+      "552": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/fistofannoyance.glb",
@@ -68903,7 +69593,7 @@
         },
         "uuid": "fd505626b25a3bff"
       },
-      "554": {
+      "553": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "weapon 02",
         "rootComponent": {
@@ -68938,7 +69628,7 @@
         },
         "uuid": "d8825e33f7c49433"
       },
-      "555": {
+      "554": {
         "$bc": "ENGINE.GLTFMeshActor",
         "name": "weapon 03",
         "rootComponent": {
@@ -68973,7 +69663,7 @@
         },
         "uuid": "d84919bb34419660"
       },
-      "556": {
+      "555": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 126",
@@ -69175,7 +69865,7 @@
         },
         "uuid": "bede944e0e66edab"
       },
-      "557": {
+      "556": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 141",
@@ -69377,7 +70067,7 @@
         },
         "uuid": "ba15c85eb4329818"
       },
-      "558": {
+      "557": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 142",
@@ -69579,7 +70269,7 @@
         },
         "uuid": "10217366bea9ba35"
       },
-      "559": {
+      "558": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 143",
@@ -69781,7 +70471,7 @@
         },
         "uuid": "56fe2d2304aadcf2"
       },
-      "560": {
+      "559": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 144",
@@ -69983,7 +70673,7 @@
         },
         "uuid": "33a912305c79308b"
       },
-      "561": {
+      "560": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 145",
@@ -70185,7 +70875,7 @@
         },
         "uuid": "1b1d9b060bbbb8d7"
       },
-      "562": {
+      "561": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 146",
@@ -70387,7 +71077,7 @@
         },
         "uuid": "98a2cb83128104e1"
       },
-      "563": {
+      "562": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 147",
@@ -70589,7 +71279,7 @@
         },
         "uuid": "27a55f52f2878e68"
       },
-      "564": {
+      "563": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 148",
@@ -70791,7 +71481,7 @@
         },
         "uuid": "463382c93605e74d"
       },
-      "565": {
+      "564": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 149",
@@ -70993,7 +71683,7 @@
         },
         "uuid": "5736de757964070e"
       },
-      "566": {
+      "565": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 150",
@@ -71195,7 +71885,7 @@
         },
         "uuid": "4fcdf0f586355acb"
       },
-      "567": {
+      "566": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 151",
@@ -71397,7 +72087,7 @@
         },
         "uuid": "112824f99e343db5"
       },
-      "568": {
+      "567": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 152",
@@ -71599,7 +72289,7 @@
         },
         "uuid": "b71321c7ea3ca7d7"
       },
-      "569": {
+      "568": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 153",
@@ -71801,7 +72491,7 @@
         },
         "uuid": "26ffe9adecae447f"
       },
-      "570": {
+      "569": {
         "$bc": "GAME.NewZombieActor",
         "$initOptions": {},
         "name": "NewZombieActor 154",
@@ -72003,7 +72693,7 @@
         },
         "uuid": "d8f5bc62c0e6c77b"
       },
-      "571": {
+      "570": {
         "$bc": "ENGINE.GLTFMeshActor",
         "$initOptions": {
           "modelUrl": "@project/assets/models/demonletter.glb"
@@ -72041,7 +72731,7 @@
         },
         "uuid": "7703ac5a021661fc"
       },
-      "572": {
+      "571": {
         "$bc": "GAME.PostmanBulletActor",
         "$initOptions": {},
         "name": "Postman Bullet Actor 2",
@@ -72101,7 +72791,7 @@
         },
         "uuid": "1d973cd19248dd2d"
       },
-      "573": {
+      "572": {
         "$bc": "GAME.PostmanBossActor",
         "$initOptions": {},
         "name": "Postman Boss Actor 4",
@@ -72264,6 +72954,3093 @@
           "uuid": "a66934d0-5905-43bd-b6c7-27d296e71de0"
         },
         "uuid": "c83184dd3140f908"
+      },
+      "573": {
+        "$bc": "ENGINE.Actor",
+        "$initOptions": {},
+        "editorData": {
+          "hidden": false
+        },
+        "name": "Fog System 09",
+        "rootComponent": {
+          "$bc": "GAME.FogSystemComponent",
+          "atmosphereColor": {
+            "$bc": "c",
+            "_": [
+              0.194618,
+              0.278894,
+              0.434154
+            ]
+          },
+          "baseColorContrast": -0.65,
+          "baseColorIntensity": 3.9,
+          "baseColorOutputIntensity": 1.18,
+          "baseColorTint": {
+            "$bc": "c",
+            "_": [
+              0.102242,
+              0.152926,
+              0.246201
+            ]
+          },
+          "cardModelUrl": "@project/assets/models/SM_FogCard_02.glb",
+          "children": [
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "43c356ce82335e65"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7311cff2a97b6e71"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "60d2a0002f03a63e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f18eb32c3c78e3e3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5585d101d8832ad2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6959e5b7d3ad584c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "00a4dfaa5c38cd7f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "529e5fdcdd701280"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f99b3f7898a84c47"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ae68bb0a45a83ab1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7433620976029cb0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "13b37caa3d2366ee"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f5e3d7df0a59f54b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c16f1fc10bf49a70"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "20b6a350b76e6050"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d8995d79705bf76a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "afc3a679987da9fc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1638653d01934919"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e298e185de386abc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e34fa61ec8e39b5e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8d1fdbcf3dbd697e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3ace96b521ba76cc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b87da9f3acbcd942"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a4d6985696ab26cd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "22d5deea73caaf47"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a3f1c5d094fd64a7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f4582cb4c7b14dff"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "555c022b36350585"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c53c401ffac83ff5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e1f0ace88b4d9673"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3f7535e6efe80b80"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8261e51e4531c3df"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "07700b28373d9d4a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "85a282b1d0814d7a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f7b5fd74e430d353"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bcf0581884f19ef3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "53d8c856cd8d4c83"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e39eb7a4984f132d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1064e031dd405dc6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9448ab5f271691e7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4defcaa56058380f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c0e528bb993f38b9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a0cff24f01a8b886"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8b59b3fca015640e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1aaa11dd64181626"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7dc02f7f96117e59"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "113f90044cc1e7a5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a06e6d2bb58f476a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4648e01a1962f14b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ece813793e4ba2e1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "85db76cabac6b872"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3b2eaa521e1ba66b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bce0cfd7735720f9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0377ee4f1c58b50f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e5a3772d69e96c03"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8bb707db191c54ba"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "af5f58a1e78f02cc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c70d22091a712dc9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c14e2ee4aee1f62f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b1b3de4403ce9df6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f93eb9c9655bdfe3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4c9005b69af42ccd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2010c085a467eee9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "29c2b9bc80bce915"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8d69f2b160d895b5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5c1b67f6df1c0031"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3a7497200f09315d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3082c2d8c584a338"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0c0eb823f35d935a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d5eba05890a2568a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "56befda311138bd8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fef4095e1ecf95f0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3b121c99b9388424"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8561bcb1cd2c0fb1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d8a3bc8f6dcae866"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "381d25f878e55caa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "95d4bf6c4146dc01"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3cb96490fa7aa563"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "92a77badc1287c73"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ca77dff73b5d93d2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e754e67a3616873a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b7073592fb315521"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "735defeb3aa2d5df"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "09856e4b4a5d10ec"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7af1f0ec3818ee04"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d20be24164f15de2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5e3c6d26b9746b9c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "909531da58faa37a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7d37a191ecb94f70"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2a59df27b5daeb17"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b04ffcece98091ec"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9a658317f91f2147"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b087904892afe43f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "da99fcb0873dd4d7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7901e5bea28af22b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ecc72779d41e1f2f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "13ed2ce6dbd9bec9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0a03ff6672605c79"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9a919b8a4d61fc6d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7cd2f6ae60eb7510"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cba4655873c2e4bb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "178b1302ed96cf75"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2a5a7dfe2338c1e6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "26bb3e1cf4a5f008"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f99cadcebebdc19d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9c42611a0c1fbb8e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0a16321f46021490"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f2fe27e088b63f66"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5e61c384e93a878a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d3f9554cfd6b61d9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "826e62ac24aa7b95"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "67321614a3d311ec"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ad4dfda4438b4a34"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fd6ffca2b3205efe"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "337d0fb649e435ff"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4b20c4c97bc6e943"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8518b65bc6377b96"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0b9ecc2a3f50aa14"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1559413383735957"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "09bdf1904acd485a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4042d04521a2ac48"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "28ced39bf33ff737"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "255ef85602bbf3c9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "363dde569bc6988e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b8acd0a4c3b62ae9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "679d6aec654a9a65"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "83480cfb569faf94"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7a01f081e22a4ec8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6e3606ae094d28c7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e18ab8d9c79f753a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "786ca8f1ca2782a1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dc6530427b32493c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a2d4a62dfe22a1a9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2a2abb408453970d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "85dfa7a47b361281"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d8de5d10090812c3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d65316cf3820b527"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7e869c1e1b6a91d8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "233a09bb88d460d8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "477508ff5e4b31a8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a01c3567d0257a26"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6ee80f1100bd3a00"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "653c75b4f0fcf2db"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b3f45331d91c7250"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "81d8afcb5e8d0abf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fe4cff84f53353e1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3fc82e90f7d89306"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c17a447819e9b8fd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b55225864ea2e0e2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "98b6c23cdc362dd1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c51ccdad4fc144ed"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9e6dafcb01e84675"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0f541c46cb21bdcc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a1bf2ebb1eff6b7e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e4f76f8120c0ce99"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "833d52c20e24e1a0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "312d73bfb8e13613"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3fa2c7453db5f2b3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "19c29b1ea153def9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "944f2a1ea53b3ba3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "95c2f4fa833f7813"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "12f24a9bd7824416"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "101bb2f20b484cb1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "93d53fd9f30d567a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "96405acc8933e14a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bd6436f2b7fa78d4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "68d2d7a5e66d2375"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4e6f2d9b2b7abdf1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4dc75a63809cd09a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "71f31618ef9ce3fd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bd4b084ad3ca4116"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c162d81a8f0b3e88"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c263ca29e13bdc41"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0c7f76b072617345"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "75f1b01f25280542"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8006123d58ef4ab0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "215dba265857200f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ebc494f79132c383"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a8810a123d98f8e1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "22bbfa7ba7d3c290"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9ced04f9ce830202"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0151f7cfeaa77906"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a24595449af02b3c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e015a69ff4b24338"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "64997d2ba7d80861"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "68a4becf8a11a9fb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "24f0929b9cfb7fda"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a0f8f09f6980fe43"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c7bdbe4fa05da763"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9d723c06d9654d47"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e55d440357a2b512"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b963843d78c9daec"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6b0a9cc419d30e62"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b885fb49251fa79b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "849cd5902990d56e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0c6e36225fdb8c19"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "889e80c19f93f235"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d0150aa27ed945bf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "81cae350783c2b97"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4886f8be0f7a1c46"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a088d112c1acdbaf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d9c959c6e2ac381f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "af0dca805c341631"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "993c03d553c13649"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2675f5fec3a78220"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a29652eb95b836a6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "316643982a53d414"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "895f1087df35c65c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3a9b97cb8ab60607"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8daed012e545084d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3aead3cbd4726b93"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ab52bad1ffa60823"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "12696a4c6e743658"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8fbc5b7ac23f830b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5384435ab46acbef"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c5546d50d2237607"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "17f44ea37101b841"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9c15bfb120a215a7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8f2161adda7a41f8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dcdcc88928b74ac0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3f65680bc155ce9a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3200b4a2d741bb1f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d9ac397d200a2cbe"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ea3fb0a686712f5e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1b5a987d720b58e4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9e62dd6c7cf68773"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e15ff6cef1c4bb9f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fe865db90f066ace"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "934e6d68d08e2cfd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5c814bdd6c57e81b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "68cccdf371c9787c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5c1a16a40e4a13f2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9c9e0754489d822b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "165b1172272a841c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "90d4abc4f0425b4a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fb6db3c80a8b6782"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ec6496ada10cb7ac"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1ce24f8d55a57556"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a8fd31bf339b250d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "95ca03ce87ebd834"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "72dc3d7f0b56ca89"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e53926fd8ad6bdea"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b23c8f8e585f5c38"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7dd7edfe05470cc1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7d76054ed3b1e855"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1681587c8e2542b2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ab2f99e7bc74cc2a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "631d0808cbaaf3c5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d604275e8cca83f4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ce18f649d5268fd0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9eaea0602cb22a16"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b3511f5c6abdd462"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9829b50907114494"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5a7da0c1214e44f4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4d8d8bb733d1baa3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2e5bf3e35cfaaeb6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b45b67e79e06d2c3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "37c1cb8c2da2f7e3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "17e8e37c1f1e2e40"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ff22edc462d35377"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2965b649d41ca04d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8ce578fe2873bf3d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f4aa06314fffaee9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8b4dc371906ad123"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "86ea7878c00f6eb2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1b9c37994b5f9883"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "db81642d1b197616"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a66acbef3fcd7292"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2378742bd52e4840"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8696e4bc1ce6b4d3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4d8f4c298a7cd80e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "18adfab114ae9115"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "87c69a0bd1990157"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d4f3a22fe9e51520"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "931503e6caa9f259"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fa770ad5dbc3093c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f2c40ec6c9d593e8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "21e77ab594e7146d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "12ceaa50591e7508"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2031e34b026046f1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7a9369b5a25fe4d7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "baaef86f98d02e2e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3beb86c40450338d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "767de691cb1b9af4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c697973c9b1b2d9c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e057251de288b95e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e87d7e2268b69be8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6d3f91a78994ae64"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "996f05174cc975d1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "50c9fe3434db90fe"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "50e162fec31ab9db"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5d3287c32b7895f0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "636ad7c26a1dda0d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "172049c5ea2e4faf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "46abee419c350002"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "06c0defc0576370c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4ea765ec0c8ddc7e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2ab6e1485d3b8e4b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2476934080213ca6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c4cf1c3708c82198"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a2e56cdab82db25f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1879b7296e89e76d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7ba8662cf9265d73"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2af66264ccf96a87"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "222846e7c602237f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5668105219fb6c34"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9d0fb8daab5e1666"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c13371ee83d6bb87"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "826e53b5807acf2e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d128a6c1b3b53e02"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7fc32670eb4ff864"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bf4302fa7068e598"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8471f0b40eba78a6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fb4452952a96e5b5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "84bfef5187ab0f35"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d41b241f53ba5cc1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b5eb585f8b405081"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "423c28986c64261e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "927f2b763ba399c6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "44a2c638ccc92998"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7831be8e55ee7ac8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b59daf7037aa73aa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b7edafefb4a4b5f5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "489c3414eccd2dd4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "190c6321c78028e9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1ca7c1730c243e84"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3010f11ebfccc13a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "df5f0a0de0c8f52f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c3d8bbbff42cc823"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "db858f4c18e99b7a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f5c71623e97fd10f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b5c5e2a312dd8e5c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d76233b0d1dd7e61"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7c25953049283d92"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "131dad90c98858ce"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "03714af6116eddb5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ef945511179723c9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a6c9698c3f92b549"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ae53d662fd5644a5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "64acee8eb1614b99"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4f75c9db3ede3983"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8edcc7cb725826e9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4859cbd7c2df84d3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ef2c189e576d3582"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bdc88fca991ec4bf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "40c20c60171fb2dd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7e6f3423e1c58725"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0fb0fc8dce6f78e3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0cd550aa27c76a80"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a5c0bb96cbf585ea"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4baff4fedde6433b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "29046e0ae6640797"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5979ec3fd92e7061"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ef0148e9cb930c94"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "438aa57af7278945"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "974a20a60c67f1ac"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "917f3b5e592a9ad7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e71aeb5ca8430f0f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2b15dafa557dafaa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cbbb518abf0ec0e0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2ac1640e743a5ffa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e616cc7c9e72cb47"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0f1fc7f6ef4e149f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fa9a21841a6e5673"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3651735a6323ac4a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7fded9b663e3f342"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e350764df1fdacfc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6c8f554e0a6f562d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a842ad9d360f69a1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "39ddda6e0064db7f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "97be71df4d879ca6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dc5ee215c0bf3c3f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0c48bd9cee643278"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ffb5a74c554507fe"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "08d406f1baf0f849"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8635723019b4feac"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0cf284ec000a3ed1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5f979723e29e0ab4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8bd8f1558b5d97c8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ce27833bc92119ee"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1e123a27f339b443"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f5d5f86dba93e9b5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8e5d2d2395c0bd4a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0eaea067cbcb8ad6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d85abc97c4b1e68a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "94804b9926f7f89a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "313ad28209032b83"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "037bc650724c4851"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7645d1bac8e05f66"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e969082d2cde3a7d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4d5ad133200b1c49"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e501dd703c4007b9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a7c85d59a303ef55"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b0fd8b2eda133f52"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "582ce0aefbb1fb96"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "24c88a73d021219a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5735997c20b5b8cb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cf20c369a7214d7a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6ce24d9aeb331f3a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "917dfee339f30310"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "329d5ca3ed508cfa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "413fd68b7ca16dfd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c7c29e6c82855ea3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "418394ff749eca18"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "46732566097b669d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f6c557153850e46b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "05ee78c2f7573d6a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "feaa44257af00bda"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "43c8918e08f32cbb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "145706336a086ee5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "14095c4772f081f7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "abcb5a42da1a049a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6a57fd016ef593c7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e67aff89c0e768ee"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "52b3eb34a69cb625"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4685ef5428e83e06"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0cd90179d7ccd783"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "005aabe5fcbb505d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c21520e73ca1695b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "deecd7f578386681"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b382e851955a0667"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "aaf7efe9091e1dda"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0b2615e1644650c2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f32916bef1eb76cc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e5b480c91b36e368"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0e85298017b92459"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c71b56d5d5fcb58b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0f48de6773feddc5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "751871d570a9c5f2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8450feedfe7d3a2b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "acfb9055100c6d98"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "da355412e83b0c15"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e06656fd7d879ab1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "80bb78e8d64b06c2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "854be6e462311e6c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2fd10ecacf3bb3de"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b5fde71f9c64cda4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "89c6fd7e1bd055f8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a6c4a82b7ef82bd4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6a440a3a50a8d39b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5e5cf658ff54a4cd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9cdf1fc14d65b263"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e349a51bfee47e99"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6ad13e181a541c69"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "593b5ad0f5fe4230"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7a835378d508b44a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9d40a336d02c5967"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "77c93394bb39cf1c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fbb2f13ce04ef91a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "59cb60d4f90e31df"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7a0500893af37168"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1e969abbc15bdeec"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6de53bba91707dec"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "64d3eb19fba656c1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "24abd3fab9fd3860"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5779c4169afc0a76"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6cbfbe5488045ad2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f5e0633cfac4b6a7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1a29ff337963c875"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8f5bbf022fb62a87"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7a85c045c7391e94"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "60765f41302cabc4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "adef5f13b9782077"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "01abed7d1c721627"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cbeb28a2f8d05dc8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a1267845de51ff17"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b8b0e17c14c3cfae"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b9e41c8701cfa916"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1533304d3b7bf36e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "043a41506cacf4a4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4892e262b2ffeeca"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2fb31eca94a7e500"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e53696fd2ff53d0b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "30e5476e97dcd909"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3d3cd8261fe989b9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "34e7d2c672a7ee4b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4c4a900c787da80c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e49710596a147dd3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3b9c658314e2f7bd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4fab01dd0321b9f9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d0d5700f686365c0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "57f94a1c7495adb1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e48630915ba86dd5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "58fbf398ebdfdf4e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e7ef81a977c02675"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "61958c4b042bbfd4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cc833d7227fbc4c0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "03deb217cb34d0ec"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "889a4bac8e782275"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f57eb00e3bcbe56d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "538ff8aae02aa08e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "585a7806-98e8-488a-a153-9e525c2cb652"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6979533c-66d0-4524-8473-b4aeb0476f62"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9b22fded-21e1-43d5-978f-10b30fe3f975"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1d43bdb6-8f3a-45ea-a78f-e087c315707b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "85a5900f-6aef-411f-b5d2-233aa705f3c6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e6ac20bb-3bc1-4389-a967-b2fb489129d7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "874d8c78-371e-4b86-aae2-1ab8b60c4186"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b22d9bf6-7c14-4029-beb9-92dac5b83712"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b868a9d2-8c8e-455e-be4b-01cb11f341d1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "32d9d1e8-855b-45e0-b624-253f164e0059"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ca25c80b-b860-48c8-822c-5f66cf98dd05"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b0b56cc9-f81b-4ce8-b5b5-34154bd4884e"
+            }
+          ],
+          "emissiveIntensity": 0.9,
+          "flowMapDirection": 0.28,
+          "flowMapSpeed": 0.18,
+          "flowMapTiling": 3.15,
+          "fogDensity": 0.52,
+          "name": "FogSystemComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              -65.2,
+              1,
+              6.7
+            ]
+          },
+          "renderOrder": 10,
+          "rotation": {
+            "$bc": "e",
+            "_": [
+              0,
+              1.570796,
+              0
+            ]
+          },
+          "scale": {
+            "$bc": "v3",
+            "_": [
+              16.666858,
+              2.749132,
+              15.89615
+            ]
+          },
+          "useAtmosphereColor": 0.66,
+          "uuid": "bc1608abb678e2f6",
+          "viewAngleFade": 0.5,
+          "windEnabled": 0.44
+        },
+        "uuid": "4f940bfb1572d8fe"
       },
       "$length": 574
     },
@@ -74902,12 +78679,12 @@
             "nodeType": "actor"
           },
           {
-            "id": "1894782cd4655928",
+            "id": "c20ed2f6c4fed04b",
             "isExpanded": false,
             "nodeType": "actor"
           },
           {
-            "id": "c20ed2f6c4fed04b",
+            "id": "4f940bfb1572d8fe",
             "isExpanded": false,
             "nodeType": "actor"
           },
@@ -75212,7 +78989,7 @@
           "vignetteIntensity": 1
         },
         {
-          "enabled": true,
+          "enabled": false,
           "ignoreBackground": false,
           "levels": 8,
           "mipmapBlur": true,

@@ -145,6 +145,8 @@ export class BigUndeadActor extends ENGINE.Actor {
 
   private _btTimer = 0;
   private static readonly BT_UPDATE_INTERVAL = 0.2;
+  private _spatialUpdateTimer = 0;
+  private static readonly SPATIAL_UPDATE_INTERVAL = 0.05;
 
   private readonly _myPos = new THREE.Vector3();
   private readonly _playerPos = new THREE.Vector3();
@@ -340,6 +342,12 @@ export class BigUndeadActor extends ENGINE.Actor {
     this.rootComponent.getWorldPosition(this._myPos);
     player.rootComponent.getWorldPosition(this._playerPos);
     const dist = this._myPos.distanceTo(this._playerPos);
+
+    this._spatialUpdateTimer += deltaTime;
+    if (this._spatialUpdateTimer >= BigUndeadActor.SPATIAL_UPDATE_INTERVAL) {
+      this._spatialUpdateTimer = 0;
+      zombieSpatialManager.updateZombiePosition(this);
+    }
 
     this._tickFlash(deltaTime);
     this._tickAnimationInit(deltaTime);
@@ -766,9 +774,12 @@ export class BigUndeadActor extends ENGINE.Actor {
     const mutableStats = stats as unknown as {
       maxHealth: number;
       currentHealth: number;
+      isDead: boolean;
       onHealthChanged: { invoke(current: number, max: number): void };
     };
+    mutableStats.maxHealth = this.maxHealth;
     mutableStats.currentHealth = this.maxHealth;
+    mutableStats.isDead = false;
     this._lastTrackedHealth = this.maxHealth;
     mutableStats.onHealthChanged.invoke(this.maxHealth, this.maxHealth);
   }

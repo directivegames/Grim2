@@ -3,70 +3,55 @@ name: genesys-engine
 description: Provides comprehensive reference for the Genesys game engine including architecture, actors, components, APIs, and project structure. Use when implementing game features, exploring the codebase or project structure, working with engine classes, or when the user mentions Genesys, engine, game logic, actors, components, scenes, worlds, levels, pawns, controllers, input handling, cameras, serialization, game loop, project structure, or project organization.
 ---
 
+# Methodology
+
+Follow these steps when working with Genesys:
+
+1. Read [project-structure](references/project-structure.md) to understand the folder layout and entry points.
+2. Read the relevant subsystem references in the References section below.
+3. Check the Patterns section below for implementation guides for specific features.
+4. Continue with the gathered context.
+
 # Genesys Engine Overview
-- The engine package name is `@gnsx/genesys.js`
-- Source code of the engine is located at `node_modules/@gnsx/genesys.js/src`
-  NOTE! Don't use the grep/glob tool to find stuff in the engine source since the entire `node_modules` folder is gitignored and those tools respect it. Use the bash tool instead.
-  The read tool is NOT affected by this so keep using it!
 
-## Core Architecture
-
-1. Actor-Component System: The engine uses a class-based Actor-Component pattern
-    - Actor = any object in the world (has a root SceneComponent)
-    - Every Actor has a root SceneComponent — this is the transform anchor
-    - SceneComponent = transform + visual/physics representation (extends THREE.Object3D)
-    - Components form a parent-child hierarchy via standard Three.js add()/remove()
-    - Actors tick components: PrePhysics → [physics] → PostPhysics
-
-2. World-Centric Runtime:
-    - World = the runtime scene manager, owns the Three.js scene, actors, and global systems
-    - Level = serialized world data + resources
-    - GameMode: Spawns players, manages rules (transient — not saved)
-    - GameLoop: Drives tick, manages World/Level lifecycle
+- The engine package name is @gnsx/genesys.js.
+- Engine source code is available in the .engine folder at the project root. Use this as your primary reference for class hierarchies, method signatures, and coding patterns.
 
 ## Core Coding Guidelines
-- When using the engine, import the entire module into scope with `import * as ENGINE from '@gnsx/genesys.js'`
-- Access all engine classes via the `ENGINE` namespace (e.g., `ENGINE.Pawn`, `ENGINE.CharacterMovementComponent`, `ENGINE.GameMode`)
-- THREE.js is not re-exported from the engine. Import it separately: `import * as THREE from 'three'`
-- After finishing ALL the code changes, run `pnpm build` and `pnpm lint` to make sure the output is clean.
-- Actor and component instances must be created using the `.create(options)` method. Calling the constructor directly is forbidden.
-- DO NOT use the "EngineClass" decorator, use "GameClass" instead.
-- Use correct typing, "xxx as any" is forbidden.
+
+- Import the engine module with import * as ENGINE from '@gnsx/genesys.js'.
+- Access all engine classes via the ENGINE namespace (e.g., ENGINE.Pawn, ENGINE.CharacterPawn).
+- Import Three.js separately: import * as THREE from 'three'.
+- Run pnpm build and pnpm lint after code changes to verify cleanliness.
+- Create actor and component instances using the .create(options) factory method. Do not call the constructor directly.
+- Decorate every custom Actor, Component, and serializable class with @ENGINE.GameClass(). Never use @EngineClass — it is engine-internal.
+- Mark serializable fields with @ENGINE.property() (lowercase). The decorator requires the enclosing class to be @ENGINE.GameClass().
+- Prefer extending ENGINE.CharacterPawn for first/third-person player pawns; override its setup hooks (createRootComponent, createMovementComponent, getInitialCameraPositions, setupCamera, setupAnimationComponent, setupVisualComponent) instead of replacing the whole class.
+- Use explicit typing. Avoid as any.
 
 ## References
 
-Read the references below that match what you're implementing:
+Read the references below that match your current task:
 
-- `SKILL_DIR/references/world-actor-component-overview.md`: understand relationship between the world, actor and component system.
-
-- `SKILL_DIR/references/actor.md`: learn how to create game objects, manage their lifecycle, and make them respond to game events.
-
-- `SKILL_DIR/references/component.md`: understand how to build actor behavior from modular pieces, work with component hierarchies, and handle component lifecycle.
-
-- `SKILL_DIR/references/game-loop.md`: dive deeper into how the engine runs frame by frame, manages the world lifecycle, and keeps your game state persistent across level loads.
-
-- `SKILL_DIR/references/pawn-player-controller.md`: learn how the engine separates your character's body from the brain that controls it. Useful for understanding player possession, switching characters, and the different ways pawns can move.
-
-- `SKILL_DIR/references/input-handling.md`: explore how keyboard, mouse, gamepad, and touch input are captured and routed to your game.
-
-- `SKILL_DIR/references/camera.md`: understand how cameras work in the engine.
-
-- `SKILL_DIR/references/threejs-extension.md`: understand how the engine bridges the gap between Three.js's local-space-only API and the world-space operations, component discovery, and game lifecycle management required for game development.
-
-- `SKILL_DIR/references/property-serialization-system.md`: learn how the engine saves and loads your game world, enables prefab inheritance, and powers the editor's property panels.
+- [World, Actor, and Component Overview](references/world-actor-component-overview.md): understand relationship between the world, actor and component system.
+- [Actor](references/actor.md): Learn how to create game objects, manage their lifecycle, and make them respond to game events.
+- [Component](references/component.md): Understand how to build actor behavior from modular pieces and handle component lifecycle.
+- [Game Loop](references/game-loop.md): Frame execution order and world/level lifecycle management.
+- [Pawn and PlayerController](references/pawn-player-controller.md): Separation of character representation from input handling logic.
+- [Input Handling](references/input-handling.md): Capture and routing of keyboard, mouse, gamepad, and touch input.
+- [Camera System](references/camera.md): Camera resolution, view target stack, and perspective/orthographic setup.
+- [Three.js Extension](references/threejs-extension.md): World-space transform operations and component discovery.
+- [Property and Serialization System](references/property-serialization-system.md): Saving/loading, prefab inheritance, and property decorators.
 
 ## Patterns
 
-The `SKILL_DIR/patterns` folder contains concise guides explaining recommended patterns for isolated features. There is no index; list the folder contents and use file names to identify relevant patterns.
+Guides for specific implementations:
 
-
-# Methodology
-Follow steps below when working with genesys:
-1. **Before exploring the codebase or making any changes, you MUST first read `SKILL_DIR/references/project-structure.md`** to understand the project structure.
-2. Identify the relevant references, read them.
-3. **Before exploring the codebase or making any changes, you MUST first list `SKILL_DIR/patterns`**, then identify and load the relevant ones.
-5. Continue with the new context.
+- [Sprint Movement](patterns/sprint-movement.md): Implementing sprinting with pawn and controller logic.
+- [Isometric Camera](patterns/isometric-camera.md): Setting up an orthographic camera that follows the player.
 
 # Tips
-- grep CLASS_NAME against `node_modules/@gnsx/genesys.js/artifacts/class-hierarchy.xml` to find exactly where its source is. You can also read the file in whole to understand the entire engine class hierarchy.
-- The property decorator is `ENGINE.property` (lower case)
+
+- The property decorator is ENGINE.property (lowercase).
+- The engine source under .engine/ is the authoritative API reference; consult it before guessing at signatures.
+- For built-in widgets and HUD layouts, see the genesys-ui-kit skill rather than rolling raw HTML.

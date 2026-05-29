@@ -9,7 +9,10 @@ import {
   pauseGame,
   resumeGame,
 } from '../utils/game-pause.js';
+import { MapUI } from '../ui/MapUI.js';
+import { OptionsMenuUI } from '../ui/OptionsMenuUI.js';
 import { PauseMenuUI } from '../ui/PauseMenuUI.js';
+import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 
 @ENGINE.GameClass()
 export class PauseManagerActor extends ENGINE.Actor {
@@ -22,6 +25,17 @@ export class PauseManagerActor extends ENGINE.Actor {
       const world = this.getWorld();
       if (!world) {
         return false;
+      }
+
+      if (OptionsMenuUI.isOpen(world)) {
+        OptionsMenuUI.close(world);
+        return true;
+      }
+
+      if (MapUI.isOpen(world)) {
+        MapUI.close(world);
+        returnToMainMenu(world);
+        return true;
       }
 
       if (PauseMenuUI.isOpen(world) || isPaused()) {

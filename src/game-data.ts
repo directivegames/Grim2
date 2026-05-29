@@ -5,14 +5,12 @@ import { registerGeneratedClassMetadata, registerGeneratedPropertyMetadata } fro
 
 import { BigUndeadActor } from './actors/BigUndeadActor.js';
 import { DialogueTriggerActor } from './actors/DialogueTriggerActor.js';
-import { GrassClumpActor } from './actors/GrassClumpActor.js';
 import { GroundFogActor } from './actors/GroundFogActor.js';
 import { HedgeActor } from './actors/HedgeActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
 import { NewZombieActor } from './actors/NewZombieActor.js';
 import { SpawnBlockerActor } from './actors/SpawnBlockerActor.js';
 import { SpawnPointMarkerActor } from './actors/SpawnPointMarkerActor.js';
-import { TallGrassActor } from './actors/TallGrassActor.js';
 import { ZombieActor } from './actors/ZombieActor.js';
 import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
 import { CloudShadowComponent } from './cloudShadow/CloudShadowComponent.js';
@@ -88,55 +86,6 @@ export function registerMetadata(): void {
       "playOnBeginPlay": {
         "type": "boolean",
         "category": "Dialogue"
-      }
-    });
-
-  registerGeneratedPropertyMetadata(GrassClumpActor, {
-      "bladeCount": {
-        "type": "number",
-        "min": 1,
-        "max": 24,
-        "step": 1,
-        "category": "Grass Clump"
-      },
-      "spreadRadius": {
-        "type": "number",
-        "min": 0.05,
-        "max": 3,
-        "step": 0.05,
-        "category": "Grass Clump"
-      },
-      "scaleMin": {
-        "type": "number",
-        "min": 0.1,
-        "max": 3,
-        "step": 0.05,
-        "category": "Grass Clump"
-      },
-      "scaleMax": {
-        "type": "number",
-        "min": 0.1,
-        "max": 3,
-        "step": 0.05,
-        "category": "Grass Clump"
-      },
-      "overallScale": {
-        "type": "number",
-        "min": 0.1,
-        "max": 5,
-        "step": 0.05,
-        "category": "Grass Clump"
-      },
-      "tiltAmount": {
-        "type": "number",
-        "min": -0.15,
-        "max": 0.15,
-        "step": 0.01,
-        "category": "Grass Clump"
-      },
-      "seed": {
-        "type": "number",
-        "category": "Grass Clump"
       }
     });
 
@@ -305,70 +254,6 @@ export function registerMetadata(): void {
       "showWireframeInGame": {
         "type": "boolean",
         "category": "Spawn Point"
-      }
-    });
-
-  registerGeneratedClassMetadata(TallGrassActor, { description: "TallGrassActor — standard vertex-shader swaying + interaction (GPU)." });
-  registerGeneratedPropertyMetadata(TallGrassActor, {
-      "textureUrl": {
-        "type": "string",
-        "category": "Tall Grass"
-      },
-      "width": {
-        "type": "number",
-        "min": 0.05,
-        "max": 10,
-        "step": 0.05,
-        "category": "Tall Grass"
-      },
-      "height": {
-        "type": "number",
-        "min": 0.05,
-        "max": 10,
-        "step": 0.05,
-        "category": "Tall Grass"
-      },
-      "windSpeed": {
-        "type": "number",
-        "min": 0,
-        "max": 10,
-        "step": 0.1,
-        "category": "Wind"
-      },
-      "windRigidness": {
-        "type": "number",
-        "min": 1,
-        "max": 80,
-        "step": 1,
-        "category": "Wind"
-      },
-      "windAmplitude": {
-        "type": "number",
-        "min": 0,
-        "max": 0.2,
-        "step": 0.001,
-        "category": "Wind"
-      },
-      "yOffset": {
-        "type": "number",
-        "min": -1,
-        "max": 2,
-        "step": 0.01,
-        "category": "Wind"
-      },
-      "interactorRadius": {
-        "type": "number",
-        "min": 0.1,
-        "max": 10,
-        "step": 0.1,
-        "category": "Interaction"
-      },
-      "interactorStrength": {
-        "type": "number",
-        "min": 0,
-        "max": 1,
-        "step": 0.01,
-        "category": "Interaction"
       }
     });
 

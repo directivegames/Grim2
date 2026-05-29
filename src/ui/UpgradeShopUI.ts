@@ -121,6 +121,10 @@ export class UpgradeShopUI {
     void inst._mount();
   }
 
+  public static isOpen(world: ENGINE.World): boolean {
+    return Boolean(UpgradeShopUI.byWorld.get(world)?._overlay);
+  }
+
   public static close(world: ENGINE.World): void {
     UpgradeShopUI.byWorld.get(world)?._destroy();
   }

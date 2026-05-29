@@ -13,6 +13,15 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
+import {
+  ZOMBIE_STEER_GOAL_STOP,
+  ZOMBIE_STEER_SEPARATION_RADIUS,
+  ZOMBIE_STEER_SEPARATION_WEIGHT,
+  computeZombieSteerGoal,
+  createZombieSteerScratch,
+  ensureSteerGoalMinDistance,
+  tangentialSignFromSeed,
+} from './zombie-steering.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
@@ -26,6 +35,8 @@ import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { ZOMBIE_BASE_ATTACK_DAMAGE } from '../data/combat-balance.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
+import { getCachedPlayerPawn, getCachedWorldFrame } from '../utils/world-tick-cache.js';
+import { trackDeathSmokeActor } from '../utils/runtime-vfx-cleanup.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -53,12 +64,7 @@ const ATTACK_ZONE_HYSTERESIS_MARGIN = 0.38;
 const HIT_REACTION_HOLD_SEC = 0.95;
 const SPEED_JITTER_RANGE = 0.8;
 
-const STEER_LOOKAHEAD = 3.5;
-const STEER_GOAL_STOP = 0.12;
-const STEER_SEPARATION_RADIUS = 0.88;
-const STEER_SEPARATION_WEIGHT = 2.0;
 const NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY = 0.25;
-const STEER_GOAL_MIN_XY_FROM_AGENT = NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY + 0.1;
 
 const SHARED_ROOT_GEOMETRY = new THREE.CapsuleGeometry(CAPSULE_RADIUS, CAPSULE_HEIGHT - CAPSULE_RADIUS * 2);
 const SHARED_ROOT_MATERIAL = new THREE.MeshStandardMaterial({ visible: false });
@@ -194,6 +200,18 @@ export class NewZombieActor extends ENGINE.Actor {
   private readonly _steerSep = new THREE.Vector3();
   private readonly _steerOtherPos = new THREE.Vector3();
   private readonly _steerGoal = new THREE.Vector3();
+  private readonly _steerScratch = createZombieSteerScratch();
+  private _tangentialSign = 1;
+  private _visibilityReassertTicks = 0;
+  private _distanceToPlayerLinear = Infinity;
+  private _npcComponent: {
+    useNavigationServer: boolean;
+    enabled: boolean;
+    hasCharacterController: boolean;
+    maxSpeed: number;
+    setTargetPosition: (p: THREE.Vector3, stop?: number) => void;
+    stop: () => void;
+  } | null = null;
 
   /** Scratch vectors — reused each tick to avoid per-frame GC. */
   private readonly _lodMyPos      = new THREE.Vector3();
@@ -219,6 +237,7 @@ export class NewZombieActor extends ENGINE.Actor {
   private static readonly DEATH_ANIM_DURATION_SEC = 1.0;
   private static readonly DEATH_SETTLE_SEC = 0.5;
   private static readonly DEATH_GRAVITY = 9;
+  private static readonly DEATH_SMOKE_SCALE = 2.0;
 
   private _lastSeparationTime = 0;
   private static readonly SEPARATION_INTERVAL_MS = 50;
@@ -395,6 +414,7 @@ export class NewZombieActor extends ENGINE.Actor {
     root.add(this._blobShadow);
 
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
+    this._npcComponent = npc as unknown as typeof this._npcComponent;
   }
 
   protected override doBeginPlay(): void {
@@ -410,6 +430,7 @@ export class NewZombieActor extends ENGINE.Actor {
     this._ensureBlobShadowAtFeet();
 
     this._tickOffset = Math.floor(Math.random() * 100);
+    this._tangentialSign = tangentialSignFromSeed(this._tickOffset + this._individualOffset);
 
     this._jitteredSpeed = this.moveSpeed + (Math.random() - 0.5) * SPEED_JITTER_RANGE;
     const npc = this.getComponent(ENGINE.NpcMovementComponent) as unknown as {
@@ -421,6 +442,7 @@ export class NewZombieActor extends ENGINE.Actor {
       npc.maxSpeed = this._jitteredSpeed;
       npc.pathFollowingAccuracy = NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY;
       npc.actorFollowingDistance = NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE;
+      this._npcComponent = npc as unknown as typeof this._npcComponent;
     }
 
     this.syncStatsAndMovementFromProperties();
@@ -475,6 +497,11 @@ export class NewZombieActor extends ENGINE.Actor {
       return;
     }
 
+    if (this._visibilityReassertTicks > 0) {
+      this._reassertVisibility();
+      this._visibilityReassertTicks--;
+    }
+
     if (!isGameplayUnlocked()) {
       this.getComponent(ENGINE.NpcMovementComponent)?.stop();
       const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
@@ -488,11 +515,13 @@ export class NewZombieActor extends ENGINE.Actor {
       return;
     }
 
-    const player = this.getWorld()?.getFirstPlayerPawn();
+    const world = this.getWorld();
+    const player = world ? getCachedPlayerPawn(world) : null;
     if (player) {
       this.rootComponent.getWorldPosition(this._lodMyPos);
       player.rootComponent.getWorldPosition(this._lodPlayerPos);
       this._distanceToPlayer = this._lodMyPos.distanceToSquared(this._lodPlayerPos);
+      this._distanceToPlayerLinear = Math.sqrt(this._distanceToPlayer);
       this._updateLODLevel();
     }
 
@@ -518,8 +547,7 @@ export class NewZombieActor extends ENGINE.Actor {
       }
     }
 
-    const world = this.getWorld();
-    const frameCount = world ? (world as unknown as { frameCount?: number }).frameCount ?? 0 : 0;
+    const frameCount = world ? getCachedWorldFrame(world) : 0;
     const tickInterval = this._isHighLOD ? NewZombieActor.TICK_INTERVAL : NewZombieActor.TICK_INTERVAL_LOW;
     const shouldUpdate = ((frameCount + this._tickOffset) % tickInterval) === 0;
 
@@ -1019,6 +1047,12 @@ export class NewZombieActor extends ENGINE.Actor {
     // Hide the zombie
     this.setHiddenInGame(true);
 
+    // Disable physics while parked — removes Rapier body cost for idle pool zombies.
+    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
+      enabled: false,
+      motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
+    });
+
     // Move it far off-screen (won't be visible until respawned)
     this.rootComponent.position.set(0, -1000, 0);
 
@@ -1098,6 +1132,11 @@ export class NewZombieActor extends ENGINE.Actor {
     this.rootComponent.position.copy(position);
     this.rootComponent.updateMatrixWorld();
 
+    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
+      enabled: true,
+      motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
+    });
+
     // Reset aggro / BT state
     this._hasAggro = true;
     this._attackZoneLatched = false;
@@ -1161,6 +1200,7 @@ export class NewZombieActor extends ENGINE.Actor {
       npc.hasCharacterController = true; // Controller was never removed, just restore flag
       npc.maxSpeed = this._jitteredSpeed;
       npc.useNavigationServer = false; // Direct steer chase
+      this._npcComponent = npc as unknown as typeof this._npcComponent;
       // Do NOT call followActor or stop - applyDirectSteerChase runs every tick
     }
 
@@ -1180,6 +1220,23 @@ export class NewZombieActor extends ENGINE.Actor {
     this._startupComplete = true;
 
     this._showBlobShadow();
+    this.beginVisibilityReassert();
+  }
+
+  /** Re-apply render layers for a few ticks after reveal — catches late-attached GLTF meshes. */
+  public beginVisibilityReassert(ticks = 3): void {
+    this._visibilityReassertTicks = ticks;
+  }
+
+  private _reassertVisibility(): void {
+    if (this._pooledHidden) {
+      return;
+    }
+    this.rootComponent.visible = true;
+    this.rootComponent.traverse(obj => {
+      obj.visible = true;
+      obj.layers.enable(0);
+    });
   }
 
   /**
@@ -1226,12 +1283,14 @@ export class NewZombieActor extends ENGINE.Actor {
     const smokeActor = ENGINE.Actor.create();
     smokeActor.rootComponent.position.copy(landPos);
     smokeActor.rootComponent.position.y += 0.1;
+    smokeActor.rootComponent.scale.setScalar(NewZombieActor.DEATH_SMOKE_SCALE);
     const smokeVfx = ENGINE.VFXComponent.create({
       vfxPath: '@project/assets/VFX/smoke.vfx.json',
       autoStart: true,
     });
     smokeActor.rootComponent.add(smokeVfx);
     world.addActor(smokeActor);
+    trackDeathSmokeActor(smokeActor);
 
     setTimeout(() => {
       smokeActor.destroy();
@@ -1242,10 +1301,7 @@ export class NewZombieActor extends ENGINE.Actor {
   // ─── Internal helpers ──────────────────────────────────────────────────────
 
   private applyDirectSteerChase(): void {
-    const npc = this.getComponent(ENGINE.NpcMovementComponent) as unknown as {
-      useNavigationServer: boolean;
-      setTargetPosition: (p: THREE.Vector3, stop?: number) => void;
-    } | null;
+    const npc = this._npcComponent;
     if (!npc) return;
 
     const steerChase = this._hasAggro && !this._attackZoneLatched;
@@ -1255,8 +1311,13 @@ export class NewZombieActor extends ENGINE.Actor {
     }
 
     const w = this.getWorld();
-    const player = w?.getFirstPlayerPawn();
-    if (!w || !player) {
+    if (!w) {
+      npc.useNavigationServer = true;
+      return;
+    }
+
+    const player = getCachedPlayerPawn(w);
+    if (!player) {
       npc.useNavigationServer = true;
       return;
     }
@@ -1280,7 +1341,7 @@ export class NewZombieActor extends ENGINE.Actor {
 
       zombieSpatialManager.updateZombiePosition(this);
 
-      const rSep = STEER_SEPARATION_RADIUS;
+      const rSep = ZOMBIE_STEER_SEPARATION_RADIUS;
       const rSepSq = rSep * rSep;
 
       const nearbyZombies = zombieSpatialManager.getNearbyZombies(this._steerMyPos, rSep);
@@ -1304,20 +1365,21 @@ export class NewZombieActor extends ENGINE.Actor {
         const nx = dx / d;
         const nz = dz / d;
         const pen = rSep - d;
-        this._steerSep.x += nx * pen * STEER_SEPARATION_WEIGHT;
-        this._steerSep.z += nz * pen * STEER_SEPARATION_WEIGHT;
+        this._steerSep.x += nx * pen * ZOMBIE_STEER_SEPARATION_WEIGHT;
+        this._steerSep.z += nz * pen * ZOMBIE_STEER_SEPARATION_WEIGHT;
       }
     }
 
-    this._steerGoal.copy(this._steerToPlayer).add(this._steerSep);
-    this._steerGoal.y = 0;
-    if (this._steerGoal.lengthSq() < 1e-8) {
-      this._steerGoal.copy(this._steerToPlayer);
-    } else {
-      this._steerGoal.normalize();
-    }
-
-    this._steerGoal.multiplyScalar(STEER_LOOKAHEAD).add(this._steerMyPos);
+    computeZombieSteerGoal({
+      myPos: this._steerMyPos,
+      seekDir: this._steerToPlayer,
+      separation: this._steerSep,
+      tangentialSign: this._tangentialSign,
+      distToPlayer: this._distanceToPlayerLinear,
+      attackRange: this.attackRange,
+      scratch: this._steerScratch,
+    });
+    this._steerGoal.copy(this._steerScratch.goal);
 
     const nav = w.getNavigationServer() as {
       isReady?: () => boolean;
@@ -1337,15 +1399,14 @@ export class NewZombieActor extends ENGINE.Actor {
       }
     }
 
-    this._steerOtherPos.copy(this._steerGoal).sub(this._steerMyPos);
-    this._steerOtherPos.y = 0;
-    if (this._steerOtherPos.length() < STEER_GOAL_MIN_XY_FROM_AGENT) {
-      this._steerGoal
-        .copy(this._steerMyPos)
-        .addScaledVector(this._steerToPlayer, Math.max(STEER_LOOKAHEAD, STEER_GOAL_MIN_XY_FROM_AGENT));
-    }
+    ensureSteerGoalMinDistance(
+      this._steerMyPos,
+      this._steerGoal,
+      this._steerToPlayer,
+      this._steerScratch.goalDelta,
+    );
 
-    npc.setTargetPosition(this._steerGoal, STEER_GOAL_STOP);
+    npc.setTargetPosition(this._steerGoal, ZOMBIE_STEER_GOAL_STOP);
   }
 
   private static readonly BASE_MAX_HEALTH = 100;

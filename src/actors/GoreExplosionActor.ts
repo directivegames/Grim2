@@ -166,6 +166,20 @@ export class GoreExplosionActor extends ENGINE.Actor {
     return actor;
   }
 
+  /** Remove active gore bursts when a mission ends or resets. */
+  public static destroyAllRuntime(world: ENGINE.World): void {
+    const toDestroy: GoreExplosionActor[] = [];
+    for (const actor of world.getActors()) {
+      if (actor instanceof GoreExplosionActor) {
+        toDestroy.push(actor);
+      }
+    }
+    for (const actor of toDestroy) {
+      actor.destroy();
+    }
+    activeCount = 0;
+  }
+
   private _spawnBloodDrops(world: ENGINE.World, origin: THREE.Vector3): void {
     for (let i = 0; i < BLOOD_DROP_COUNT; i++) {
       const angle = Math.random() * Math.PI * 2;

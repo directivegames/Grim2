@@ -120,3 +120,65 @@ export function pickClosestEnemySpawnPoint(
   chosen.getSpawnWorldPosition(out);
   return chosen;
 }
+
+let _spreadPickIndex = 0;
+
+/**
+ * Round-robin pick among the closest markers — spreads consecutive spawns/relocates
+ * around the player instead of reusing the same nearest pad.
+ */
+export function pickSpreadEnemySpawnPoint(
+  playerPos: THREE.Vector3,
+  out: THREE.Vector3,
+  exclude?: ReadonlySet<EnemySpawnPointActor>,
+): EnemySpawnPointActor | null {
+  if (_points.size === 0) {
+    return null;
+  }
+
+  _resetPools();
+
+  const preferredCounter = { count: 0 };
+  const fallbackCounter = { count: 0 };
+
+  for (const p of _points) {
+    if (!p.enabled || exclude?.has(p)) {
+      continue;
+    }
+
+    p.getSpawnWorldPosition(_scratch);
+
+    const dx = _scratch.x - playerPos.x;
+    const dz = _scratch.z - playerPos.z;
+    const distSq = dx * dx + dz * dz;
+
+    _insertIntoTopN(distSq, p, _fallbackDistSq, _fallback, fallbackCounter);
+
+    if (distSq >= _minDistSq) {
+      _insertIntoTopN(distSq, p, _preferredDistSq, _preferred, preferredCounter);
+    }
+  }
+
+  const usePreferred = preferredCounter.count > 0;
+  const pool = usePreferred ? _preferred : _fallback;
+  const count = usePreferred ? preferredCounter.count : fallbackCounter.count;
+
+  if (count === 0) {
+    return null;
+  }
+
+  const available: EnemySpawnPointActor[] = [];
+  for (let i = 0; i < count; i++) {
+    const point = pool[i]!;
+    if (!exclude?.has(point)) {
+      available.push(point);
+    }
+  }
+
+  const pickPool = available.length > 0 ? available : pool.slice(0, count) as EnemySpawnPointActor[];
+  const chosen = pickPool[_spreadPickIndex % pickPool.length]!;
+  _spreadPickIndex++;
+
+  chosen.getSpawnWorldPosition(out);
+  return chosen;
+}

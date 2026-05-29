@@ -27,9 +27,12 @@ import type { EnemySpawnPointActor } from './EnemySpawnPointActor.js';
 import {
   getEnemySpawnPointCount,
   pickClosestEnemySpawnPoint,
+  pickSpreadEnemySpawnPoint,
 } from '../mission/enemy-spawn-points.js';
 import { tryApplyHordeZombieSpawnPointWorldPosition } from '../mission/innocent-spawn-position.js';
+import { revealActorWhenVisualReady } from '../horde/horde-spawn-utils.js';
 import { BigUndeadActor } from './BigUndeadActor.js';
+import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
 import type { RiskLevel } from '../data/risk-levels.js';
@@ -105,6 +108,11 @@ export class ZombieHordeManager extends ENGINE.Actor {
   private _spawnFailLogTimer = 0;
   private readonly _relocateCooldowns = new Map<NewZombieActor, number>();
   private readonly _eliteRelocateCooldowns = new Map<ENGINE.Actor, number>();
+  private readonly _relocateUsedMarkers = new Set<EnemySpawnPointActor>();
+
+  /** Hidden pooled zombies kept between missions — reused before allocating new actors. */
+  private readonly _idlePool = new Set<NewZombieActor>();
+  private readonly _idleElitePools = new Map<string, BigUndeadActor[]>();
 
   @ENGINE.property({ type: 'number', min: 1, max: 50, step: 1, category: 'Horde' })
   public killsToActivate: number = KILLS_TO_ACTIVATE_HORDE;
@@ -273,37 +281,37 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   /**
-   * Reveal a zombie only once its GLTF visual exists.
-   *
-   * Newly-created horde zombies load their GLB asynchronously after addActor().
-   * If smoke is spawned before that load completes, the player sees smoke with
-   * no zombie. Pooled zombies are already loaded, so this returns immediately.
+   * Reveal a zombie only once its GLTF visual is renderable.
+   * VFX plays only after softReset confirms the enemy is visible in-world.
    */
   private revealZombieWhenVisualReady(
     world: ENGINE.World,
     zombie: NewZombieActor,
     spawnPos: THREE.Vector3
   ): void {
-    const finalSpawnPos = spawnPos.clone();
-    const visual = zombie.getComponent(ENGINE.GLTFMeshComponent);
-
-    const reveal = (): void => {
-      if (!zombie.getWorld()) return;
-      zombie.softReset(finalSpawnPos);
-      ZombieRiseVFXActor.spawnAt(world, finalSpawnPos);
-    };
-
-    if (!visual || visual.isModelLoaded()) {
-      reveal();
-      return;
-    }
-
-    void visual.waitForLoad().then(reveal).catch(() => {
-      // If loading errors, don't spawn smoke-only — drop from active set for retry.
-      zombie.onDied = null;
-      this._activeZombies.delete(zombie);
-      zombie.setHiddenInGame(true);
-      this._respawnQueue.push({ delayRemaining: RESPAWN_RETRY_SEC, zombie });
+    revealActorWhenVisualReady({
+      actor: zombie,
+      onReady: () => {
+        if (!zombie.getWorld()) {
+          return;
+        }
+        zombie.softReset(spawnPos);
+        if (zombie.isHiddenInGame()) {
+          zombie.onDied = null;
+          this._activeZombies.delete(zombie);
+          zombie.setHiddenInGame(true);
+          this._respawnQueue.push({ delayRemaining: RESPAWN_RETRY_SEC, zombie });
+          return;
+        }
+        zombie.beginVisibilityReassert();
+        ZombieRiseVFXActor.spawnAt(world, spawnPos);
+      },
+      onFailed: () => {
+        zombie.onDied = null;
+        this._activeZombies.delete(zombie);
+        zombie.setHiddenInGame(true);
+        this._respawnQueue.push({ delayRemaining: RESPAWN_RETRY_SEC, zombie });
+      },
     });
   }
 
@@ -386,6 +394,18 @@ export class ZombieHordeManager extends ENGINE.Actor {
       return;
     }
 
+    const idleElite = this._takeIdleElite(type.id);
+    if (idleElite) {
+      const actor = idleElite;
+      const onDied = () => this._onEliteEnemyDied(type, actor);
+      actor.setHiddenInGame(true);
+      type.hookDeath(actor, onDied);
+      const activeSet = this._activeEliteActors.get(type.id);
+      activeSet?.add(actor);
+      this._revealActorWhenVisualReady(world, actor, spawnPos, type);
+      return;
+    }
+
     const actor = type.create(world, spawnPos);
     actor.setHiddenInGame(true);
     const onDied = () => this._onEliteEnemyDied(type, actor);
@@ -395,6 +415,35 @@ export class ZombieHordeManager extends ENGINE.Actor {
     activeSet?.add(actor);
 
     this._revealActorWhenVisualReady(world, actor, spawnPos, type);
+  }
+
+  private _takeIdleElite(typeId: string): BigUndeadActor | null {
+    const pool = this._idleElitePools.get(typeId);
+    if (!pool || pool.length === 0) {
+      return null;
+    }
+    const actor = pool.pop()!;
+    if (!actor.getWorld()) {
+      return null;
+    }
+    return actor;
+  }
+
+  private _returnEliteToIdlePool(type: HordeEnemyType, actor: ENGINE.Actor): void {
+    if (!(actor instanceof BigUndeadActor)) {
+      destroyActorWhenGltfIdle(actor);
+      return;
+    }
+    type.clearDeathHook(actor);
+    zombieSpatialManager.unregisterZombie(actor);
+    actor.setHiddenInGame(true);
+    actor.rootComponent.position.set(0, -1000, 0);
+    let pool = this._idleElitePools.get(type.id);
+    if (!pool) {
+      pool = [];
+      this._idleElitePools.set(type.id, pool);
+    }
+    pool.push(actor);
   }
 
   private _onEliteEnemyDied(type: HordeEnemyType, actor: ENGINE.Actor): void {
@@ -416,31 +465,34 @@ export class ZombieHordeManager extends ENGINE.Actor {
     spawnPos: THREE.Vector3,
     type: HordeEnemyType,
   ): void {
-    const finalSpawnPos = spawnPos.clone();
-    const visual = actor.getComponent(ENGINE.GLTFMeshComponent);
-
-    const reveal = (): void => {
-      if (!actor.getWorld()) return;
-      actor.rootComponent.position.copy(finalSpawnPos);
-      actor.rootComponent.updateMatrixWorld();
-      actor.setHiddenInGame(false);
-      if (actor instanceof BigUndeadActor) {
-        actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
-        actor.wakeForHordeSpawn();
-      }
-      ZombieRiseVFXActor.spawnAt(world, finalSpawnPos);
-    };
-
-    if (!visual || visual.isModelLoaded()) {
-      reveal();
-      return;
-    }
-
-    void visual.waitForLoad().then(reveal).catch(() => {
-      type.clearDeathHook(actor);
-      this._activeEliteActors.get(type.id)?.delete(actor);
-      actor.setHiddenInGame(true);
-      destroyActorWhenGltfIdle(actor);
+    revealActorWhenVisualReady({
+      actor,
+      onReady: () => {
+        if (!actor.getWorld()) {
+          return;
+        }
+        actor.rootComponent.position.copy(spawnPos);
+        actor.rootComponent.updateMatrixWorld();
+        actor.setHiddenInGame(false);
+        if (actor instanceof BigUndeadActor) {
+          actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
+          actor.wakeForHordeSpawn();
+        }
+        if (actor.isHiddenInGame()) {
+          type.clearDeathHook(actor);
+          this._activeEliteActors.get(type.id)?.delete(actor);
+          actor.setHiddenInGame(true);
+          destroyActorWhenGltfIdle(actor);
+          return;
+        }
+        ZombieRiseVFXActor.spawnAt(world, spawnPos);
+      },
+      onFailed: () => {
+        type.clearDeathHook(actor);
+        this._activeEliteActors.get(type.id)?.delete(actor);
+        actor.setHiddenInGame(true);
+        destroyActorWhenGltfIdle(actor);
+      },
     });
   }
 
@@ -461,8 +513,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   /**
-   * Create a brand-new zombie actor. Only called for initial wave fill —
-   * subsequent respawns go through respawnZombie() which reuses the actor.
+   * Fill one horde slot from the idle pool or allocate once when the pool is empty.
    */
   private spawnSingleZombie(): NewZombieActor | null {
     if (this._activeZombies.size >= this._maxActiveZombies) return null;
@@ -475,6 +526,16 @@ export class ZombieHordeManager extends ENGINE.Actor {
     const spawnPos = this.getSpawnPosition(this._playerPos, 'spawn');
     if (!spawnPos) {
       return null;
+    }
+
+    const idle = this._takeIdlePooledZombie();
+    if (idle) {
+      const onDied = () => this.onPoolZombieDied(idle);
+      idle.onDied = onDied;
+      this._activeZombies.set(idle, { actor: idle, onDiedCallback: onDied });
+      this._applyRiskToZombie(idle);
+      this.revealZombieWhenVisualReady(world, idle, spawnPos);
+      return idle;
     }
 
     const zombie = NewZombieActor.create({ position: spawnPos });
@@ -494,10 +555,43 @@ export class ZombieHordeManager extends ENGINE.Actor {
     return zombie;
   }
 
+  private _takeIdlePooledZombie(): NewZombieActor | null {
+    for (const zombie of this._idlePool) {
+      this._idlePool.delete(zombie);
+      if (zombie.getWorld()) {
+        return zombie;
+      }
+    }
+    return null;
+  }
+
+  private _returnZombieToIdlePool(zombie: NewZombieActor): void {
+    if (!zombie.isPooled) {
+      return;
+    }
+    zombie.onDied = null;
+    zombie.parkForHordeReset();
+    this._idlePool.add(zombie);
+  }
+
+  /** Register any hidden pooled zombies left in the world after mission cleanup. */
+  public absorbParkedPooledZombies(): void {
+    const world = this.getWorld();
+    if (!world) return;
+
+    for (const actor of world.getActors()) {
+      if (actor instanceof NewZombieActor && actor.isPooled && actor.isHiddenInGame()) {
+        actor.onDied = null;
+        this._idlePool.add(actor);
+      }
+    }
+  }
+
   /** Horde spawns only from scene-placed EnemySpawnPointActor markers (nav-validated). */
   private getSpawnPosition(
     playerPos: THREE.Vector3,
     reason: 'spawn' | 'respawn' | 'relocate' | 'elite',
+    excludeMarkers?: Set<EnemySpawnPointActor>,
   ): THREE.Vector3 | null {
     const world = this.getWorld();
     if (!world) {
@@ -514,11 +608,14 @@ export class ZombieHordeManager extends ENGINE.Actor {
     }
 
     const nav = world.getNavigationServer();
-    const triedMarkers = new Set<EnemySpawnPointActor>();
+    const triedMarkers = excludeMarkers ?? new Set<EnemySpawnPointActor>();
     const maxMarkerTries = Math.min(MAX_MARKER_SPAWN_TRIES, markerCount);
+    const useSpread = reason === 'relocate';
 
     for (let i = 0; i < maxMarkerTries; i++) {
-      const marker = pickClosestEnemySpawnPoint(playerPos, this._spawnPos, triedMarkers);
+      const marker = useSpread
+        ? pickSpreadEnemySpawnPoint(playerPos, this._spawnPos, triedMarkers)
+        : pickClosestEnemySpawnPoint(playerPos, this._spawnPos, triedMarkers);
       if (!marker) {
         break;
       }
@@ -576,6 +673,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     if (!world || !player) return;
 
     player.rootComponent.getWorldPosition(this._playerPos);
+    this._relocateUsedMarkers.clear();
 
     for (const { actor: zombie } of this._activeZombies.values()) {
       if (zombie.isHiddenInGame() || this._relocateCooldowns.has(zombie)) {
@@ -587,12 +685,14 @@ export class ZombieHordeManager extends ENGINE.Actor {
         continue;
       }
 
-      const spawnPos = this.getSpawnPosition(this._playerPos, 'relocate');
+      const spawnPos = this.getSpawnPosition(this._playerPos, 'relocate', this._relocateUsedMarkers);
       if (!spawnPos) {
         continue;
       }
 
       zombie.softReset(spawnPos);
+      zombie.beginVisibilityReassert();
+      ZombieRiseVFXActor.spawnAt(world, spawnPos);
       this._relocateCooldowns.set(zombie, RELOCATE_COOLDOWN_SEC);
     }
 
@@ -610,7 +710,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
           continue;
         }
 
-        const spawnPos = this.getSpawnPosition(this._playerPos, 'relocate');
+        const spawnPos = this.getSpawnPosition(this._playerPos, 'relocate', this._relocateUsedMarkers);
         if (!spawnPos) {
           continue;
         }
@@ -620,6 +720,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
         if (actor instanceof BigUndeadActor) {
           actor.wakeForHordeSpawn();
         }
+        ZombieRiseVFXActor.spawnAt(world, spawnPos);
         this._eliteRelocateCooldowns.set(actor, RELOCATE_COOLDOWN_SEC);
       }
     }
@@ -679,14 +780,19 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   private _applyRiskToAllZombies(): void {
-    const world = this.getWorld();
-    if (!world) return;
-
-    for (const actor of world.getActors()) {
-      if (actor instanceof NewZombieActor) {
-        this._applyRiskToZombie(actor);
-      } else if (actor instanceof BigUndeadActor) {
-        actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
+    for (const { actor } of this._activeZombies.values()) {
+      this._applyRiskToZombie(actor);
+    }
+    for (const zombie of this._placedZombies) {
+      this._applyRiskToZombie(zombie);
+    }
+    for (const type of this._hordeEnemyTypes) {
+      const active = this._activeEliteActors.get(type.id);
+      if (!active) continue;
+      for (const actor of active) {
+        if (actor instanceof BigUndeadActor) {
+          actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
+        }
       }
     }
   }
@@ -723,33 +829,40 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._waveTimer = 0;
     this._spawningPaused = false;
     this._pendingWaveSpawns.length = 0;
+
+    for (const entry of this._respawnQueue) {
+      this._returnZombieToIdlePool(entry.zombie);
+    }
     this._respawnQueue.length = 0;
+
+    for (const [zombie] of this._activeZombies) {
+      this._returnZombieToIdlePool(zombie);
+    }
+    this._activeZombies.clear();
+
     this._relocateCooldowns.clear();
     this._eliteRelocateCooldowns.clear();
     this._relocateTimer = 0;
     this._spawnFailLogTimer = 0;
-
-    for (const [zombie] of this._activeZombies) {
-      zombie.onDied = null;
-    }
-    this._activeZombies.clear();
   }
 
   /**
    * Reset wave state between missions (e.g. replaying same rank).
-   * Parks all live pooled zombies off-screen, disconnects elite actors,
-   * and resets kill/wave counters so the next mission starts fresh.
+   * Parks all live pooled zombies into the idle pool for reuse.
    */
   public resetForMissionStart(): void {
     this._pendingWaveSpawns.length = 0;
+
+    for (const entry of this._respawnQueue) {
+      this._returnZombieToIdlePool(entry.zombie);
+    }
     this._respawnQueue.length = 0;
     this._relocateCooldowns.clear();
     this._eliteRelocateCooldowns.clear();
     this._relocateTimer = 0;
 
     for (const [zombie] of this._activeZombies) {
-      zombie.onDied = null;
-      zombie.parkForHordeReset();
+      this._returnZombieToIdlePool(zombie);
     }
     this._activeZombies.clear();
 
@@ -757,9 +870,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       const active = this._activeEliteActors.get(type.id);
       if (!active) continue;
       for (const actor of active) {
-        type.clearDeathHook(actor);
-        actor.setHiddenInGame(true);
-        actor.rootComponent.position.set(0, -1000, 0);
+        this._returnEliteToIdlePool(type, actor);
       }
       active.clear();
     }
@@ -790,6 +901,8 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._respawnQueue.length = 0;
     this._relocateCooldowns.clear();
     this._eliteRelocateCooldowns.clear();
+    this._idlePool.clear();
+    this._idleElitePools.clear();
 
     for (const type of this._hordeEnemyTypes) {
       const active = this._activeEliteActors.get(type.id);
