@@ -1,10 +1,10 @@
 /**
  * Full-screen film grain overlay using a 6-frame horizontal sprite sheet
- * (assets/UI/noise.png). CSS steps() animation — no per-frame canvas work.
+ * (assets/UI/noise.webp). CSS steps() animation — no per-frame canvas work.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-const NOISE_SPRITE_URL = '@project/assets/UI/noise.png';
+const NOISE_SPRITE_URL = '@project/assets/UI/noise.webp';
 const OVERLAY_ATTR = 'data-grim-film-grain';
 const GRAIN_ANIM_STYLE_ID = 'grim-film-grain-keyframes';
 const GRAIN_ANIM_NAME = 'grim-film-grain-shift';

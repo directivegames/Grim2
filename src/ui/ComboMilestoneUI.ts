@@ -6,18 +6,18 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 const MILESTONES = [
-  { threshold: 10, image: '@project/assets/UI/Combo-10x 2.png', tier: 'bronze' },
-  { threshold: 20, image: '@project/assets/UI/Combo-20x 2.png', tier: 'bronze' },
-  { threshold: 30, image: '@project/assets/UI/Combo-30x 2.png', tier: 'silver' },
-  { threshold: 40, image: '@project/assets/UI/Combo-40x 2.png', tier: 'silver' },
-  { threshold: 50, image: '@project/assets/UI/Combo-50x 2.png', tier: 'silver' },
-  { threshold: 75, image: '@project/assets/UI/Combo-75x 2.png', tier: 'gold' },
-  { threshold: 100, image: '@project/assets/UI/Combo-100x 2.png', tier: 'gold' },
-  { threshold: 150, image: '@project/assets/UI/Combo-150x 2.png', tier: 'gold' },
-  { threshold: 200, image: '@project/assets/UI/Combo-200x 2.png', tier: 'epic' },
-  { threshold: 250, image: '@project/assets/UI/Combo-250x 2.png', tier: 'epic' },
-  { threshold: 500, image: '@project/assets/UI/Combo-500x 2.png', tier: 'legendary' },
-  { threshold: 999, image: '@project/assets/UI/Combo-999x 2.png', tier: 'legendary' },
+  { threshold: 10, image: '@project/assets/UI/Combo-10x.webp', tier: 'bronze' },
+  { threshold: 20, image: '@project/assets/UI/Combo-20x.webp', tier: 'bronze' },
+  { threshold: 30, image: '@project/assets/UI/Combo-30x.webp', tier: 'silver' },
+  { threshold: 40, image: '@project/assets/UI/Combo-40x.webp', tier: 'silver' },
+  { threshold: 50, image: '@project/assets/UI/Combo-50x.webp', tier: 'silver' },
+  { threshold: 75, image: '@project/assets/UI/Combo-75x.webp', tier: 'gold' },
+  { threshold: 100, image: '@project/assets/UI/Combo-100x.webp', tier: 'gold' },
+  { threshold: 150, image: '@project/assets/UI/Combo-150x.webp', tier: 'gold' },
+  { threshold: 200, image: '@project/assets/UI/Combo-200x.webp', tier: 'epic' },
+  { threshold: 250, image: '@project/assets/UI/Combo-250x.webp', tier: 'epic' },
+  { threshold: 500, image: '@project/assets/UI/Combo-500x.webp', tier: 'legendary' },
+  { threshold: 999, image: '@project/assets/UI/Combo-999x.webp', tier: 'legendary' },
 ] as const;
 
 const UI_SCALE = 0.3;

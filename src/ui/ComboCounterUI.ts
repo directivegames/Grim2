@@ -8,7 +8,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { injectBreeSerifFont, sunsetNumberTextCss } from './uiTypography.js';
 
-const BG_URL = '@project/assets/UI/ComboBG 1.png';
+const BG_URL = '@project/assets/UI/ComboBG.webp';
 
 const UI_SCALE = 0.35;
 const BG_WIDTH = 512;

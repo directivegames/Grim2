@@ -9,10 +9,19 @@ import { applyMusicVolumeToWorld } from '../utils/apply-music-volume.js';
 import { GAME_SETTINGS_DEFAULTS, gameSettings } from '../utils/game-settings.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
+import {
+  UI_MENU_PANEL,
+  UI_OPTIONS_FRAME,
+  UI_OPTIONS_LOGO,
+  UI_OPTIONS_LOGO_ASPECT,
+  applyBackgroundImageWhenReady,
+  ensureUiImagesReady,
+  getCachedUiImageUrl,
+} from '../utils/ui-image-cache.js';
 
-const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
-const OPTIONS_LOGO_URL = '@project/assets/UI/Options.png';
-const OPTIONS_BG_URL = '@project/assets/UI/optionsbackground.png';
+/** Reserved header width for Options.webp (1536×1024); height comes from aspect-ratio on the slot. */
+const OPTIONS_LOGO_MAX_WIDTH_PX = 540;
+const OPTIONS_PANEL_OVERLAP_PX = 18;
 
 type GameContainerWorld = ENGINE.World & {
   gameContainer?: HTMLElement;
@@ -26,7 +35,6 @@ export class OptionsMenuUI {
   private _root: HTMLDivElement | null = null;
   private _mounting = false;
   private _onClose: (() => void) | null = null;
-  private _resolvedPanelUrl = '';
 
   private _sfxValueLabel: HTMLSpanElement | null = null;
   private _musicValueLabel: HTMLSpanElement | null = null;
@@ -333,25 +341,20 @@ export class OptionsMenuUI {
       return;
     }
 
-    const css = `
-      .grim-options-panel-bg { background-image: url("${MENU_PANEL_URL}"); }
-      .grim-options-logo { background-image: url("${OPTIONS_LOGO_URL}"); }
-      .grim-options-frame-bg { background-image: url("${OPTIONS_BG_URL}"); }
-    `;
-    const resolved = await ENGINE.resolveAssetPathsInText(css);
-    const urls = [...resolved.matchAll(/url\("([^"]+)"\)/g)].map(m => m[1] ?? '');
-    this._resolvedPanelUrl = urls[0] ?? '';
-    const resolvedLogoUrl = urls[1] ?? '';
-    const resolvedFrameUrl = urls[2] ?? '';
+    await ensureUiImagesReady([UI_OPTIONS_LOGO, UI_OPTIONS_FRAME, UI_MENU_PANEL]);
 
     this._ensureStyles(gameContainer);
+
+    const logoUrl = getCachedUiImageUrl(UI_OPTIONS_LOGO);
+    const frameUrl = getCachedUiImageUrl(UI_OPTIONS_FRAME);
+    const menuPanelUrl = getCachedUiImageUrl(UI_MENU_PANEL);
 
     const overlay = document.createElement('div');
     overlay.className = 'grim-options-menu-root';
     overlay.style.cssText = `
       position: absolute;
       inset: 0;
-      z-index: 10055;
+      z-index: 10065;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -360,7 +363,7 @@ export class OptionsMenuUI {
       box-sizing: border-box;
       user-select: none;
       padding: clamp(16px, 3vh, 32px) clamp(12px, 3vw, 28px);
-      overflow-y: auto;
+      overflow: auto;
     `;
 
     const menuStack = document.createElement('div');
@@ -370,48 +373,91 @@ export class OptionsMenuUI {
       flex-direction: column;
       align-items: center;
       width: min(560px, 94vw);
+      flex-shrink: 0;
+      margin: auto;
     `;
 
-    if (resolvedLogoUrl) {
+    const logoSlot = document.createElement('div');
+    logoSlot.style.cssText = `
+      position: relative;
+      width: min(${OPTIONS_LOGO_MAX_WIDTH_PX}px, 98%);
+      max-width: 100%;
+      aspect-ratio: ${UI_OPTIONS_LOGO_ASPECT};
+      flex-shrink: 0;
+      margin: 0 auto;
+      margin-bottom: -${OPTIONS_PANEL_OVERLAP_PX}px;
+    `;
+
+    if (logoUrl) {
       const titleImg = document.createElement('img');
-      titleImg.src = resolvedLogoUrl;
+      titleImg.src = logoUrl;
       titleImg.alt = 'Options';
       titleImg.draggable = false;
       titleImg.style.cssText = `
-        display: block;
-        width: min(540px, 98%);
-        height: auto;
-        margin: 0 auto clamp(-22px, -3vh, -12px);
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center bottom;
         pointer-events: none;
         filter: drop-shadow(0 0 22px rgba(0, 220, 255, 0.4));
       `;
-      menuStack.appendChild(titleImg);
+      logoSlot.appendChild(titleImg);
     }
 
-    const panel = document.createElement('div');
-    const panelBg = resolvedFrameUrl
+    menuStack.appendChild(logoSlot);
+
+    const panelFrameBg = frameUrl
       ? `
-      background-image: url("${resolvedFrameUrl}");
+      background-image: url("${frameUrl}");
       background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: center;
     `
-      : `
-      background: #0d1117;
-      border: 2px solid rgba(100, 160, 200, 0.25);
-      border-radius: 6px;
-    `;
+      : '';
+
+    const panel = document.createElement('div');
     panel.style.cssText = `
       position: relative;
       width: 100%;
       box-sizing: border-box;
-      ${panelBg}
+      background: #0d1117;
+      border: 2px solid rgba(100, 160, 200, 0.25);
+      border-radius: 6px;
       box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
       padding: clamp(48px, 7vh, 56px) clamp(32px, 5vw, 44px) clamp(40px, 5.5vh, 48px);
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      flex-shrink: 0;
+      ${panelFrameBg}
     `;
+
+    if (!frameUrl) {
+      applyBackgroundImageWhenReady(panel, UI_OPTIONS_FRAME, {
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+      });
+    }
+
+    const panelBtnBg = {
+      backgroundSize: '100% auto',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+    } as const;
+
+    const applyMenuPanelBtnBg = (el: HTMLElement): void => {
+      if (menuPanelUrl) {
+        el.style.backgroundImage = `url("${menuPanelUrl}")`;
+        el.style.backgroundSize = panelBtnBg.backgroundSize;
+        el.style.backgroundRepeat = panelBtnBg.backgroundRepeat;
+        el.style.backgroundPosition = panelBtnBg.backgroundPosition;
+        return;
+      }
+      applyBackgroundImageWhenReady(el, UI_MENU_PANEL, panelBtnBg);
+    };
 
     panel.appendChild(this._createSectionHeader('AUDIO'));
 
@@ -483,12 +529,7 @@ export class OptionsMenuUI {
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.2s ease;
     `;
-    if (this._resolvedPanelUrl) {
-      resetWrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
-      resetWrap.style.backgroundSize = '100% auto';
-      resetWrap.style.backgroundRepeat = 'no-repeat';
-      resetWrap.style.backgroundPosition = 'center';
-    }
+    applyMenuPanelBtnBg(resetWrap);
     const resetLabel = document.createElement('span');
     resetLabel.textContent = 'RESET ALL PROGRESS';
     resetLabel.style.cssText = `
@@ -527,12 +568,7 @@ export class OptionsMenuUI {
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.2s ease;
     `;
-    if (this._resolvedPanelUrl) {
-      backWrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
-      backWrap.style.backgroundSize = '100% auto';
-      backWrap.style.backgroundRepeat = 'no-repeat';
-      backWrap.style.backgroundPosition = 'center';
-    }
+    applyMenuPanelBtnBg(backWrap);
 
     const backLabel = document.createElement('span');
     backLabel.textContent = 'BACK';

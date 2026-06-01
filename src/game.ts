@@ -22,6 +22,7 @@ import { FilmGrainActor } from './post/FilmGrainActor.js';
 import { DEFAULT_FILM_GRAIN_SETTINGS, FilmGrainUI } from './ui/FilmGrainUI.js';
 import { gameSettings } from './utils/game-settings.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
+import { LoadingScreenUI, LoadingStages, mapWarmupProgress } from './ui/LoadingScreenUI.js';
 import { setGameplayUnlocked } from './utils/game-pause.js';
 import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
@@ -141,6 +142,7 @@ class MyGame extends ENGINE.BaseGameLoop {
    * Cover the canvas as early as possible (before beginPlay / first ticks).
    */
   protected override async preStart(): Promise<void> {
+    LoadingScreenUI.setProgress(LoadingStages.boot.percent, LoadingStages.boot.status);
     await super.preStart();
     StartMenuUI.preflightCover(this.getWorld());
   }
@@ -153,6 +155,8 @@ class MyGame extends ENGINE.BaseGameLoop {
     super.postStart();
     const world = this.getWorld();
     if (!world) return;
+
+    LoadingScreenUI.setProgress(LoadingStages.worldReady.percent, LoadingStages.worldReady.status);
 
     setGameplayUnlocked(false);
     world.inputManager.setInputEnabled(false);
@@ -283,9 +287,17 @@ class MyGame extends ENGINE.BaseGameLoop {
       return;
     }
 
-    WarmupActor.spawnAndWarmup(world, () => {
-      startMenu.markWarmupComplete();
-    });
+    LoadingScreenUI.setProgress(LoadingStages.warmupStart.percent, LoadingStages.warmupStart.status);
+
+    WarmupActor.spawnAndWarmup(
+      world,
+      () => {
+        startMenu.markWarmupComplete();
+      },
+      (frac, status) => {
+        mapWarmupProgress(frac, status);
+      },
+    );
   }
 }
 

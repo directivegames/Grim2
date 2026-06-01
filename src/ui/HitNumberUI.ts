@@ -9,7 +9,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { injectBreeSerifFont, sunsetNumberTextCss } from './uiTypography.js';
 
-const HIT_BG_URL = '@project/assets/UI/HitNumbersBG 1.png';
+const HIT_BG_URL = '@project/assets/UI/HitNumbersBG.webp';
 
 const BG_SIZE = 512;
 const UI_SCALE = 0.15;

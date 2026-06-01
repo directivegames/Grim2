@@ -24,10 +24,10 @@ import {
   skillLevelPips,
 } from './upgrade-shop-format.js';
 
-const BG_URL = '@project/assets/UI/Shopbackground.png';
-const UPGRADE_WINDOW_URL = '@project/assets/UI/Upgradewindow.png';
-const SHOP_WINDOW_URL = '@project/assets/UI/shopwindow.png';
-const BTN_URL = '@project/assets/UI/menu element.png';
+const BG_URL = '@project/assets/UI/Shopbackground.webp';
+const UPGRADE_WINDOW_URL = '@project/assets/UI/Upgradewindow.webp';
+const SHOP_WINDOW_URL = '@project/assets/UI/shopwindow.webp';
+const BTN_URL = '@project/assets/UI/menuelement.webp';
 const SHOP_OVERLAY_ATTR = 'data-grim-upgrade-shop';
 
 const ACTION_BTN_MIN_WIDTH = 118;

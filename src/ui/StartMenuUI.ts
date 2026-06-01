@@ -12,9 +12,14 @@ import { OptionsMenuUI } from './OptionsMenuUI.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeInElement } from '../utils/screen-transition.js';
 import { setGameplayUnlocked } from '../utils/game-pause.js';
-
-const BG_URL = '@project/assets/UI/background.png';
-const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
+import {
+  UI_MENU_PANEL,
+  UI_START_BG,
+  applyBackgroundImageWhenReady,
+  getCachedUiImageUrl,
+  resolveAndCacheUiImage,
+} from '../utils/ui-image-cache.js';
+import { LOADING_SCREEN_ATTR, LoadingScreenUI, LoadingStages } from './LoadingScreenUI.js';
 
 const SHATTER_COLS = 8;
 const SHATTER_ROWS = 6;
@@ -43,7 +48,6 @@ export class StartMenuUI {
   private _warmupReady = false;
   private _dismissed = false;
   private _resolvedBgUrl = '';
-  private _resolvedPanelUrl = '';
   /** Optional override called instead of ReadyToReapUI when PLAY is clicked. */
   private _onPlay: (() => void) | null = null;
   /** True when _onPlay already ran at click time (grim intro pre-started). */
@@ -84,34 +88,12 @@ export class StartMenuUI {
     }
     container.querySelectorAll(`[${BLOCKER_ATTR}]`).forEach(el => el.remove());
     container.querySelectorAll(`[${EARLY_LOAD_ATTR}]`).forEach(el => el.remove());
+    container.querySelectorAll(`[${LOADING_SCREEN_ATTR}]`).forEach(el => el.remove());
   }
 
   /** Cover the host container before the engine finishes booting (call from main()). */
   public static injectEarlyLoadCover(container: HTMLElement): void {
-    if (container.querySelector(`[${EARLY_LOAD_ATTR}]`)) {
-      return;
-    }
-    if (getComputedStyle(container).position === 'static') {
-      container.style.position = 'relative';
-    }
-    const cover = document.createElement('div');
-    cover.setAttribute(EARLY_LOAD_ATTR, '');
-    cover.style.cssText = `
-      position: absolute;
-      inset: 0;
-      z-index: 99999;
-      background: #050508;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      font-family: system-ui, sans-serif;
-      font-size: 14px;
-      letter-spacing: 0.14em;
-      color: rgba(160, 175, 190, 0.85);
-    `;
-    cover.textContent = 'LOADING';
-    container.appendChild(cover);
+    LoadingScreenUI.attach(container);
   }
 
   public static isVisible(world: ENGINE.World): boolean {
@@ -170,6 +152,8 @@ export class StartMenuUI {
 
   /** Call when WarmupActor finishes (same moment as former GrimLoadingScreen). */
   public markWarmupComplete(): void {
+    LoadingScreenUI.setProgress(LoadingStages.done.percent, LoadingStages.done.status);
+    LoadingScreenUI.dismiss();
     this._warmupReady = true;
     this._refreshPlayState();
   }
@@ -192,19 +176,19 @@ export class StartMenuUI {
     }
   }
 
-  private async _mount(): Promise<void> {
+  private _mount(): void {
     if (this._root || this._mounting) {
       return;
     }
     this._mounting = true;
     try {
-      await this._mountInner();
+      this._mountInner();
     } finally {
       this._mounting = false;
     }
   }
 
-  private async _mountInner(): Promise<void> {
+  private _mountInner(): void {
     const gameContainer = this._gameContainer();
     const w = this._world as GameContainerWorld;
     if (!gameContainer || w.options?.headless) {
@@ -217,26 +201,24 @@ export class StartMenuUI {
       /* */
     }
 
-    const css = `
-      .sm-bg { background-image: url("${BG_URL}"); }
-      .sm-panel { background-image: url("${MENU_PANEL_URL}"); }
-    `;
-    const resolved = await ENGINE.resolveAssetPathsInText(css);
-    const bgM = resolved.match(/\.sm-bg\s*\{[^}]*url\("([^"]+)"/);
-    const panelM = resolved.match(/\.sm-panel\s*\{[^}]*url\("([^"]+)"/);
-    this._resolvedBgUrl = bgM?.[1] ?? '';
-    this._resolvedPanelUrl = panelM?.[1] ?? '';
-    if (!this._resolvedBgUrl) {
-      StartMenuUI._removeBlockersFrom(gameContainer);
-      this._setInput(true);
-      return;
-    }
+    this._resolvedBgUrl = getCachedUiImageUrl(UI_START_BG);
+    void resolveAndCacheUiImage(UI_START_BG).then(url => {
+      if (url) {
+        this._resolvedBgUrl = url;
+      }
+    });
 
     if (this._dismissed) {
       StartMenuUI._removeBlockersFrom(gameContainer);
       this._setInput(true);
       return;
     }
+
+    const panelBtnBg = {
+      backgroundSize: '100% auto',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+    } as const;
 
     const root = document.createElement('div');
     root.className = 'grim-start-menu-root';
@@ -253,11 +235,16 @@ export class StartMenuUI {
     bg.style.cssText = `
       position: absolute;
       inset: 0;
-      background-image: url("${this._resolvedBgUrl}");
+      background-color: #050508;
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
     `;
+    applyBackgroundImageWhenReady(bg, UI_START_BG, {
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center center',
+    });
 
     const vignette = document.createElement('div');
     vignette.style.cssText = `
@@ -296,7 +283,7 @@ export class StartMenuUI {
       pointer-events: auto;
     `;
 
-    /** Matches menu element.png (~3.4:1) — height from aspect ratio; bar width is 50% of prior size. */
+    /** Matches menuelement.webp (~3.4:1) — height from aspect ratio; bar width is 50% of prior size. */
     const menuButtonBase = `
       position: relative;
       width: 100%;
@@ -314,12 +301,7 @@ export class StartMenuUI {
       cursor: not-allowed;
       transition: filter 0.35s ease, opacity 0.35s ease, transform 0.25s ease;
     `;
-    if (this._resolvedPanelUrl) {
-      playWrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
-      playWrap.style.backgroundSize = '100% auto';
-      playWrap.style.backgroundRepeat = 'no-repeat';
-      playWrap.style.backgroundPosition = 'center';
-    }
+    applyBackgroundImageWhenReady(playWrap, UI_MENU_PANEL, panelBtnBg);
 
     const playLabel = document.createElement('span');
     playLabel.textContent = 'PLAY';
@@ -341,13 +323,8 @@ export class StartMenuUI {
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.2s ease;
     `;
-    if (this._resolvedPanelUrl) {
-      quitWrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
-      quitWrap.style.backgroundSize = '100% auto';
-      quitWrap.style.backgroundRepeat = 'no-repeat';
-      quitWrap.style.backgroundPosition = 'center';
-      quitWrap.style.filter = 'brightness(0.82)';
-    }
+    applyBackgroundImageWhenReady(quitWrap, UI_MENU_PANEL, panelBtnBg);
+    quitWrap.style.filter = 'brightness(0.82)';
     const quitLabel = document.createElement('span');
     quitLabel.textContent = 'QUIT';
     quitLabel.style.cssText = `
@@ -446,6 +423,9 @@ export class StartMenuUI {
     gameContainer.appendChild(root);
     StartMenuUI._removeBlockersFrom(gameContainer);
     fadeInElement(root, 520);
+
+    LoadingScreenUI.setProgress(LoadingStages.menuVisible.percent, LoadingStages.menuVisible.status);
+    LoadingScreenUI.setPeekMode(true);
 
     this._root = root;
     this._playWrap = playWrap;

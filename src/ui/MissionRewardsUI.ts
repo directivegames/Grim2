@@ -14,8 +14,8 @@ import { resolveProjectAssetUrl } from '../utils/resolve-project-asset.js';
 import { injectBreeSerifFont } from './uiTypography.js';
 import { pauseGame } from '../utils/game-pause.js';
 
-const PANEL_URL = '@project/assets/UI/menu element.png';
-const FRAME_URL = '@project/assets/UI/optionsbackground.png';
+const PANEL_URL = '@project/assets/UI/menuelement.webp';
+const FRAME_URL = '@project/assets/UI/optionsbackground.webp';
 
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 

@@ -10,8 +10,8 @@ import type { DialogueLine, DialogueScript } from '../dialogue/DialogueTypes.js'
 import { gameSettings } from '../utils/game-settings.js';
 import { mountCutsceneSkipButton } from './CutsceneSkipUI.js';
 
-const SPEAKER_PANEL_URL = '@project/assets/UI/SpeakerUI.png';
-/** Matches assets/UI/SpeakerUI.png (1536×1024) */
+const SPEAKER_PANEL_URL = '@project/assets/UI/SpeakerUI.webp';
+/** Matches assets/UI/SpeakerUI.webp (1536×1024) */
 const SPEAKER_PANEL_ASPECT = 1536 / 1024;
 /** Fits in the horizontal gap between health (left) and souls (right) HUD. */
 const SPEAKER_PANEL_MAX_WIDTH_PX = 540;

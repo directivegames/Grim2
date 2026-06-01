@@ -22,7 +22,7 @@ export interface MissionDef {
   difficulty: MissionDifficulty;
   description: string;
   objectives: string[];
-  /** Map marker PNG under `assets/UI/` (e.g. `sub.png`). */
+  /** Map marker WebP under `assets/UI/` (e.g. `sub.webp`). */
   iconFile: string;
   /** Icon position on the map image (0–1, top-left origin). */
   mapX: number;
@@ -50,7 +50,7 @@ export const MISSIONS: readonly MissionDef[] = [
     difficulty: 'Medium',
     description: 'Coming soon.',
     objectives: [],
-    iconFile: 'ShopC.png',
+    iconFile: 'ShopC.webp',
     mapX: 0.52,
     mapY: 0.18,
     selectable: false,
@@ -65,7 +65,7 @@ export const MISSIONS: readonly MissionDef[] = [
     difficulty: 'Medium',
     description: 'Coming soon.',
     objectives: [],
-    iconFile: 'Cinema.png',
+    iconFile: 'Cinema.webp',
     mapX: 0.8,
     mapY: 0.2,
     selectable: false,
@@ -81,7 +81,7 @@ export const MISSIONS: readonly MissionDef[] = [
     description:
       'Reap the souls in the local suburb, where getting the mail and becoming possessed go hand in hand.',
     objectives: [],
-    iconFile: 'sub.png',
+    iconFile: 'sub.webp',
     mapX: 0.76,
     mapY: 0.44,
     selectable: true,
@@ -97,7 +97,7 @@ export const MISSIONS: readonly MissionDef[] = [
     difficulty: 'Hard',
     description: 'Coming soon.',
     objectives: [],
-    iconFile: 'underworld.png',
+    iconFile: 'underworld.webp',
     mapX: 0.48,
     mapY: 0.52,
     selectable: false,
@@ -112,7 +112,7 @@ export const MISSIONS: readonly MissionDef[] = [
     difficulty: 'Hard',
     description: 'Coming soon.',
     objectives: [],
-    iconFile: 'hosptial.png',
+    iconFile: 'hosptial.webp',
     mapX: 0.2,
     mapY: 0.74,
     selectable: false,
@@ -127,7 +127,7 @@ export const MISSIONS: readonly MissionDef[] = [
     difficulty: 'Medium',
     description: 'Coming soon.',
     objectives: [],
-    iconFile: 'factory.png',
+    iconFile: 'factory.webp',
     mapX: 0.16,
     mapY: 0.36,
     selectable: false,
@@ -142,7 +142,7 @@ export const MISSIONS: readonly MissionDef[] = [
     difficulty: 'Medium',
     description: 'Coming soon.',
     objectives: [],
-    iconFile: 'police.png',
+    iconFile: 'police.webp',
     mapX: 0.78,
     mapY: 0.76,
     selectable: false,

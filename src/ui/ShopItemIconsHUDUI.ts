@@ -8,12 +8,12 @@ import { SHOP_ITEMS } from '../data/shop-items.js';
 
 /** Hardcoded @project paths — same as BoneShardIconTestHUDUI. */
 const SHOP_ITEM_ICON_URLS: Record<string, string> = {
-  bone_shard: '@project/assets/UI/Boneshard.png',
-  cursed_vial: '@project/assets/UI/cursedvial.png',
-  soul_crystal: '@project/assets/UI/soulcrystal.png',
-  grim_ember: '@project/assets/UI/grimember.png',
-  void_relic: '@project/assets/UI/voidrelic.png',
-  brute_core: '@project/assets/UI/brutecore.png',
+  bone_shard: '@project/assets/UI/Boneshard.webp',
+  cursed_vial: '@project/assets/UI/cursedvial.webp',
+  soul_crystal: '@project/assets/UI/soulcrystal.webp',
+  grim_ember: '@project/assets/UI/grimember.webp',
+  void_relic: '@project/assets/UI/voidrelic.webp',
+  brute_core: '@project/assets/UI/brutecore.webp',
 };
 
 const SHOP_ITEM_KEY_HINTS: Record<string, string> = {

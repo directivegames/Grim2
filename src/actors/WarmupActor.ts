@@ -12,6 +12,8 @@ import { DeadGraveActor } from './DeadGraveActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { GameAudioManager } from './GameAudioManager.js';
 import { parkAllSceneFists, parkAllSceneWeapons } from '../utils/scene-visual-pool.js';
+import { LoadingScreenUI, mapUiPreloadProgress } from '../ui/LoadingScreenUI.js';
+import { preloadUiImages } from '../utils/ui-image-cache.js';
 
 /** Off-screen position for warmup actors - far enough to never be visible. */
 const HIDDEN_POS = new THREE.Vector3(0, -1000, 0);
@@ -23,18 +25,21 @@ const WARMUP_HOLD_MS = 500;
 const CHECK_INTERVAL_MS = 50;
 
 type WarmupCallback = () => void;
+type WarmupProgressCallback = (fraction: number, status: string) => void;
 
 @ENGINE.GameClass()
 export class WarmupActor extends ENGINE.Actor {
   private static _hasCompletedOnce = false;
 
   private _onComplete: WarmupCallback | null = null;
+  private _onProgress: WarmupProgressCallback | null = null;
   private _warmupActors: ENGINE.Actor[] = [];
   private _audioManager: GameAudioManager | null = null;
   private _slashMesh: THREE.Mesh | null = null;
   private _startTime = 0;
   private _minDurationMs = 2000;
   private _isComplete = false;
+  private _uiImagesReady = false;
 
   // Component references for pool pre-building
   private _boomerangTrail: ENGINE.SceneComponent | null = null;
@@ -50,8 +55,9 @@ export class WarmupActor extends ENGINE.Actor {
    * Start the warmup process. Must be called during loading screen.
    * @param onComplete - Called when all warmups are finished.
    */
-  public startWarmup(onComplete: WarmupCallback): void {
+  public startWarmup(onComplete: WarmupCallback, onProgress?: WarmupProgressCallback): void {
     this._onComplete = onComplete;
+    this._onProgress = onProgress ?? null;
     this._startTime = performance.now();
 
     const world = this.getWorld();
@@ -62,6 +68,24 @@ export class WarmupActor extends ENGINE.Actor {
 
     // 1. Ensure audio manager exists and preload all sounds
     this._audioManager = GameAudioManager.ensureExists(world);
+
+    // 1b. Preload UI images (menus/HUD) so pause/options open instantly in browser
+    this._reportProgress();
+    void preloadUiImages((loaded, total) => {
+      LoadingScreenUI.setProgress(mapUiPreloadProgress(loaded, total), 'Loading interface…');
+      if (loaded >= total) {
+        this._uiImagesReady = true;
+        this._reportProgress();
+      }
+    })
+      .then(() => {
+        this._uiImagesReady = true;
+        this._reportProgress();
+      })
+      .catch(() => {
+        this._uiImagesReady = true;
+        this._reportProgress();
+      });
 
     // 2. Pre-warm grave actors (spawn multiple to cover rapid kills)
     for (let i = 0; i < 3; i++) {
@@ -127,9 +151,51 @@ export class WarmupActor extends ENGINE.Actor {
     }
   }
 
+  private _reportProgress(): void {
+    if (!this._onProgress) {
+      return;
+    }
+    const elapsed = performance.now() - this._startTime;
+    const minFrac = Math.min(1, elapsed / this._minDurationMs);
+
+    let actorFrac = 1;
+    if (this._warmupActors.length > 0) {
+      let ready = 0;
+      for (const actor of this._warmupActors) {
+        let loaded = true;
+        for (const gltfMesh of actor.getComponents(ENGINE.GLTFMeshComponent)) {
+          if (gltfMesh.isLoading()) {
+            loaded = false;
+            break;
+          }
+        }
+        if (loaded) {
+          ready += 1;
+        }
+      }
+      actorFrac = ready / this._warmupActors.length;
+    }
+
+    const uiFrac = this._uiImagesReady ? 1 : 0;
+    const audioFrac = this._audioManager ? 1 : 0;
+    const combined = audioFrac * 0.12 + uiFrac * 0.38 + actorFrac * 0.35 + minFrac * 0.15;
+    const status = !this._audioManager
+      ? 'Loading audio…'
+      : !this._uiImagesReady
+        ? 'Loading interface…'
+        : actorFrac < 1
+          ? 'Preparing effects…'
+          : minFrac < 1
+            ? 'Compiling shaders…'
+            : 'Almost ready…';
+    this._onProgress(combined, status);
+  }
+
   private _checkComplete(): void {
     const elapsed = performance.now() - this._startTime;
     const minTimeMet = elapsed >= this._minDurationMs;
+
+    this._reportProgress();
 
     // Check if all warmup actors have had time to initialize
     const allActorsReady = this._warmupActors.every(actor => {
@@ -142,10 +208,10 @@ export class WarmupActor extends ENGINE.Actor {
       return true;
     });
 
-    // Also check audio manager is ready
+    // Also check audio manager and UI images are ready
     const audioReady = this._audioManager !== null;
 
-    if (minTimeMet && allActorsReady && audioReady) {
+    if (minTimeMet && allActorsReady && audioReady && this._uiImagesReady) {
       this._cleanupAndComplete();
     } else {
       // Check again in a bit
@@ -181,10 +247,14 @@ export class WarmupActor extends ENGINE.Actor {
     return WarmupActor._hasCompletedOnce;
   }
 
-  public static spawnAndWarmup(world: ENGINE.World, onComplete: () => void): WarmupActor {
+  public static spawnAndWarmup(
+    world: ENGINE.World,
+    onComplete: () => void,
+    onProgress?: WarmupProgressCallback,
+  ): WarmupActor {
     const warmup = WarmupActor.create({ position: HIDDEN_POS });
     world.addActor(warmup);
-    warmup.startWarmup(onComplete);
+    warmup.startWarmup(onComplete, onProgress);
     return warmup;
   }
 }

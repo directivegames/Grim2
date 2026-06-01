@@ -23,11 +23,11 @@ import { playShopOpenSound, withMenuSelectSound } from '../utils/menu-audio.js';
 import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 import { fadeInElement, fadeOutIntroBlackCover } from '../utils/screen-transition.js';
 
-const MAP_BG_URL = '@project/assets/UI/Burdenvillemaponly.png';
-const COMPASS_URL = '@project/assets/UI/compass.png';
-const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
-const OPTIONS_FRAME_URL = '@project/assets/UI/optionsbackground.png';
-const SHOP_ICON_FILE = 'ShopC.png';
+const MAP_BG_URL = '@project/assets/UI/Burdenvillemaponly.webp';
+const COMPASS_URL = '@project/assets/UI/compass.webp';
+const MENU_PANEL_URL = '@project/assets/UI/menuelement.webp';
+const OPTIONS_FRAME_URL = '@project/assets/UI/optionsbackground.webp';
+const SHOP_ICON_FILE = 'ShopC.webp';
 const SHOP_MAP_X = 0.35;
 const SHOP_MAP_Y = 0.64;
 

@@ -7,8 +7,8 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-const HEALTH_BG_URL = '@project/assets/UI/HealthBG.png';
-const HEALTH_FILL_URL = '@project/assets/UI/HealthBar.png';
+const HEALTH_BG_URL = '@project/assets/UI/HealthBG.webp';
+const HEALTH_FILL_URL = '@project/assets/UI/HealthBar.webp';
 
 // Bar dimensions (from HealthBar.png/HealthBG.png)
 const BAR_WIDTH = 862;

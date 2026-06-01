@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-const KO_BG_URL = '@project/assets/UI/KO-sign 2.png';
+const KO_BG_URL = '@project/assets/UI/KO-sign.webp';
 
 const BG_SIZE = 512;
 const UI_SCALE = 0.15;

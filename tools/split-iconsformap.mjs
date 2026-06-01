@@ -1,10 +1,10 @@
 /**
- * Split iconsformap.png into icon1..icon8.png and compass.png (2x4 grid + compass).
+ * Split iconsformap.webp into icon1..icon8.png and compass.png (2x4 grid + compass).
  */
 import path from 'node:path';
 import sharp from 'sharp';
 
-const SRC = path.resolve('assets/UI/iconsformap.png');
+const SRC = path.resolve('assets/UI/iconsformap.webp');
 const OUT_DIR = path.resolve('assets/UI');
 
 /** 2 rows × 4 columns — tuned for 1536×1024 source. */

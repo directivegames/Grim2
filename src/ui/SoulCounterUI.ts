@@ -8,7 +8,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { FONT_URL, injectBreeSerifFont, sunsetNumberTextCss } from './uiTypography.js';
 
-const SOULS_BG_URL = '@project/assets/UI/SoulsBG.png';
+const SOULS_BG_URL = '@project/assets/UI/SoulsBG.webp';
 
 // Background dimensions
 const BG_WIDTH = 688;

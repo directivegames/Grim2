@@ -9,8 +9,8 @@ import { markTutSoulSeen } from '../utils/tut-progress.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { pauseGame, resumeGame } from '../utils/game-pause.js';
 
-const TUT_IMAGE_URL = '@project/assets/UI/TutSoul.png';
-const PANEL_URL = '@project/assets/UI/menu element.png';
+const TUT_IMAGE_URL = '@project/assets/UI/TutSoul.webp';
+const PANEL_URL = '@project/assets/UI/menuelement.webp';
 
 export const TUT_SOUL_OVERLAY_ATTR = 'data-tut-soul';
 

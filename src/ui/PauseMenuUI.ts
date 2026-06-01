@@ -7,9 +7,13 @@ import { withMenuSelectSound } from '../utils/menu-audio.js';
 import { pauseGame, resumeGame } from '../utils/game-pause.js';
 import { OptionsMenuUI } from './OptionsMenuUI.js';
 import { returnToMap } from '../utils/return-to-map.js';
-
-const MENU_PANEL_URL = '@project/assets/UI/menu element.png';
-const PAUSE_FRAME_URL = '@project/assets/UI/optionsbackground.png';
+import {
+  UI_MENU_PANEL,
+  UI_OPTIONS_FRAME,
+  applyBackgroundImageWhenReady,
+  getCachedUiImageUrl,
+  resolveAndCacheUiImage,
+} from '../utils/ui-image-cache.js';
 
 type GameContainerWorld = ENGINE.World & {
   gameContainer?: HTMLElement;
@@ -22,8 +26,7 @@ export class PauseMenuUI {
   private readonly _world: ENGINE.World;
   private _root: HTMLDivElement | null = null;
   private _mounting = false;
-  private _resolvedPanelUrl = '';
-  private _resolvedFrameUrl = '';
+  private _panelUrl = '';
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -70,6 +73,7 @@ export class PauseMenuUI {
     highlight = false,
   ): HTMLDivElement {
     const wrap = document.createElement('div');
+    wrap.setAttribute('data-grim-menu-panel-btn', '');
     wrap.style.cssText = `
       position: relative;
       width: min(300px, 78%);
@@ -81,8 +85,8 @@ export class PauseMenuUI {
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.2s ease;
     `;
-    if (this._resolvedPanelUrl) {
-      wrap.style.backgroundImage = `url("${this._resolvedPanelUrl}")`;
+    if (this._panelUrl) {
+      wrap.style.backgroundImage = `url("${this._panelUrl}")`;
       wrap.style.backgroundSize = '100% auto';
       wrap.style.backgroundRepeat = 'no-repeat';
       wrap.style.backgroundPosition = 'center';
@@ -114,33 +118,26 @@ export class PauseMenuUI {
     return wrap;
   }
 
-  private async _mount(): Promise<void> {
+  private _mount(): void {
     if (this._root || this._mounting) {
       return;
     }
     this._mounting = true;
     try {
-      await this._mountInner();
+      this._mountInner();
     } finally {
       this._mounting = false;
     }
   }
 
-  private async _mountInner(): Promise<void> {
+  private _mountInner(): void {
     const gameContainer = this._gameContainer();
     const w = this._world as GameContainerWorld;
     if (!gameContainer || w.options?.headless) {
       return;
     }
 
-    const css = `
-      .grim-pause-panel { background-image: url("${MENU_PANEL_URL}"); }
-      .grim-pause-frame { background-image: url("${PAUSE_FRAME_URL}"); }
-    `;
-    const resolved = await ENGINE.resolveAssetPathsInText(css);
-    const urls = [...resolved.matchAll(/url\("([^"]+)"\)/g)].map(m => m[1] ?? '');
-    this._resolvedPanelUrl = urls[0] ?? '';
-    this._resolvedFrameUrl = urls[1] ?? '';
+    this._panelUrl = getCachedUiImageUrl(UI_MENU_PANEL);
 
     const overlay = document.createElement('div');
     overlay.className = 'grim-pause-menu-root';
@@ -169,23 +166,13 @@ export class PauseMenuUI {
     `;
 
     const panel = document.createElement('div');
-    const panelBg = this._resolvedFrameUrl
-      ? `
-      background-image: url("${this._resolvedFrameUrl}");
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      background-position: center;
-    `
-      : `
-      background: #0d1117;
-      border: 2px solid rgba(100, 160, 200, 0.25);
-      border-radius: 6px;
-    `;
     panel.style.cssText = `
       position: relative;
       width: 100%;
       box-sizing: border-box;
-      ${panelBg}
+      background: #0d1117;
+      border: 2px solid rgba(100, 160, 200, 0.25);
+      border-radius: 6px;
       box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
       padding: clamp(44px, 6.5vh, 52px) clamp(28px, 4.5vw, 40px) clamp(36px, 5vh, 44px);
       display: flex;
@@ -193,6 +180,11 @@ export class PauseMenuUI {
       align-items: center;
       gap: clamp(10px, 1.8vh, 14px);
     `;
+    applyBackgroundImageWhenReady(panel, UI_OPTIONS_FRAME, {
+      backgroundSize: '100% 100%',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+    });
 
     const title = document.createElement('h2');
     title.textContent = 'PAUSED';
@@ -246,8 +238,10 @@ export class PauseMenuUI {
     );
     buttonCol.appendChild(
       this._createMenuButton('OPTIONS', () => {
+        this.close();
         OptionsMenuUI.open(this._world, () => {
           pauseGame(this._world);
+          void PauseMenuUI.open(this._world);
         });
       }),
     );
@@ -263,6 +257,21 @@ export class PauseMenuUI {
     gameContainer.appendChild(overlay);
 
     this._root = overlay;
+
+    void resolveAndCacheUiImage(UI_MENU_PANEL).then(url => {
+      this._panelUrl = url;
+      if (!this._root) {
+        return;
+      }
+      this._root.querySelectorAll<HTMLElement>('[data-grim-menu-panel-btn]').forEach(btn => {
+        if (url) {
+          btn.style.backgroundImage = `url("${url}")`;
+          btn.style.backgroundSize = '100% auto';
+          btn.style.backgroundRepeat = 'no-repeat';
+          btn.style.backgroundPosition = 'center';
+        }
+      });
+    });
   }
 
   private _onResume(): void {

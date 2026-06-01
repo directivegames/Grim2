@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@gnsx/genesys.js':
-        specifier: 10.19.5
-        version: 10.19.5(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)
+        specifier: 10.19.8
+        version: 10.19.8(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)
       three:
         specifier: npm:@gnsx/three@0.184.11
         version: '@gnsx/three@0.184.11'
@@ -516,8 +516,8 @@ packages:
   '@gltf-transform/functions@4.3.0':
     resolution: {integrity: sha512-FZggHVgt3DHOezgESBrf2vDzuD2FYQYaNT2sT/aP316SIwhuiIwby3z7rhV9joDvWqqUaPkf1UmkjlOaY9riSQ==}
 
-  '@gnsx/genesys.js@10.19.5':
-    resolution: {integrity: sha512-x9m3lUirf3a6uFuAC24BvAH246OjlCQLKoeotBa9dINdsCt4sIusr9bGfrJj1cBlIpKDZcHHu1N5rThZpxrufw==}
+  '@gnsx/genesys.js@10.19.8':
+    resolution: {integrity: sha512-7ntgAhY5gsgonBZWtA1jXrND3dEn/nMp3X+3PDiDOo9RYvUwxqaF9wcmjT7TGzQOFDXFqSQgtQnc3RkqUxPDCg==}
 
   '@gnsx/three-types@0.184.6':
     resolution: {integrity: sha512-bn1bvWoVdJYaZ4b0GeJKxzsGEV5HQyPeLW0PUj6J8ugJUwEw7qrrf81VfeZuuxKoIefScNczNceiSwQwR7hffg==}
@@ -2983,10 +2983,11 @@ snapshots:
       ndarray-lanczos: 0.3.0
       ndarray-pixels: 5.0.1
 
-  '@gnsx/genesys.js@10.19.5(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)':
+  '@gnsx/genesys.js@10.19.8(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.184.6)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@msgpack/msgpack': 3.1.3
+      '@recast-navigation/core': 0.43.1
       '@recast-navigation/three': 0.43.1(@gnsx/three-types@0.184.6)(@gnsx/three@0.184.11)
       '@tweenjs/tween.js': 25.0.0
       dat.gui: 0.7.9

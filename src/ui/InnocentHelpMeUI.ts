@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-const HELPME_URL = '@project/assets/UI/Helpme.png';
+const HELPME_URL = '@project/assets/UI/Helpme.webp';
 
 /** Extra world Y above the innocent indicator point (head-ish). */
 const WORLD_OFFSET_ABOVE = 1.05;

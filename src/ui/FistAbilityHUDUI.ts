@@ -6,7 +6,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { FIST_COOLDOWN_SEC, SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
 import { grimVault } from '../game/GrimVault.js';
 
-const FIST_ICON_URL = '@project/assets/UI/fistofa.png';
+const FIST_ICON_URL = '@project/assets/UI/fistofa.webp';
 
 /** Match HealthBarUI placement. */
 const HEALTH_BAR_BOTTOM = 20;

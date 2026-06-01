@@ -12,8 +12,8 @@ import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeToBlackThen } from '../utils/screen-transition.js';
 import { MissionRewardsUI } from './MissionRewardsUI.js';
 
-const PANEL_URL = '@project/assets/UI/menu element.png';
-const FRAME_URL = '@project/assets/UI/optionsbackground.png';
+const PANEL_URL = '@project/assets/UI/menuelement.webp';
+const FRAME_URL = '@project/assets/UI/optionsbackground.webp';
 
 const FAIL_SOUL_RETAIN_FRACTION = 0.1;
 
