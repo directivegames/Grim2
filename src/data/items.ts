@@ -5,6 +5,9 @@ export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'legendary';
 /** Horde registry id — used with `dropFromEnemyIds`. */
 export const ENEMY_TYPE_ZOMBIE = 'zombie';
 
+/** Horde registry id for the Demonbox suicide-bomber enemy. */
+export const ENEMY_TYPE_DEMONBOX = 'demonbox';
+
 /** One collectible item — edit this file to add or tune drops. */
 export interface ItemDef {
   id: string;

@@ -5,6 +5,7 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { GRIM_INTRO_BLACK_COVER_ATTR } from '../actors/GrimIntroActor.js';
+import { ensureGrimIntroBlackCover } from '../utils/presentation-mode.js';
 import { MapMusicActor } from '../actors/MapMusicActor.js';
 import { MISSIONS, type MissionDef } from '../data/missions.js';
 import type { MissionConfig } from '../data/mission-types.js';
@@ -200,6 +201,8 @@ export class MapUI {
     if (!gameContainer) {
       return;
     }
+
+    ensureGrimIntroBlackCover(this._world);
 
     try {
       this._world.inputManager.setInputEnabled(false);

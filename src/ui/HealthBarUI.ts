@@ -115,6 +115,8 @@ export class HealthBarUI {
     this._container.appendChild(this._bgElement);
     this._container.appendChild(this._fillElement);
 
+    this._container.style.display = 'none';
+    this._container.style.opacity = '0';
     gameContainer.appendChild(this._container);
   }
 
@@ -139,18 +141,17 @@ export class HealthBarUI {
     if (bgMatch) this._bgElement.style.backgroundImage = `url("${bgMatch[1]}")`;
     if (fillMatch) this._fillElement.style.backgroundImage = `url("${fillMatch[1]}")`;
 
-    // Show the container with fade
-    if (this._container) {
-      this._container.style.opacity = '0';
-      this._container.style.display = 'block';
-      requestAnimationFrame(() => {
-        if (this._container) {
-          this._container.style.transition = 'opacity 0.3s ease';
-          this._container.style.opacity = '1';
-        }
-      });
-    }
     this._initialized = true;
+  }
+
+  /** Hide until a mission starts (title / map / intro). */
+  public hide(): void {
+    if (!this._container) {
+      return;
+    }
+    this._container.style.display = 'none';
+    this._container.style.opacity = '0';
+    this._container.classList.remove('health-low-pulse');
   }
 
   /** Re-show the bar after mission reset (container may still exist but be hidden). */

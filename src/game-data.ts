@@ -4,6 +4,7 @@
 import { registerGeneratedClassMetadata, registerGeneratedPropertyMetadata } from '@gnsx/genesys.js';
 
 import { BigUndeadActor } from './actors/BigUndeadActor.js';
+import { DemonboxActor } from './actors/DemonboxActor.js';
 import { DialogueTriggerActor } from './actors/DialogueTriggerActor.js';
 import { GroundFogActor } from './actors/GroundFogActor.js';
 import { HedgeActor } from './actors/HedgeActor.js';
@@ -75,6 +76,58 @@ export function registerMetadata(): void {
         "max": 30,
         "step": 0.5,
         "category": "Big Undead"
+      }
+    });
+
+  registerGeneratedPropertyMetadata(DemonboxActor, {
+      "maxHealth": {
+        "type": "number",
+        "min": 1,
+        "max": 5000,
+        "step": 1,
+        "category": "Demonbox"
+      },
+      "moveSpeed": {
+        "type": "number",
+        "min": 0.5,
+        "max": 20,
+        "step": 0.1,
+        "category": "Demonbox"
+      },
+      "aggroRadius": {
+        "type": "number",
+        "min": 1,
+        "max": 100,
+        "step": 0.5,
+        "category": "Demonbox"
+      },
+      "blastStopRange": {
+        "type": "number",
+        "min": 0.5,
+        "max": 10,
+        "step": 0.1,
+        "category": "Demonbox"
+      },
+      "blastRadius": {
+        "type": "number",
+        "min": 0.5,
+        "max": 15,
+        "step": 0.25,
+        "category": "Demonbox"
+      },
+      "blastDamage": {
+        "type": "number",
+        "min": 0,
+        "max": 500,
+        "step": 1,
+        "category": "Demonbox"
+      },
+      "windupDuration": {
+        "type": "number",
+        "min": 1,
+        "max": 10,
+        "step": 0.25,
+        "category": "Demonbox"
       }
     });
 

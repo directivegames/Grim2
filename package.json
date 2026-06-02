@@ -22,8 +22,8 @@
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
-    "@gnsx/genesys.js": "10.19.9",
-    "three": "npm:@gnsx/three@0.184.11"
+    "@gnsx/genesys.js": "10.20.1",
+    "three": "npm:@gnsx/three@0.184.12"
   },
   "pnpm": {
     "onlyBuiltDependencies": []
@@ -36,7 +36,7 @@
     "@types/adm-zip": "0.5.8",
     "@types/jsdom": "21.1.7",
     "@types/node": "25.6.2",
-    "@types/three": "npm:@gnsx/three-types@0.184.6",
+    "@types/three": "npm:@gnsx/three-types@0.184.7",
     "@types/ws": "8.18.1",
     "@typescript-eslint/eslint-plugin": "8.59.2",
     "@typescript-eslint/parser": "8.59.2",

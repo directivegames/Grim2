@@ -32,6 +32,7 @@ import {
 import { tryApplyHordeZombieSpawnPointWorldPosition } from '../mission/innocent-spawn-position.js';
 import { revealActorWhenVisualReady } from '../horde/horde-spawn-utils.js';
 import { BigUndeadActor } from './BigUndeadActor.js';
+import { DemonboxActor } from './DemonboxActor.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
@@ -112,7 +113,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   /** Hidden pooled zombies kept between missions — reused before allocating new actors. */
   private readonly _idlePool = new Set<NewZombieActor>();
-  private readonly _idleElitePools = new Map<string, BigUndeadActor[]>();
+  private readonly _idleElitePools = new Map<string, ENGINE.Actor[]>();
 
   @ENGINE.property({ type: 'number', min: 1, max: 50, step: 1, category: 'Horde' })
   public killsToActivate: number = KILLS_TO_ACTIVATE_HORDE;
@@ -137,6 +138,9 @@ export class ZombieHordeManager extends ENGINE.Actor {
     void ENGINE.resourceManager.loadModel(ENGINE.AssetPath.fromString(NEW_ZOMBIE_MODEL_URL));
     void ENGINE.resourceManager.loadModel(
       ENGINE.AssetPath.fromString('@project/assets/models/Vomitball.glb'),
+    );
+    void ENGINE.resourceManager.loadModel(
+      ENGINE.AssetPath.fromString('@project/assets/models/demonletter.glb'),
     );
     for (const type of this._hordeEnemyTypes) {
       if (type.modelUrl) {
@@ -417,7 +421,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._revealActorWhenVisualReady(world, actor, spawnPos, type);
   }
 
-  private _takeIdleElite(typeId: string): BigUndeadActor | null {
+  private _takeIdleElite(typeId: string): ENGINE.Actor | null {
     const pool = this._idleElitePools.get(typeId);
     if (!pool || pool.length === 0) {
       return null;
@@ -430,7 +434,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   private _returnEliteToIdlePool(type: HordeEnemyType, actor: ENGINE.Actor): void {
-    if (!(actor instanceof BigUndeadActor)) {
+    if (!(actor instanceof BigUndeadActor) && !(actor instanceof DemonboxActor)) {
       destroyActorWhenGltfIdle(actor);
       return;
     }
@@ -475,6 +479,10 @@ export class ZombieHordeManager extends ENGINE.Actor {
         actor.rootComponent.updateMatrixWorld();
         actor.setHiddenInGame(false);
         if (actor instanceof BigUndeadActor) {
+          actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
+          actor.wakeForHordeSpawn();
+        }
+        if (actor instanceof DemonboxActor) {
           actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
           actor.wakeForHordeSpawn();
         }
@@ -720,6 +728,9 @@ export class ZombieHordeManager extends ENGINE.Actor {
         if (actor instanceof BigUndeadActor) {
           actor.wakeForHordeSpawn();
         }
+        if (actor instanceof DemonboxActor) {
+          actor.wakeForHordeSpawn();
+        }
         ZombieRiseVFXActor.spawnAt(world, spawnPos);
         this._eliteRelocateCooldowns.set(actor, RELOCATE_COOLDOWN_SEC);
       }
@@ -791,6 +802,9 @@ export class ZombieHordeManager extends ENGINE.Actor {
       if (!active) continue;
       for (const actor of active) {
         if (actor instanceof BigUndeadActor) {
+          actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
+        }
+        if (actor instanceof DemonboxActor) {
           actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
         }
       }

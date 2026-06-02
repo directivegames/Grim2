@@ -10,6 +10,11 @@ import { ReadyToReapUI } from '../ui/ReadyToReapUI.js';
 import { TutSoulUI } from '../ui/TutSoulUI.js';
 import { getGameAudioManager } from './game-audio.js';
 import { clearMissionPause, resumeGame, setGameplayUnlocked } from './game-pause.js';
+import {
+  ensureGrimIntroBlackCover,
+  hideGameplayPresentation,
+  prepareReadyToReapPresentation,
+} from './presentation-mode.js';
 import { removeAllBlockingOverlays } from './screen-transition.js';
 import { shouldShowTutSoul } from './tut-progress.js';
 
@@ -21,10 +26,10 @@ export function beginMissionFromMap(
   mission: MissionDef,
   config: MissionConfig,
 ): void {
+  ensureGrimIntroBlackCover(world);
+  hideGameplayPresentation(world);
+
   const pawn = world.getFirstPlayerPawn();
-  if (pawn instanceof IsometricPlayerPawn) {
-    pawn.setHiddenInGame(false);
-  }
 
   clearMissionPause(world);
   setGameplayUnlocked(false);
@@ -34,7 +39,6 @@ export function beginMissionFromMap(
     /* */
   }
 
-  getGameAudioManager(world).play('letsReap', 1.0, true);
   missionRunner.start(world, mission, config);
 
   const finishMissionIntro = (): void => {
@@ -72,7 +76,11 @@ export function beginMissionFromMap(
   };
 
   const playReadyToReap = (): void => {
-    void ReadyToReapUI.play(world, finishMissionIntro, { startGameplayMusic: false });
+    void (async () => {
+      await prepareReadyToReapPresentation(world);
+      getGameAudioManager(world).play('letsReap', 1.0, true);
+      await ReadyToReapUI.play(world, finishMissionIntro, { startGameplayMusic: false });
+    })();
   };
 
   if (shouldShowTutSoul()) {

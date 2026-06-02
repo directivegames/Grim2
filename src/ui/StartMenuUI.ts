@@ -82,12 +82,20 @@ export class StartMenuUI {
     gc.appendChild(blocker);
   }
 
-  private static _removeBlockersFrom(container: HTMLElement | null): void {
+  private static _removePreflightBlockers(container: HTMLElement | null): void {
     if (!container) {
       return;
     }
     container.querySelectorAll(`[${BLOCKER_ATTR}]`).forEach(el => el.remove());
     container.querySelectorAll(`[${EARLY_LOAD_ATTR}]`).forEach(el => el.remove());
+  }
+
+  /** Tear down boot blockers and loading (menu destroy / quit). */
+  private static _removeBlockersFrom(container: HTMLElement | null): void {
+    StartMenuUI._removePreflightBlockers(container);
+    if (!container) {
+      return;
+    }
     container.querySelectorAll(`[${LOADING_SCREEN_ATTR}]`).forEach(el => el.remove());
   }
 
@@ -120,10 +128,8 @@ export class StartMenuUI {
   }
 
   /**
-   * Show menu, disable gameplay input, resolve assets. Safe to call once per world.
-   * @param onPlay Optional callback invoked when PLAY is clicked (after shatter animation).
-   *               When provided, replaces the default ReadyToReapUI flow — use this to
-   *               trigger a scene transition instead (e.g. loadMap to Grim's Room).
+   * Register start menu for this world. Title DOM is created in markWarmupComplete
+   * after loading dismisses (or immediately on reopenAfterQuit).
    */
   public static attach(world: ENGINE.World, onPlay?: () => void): StartMenuUI {
     let inst = StartMenuUI.byWorld.get(world);
@@ -146,15 +152,18 @@ export class StartMenuUI {
       }
     }
     StartMenuUI.preflightCover(world);
-    void inst._mount();
     return inst;
   }
 
-  /** Call when WarmupActor finishes (same moment as former GrimLoadingScreen). */
+  /** Call when WarmupActor finishes — dismiss loading, then show the title menu. */
   public markWarmupComplete(): void {
     LoadingScreenUI.setProgress(LoadingStages.done.percent, LoadingStages.done.status);
     LoadingScreenUI.dismiss();
+    StartMenuUI._removePreflightBlockers(this._gameContainer());
     this._warmupReady = true;
+    if (!this._root && !this._mounting) {
+      this._mount();
+    }
     this._refreshPlayState();
   }
 
@@ -240,12 +249,6 @@ export class StartMenuUI {
       background-position: center center;
       background-repeat: no-repeat;
     `;
-    applyBackgroundImageWhenReady(bg, UI_START_BG, {
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center center',
-    });
-
     const vignette = document.createElement('div');
     vignette.style.cssText = `
       position: absolute;
@@ -421,11 +424,15 @@ export class StartMenuUI {
 
     root.style.opacity = '0';
     gameContainer.appendChild(root);
-    StartMenuUI._removeBlockersFrom(gameContainer);
+    applyBackgroundImageWhenReady(bg, UI_START_BG, {
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center center',
+    });
+    StartMenuUI._removePreflightBlockers(gameContainer);
     fadeInElement(root, 520);
 
     LoadingScreenUI.setProgress(LoadingStages.menuVisible.percent, LoadingStages.menuVisible.status);
-    LoadingScreenUI.setPeekMode(true);
 
     this._root = root;
     this._playWrap = playWrap;

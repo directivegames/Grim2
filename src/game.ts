@@ -24,6 +24,7 @@ import { gameSettings } from './utils/game-settings.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
 import { LoadingScreenUI, LoadingStages, mapWarmupProgress } from './ui/LoadingScreenUI.js';
 import { setGameplayUnlocked } from './utils/game-pause.js';
+import { hideGameplayPresentation } from './utils/presentation-mode.js';
 import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { GrimIntroActor } from './actors/GrimIntroActor.js';
@@ -171,6 +172,8 @@ class MyGame extends ENGINE.BaseGameLoop {
     PauseManagerActor.ensureExists(world);
     DebugCheatsActor.ensureExists(world);
     this._attachGrimGrinderController(world);
+
+    hideGameplayPresentation(world);
 
     const startMenu = StartMenuUI.attach(world, () => {
       world.addActor(GrimIntroActor.create({ name: 'GrimIntroActor' }));

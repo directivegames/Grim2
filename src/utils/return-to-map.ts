@@ -20,7 +20,10 @@ import { TutSoulUI } from '../ui/TutSoulUI.js';
 import { beginMissionFromMap } from './begin-mission-from-map.js';
 import { clearMissionPause, setGameplayUnlocked } from './game-pause.js';
 import { PauseMenuUI } from '../ui/PauseMenuUI.js';
-import { removeAllBlockingOverlays } from './screen-transition.js';
+import {
+  ensureGrimIntroBlackCover,
+  hideGameplayPresentation,
+} from './presentation-mode.js';
 import { resetMissionWorld } from './reset-mission-world.js';
 
 /** Shared cleanup after a mission ends (win or fail). */
@@ -45,7 +48,6 @@ export function cleanupAfterMission(world: ENGINE.World): void {
   ItemCollectedToastUI.hideForWorld(world);
   UpgradeShopUI.close(world);
   TutSoulUI.close();
-  removeAllBlockingOverlays(world);
 
   // Stop mission logic before touching the live world so horde / mission tick cannot run.
   missionRunner.stop(world);
@@ -77,11 +79,14 @@ export function cleanupAfterMission(world: ENGINE.World): void {
       break;
     }
   }
+
+  hideGameplayPresentation(world);
 }
 
 /** Return to the Burdenville map to pick another mission. */
 export function returnToMap(world: ENGINE.World): void {
   cleanupAfterMission(world);
+  ensureGrimIntroBlackCover(world);
 
   MapUI.open(world, (mission: MissionDef, config: MissionConfig) => {
     beginMissionFromMap(world, mission, config);

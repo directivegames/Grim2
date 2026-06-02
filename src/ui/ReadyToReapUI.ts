@@ -1,8 +1,8 @@
 /**
  * ReadyToReapUI — Dramatic "READY TO" → "REAP" intro before gameplay.
  *
- * Transparent overlay: game canvas stays visible; multiply-blended PNGs knock out white.
- * Input stays disabled until onComplete. Fades out the intro black cover once assets load.
+ * Transparent overlay over the live game canvas; multiply-blended PNGs knock out white.
+ * Input stays disabled until onComplete.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
@@ -64,7 +64,7 @@ export class ReadyToReapUI {
     overlay.style.cssText = `
       position: absolute;
       inset: 0;
-      z-index: 10070;
+      z-index: 10095;
       background: transparent;
       display: flex;
       align-items: center;

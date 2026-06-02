@@ -6,7 +6,7 @@ export const GAME_SETTINGS_DEFAULTS = {
   disable360Spin: false,
   alwaysShowTutorials: false,
   skipAllCutscenes: false,
-  filmGrainEnabled: true,
+  filmGrainEnabled: false,
 } as const;
 
 export type GameSettingsSnapshot = {

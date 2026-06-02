@@ -11,6 +11,7 @@
 **/.DS_Store
 **/*.tgz
 **/*.mcp-port
+**/.cursor/mcp.json
 **/.placeholder
 # Ignore all of .genesys except the sdk/ folder (SDK base files)
 **/.genesys/*
