@@ -2,6 +2,7 @@ import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
+import { parseJson } from '@gnsx/genesys.js';
 import AdmZip from 'adm-zip';
 
 import { getProjectRoot } from './common.js';
@@ -76,7 +77,7 @@ interface PackConfig { version?: string; [k: string]: unknown }
 function readPackConfig(packRoot: string): PackConfig {
   const configPath = path.join(packRoot, 'config.json');
   if (!fs.existsSync(configPath)) throw new Error(`Missing ${configPath}`);
-  return JSON.parse(fs.readFileSync(configPath, 'utf-8')) as PackConfig;
+  return parseJson(fs.readFileSync(configPath, 'utf-8')) as PackConfig;
 }
 
 function writePackConfig(packRoot: string, config: PackConfig): void {

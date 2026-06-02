@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
+import { parseJson } from '@gnsx/genesys.js';
 import Ajv, { type ErrorObject } from 'ajv';
 
 import { getProjectRoot } from './common.js';
@@ -39,7 +40,7 @@ function validatePrefabs() {
   let schema: any;
   try {
     const schemaContent = fs.readFileSync(schemaPath, 'utf-8');
-    schema = JSON.parse(schemaContent);
+    schema = parseJson(schemaContent);
   } catch (error) {
     console.error(`❌ Failed to load schema from ${schemaPath}`);
     console.error(error);
@@ -81,7 +82,7 @@ function validatePrefabs() {
 
     try {
       const prefabContent = fs.readFileSync(prefabPath, 'utf-8');
-      const prefabData = JSON.parse(prefabContent);
+      const prefabData = parseJson(prefabContent);
 
       const valid = validate(prefabData);
 

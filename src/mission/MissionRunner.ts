@@ -81,19 +81,26 @@ class MissionRunnerImpl {
     }
 
     this.stop(world);
-    resetMissionWorld(world);
+    resetMissionWorld(world, { restorePlacedEnemies: true }, 'mission-start');
 
     this._world = world;
     this._running = true;
 
+    const playerStart = world.getActors(ENGINE.PlayerStart)[0];
+    if (playerStart) {
+      playerStart.rootComponent.getWorldPosition(this._playerPos);
+      setPlayerSpawnAnchor(this._playerPos);
+    } else {
+      const pawn = world.getFirstPlayerPawn();
+      if (pawn) {
+        pawn.rootComponent.getWorldPosition(this._playerPos);
+        setPlayerSpawnAnchor(this._playerPos);
+      }
+    }
+
     const pawn = world.getFirstPlayerPawn();
     if (pawn instanceof IsometricPlayerPawn) {
       pawn.soulsCollected = 0;
-      pawn.rootComponent.getWorldPosition(this._playerPos);
-      setPlayerSpawnAnchor(this._playerPos);
-    } else if (pawn) {
-      pawn.rootComponent.getWorldPosition(this._playerPos);
-      setPlayerSpawnAnchor(this._playerPos);
     }
 
     this._usedInnocentMarkers.clear();

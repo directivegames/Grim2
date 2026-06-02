@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { parseJson } from '@gnsx/genesys.js';
+
 import { getProjectRoot } from './common.js';
 
 const PROJECT_PREFIX = '@project';
@@ -68,7 +70,7 @@ function extractRefsFromJsonValues(value: unknown, out: string[]): void {
 function refsInFile(absPath: string): string[] {
   const text = fs.readFileSync(absPath, 'utf-8');
   if (absPath.endsWith('.prefab.json') || absPath.endsWith('.material.json')) {
-    try { const out: string[] = []; extractRefsFromJsonValues(JSON.parse(text), out); return out; }
+    try { const out: string[] = []; extractRefsFromJsonValues(parseJson(text), out); return out; }
     catch { return extractRefsFromText(text); }
   }
   return extractRefsFromText(text);

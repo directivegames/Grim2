@@ -167,7 +167,7 @@ async function fetchBoundingBoxData(manifestFile: string, gltfPaths: {[key: stri
     try {
       if (fs.existsSync(manifestFile)) {
         const manifestContent = fs.readFileSync(manifestFile, 'utf-8');
-        manifest = JSON.parse(manifestContent) as BoundingBoxManifest;
+        manifest = ENGINE.parseJson(manifestContent) as BoundingBoxManifest;
         console.log(`Loaded existing manifest with ${Object.keys(manifest).length} entries`);
       } else {
         console.log('Creating new manifest file');

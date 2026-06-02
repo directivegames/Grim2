@@ -1,9 +1,9 @@
 {
   "mcpServers": {
     "genesys": {
-      "url": "http://127.0.0.1:65065/mcp",
+      "url": "http://127.0.0.1:57100/mcp",
       "headers": {
-        "Authorization": "Bearer b5d75306-86d2-4113-83ff-704aaac4d003"
+        "Authorization": "Bearer 690e1b37-4bee-4479-b01b-5c61d007c152"
       }
     }
   },

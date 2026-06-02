@@ -226,6 +226,25 @@ export const SKILL_UPGRADES: readonly SkillUpgradeDef[] = [
     ],
   },
   {
+    id: 'grimGrinder',
+    name: 'Grim Grinder',
+    description: 'Collect 50 souls in a run, then press F to become the Grim Grinder.',
+    maxLevel: 1,
+    comingSoon: false,
+    levelDescriptions: [
+      'Transform for 20 seconds — ram enemies, invincible, bosses take 4% HP per hit.',
+    ],
+    levelCosts: [
+      {
+        souls: 200,
+        items: [
+          { itemId: 'bone_shard', qty: 25 },
+          { itemId: 'cursed_vial', qty: 5 },
+        ],
+      },
+    ],
+  },
+  {
     id: 'soulThrow',
     name: 'Soul Throw',
     description: 'Right-click to throw soul blades at your aim.',

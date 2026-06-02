@@ -1,0 +1,26 @@
+{
+  "externalAnimationSources": [],
+  "parameters": {
+    "state": "rumbling"
+  },
+  "initialState": "rumbling",
+  "oneShotClips": [],
+  "states": {
+    "rumbling": {
+      "clip": "rumbling",
+      "transitions": []
+    },
+    "spinning": {
+      "clip": "spinning",
+      "transitions": []
+    }
+  },
+  "clipOptions": {
+    "rumbling": {
+      "loop": "LoopRepeat"
+    },
+    "spinning": {
+      "loop": "LoopRepeat"
+    }
+  }
+}

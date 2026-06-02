@@ -9,7 +9,7 @@ import { missionRunner } from '../mission/MissionRunner.js';
 import { ReadyToReapUI } from '../ui/ReadyToReapUI.js';
 import { TutSoulUI } from '../ui/TutSoulUI.js';
 import { getGameAudioManager } from './game-audio.js';
-import { resumeGame, setGameplayUnlocked } from './game-pause.js';
+import { clearMissionPause, resumeGame, setGameplayUnlocked } from './game-pause.js';
 import { removeAllBlockingOverlays } from './screen-transition.js';
 import { shouldShowTutSoul } from './tut-progress.js';
 
@@ -22,10 +22,11 @@ export function beginMissionFromMap(
   config: MissionConfig,
 ): void {
   const pawn = world.getFirstPlayerPawn();
-  if (pawn) {
+  if (pawn instanceof IsometricPlayerPawn) {
     pawn.setHiddenInGame(false);
   }
 
+  clearMissionPause(world);
   setGameplayUnlocked(false);
   try {
     world.inputManager.setInputEnabled(false);
@@ -38,6 +39,12 @@ export function beginMissionFromMap(
 
   const finishMissionIntro = (): void => {
     removeAllBlockingOverlays(world);
+
+    if (pawn instanceof IsometricPlayerPawn) {
+      // Full reset (health, visibility, spawn, physics sync) right before gameplay unlock.
+      pawn.prepareForMissionStart('finish-intro');
+    }
+
     setGameplayUnlocked(true);
 
     const bg = world.getActors().find(a => a instanceof BackgroundMusicActor);
@@ -53,13 +60,14 @@ export function beginMissionFromMap(
     }
 
     resumeGame(world);
-    // Ready To Reap / map START disable input without pauseGame — ensure slomo runs.
     const w = world as unknown as { slomo?: number };
     if (typeof w.slomo === 'number' && w.slomo <= 0) {
       w.slomo = 1;
     }
-    if (pawn instanceof IsometricPlayerPawn) {
-      pawn.applyGrimVaultStats();
+    try {
+      world.inputManager.setInputEnabled(true);
+    } catch {
+      /* */
     }
   };
 

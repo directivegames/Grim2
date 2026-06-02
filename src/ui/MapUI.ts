@@ -23,6 +23,9 @@ import { playShopOpenSound, withMenuSelectSound } from '../utils/menu-audio.js';
 import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 import { fadeInElement, fadeOutIntroBlackCover } from '../utils/screen-transition.js';
 
+/** Set true only when testing map debug keys (R / L). */
+const SHOW_MAP_DEBUG_HINT = false;
+
 const MAP_BG_URL = '@project/assets/UI/Burdenvillemaponly.webp';
 const COMPASS_URL = '@project/assets/UI/compass.webp';
 const MENU_PANEL_URL = '@project/assets/UI/menuelement.webp';
@@ -296,7 +299,9 @@ export class MapUI {
     mapWrap.appendChild(compass);
 
     root.appendChild(mapWrap);
-    root.appendChild(this._createDebugRerollHint());
+    if (SHOW_MAP_DEBUG_HINT) {
+      root.appendChild(this._createDebugRerollHint());
+    }
     gameContainer.appendChild(root);
     this._root = root;
     document.addEventListener('keydown', this._escapeKeyHandler, true);

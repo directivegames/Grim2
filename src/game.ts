@@ -27,6 +27,7 @@ import { setGameplayUnlocked } from './utils/game-pause.js';
 import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { GrimIntroActor } from './actors/GrimIntroActor.js';
+import { GrimGrinderControllerComponent } from './components/GrimGrinderControllerComponent.js';
 import { MenuMusicActor } from './actors/MenuMusicActor.js';
 import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
 import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
@@ -162,11 +163,6 @@ class MyGame extends ENGINE.BaseGameLoop {
     world.inputManager.setInputEnabled(false);
     this._disableSceneViewTargetCameras(world);
 
-    const pawn = world.getFirstPlayerPawn();
-    if (pawn) {
-      pawn.setHiddenInGame(true);
-    }
-
     this._spawnScenicFogCards(world);
     this._spawnCloudShadows(world);
     this._spawnFilmGrain(world);
@@ -174,6 +170,7 @@ class MyGame extends ENGINE.BaseGameLoop {
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
     DebugCheatsActor.ensureExists(world);
+    this._attachGrimGrinderController(world);
 
     const startMenu = StartMenuUI.attach(world, () => {
       world.addActor(GrimIntroActor.create({ name: 'GrimIntroActor' }));
@@ -192,6 +189,11 @@ class MyGame extends ENGINE.BaseGameLoop {
         vtc.setActive(false);
       }
     }
+  }
+
+  /** Scene-placed grimgrinder — animations + future transform mode (no custom actor class needed). */
+  private _attachGrimGrinderController(world: ENGINE.World): void {
+    GrimGrinderControllerComponent.attachAllInWorld(world);
   }
 
   /** Scene policerdone cars use static point lights — drive them at runtime. */

@@ -17,6 +17,8 @@ import { DustTrailComponent } from '../components/vfx/DustTrailComponent.js';
 import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcComponent.js';
 import { FistAbilityHUDUI } from '../ui/FistAbilityHUDUI.js';
+import { GrimGrinderHUDUI } from '../ui/GrimGrinderHUDUI.js';
+import { GRIM_GRINDER_CAR_YAW_OFFSET, GRIM_GRINDER_SOUL_THRESHOLD } from '../data/grim-grinder-config.js';
 import { HealthBarUI } from '../ui/HealthBarUI.js';
 import { ShopItemIconsHUDUI } from '../ui/ShopItemIconsHUDUI.js';
 import { killStreakTracker } from './KillStreakTracker.js';
@@ -27,6 +29,7 @@ import { missionRunner } from '../mission/MissionRunner.js';
 import { missionState } from '../mission/MissionState.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
+import { logMissionReset } from '../utils/mission-reset-log.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -99,12 +102,18 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   /** Souls collected from defeated zombies. */
   public soulsCollected: number = 0;
 
+  /** Run souls toward Grim Grinder (resets on use / new mission). */
+  public grimGrinderSoulProgress = 0;
+
+  private _grimGrinderInvincible = false;
+
   /** Fractional heal from soul leech — whole HP applied when buffer reaches 1. */
   private _soulHealBuffer = 0;
 
   /** Health bar UI reference. */
   private _healthBarUI: HealthBarUI | null = null;
   private _fistAbilityHUD: FistAbilityHUDUI | null = null;
+  private _grimGrinderHUD: GrimGrinderHUDUI | null = null;
 
   /** Hit number UI reference. */
   private _hitNumberUI: import('../ui/HitNumberUI.js').HitNumberUI | null = null;
@@ -200,6 +209,14 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     }
   };
 
+  /**
+   * Engine Actor.handleDeath() destroys the actor. Grim stays in the scene at 0 HP;
+   * mission fail is driven by _onHealthChanged → missionState.onGrimDied().
+   */
+  public override handleDeath(_hitInfo?: ENGINE.DamageHitInfo): void {
+    /* no-op */
+  }
+
   // ── Component factory overrides ───────────────────────────────────────────
 
   protected override setupAnimationComponent(): ENGINE.AnimationStateMachineComponent | null {
@@ -291,6 +308,80 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
    * Credit fractional heal per kill (base soul leech + upgrades).
    * Whole HP is applied once the buffer reaches 1.0.
    */
+  public onEnemyKillForGrimGrinder(): void {
+    this.grimGrinderSoulProgress += 1;
+  }
+
+  public consumeGrimGrinderSouls(): void {
+    this.grimGrinderSoulProgress = Math.max(
+      0,
+      this.grimGrinderSoulProgress - GRIM_GRINDER_SOUL_THRESHOLD,
+    );
+  }
+
+  public setGrimGrinderInvincible(enabled: boolean): void {
+    this._grimGrinderInvincible = enabled;
+  }
+
+  public isGrimGrinderInvincible(): boolean {
+    return this._grimGrinderInvincible;
+  }
+
+  public setGrimGrinderVisualHidden(hidden: boolean): void {
+    const mesh = this._findGrimVisualMesh();
+    if (mesh) {
+      mesh.visible = !hidden;
+    }
+    if (this._weaponArcComponent) {
+      this._weaponArcComponent.visible = !hidden;
+    }
+  }
+
+  /**
+   * Engine hide uses render layers on the whole hierarchy; death can leave child meshes
+   * layer-disabled even after setHiddenInGame(false). Mirror NewZombieActor's restore.
+   */
+  public override setHiddenInGame(hidden: boolean): void {
+    super.setHiddenInGame(hidden);
+    this.rootComponent.visible = !hidden;
+    this.rootComponent.traverse(obj => {
+      obj.visible = !hidden;
+      if (hidden) {
+        obj.layers.disableAll();
+      } else {
+        obj.layers.enable(0);
+      }
+    });
+    if (!hidden) {
+      this.setGrimGrinderVisualHidden(false);
+    }
+  }
+
+  public restoreFullHealth(): void {
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (!stats) {
+      return;
+    }
+    const mutable = stats as unknown as { currentHealth: number; isDead: boolean };
+    const max = stats.getMaxHealth();
+    mutable.isDead = false;
+    mutable.currentHealth = max;
+    this._lastKnownHealth = max;
+    stats.onHealthChanged.invoke(max, max);
+    this._healthBarUI?.show();
+    this._healthBarUI?.updateHealth(max, max);
+  }
+
+  private _findGrimVisualMesh(): ENGINE.GLTFMeshComponent | null {
+    for (const mesh of this.getComponents(ENGINE.GLTFMeshComponent)) {
+      const url = (mesh as unknown as { modelUrl?: string }).modelUrl ?? '';
+      if (url.includes('Grim2')) {
+        return mesh;
+      }
+    }
+    return null;
+  }
+
   public addSoulHealCredit(amount: number): void {
     if (amount <= 0 || !Number.isFinite(amount)) {
       return;
@@ -318,12 +409,13 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   /** Teleport to scene spawn and restore full health for a new mission attempt. */
-  public prepareForMissionStart(): void {
+  public prepareForMissionStart(phase = 'prepare'): void {
     this._missionDeathReported = false;
-    this.setHiddenInGame(false);
+    this.setGrimGrinderInvincible(false);
     this.endKillStreakOrbit();
     this.endSlomoEffect();
     this._soulHealBuffer = 0;
+    this.grimGrinderSoulProgress = 0;
 
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     if (stats) {
@@ -342,14 +434,31 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       stats.onHealthChanged.invoke(max, max);
     }
 
+    this.setHiddenInGame(false);
+
     this.applyGrimVaultStats();
-    this.resetToMissionSpawn();
+    this.resetToMissionSpawn(phase);
+
+    if (stats) {
+      const cur = stats.getCurrentHealth();
+      const maxH = stats.getMaxHealth();
+      this._healthBarUI?.show();
+      this._healthBarUI?.updateHealth(cur, maxH);
+    }
   }
 
   /** Return Grim to the position captured at first begin play. */
-  public resetToMissionSpawn(): void {
+  public resetToMissionSpawn(phase = 'spawn'): void {
     this._captureMissionSpawnFromPlayerStart();
     if (!this._missionSpawnPosition) {
+      logMissionReset(`${phase}:spawn-missing`, {
+        playerStartFound: false,
+        grimPos: {
+          x: this.rootComponent.position.x,
+          y: this.rootComponent.position.y,
+          z: this.rootComponent.position.z,
+        },
+      });
       return;
     }
 
@@ -357,12 +466,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     if (mc instanceof IsometricMovementComponent) {
       mc.resetRuntimeMotion();
 
-      // Teleport with ignoreCollision=true puts the kinematic body exactly at
-      // the target. PlayerStart sits at the floor surface (Y=0), so without an
-      // upward offset Grim ends up half-embedded in the road geometry and the
-      // character controller can't push him up out of it. Spawn a few units
-      // above; gravity in the locked Ready-To-Reap branch settles him onto the
-      // floor before gameplay unlocks.
+      // PlayerStart is at floor level — spawn slightly above; gravity settles Grim
+      // during Ready-To-Reap while gameplay is locked but physics still steps.
       const target = IsometricPlayerPawn._spawnTargetScratch.copy(this._missionSpawnPosition);
       target.y += 2;
 
@@ -370,9 +475,26 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
         position: target,
         rotation: new THREE.Euler(0, this._missionSpawnYaw, 0),
       });
+      const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+      logMissionReset(`${phase}:spawn-teleport`, {
+        playerStart: {
+          x: this._missionSpawnPosition.x,
+          y: this._missionSpawnPosition.y,
+          z: this._missionSpawnPosition.z,
+        },
+        target: { x: target.x, y: target.y, z: target.z },
+        yaw: this._missionSpawnYaw,
+        health: stats?.getCurrentHealth(),
+        maxHealth: stats?.getMaxHealth(),
+      });
     } else {
       this.rootComponent.position.copy(this._missionSpawnPosition);
       this.rootComponent.rotation.y = this._missionSpawnYaw;
+      logMissionReset(`${phase}:spawn-direct`, {
+        x: this._missionSpawnPosition.x,
+        y: this._missionSpawnPosition.y,
+        z: this._missionSpawnPosition.z,
+      });
     }
     this.rootComponent.updateWorldMatrix(true, true);
   }
@@ -436,6 +558,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       // Initialize health bar UI asynchronously
       void this._initHealthBarUI(stats);
       void this._initFistAbilityHUD();
+      void this._initGrimGrinderHUD();
       void this._initShopItemIconsHUD();
       // Initialize hit number UI
       void this._initHitNumberUI();
@@ -451,6 +574,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   private async _initFistAbilityHUD(): Promise<void> {
     this._fistAbilityHUD = await FistAbilityHUDUI.getInstance(this.getWorld());
+  }
+
+  private async _initGrimGrinderHUD(): Promise<void> {
+    this._grimGrinderHUD = await GrimGrinderHUDUI.getInstance(this.getWorld());
   }
 
   private async _initShopItemIconsHUD(): Promise<void> {
@@ -470,6 +597,52 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   /** Current visual facing angle (radians, Y-axis). Used by the weapon for sweep directions. */
   public getFacingYaw(): number {
     return this._facingYaw;
+  }
+
+  /** Facing from current movement velocity; falls back to visual facing when still. */
+  public getMovementYaw(): number {
+    const mc = this.movementComponent;
+    if (mc instanceof IsometricMovementComponent) {
+      const vel = mc.getWorldVelocity();
+      if (vel.lengthSq() > 0.01) {
+        return Math.atan2(vel.x, vel.z);
+      }
+    }
+    return this._facingYaw;
+  }
+
+  /**
+   * World Y rotation matching Grim's visible facing (for vehicles).
+   * Uses velocity when moving; otherwise the visual mesh euler.
+   */
+  public getDriveYaw(): number {
+    const mc = this.movementComponent;
+    if (mc instanceof IsometricMovementComponent) {
+      const vel = mc.getWorldVelocity();
+      if (vel.lengthSq() > 0.01) {
+        return Math.atan2(vel.x, vel.z);
+      }
+    }
+    if (this.visualComponent) {
+      return this.visualComponent.rotation.y;
+    }
+    return this._facingYaw;
+  }
+
+  /** Yaw for grimgrinder.glb — follows actual movement velocity (A/D differ correctly). */
+  public getGrimGrinderCarYaw(): number {
+    const mc = this.movementComponent;
+    if (mc instanceof IsometricMovementComponent) {
+      const vel = mc.getWorldVelocity();
+      if (vel.lengthSq() > 0.01) {
+        return Math.atan2(vel.x, vel.z) + GRIM_GRINDER_CAR_YAW_OFFSET;
+      }
+      const heading = mc.getMovementHeadingYaw();
+      if (heading !== null) {
+        return heading + GRIM_GRINDER_CAR_YAW_OFFSET;
+      }
+    }
+    return this.getFacingYaw() + GRIM_GRINDER_CAR_YAW_OFFSET;
   }
 
   /** Jumping disabled for VS-style. */
@@ -504,6 +677,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     // Update health bar animation
     this._healthBarUI?.tick(deltaTime);
     this._fistAbilityHUD?.tick();
+    this._grimGrinderHUD?.tick();
     // Update hit number animations
     this._hitNumberUI?.tick();
     // Update KO sign animations

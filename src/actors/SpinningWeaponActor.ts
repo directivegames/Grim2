@@ -25,6 +25,7 @@ import { BoomerangTrailComponent } from '../components/vfx/BoomerangTrailCompone
 import { grimVault } from '../game/GrimVault.js';
 import { getPlayerWeaponDamage } from '../utils/player-combat-stats.js';
 import { FistOfAnnoyanceActor } from './FistOfAnnoyanceActor.js';
+import { GrimGrinderModeActor } from './GrimGrinderModeActor.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
 import { missionState } from '../mission/MissionState.js';
@@ -240,6 +241,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     handleMouseClick: () => false,
     handleKeyDown:    (e: KeyboardEvent): boolean => {
       if (e.key === 'e' || e.key === 'E') { this._onEKey(); return false; }
+      if (e.key === 'f' || e.key === 'F') { this._onFKey(); return false; }
       return false;
     },
     handleKeyUp:      () => false,
@@ -406,6 +408,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   // ── Combat ────────────────────────────────────────────────────────────────
 
   private _onLeftClick(): void {
+    if (GrimGrinderModeActor.isActive()) {
+      return;
+    }
     // Buffer input during wind-up, swing, or recovery (combo window)
     if (this._isMeleeBusy()) {
       this._queuedMelee = true;
@@ -419,6 +424,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _onRightClick(): void {
+    if (GrimGrinderModeActor.isActive()) {
+      return;
+    }
     if (this._getSoulThrowLevel() < 1) return;
     if (this._isMeleeBusy() && this._getSoulThrowLevel() < 3) return;
     if (this._getSoulThrowLevel() < 3 && this._hasActiveSoulBlades()) return;
@@ -429,7 +437,18 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._launchSoulThrow(player);
   }
 
+  private _onFKey(): void {
+    const world = this.getWorld();
+    if (!world) {
+      return;
+    }
+    GrimGrinderModeActor.tryActivate(world);
+  }
+
   private _onEKey(): void {
+    if (GrimGrinderModeActor.isActive()) {
+      return;
+    }
     const world = this.getWorld();
     if (!world) return;
 

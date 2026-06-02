@@ -153,6 +153,16 @@ export class HealthBarUI {
     this._initialized = true;
   }
 
+  /** Re-show the bar after mission reset (container may still exist but be hidden). */
+  public show(): void {
+    if (!this._container) {
+      return;
+    }
+    this._container.style.display = 'block';
+    this._container.style.opacity = '1';
+    this._container.classList.remove('health-low-pulse');
+  }
+
   /**
    * Update the health display with animation.
    * Called from player pawn on health changes.

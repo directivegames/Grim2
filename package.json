@@ -8,6 +8,7 @@
     "lint": "eslint . --fix --ext .ts,.tsx",
     "remove-engine-comments": "pnpm exec tsx ./scripts/genesys/remove-engine-comments.ts",
     "sync-assets": "pnpm exec tsx ./scripts/genesys/sync-project-assets-to-dist.ts",
+    "rebuild": "pnpm build && pnpm sync-assets && pnpm build-project",
     "rename-glb-animation": "pnpm exec tsx ./scripts/genesys/rename-glb-animation.ts",
     "dev": "pnpm exec tsx ./scripts/genesys/dev/generate-manifest.ts && vite",
     "validate-prefabs": "pnpm exec tsx ./scripts/genesys/validate-prefabs.ts",
@@ -21,7 +22,7 @@
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
-    "@gnsx/genesys.js": "10.19.8",
+    "@gnsx/genesys.js": "10.19.9",
     "three": "npm:@gnsx/three@0.184.11"
   },
   "pnpm": {

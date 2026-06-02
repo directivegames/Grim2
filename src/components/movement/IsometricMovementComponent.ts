@@ -63,10 +63,28 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
   private _worldVelocity = new THREE.Vector3();
   // Scratch vector to avoid per-frame allocations in hot path
   private readonly _deltaScratch = new THREE.Vector3();
+  private static readonly _worldPosScratch = new THREE.Vector3();
 
   /** Current world-space planar velocity – read by the pawn for visual rotation. */
   public getWorldVelocity(): THREE.Vector3 {
     return this._worldVelocity;
+  }
+
+  /** World Y rotation from current input or velocity; null if no heading. */
+  public getMovementHeadingYaw(): number | null {
+    const fwd = this.forwardInput.value;
+    const right = this.rightInput.value;
+    const lenSq = fwd * fwd + right * right;
+    if (lenSq > 0.0001) {
+      const inv = 1 / Math.sqrt(lenSq);
+      const dirX = ISO_FORWARD_AXIS.x * fwd * inv + ISO_RIGHT_AXIS.x * right * inv;
+      const dirZ = ISO_FORWARD_AXIS.z * fwd * inv + ISO_RIGHT_AXIS.z * right * inv;
+      return Math.atan2(dirX, dirZ);
+    }
+    if (this._worldVelocity.lengthSq() > 0.01) {
+      return Math.atan2(this._worldVelocity.x, this._worldVelocity.z);
+    }
+    return null;
   }
 
   /** Clear cached input/velocity when restarting a mission from a fresh spawn. */
@@ -196,7 +214,8 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
     });
 
     if (this.teleportPosition) {
-      delta.copy(this.teleportPosition.clone().sub(root.position));
+      root.getWorldPosition(IsometricMovementComponent._worldPosScratch);
+      delta.copy(this.teleportPosition).sub(IsometricMovementComponent._worldPosScratch);
     }
 
     const { isGrounded } = physics.computeCharacterMovement(

@@ -111,6 +111,23 @@ export function resumeGame(world: ENGINE.World): void {
   }
 }
 
+/**
+ * Clear fail-screen pause (slomo + _paused) without unlocking gameplay or input.
+ * Mission fail calls pauseGame(); cleanup must lift that freeze so physics/HUD can
+ * run during map + Ready-To-Reap, while beginMissionFromMap keeps input off until intro ends.
+ */
+export function clearMissionPause(world: ENGINE.World): void {
+  const w = world as unknown as { slomo?: number };
+  if (_paused) {
+    w.slomo = _savedSlomo > 0 ? _savedSlomo : 1;
+    _paused = false;
+    _savedSlomo = 1;
+    unduckMusic(world);
+  } else if (typeof w.slomo === 'number' && w.slomo <= 0) {
+    w.slomo = 1;
+  }
+}
+
 export function togglePause(world: ENGINE.World): boolean {
   if (_paused) {
     return false;

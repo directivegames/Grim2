@@ -59,7 +59,7 @@ export class StorageProvider implements ENGINE.IStorageProvider {
     if (!fs.existsSync(fullPath)) {
       return {} as T;
     }
-    return JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+    return ENGINE.parseJson(fs.readFileSync(fullPath, 'utf8'));
   }
 
   public async downloadFileAsText(assetPath: AssetPath): Promise<string> {

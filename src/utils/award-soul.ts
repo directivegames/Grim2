@@ -14,6 +14,7 @@ export function awardSoulFromEnemyKill(world: ENGINE.World): void {
   const player = world.getFirstPlayerPawn();
   if (player instanceof IsometricPlayerPawn) {
     applySoulHealOnPickup(player);
+    player.onEnemyKillForGrimGrinder();
   }
 
   if (missionState.isActive && missionState.config) {
