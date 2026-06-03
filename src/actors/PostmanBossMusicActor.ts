@@ -6,7 +6,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { gameSettings } from '../utils/game-settings.js';
 
 const BASE_VOLUME = 0.52;
-const BOSS_TRACK = '@project/assets/sounds/postmanhell.wav';
+const BOSS_TRACK = '@project/assets/sounds/postmanhell.mp3';
 
 @ENGINE.GameClass()
 export class PostmanBossMusicActor extends ENGINE.Actor {

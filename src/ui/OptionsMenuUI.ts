@@ -4,7 +4,6 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { grimVault } from '../game/GrimVault.js';
-import { FilmGrainUI } from './FilmGrainUI.js';
 import { applyMusicVolumeToWorld } from '../utils/apply-music-volume.js';
 import { GAME_SETTINGS_DEFAULTS, gameSettings } from '../utils/game-settings.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
@@ -40,7 +39,6 @@ export class OptionsMenuUI {
   private _musicValueLabel: HTMLSpanElement | null = null;
   private _spinValueLabel: HTMLSpanElement | null = null;
   private _skipCutscenesValueLabel: HTMLSpanElement | null = null;
-  private _filmGrainValueLabel: HTMLSpanElement | null = null;
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -502,19 +500,6 @@ export class OptionsMenuUI {
     this._skipCutscenesValueLabel = skipCutscenesRow.valueLabel;
     panel.appendChild(skipCutscenesRow.row);
 
-    panel.appendChild(this._createSectionHeader('PERFORMANCE'));
-
-    const filmGrainRow = this._createToggleRow(
-      'FILM GRAIN',
-      gameSettings.filmGrainEnabled,
-      value => {
-        gameSettings.filmGrainEnabled = value;
-        FilmGrainUI.attach(this._world, { enabled: value });
-      },
-    );
-    this._filmGrainValueLabel = filmGrainRow.valueLabel;
-    panel.appendChild(filmGrainRow.row);
-
     panel.appendChild(this._createSectionHeader('DATA'));
 
     const resetWrap = document.createElement('div');
@@ -640,7 +625,6 @@ export class OptionsMenuUI {
     gameSettings.resetToDefaults();
     this._applySfxVolume();
     this._applyMusicVolume();
-    FilmGrainUI.attach(this._world, { enabled: GAME_SETTINGS_DEFAULTS.filmGrainEnabled });
 
     if (this._sfxValueLabel) {
       this._sfxValueLabel.textContent = `${Math.round(GAME_SETTINGS_DEFAULTS.sfxVolume * 100)}%`;
@@ -655,9 +639,6 @@ export class OptionsMenuUI {
       this._skipCutscenesValueLabel.textContent = GAME_SETTINGS_DEFAULTS.skipAllCutscenes
         ? 'ON'
         : 'OFF';
-    }
-    if (this._filmGrainValueLabel) {
-      this._filmGrainValueLabel.textContent = GAME_SETTINGS_DEFAULTS.filmGrainEnabled ? 'ON' : 'OFF';
     }
 
     const sliders = this._root?.querySelectorAll<HTMLInputElement>('input[type="range"]');

@@ -19,26 +19,31 @@ export const SHOP_ITEMS: readonly ShopItemDef[] = [
     itemId: 'cursed_vial',
     baseSoulPrice: 55,
     priceMultiplier: 1.14,
+    unlockedByDefault: true,
   },
   {
     itemId: 'soul_crystal',
     baseSoulPrice: 120,
     priceMultiplier: 1.16,
+    unlockedByDefault: true,
   },
   {
     itemId: 'grim_ember',
     baseSoulPrice: 200,
     priceMultiplier: 1.18,
+    unlockedByDefault: true,
   },
   {
     itemId: 'void_relic',
     baseSoulPrice: 350,
     priceMultiplier: 1.2,
+    unlockedByDefault: true,
   },
   {
     itemId: 'brute_core',
     baseSoulPrice: 150,
     priceMultiplier: 1.17,
+    unlockedByDefault: true,
   },
 ] as const;
 

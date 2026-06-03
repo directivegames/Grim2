@@ -13,6 +13,7 @@ import {
   type ItemCost,
   type SkillUpgradeDef,
 } from '../data/upgrades.js';
+import { GRIM_GRINDER_SKILL_ID } from '../data/grim-grinder-config.js';
 import { grimVault } from '../game/GrimVault.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
 import { withMenuSelectSound } from '../utils/menu-audio.js';
@@ -30,8 +31,11 @@ const SHOP_WINDOW_URL = '@project/assets/UI/shopwindow.webp';
 const BTN_URL = '@project/assets/UI/menuelement.webp';
 const SHOP_OVERLAY_ATTR = 'data-grim-upgrade-shop';
 
-const ACTION_BTN_MIN_WIDTH = 118;
-const ACTION_BTN_HEIGHT = 42;
+const ACTION_BTN_MIN_WIDTH = 132;
+const ACTION_BTN_HEIGHT = 50;
+const SHOP_TOAST_ATTR = 'data-grim-shop-toast';
+const SOULS_COUNTER_ATTR = 'data-grim-shop-souls-counter';
+const SHOP_SOULS_SHAKE_CLASS = 'grim-shop-souls-shake';
 const SHOP_ITEM_ICON_SIZE = 52;
 const COST_CHIP_ICON_SIZE = 24;
 
@@ -89,6 +93,7 @@ export class UpgradeShopUI {
   private _windowFrame: HTMLDivElement | null = null;
   private _listHost: HTMLDivElement | null = null;
   private _soulsEl: HTMLSpanElement | null = null;
+  private _soulsWrap: HTMLDivElement | null = null;
   private _mounting = false;
   private _tab: ShopTab = 'upgrades';
   private _bgUrl = '';
@@ -187,6 +192,8 @@ export class UpgradeShopUI {
     backdrop.appendChild(vignette);
 
     const soulsWrap = document.createElement('div');
+    soulsWrap.setAttribute(SOULS_COUNTER_ATTR, '');
+    this._soulsWrap = soulsWrap;
     soulsWrap.style.cssText = `
       position: absolute;
       top: clamp(12px, 2vh, 24px);
@@ -281,6 +288,7 @@ export class UpgradeShopUI {
     backdrop.append(soulsWrap, stack);
     gc.appendChild(backdrop);
     this._overlay = backdrop;
+    UpgradeShopUI._injectSoulsShakeStyles(gc);
 
     this._applyWindowFrame();
     this._refresh();
@@ -362,8 +370,7 @@ export class UpgradeShopUI {
       const listed = grimVault.getListedShopItems();
       if (listed.length === 0) {
         const empty = document.createElement('p');
-        empty.textContent =
-          'Crafting materials appear here after you find them on a mission. Bone shards are always in stock.';
+        empty.textContent = 'No shop items available.';
         empty.style.cssText = this._rowHintStyle();
         this._listHost.appendChild(empty);
       }
@@ -416,7 +423,7 @@ export class UpgradeShopUI {
         }
         this._refresh();
       }
-    });
+    }, () => this._showPurchaseBlockedFeedback(soulCost, items));
     row.append(info, buy);
     return row;
   }
@@ -486,14 +493,21 @@ export class UpgradeShopUI {
     info.append(name, desc, cost);
 
     const canBuy = !locked && !atMax && grimVault.canAffordSkillUpgrade(def.id);
+    const soulCost = grimVault.getNextSkillSoulCost(def.id);
+    const items = grimVault.getNextSkillItemCosts(def.id);
     const buy = this._createActionButton(
       locked ? 'LOCKED' : atMax ? 'MAX' : 'UPGRADE',
       canBuy,
       () => {
+        const wasUnlocked = grimVault.getSkillLevel(def.id) >= 1;
         if (grimVault.purchaseSkillUpgrade(def.id)) {
+          if (def.id === GRIM_GRINDER_SKILL_ID && !wasUnlocked) {
+            this._showTransformUnlockPopup();
+          }
           this._refresh();
         }
       },
+      () => this._showPurchaseBlockedFeedback(soulCost, items),
     );
     if (locked || atMax) {
       buy.style.opacity = '0.45';
@@ -539,6 +553,10 @@ export class UpgradeShopUI {
     const buy = this._createActionButton('BUY', canBuy, () => {
       if (grimVault.purchaseShopItem(entry.itemId)) {
         this._refresh();
+      }
+    }, () => {
+      if (grimVault.getSouls() < price) {
+        this._feedbackNotEnoughSouls();
       }
     });
     row.append(info, buy);
@@ -663,10 +681,182 @@ export class UpgradeShopUI {
     return chips;
   }
 
+  private _feedbackNotEnoughSouls(): void {
+    this._shakeSoulsCounter();
+    this._showToast('Not enough souls — earn souls by reaping enemies!');
+  }
+
+  private _shakeSoulsCounter(): void {
+    const wrap = this._soulsWrap;
+    if (!wrap) {
+      return;
+    }
+    wrap.classList.remove(SHOP_SOULS_SHAKE_CLASS);
+    void wrap.offsetWidth;
+    wrap.classList.add(SHOP_SOULS_SHAKE_CLASS);
+    wrap.style.borderColor = 'rgba(255, 90, 90, 0.9)';
+    wrap.style.boxShadow = '0 0 18px rgba(255, 60, 60, 0.55)';
+    const clearHighlight = (): void => {
+      wrap.classList.remove(SHOP_SOULS_SHAKE_CLASS);
+      wrap.style.borderColor = 'rgba(160, 120, 255, 0.45)';
+      wrap.style.boxShadow = '';
+    };
+    wrap.addEventListener('animationend', clearHighlight, { once: true });
+    window.setTimeout(clearHighlight, 520);
+  }
+
+  private static _injectSoulsShakeStyles(container: HTMLElement): void {
+    const id = 'grim-shop-souls-shake-styles';
+    if (container.querySelector(`#${id}`)) {
+      return;
+    }
+    const st = document.createElement('style');
+    st.id = id;
+    st.textContent = `
+      @keyframes grim-shop-souls-shake {
+        0%, 100% { transform: translateX(0); }
+        12% { transform: translateX(-10px); }
+        24% { transform: translateX(10px); }
+        36% { transform: translateX(-8px); }
+        48% { transform: translateX(8px); }
+        60% { transform: translateX(-5px); }
+        72% { transform: translateX(5px); }
+        84% { transform: translateX(-2px); }
+      }
+      [${SOULS_COUNTER_ATTR}].${SHOP_SOULS_SHAKE_CLASS} {
+        animation: grim-shop-souls-shake 0.45s ease-in-out;
+        color: #ffb8b8 !important;
+      }
+      [${SOULS_COUNTER_ATTR}].${SHOP_SOULS_SHAKE_CLASS} span {
+        color: #ff6b6b !important;
+        text-shadow: 0 0 14px rgba(255, 80, 80, 0.85);
+      }
+    `;
+    container.appendChild(st);
+  }
+
+  private _showPurchaseBlockedFeedback(soulCost: number, items: readonly ItemCost[]): void {
+    if (grimVault.getSouls() < soulCost) {
+      this._feedbackNotEnoughSouls();
+      return;
+    }
+    if (items.length > 0 && !grimVault.hasItems(items)) {
+      this._showToast('Missing required materials for this upgrade.');
+      return;
+    }
+    this._showToast('Cannot purchase this upgrade right now.');
+  }
+
+  private _showToast(message: string): void {
+    if (!this._overlay) {
+      return;
+    }
+    this._overlay.querySelector(`[${SHOP_TOAST_ATTR}]`)?.remove();
+
+    const toast = document.createElement('div');
+    toast.setAttribute(SHOP_TOAST_ATTR, '');
+    toast.textContent = message;
+    toast.style.cssText = `
+      position: absolute;
+      left: 50%;
+      bottom: clamp(72px, 12vh, 120px);
+      transform: translateX(-50%);
+      z-index: 12;
+      max-width: min(420px, 90vw);
+      padding: 12px 20px;
+      font-family: Montserrat, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-align: center;
+      color: rgba(255, 232, 200, 0.98);
+      background: rgba(12, 8, 4, 0.92);
+      border: 1px solid rgba(255, 180, 80, 0.55);
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    `;
+    this._overlay.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+    });
+    window.setTimeout(() => {
+      toast.style.opacity = '0';
+      window.setTimeout(() => toast.remove(), 220);
+    }, 2200);
+  }
+
+  private _showTransformUnlockPopup(): void {
+    const gc = (this._world as GameContainerWorld).gameContainer;
+    if (!gc) {
+      return;
+    }
+
+    const backdrop = document.createElement('div');
+    backdrop.style.cssText = `
+      position: absolute;
+      inset: 0;
+      z-index: 10090;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 24px;
+      box-sizing: border-box;
+    `;
+
+    const panel = document.createElement('div');
+    panel.style.cssText = `
+      max-width: min(440px, 92vw);
+      padding: 24px 28px;
+      text-align: center;
+      font-family: Montserrat, sans-serif;
+      background: rgba(8, 12, 18, 0.95);
+      border: 2px solid rgba(0, 220, 255, 0.5);
+      border-radius: 8px;
+      box-shadow: 0 0 28px rgba(0, 200, 255, 0.35);
+    `;
+
+    const title = document.createElement('div');
+    title.textContent = 'TRANSFORM UNLOCKED';
+    title.style.cssText = `
+      font-weight: 800;
+      font-size: clamp(14px, 2.5vw, 18px);
+      letter-spacing: 0.14em;
+      color: rgba(160, 245, 255, 0.98);
+      text-shadow: 0 0 16px rgba(0, 220, 255, 0.45);
+    `;
+
+    const body = document.createElement('p');
+    body.textContent =
+      'Reap enough souls during a mission to activate transform, then press F.';
+    body.style.cssText = `
+      margin: 14px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(200, 220, 235, 0.92);
+    `;
+
+    panel.append(title, body);
+    backdrop.appendChild(panel);
+
+    const dismiss = (): void => {
+      backdrop.remove();
+    };
+    backdrop.addEventListener('click', dismiss);
+    panel.addEventListener('click', (e) => e.stopPropagation());
+
+    gc.appendChild(backdrop);
+    window.setTimeout(dismiss, 4500);
+  }
+
   private _createActionButton(
     label: string,
     enabled: boolean,
     onClick: () => void,
+    onDisabledClick?: () => void,
   ): HTMLDivElement {
     const wrap = document.createElement('div');
     wrap.style.cssText = `
@@ -682,7 +872,7 @@ export class UpgradeShopUI {
       opacity: ${enabled ? '1' : '0.45'};
       font-family: Montserrat, sans-serif;
       font-weight: 800;
-      font-size: 11px;
+      font-size: 12px;
       letter-spacing: 0.12em;
       color: rgba(255, 240, 210, 0.95);
       white-space: nowrap;
@@ -708,6 +898,9 @@ export class UpgradeShopUI {
         wrap.style.transform = 'scale(1)';
         wrap.style.filter = 'brightness(1)';
       });
+    } else if (onDisabledClick) {
+      wrap.style.pointerEvents = 'auto';
+      wrap.addEventListener('click', withMenuSelectSound(this._world, onDisabledClick));
     }
     return wrap;
   }
@@ -728,6 +921,7 @@ export class UpgradeShopUI {
     this._windowFrame = null;
     this._listHost = null;
     this._soulsEl = null;
+    this._soulsWrap = null;
     UpgradeShopUI.byWorld.delete(this._world);
   }
 }

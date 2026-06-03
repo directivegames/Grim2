@@ -4,8 +4,8 @@ import { gameSettings } from '../utils/game-settings.js';
 const BASE_MENU_MUSIC_VOLUME = 0.5;
 
 const MENU_TRACKS = [
-  '@project/assets/sounds/Menumusic.wav',
-  '@project/assets/sounds/menumusic2.wav',
+  '@project/assets/sounds/Menumusic.mp3',
+  '@project/assets/sounds/menumusic2.mp3',
 ] as const;
 
 @ENGINE.GameClass()

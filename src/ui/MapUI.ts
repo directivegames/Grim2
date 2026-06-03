@@ -18,6 +18,7 @@ import {
   type MissionBoard,
 } from '../game/MissionSelector.js';
 import { applyRisk5PlusToMission } from '../game/mission-risk5-plus.js';
+import { GRIM_GRINDER_SKILL_ID } from '../data/grim-grinder-config.js';
 import { grimVault } from '../game/GrimVault.js';
 import { UpgradeShopUI } from './UpgradeShopUI.js';
 import { playShopOpenSound, withMenuSelectSound } from '../utils/menu-audio.js';
@@ -72,6 +73,7 @@ export class MapUI {
   private _root: HTMLDivElement | null = null;
   private _mounting = false;
   private _briefing: HTMLDivElement | null = null;
+  private _controlsPanel: HTMLDivElement | null = null;
   private _onMissionStart: ((mission: MissionDef, config: MissionConfig) => void) | null = null;
   private _briefingMission: MissionDef | null = null;
   private _selectedRiskLevel: RiskLevel = 1;
@@ -102,6 +104,11 @@ export class MapUI {
 
     if (this._briefing) {
       this._closeBriefing();
+      return;
+    }
+
+    if (this._controlsPanel) {
+      this._closeControls();
       return;
     }
 
@@ -300,6 +307,7 @@ export class MapUI {
       opacity: 0.95;
     `;
     mapWrap.appendChild(compass);
+    mapWrap.appendChild(this._createControlsButton());
 
     root.appendChild(mapWrap);
     if (SHOW_MAP_DEBUG_HINT) {
@@ -360,6 +368,175 @@ export class MapUI {
     console.info(
       `[Debug] Forced Postman boss fight on unlocked risks (L). Select risk ${postmanRisk} and START.`,
     );
+  }
+
+  private _createControlsButton(): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'CONTROLS';
+    btn.style.cssText = `
+      position: absolute;
+      left: 2%;
+      bottom: calc(4% + clamp(56px, 8vw, 88px) + 10px);
+      z-index: 5;
+      padding: 8px 14px;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(0.5rem, 1.1vw, 0.65rem);
+      letter-spacing: 0.14em;
+      color: rgba(160, 245, 255, 0.95);
+      background: rgba(8, 12, 18, 0.88);
+      border: 1px solid rgba(0, 220, 255, 0.45);
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    `;
+    btn.addEventListener('mouseenter', () => {
+      btn.style.transform = 'scale(1.04)';
+      btn.style.boxShadow = '0 0 14px rgba(0, 220, 255, 0.4)';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'scale(1)';
+      btn.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.5)';
+    });
+    btn.addEventListener('click', withMenuSelectSound(this._world, () => {
+      this._showControls();
+    }));
+    return btn;
+  }
+
+  private _showControls(): void {
+    const gameContainer = this._gameContainer();
+    if (!gameContainer) {
+      return;
+    }
+    this._closeControls();
+
+    const transformUnlocked = grimVault.getSkillLevel(GRIM_GRINDER_SKILL_ID) >= 1;
+    const lines: { keys: string; action: string; muted?: boolean }[] = [
+      { keys: 'W A S D', action: 'Move' },
+      { keys: 'Left Click', action: 'Attack' },
+      { keys: 'Right Click', action: 'Throw weapon' },
+      { keys: 'E', action: 'Skill' },
+      {
+        keys: 'F',
+        action: transformUnlocked
+          ? 'Transform — reap 50 souls in a mission, then press F'
+          : 'Transform (once unlocked from shop) — buy Grim Grinder in upgrades',
+        muted: !transformUnlocked,
+      },
+    ];
+
+    const backdrop = document.createElement('div');
+    backdrop.style.cssText = `
+      position: absolute;
+      inset: 0;
+      z-index: 10070;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5, 5, 8, 0.75);
+      padding: clamp(12px, 3vw, 28px);
+      box-sizing: border-box;
+    `;
+
+    const frameStyle = this._resolvedFrameUrl
+      ? `
+        background-image: url("${this._resolvedFrameUrl}");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+      `
+      : `
+        background: #0d1117;
+        border: 2px solid rgba(100, 160, 200, 0.25);
+      `;
+
+    const panel = document.createElement('div');
+    panel.style.cssText = `
+      position: relative;
+      width: min(440px, 92vw);
+      box-sizing: border-box;
+      ${frameStyle}
+      padding: clamp(36px, 5vh, 48px) clamp(24px, 4vw, 36px) clamp(28px, 4vh, 36px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    `;
+
+    const heading = document.createElement('h2');
+    heading.textContent = 'CONTROLS';
+    heading.style.cssText = `
+      margin: 0;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1rem, 2.4vw, 1.35rem);
+      letter-spacing: 0.12em;
+      color: rgba(160, 245, 255, 0.98);
+      text-align: center;
+      text-shadow: 0 0 18px rgba(0, 220, 255, 0.45);
+    `;
+
+    const list = document.createElement('div');
+    list.style.cssText = `
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    `;
+
+    for (const line of lines) {
+      const row = document.createElement('div');
+      row.style.cssText = `
+        display: grid;
+        grid-template-columns: minmax(88px, 34%) 1fr;
+        gap: 12px;
+        align-items: start;
+        font-family: Montserrat, system-ui, sans-serif;
+        font-size: clamp(0.68rem, 1.45vw, 0.82rem);
+        line-height: 1.4;
+        color: ${line.muted ? 'rgba(140, 150, 165, 0.75)' : 'rgba(200, 220, 235, 0.95)'};
+      `;
+      const keys = document.createElement('span');
+      keys.textContent = line.keys;
+      keys.style.cssText = `
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: ${line.muted ? 'rgba(120, 130, 145, 0.85)' : 'rgba(160, 245, 255, 0.95)'};
+      `;
+      const action = document.createElement('span');
+      action.textContent = line.action;
+      row.append(keys, action);
+      list.appendChild(row);
+    }
+
+    const closeRow = document.createElement('div');
+    closeRow.style.cssText = `
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    `;
+    closeRow.appendChild(this._createPanelButton('CLOSE', () => {
+      this._closeControls();
+    }, false));
+
+    panel.append(heading, list, closeRow);
+    backdrop.appendChild(panel);
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        this._closeControls();
+      }
+    });
+
+    gameContainer.appendChild(backdrop);
+    this._controlsPanel = backdrop;
+  }
+
+  private _closeControls(): void {
+    this._controlsPanel?.remove();
+    this._controlsPanel = null;
   }
 
   private _createDebugRerollHint(): HTMLDivElement {
@@ -986,6 +1163,7 @@ export class MapUI {
     document.removeEventListener('keydown', this._escapeKeyHandler, true);
     UpgradeShopUI.close(this._world);
     this._closeBriefing();
+    this._closeControls();
     if (this._root?.parentNode) {
       this._root.parentNode.removeChild(this._root);
     }

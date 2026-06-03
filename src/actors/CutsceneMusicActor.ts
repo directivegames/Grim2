@@ -2,7 +2,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { gameSettings } from '../utils/game-settings.js';
 
 const BASE_CUTSCENE_MUSIC_VOLUME = 0.5;
-const CUTSCENE_TRACK = '@project/assets/sounds/cutscenemusic.wav';
+const CUTSCENE_TRACK = '@project/assets/sounds/cutscenemusic.mp3';
 
 @ENGINE.GameClass()
 export class CutsceneMusicActor extends ENGINE.Actor {

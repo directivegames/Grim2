@@ -2,7 +2,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { gameSettings } from '../utils/game-settings.js';
 
 const BASE_MAP_MUSIC_VOLUME = 0.5;
-const MAP_TRACK = '@project/assets/sounds/Mapmusic.wav';
+const MAP_TRACK = '@project/assets/sounds/Mapmusic.mp3';
 
 @ENGINE.GameClass()
 export class MapMusicActor extends ENGINE.Actor {

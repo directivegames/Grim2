@@ -6,7 +6,6 @@ export const GAME_SETTINGS_DEFAULTS = {
   disable360Spin: false,
   alwaysShowTutorials: false,
   skipAllCutscenes: false,
-  filmGrainEnabled: false,
 } as const;
 
 export type GameSettingsSnapshot = {
@@ -15,7 +14,6 @@ export type GameSettingsSnapshot = {
   disable360Spin: boolean;
   alwaysShowTutorials: boolean;
   skipAllCutscenes: boolean;
-  filmGrainEnabled: boolean;
 };
 
 function clamp01(value: number): number {
@@ -53,10 +51,6 @@ function readStoredSettings(): GameSettingsSnapshot {
         typeof parsed.skipAllCutscenes === 'boolean'
           ? parsed.skipAllCutscenes
           : GAME_SETTINGS_DEFAULTS.skipAllCutscenes,
-      filmGrainEnabled:
-        typeof parsed.filmGrainEnabled === 'boolean'
-          ? parsed.filmGrainEnabled
-          : GAME_SETTINGS_DEFAULTS.filmGrainEnabled,
     };
   } catch {
     return { ...GAME_SETTINGS_DEFAULTS };
@@ -69,7 +63,6 @@ class GameSettings {
   private _disable360Spin: boolean;
   private _alwaysShowTutorials: boolean;
   private _skipAllCutscenes: boolean;
-  private _filmGrainEnabled: boolean;
 
   public constructor() {
     const stored = readStoredSettings();
@@ -78,7 +71,6 @@ class GameSettings {
     this._disable360Spin = stored.disable360Spin;
     this._alwaysShowTutorials = stored.alwaysShowTutorials;
     this._skipAllCutscenes = stored.skipAllCutscenes;
-    this._filmGrainEnabled = stored.filmGrainEnabled;
   }
 
   public get sfxVolume(): number {
@@ -126,22 +118,12 @@ class GameSettings {
     this.save();
   }
 
-  public get filmGrainEnabled(): boolean {
-    return this._filmGrainEnabled;
-  }
-
-  public set filmGrainEnabled(value: boolean) {
-    this._filmGrainEnabled = value;
-    this.save();
-  }
-
   public resetToDefaults(): void {
     this._sfxVolume = GAME_SETTINGS_DEFAULTS.sfxVolume;
     this._musicVolume = GAME_SETTINGS_DEFAULTS.musicVolume;
     this._disable360Spin = GAME_SETTINGS_DEFAULTS.disable360Spin;
     this._alwaysShowTutorials = GAME_SETTINGS_DEFAULTS.alwaysShowTutorials;
     this._skipAllCutscenes = GAME_SETTINGS_DEFAULTS.skipAllCutscenes;
-    this._filmGrainEnabled = GAME_SETTINGS_DEFAULTS.filmGrainEnabled;
     this.save();
   }
 
@@ -152,7 +134,6 @@ class GameSettings {
       disable360Spin: this._disable360Spin,
       alwaysShowTutorials: this._alwaysShowTutorials,
       skipAllCutscenes: this._skipAllCutscenes,
-      filmGrainEnabled: this._filmGrainEnabled,
     };
   }
 

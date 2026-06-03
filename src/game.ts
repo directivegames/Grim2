@@ -18,8 +18,6 @@ import { GameAudioManager } from './actors/GameAudioManager.js';
 import { ScenicFogActor } from './actors/ScenicFogActor.js';
 import { CloudShadowActor } from './cloudShadow/CloudShadowActor.js';
 import { DEFAULT_CLOUD_SHADOW_MAP } from './cloudShadow/CloudShadowState.js';
-import { FilmGrainActor } from './post/FilmGrainActor.js';
-import { DEFAULT_FILM_GRAIN_SETTINGS, FilmGrainUI } from './ui/FilmGrainUI.js';
 import { gameSettings } from './utils/game-settings.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
 import { LoadingScreenUI, LoadingStages, mapWarmupProgress } from './ui/LoadingScreenUI.js';
@@ -166,7 +164,6 @@ class MyGame extends ENGINE.BaseGameLoop {
 
     this._spawnScenicFogCards(world);
     this._spawnCloudShadows(world);
-    this._spawnFilmGrain(world);
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
@@ -251,17 +248,6 @@ class MyGame extends ENGINE.BaseGameLoop {
       name: 'CloudShadows',
       cloudMapUrl: DEFAULT_CLOUD_SHADOW_MAP,
     }));
-  }
-
-  /** CSS film-grain overlay on the game container. */
-  private _spawnFilmGrain(world: ENGINE.World): void {
-    world.addActor(FilmGrainActor.create({
-      name: 'FilmGrain',
-    }));
-    FilmGrainUI.attach(world, {
-      ...DEFAULT_FILM_GRAIN_SETTINGS,
-      enabled: gameSettings.filmGrainEnabled,
-    });
   }
 
   /** Large flowmap fog cards at existing ground-mist cluster positions. */

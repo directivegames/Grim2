@@ -28,7 +28,7 @@ export class BackgroundMusicActor extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'backgroundMusic';
-    soundResource.audioPath = '@project/assets/sounds/NeonChapel.wav';
+    soundResource.audioPath = '@project/assets/sounds/NeonChapel.mp3';
     soundResource.volume = BASE_MUSIC_VOLUME * gameSettings.musicVolume;
 
     this.soundComponent = ENGINE.SoundComponent.create({
