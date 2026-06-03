@@ -30,6 +30,7 @@ import { getGameAudioManager } from '../utils/game-audio.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
 import { missionState } from '../mission/MissionState.js';
 import { collectSceneWeapons } from '../utils/scene-visual-pool.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
 
@@ -421,6 +422,30 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (!player) return;
     this._startAttack(player);
+  }
+
+  /** Mobile THROW button and external callers. */
+  public triggerSoulThrow(): void {
+    this._onRightClick();
+  }
+
+  public static triggerSoulThrow(world: ENGINE.World): void {
+    const actor = world.getActors().find(
+      (a): a is SpinningWeaponActor => a instanceof SpinningWeaponActor,
+    );
+    actor?.triggerSoulThrow();
+  }
+
+  /** Auto-swing while mobile aim stick is held (returns true if attack started). */
+  public tryMobileAutoMelee(): boolean {
+    if (!isMobileDevice()) {
+      return false;
+    }
+    if (GrimGrinderModeActor.isActive() || this._isMeleeBusy() || this._soulThrowBlocksMelee()) {
+      return false;
+    }
+    this._onLeftClick();
+    return true;
   }
 
   private _onRightClick(): void {

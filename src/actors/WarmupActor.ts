@@ -13,6 +13,7 @@ import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { GameAudioManager } from './GameAudioManager.js';
 import { parkAllSceneFists, parkAllSceneWeapons } from '../utils/scene-visual-pool.js';
 import { LoadingScreenUI, mapUiPreloadProgress } from '../ui/LoadingScreenUI.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 import { preloadUiImages } from '../utils/ui-image-cache.js';
 
 /** Off-screen position for warmup actors - far enough to never be visible. */
@@ -58,6 +59,7 @@ export class WarmupActor extends ENGINE.Actor {
   public startWarmup(onComplete: WarmupCallback, onProgress?: WarmupProgressCallback): void {
     this._onComplete = onComplete;
     this._onProgress = onProgress ?? null;
+    this._minDurationMs = isMobileDevice() ? 800 : 2000;
     this._startTime = performance.now();
 
     const world = this.getWorld();
@@ -87,15 +89,17 @@ export class WarmupActor extends ENGINE.Actor {
         this._reportProgress();
       });
 
+    const effectWarmupCount = isMobileDevice() ? 0 : 3;
+
     // 2. Pre-warm grave actors (spawn multiple to cover rapid kills)
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < effectWarmupCount; i++) {
       const grave = DeadGraveActor.create({ position: HIDDEN_POS });
       world.addActor(grave);
       this._warmupActors.push(grave);
     }
 
     // 3. Pre-warm gore explosions (MAX_ACTIVE = 3, so warm 3)
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < effectWarmupCount; i++) {
       const gore = GoreExplosionActor.create({ position: HIDDEN_POS.clone() });
       world.addActor(gore);
       this._warmupActors.push(gore);

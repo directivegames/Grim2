@@ -76,12 +76,14 @@ export interface SpeedReapMissionConfig extends MissionConfigBase {
 /** Reap souls while keeping the combo chain alive. */
 export interface ChainReapMissionConfig extends MissionConfigBase {
   readonly type: 'chain-reap';
-  /** Kills that count (combo must be > CHAIN_REAP_MIN_COMBO at kill time). */
+  /** Kills that count once combo is at least CHAIN_REAP_MIN_COMBO. */
   readonly killsRequired: number;
-  /** Mission timer starts on first enemy kill. */
+  /** Countdown starts on first counted kill (combo ≥ threshold). */
   readonly timeLimitSec: number;
-  /** Seconds to rebuild combo above minimum after it drops. */
+  /** Reserved — combo drop pauses counting; no fail on combo loss. */
   readonly comboGracePeriodSec: number;
+  readonly collateralTickPerSecond: number;
+  readonly collateralJumpOnInnocentDeath: number;
 }
 
 /** Solo boss fight — defeat the Postman with no horde spawns. */
@@ -200,11 +202,14 @@ export function createChainReapMissionConfig(
   riskLevel: RiskLevel,
   risk5PlusTier = 0,
 ): ChainReapMissionConfig {
+  const risk = getRiskLevelConfig(riskLevel);
   return {
     type: 'chain-reap',
     killsRequired,
     timeLimitSec,
     comboGracePeriodSec,
+    collateralTickPerSecond: risk.collateralTickPerSecond,
+    collateralJumpOnInnocentDeath: risk.collateralJumpOnInnocentDeath,
     riskLevel,
     risk5PlusTier,
   };
@@ -272,7 +277,8 @@ export function missionUsesCollateral(config: MissionConfig): boolean {
   return (
     isReapAndSaveMission(config) ||
     isCauseDamageMission(config) ||
-    isReapBeforeCollateralMission(config)
+    isReapBeforeCollateralMission(config) ||
+    isChainReapMission(config)
   );
 }
 

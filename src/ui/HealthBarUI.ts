@@ -7,6 +7,8 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+
 const HEALTH_BG_URL = '@project/assets/UI/HealthBG.webp';
 const HEALTH_FILL_URL = '@project/assets/UI/HealthBar.webp';
 
@@ -57,6 +59,8 @@ export class HealthBarUI {
     const gameContainer = (world as unknown as { gameContainer?: HTMLElement }).gameContainer;
     if (!gameContainer) return;
 
+    ensureMobileHudStyles(gameContainer);
+
     // Inject low health pulse animation style
     const pulseStyle = document.createElement('style');
     pulseStyle.textContent = `
@@ -70,8 +74,9 @@ export class HealthBarUI {
     `;
     document.head.appendChild(pulseStyle);
 
-    // Main container - positioned bottom-left
+    // Main container — bottom-left on desktop; .grim-mobile overrides to top-left
     this._container = document.createElement('div');
+    this._container.className = 'grim-hud-health';
     this._container.style.cssText = `
       position: absolute;
       bottom: 20px;

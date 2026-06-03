@@ -20,9 +20,14 @@ import { CloudShadowActor } from './cloudShadow/CloudShadowActor.js';
 import { DEFAULT_CLOUD_SHADOW_MAP } from './cloudShadow/CloudShadowState.js';
 import { gameSettings } from './utils/game-settings.js';
 import { StartMenuUI } from './ui/StartMenuUI.js';
+import { MobileLandscapeOverlayUI } from './ui/MobileLandscapeOverlayUI.js';
+import { MobileCombatChromeUI } from './ui/MobileCombatChromeUI.js';
+import { MobileCombatActor } from './actors/MobileCombatActor.js';
 import { LoadingScreenUI, LoadingStages, mapWarmupProgress } from './ui/LoadingScreenUI.js';
 import { setGameplayUnlocked } from './utils/game-pause.js';
 import { hideGameplayPresentation } from './utils/presentation-mode.js';
+import { isMobileDevice } from './utils/mobile-device.js';
+import { applyMobileMenuRenderingProfile } from './utils/mobile-startup.js';
 import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { GrimIntroActor } from './actors/GrimIntroActor.js';
@@ -33,6 +38,13 @@ import { FireLightFlickerComponent } from './components/FireLightFlickerComponen
 
 /** Spring-arm length (world units). */
 const ISO_CAMERA_DISTANCE = 20;
+
+/** Block browser right-click menu so RMB can throw weapons without interruption. */
+function disableBrowserContextMenu(host: HTMLElement): void {
+  host.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+  }, true);
+}
 
 /**
  * Cap device pixel ratio to 1. Genesys exposes {@link ENGINE.Renderer} with `.renderer` (IGenesysRenderer);
@@ -87,7 +99,7 @@ class MyGame extends ENGINE.BaseGameLoop {
       ...base,
       navigationOptions: {
         engine: ENGINE.NavigationEngine.RecastNavigation,
-        generateOnStartUp: true,
+        generateOnStartUp: !isMobileDevice(),
         options: {
           cs: 0.5,
           ch: 0.2,
@@ -112,13 +124,17 @@ class MyGame extends ENGINE.BaseGameLoop {
    * Isometric games rarely need edge AA; the camera angle hides aliasing naturally.
    */
   public override getDefaultRendererOptions(): ENGINE.RendererOptions {
-    return {
+    const options: ENGINE.RendererOptions = {
       webgl: { powerPreference: 'high-performance', antialias: false },
       webgpu: {
         powerPreference: 'high-performance',
         antialias: false,
       },
     };
+    if (isMobileDevice()) {
+      options.rendererType = 'webgl';
+    }
+    return options;
   }
 
   /**
@@ -143,6 +159,10 @@ class MyGame extends ENGINE.BaseGameLoop {
    */
   protected override async preStart(): Promise<void> {
     LoadingScreenUI.setProgress(LoadingStages.boot.percent, LoadingStages.boot.status);
+    const world = this.getWorld();
+    if (world) {
+      applyMobileMenuRenderingProfile(world);
+    }
     await super.preStart();
     StartMenuUI.preflightCover(this.getWorld());
   }
@@ -162,8 +182,10 @@ class MyGame extends ENGINE.BaseGameLoop {
     world.inputManager.setInputEnabled(false);
     this._disableSceneViewTargetCameras(world);
 
-    this._spawnScenicFogCards(world);
-    this._spawnCloudShadows(world);
+    if (!isMobileDevice()) {
+      this._spawnScenicFogCards(world);
+      this._spawnCloudShadows(world);
+    }
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
@@ -171,6 +193,12 @@ class MyGame extends ENGINE.BaseGameLoop {
     this._attachGrimGrinderController(world);
 
     hideGameplayPresentation(world);
+
+    MobileLandscapeOverlayUI.attach(world);
+    MobileCombatChromeUI.attach(world);
+    if (isMobileDevice()) {
+      MobileCombatActor.ensureExists(world);
+    }
 
     const startMenu = StartMenuUI.attach(world, () => {
       world.addActor(GrimIntroActor.create({ name: 'GrimIntroActor' }));
@@ -268,8 +296,10 @@ class MyGame extends ENGINE.BaseGameLoop {
 
   /** Compile shaders during the title screen, then enable PLAY when ready. */
   private _startWarmupSequence(world: ENGINE.World, startMenu: StartMenuUI): void {
-    const weaponActor = SpinningWeaponActor.create();
-    world.addActor(weaponActor);
+    if (!isMobileDevice()) {
+      const weaponActor = SpinningWeaponActor.create();
+      world.addActor(weaponActor);
+    }
 
     GameAudioManager.ensureExists(world);
 
@@ -294,9 +324,20 @@ class MyGame extends ENGINE.BaseGameLoop {
 
 export function main(container: HTMLElement, options?: Partial<ENGINE.BaseGameLoopOptions>): ENGINE.IGameLoop {
   StartMenuUI.injectEarlyLoadCover(container);
+  MobileLandscapeOverlayUI.ensureOnHost(container);
+  disableBrowserContextMenu(container);
+
+  const rendererOptions = isMobileDevice()
+    ? { ...options?.rendererOptions, rendererType: 'webgl' as const }
+    : options?.rendererOptions;
+
+  if (isMobileDevice()) {
+    console.info('[Grim] Mobile device — WebGL renderer and lightweight startup');
+  }
 
   const mergedOptions: Partial<ENGINE.BaseGameLoopOptions> = {
     ...options,
+    rendererOptions,
     // Disable the Three.js GPU-timestamp inspector – it forces a CPU/GPU sync
     // barrier every frame and caps the renderer at ~30fps even on fast hardware.
     debugUIMode: 'none',

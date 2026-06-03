@@ -3,6 +3,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
 export class SoulProgressUI {
@@ -43,8 +45,11 @@ export class SoulProgressUI {
     const gc = this._gameContainer();
     if (!gc || this._container) return;
 
+    ensureMobileHudStyles(gc);
+
     this._container = document.createElement('div');
     this._container.setAttribute('data-soul-progress-ui', '');
+    this._container.className = 'grim-hud-soul-progress grim-hud-mission-objective';
     this._container.style.cssText = `
       position: absolute;
       top: 48px;

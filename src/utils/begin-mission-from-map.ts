@@ -17,6 +17,8 @@ import {
 } from './presentation-mode.js';
 import { removeAllBlockingOverlays } from './screen-transition.js';
 import { shouldShowTutSoul } from './tut-progress.js';
+import { prepareMobileForGameplay } from './mobile-startup.js';
+import { MobileCombatChromeUI } from '../ui/MobileCombatChromeUI.js';
 
 /**
  * Map START → live mission: optional Tut Soul → Ready To Reap → gameplay.
@@ -26,6 +28,9 @@ export function beginMissionFromMap(
   mission: MissionDef,
   config: MissionConfig,
 ): void {
+  void (async () => {
+  await prepareMobileForGameplay(world);
+
   ensureGrimIntroBlackCover(world);
   hideGameplayPresentation(world);
 
@@ -50,6 +55,7 @@ export function beginMissionFromMap(
     }
 
     setGameplayUnlocked(true);
+    MobileCombatChromeUI.attach(world)?.refreshVisibility();
 
     const bg = world.getActors().find(a => a instanceof BackgroundMusicActor);
     if (bg instanceof BackgroundMusicActor) {
@@ -88,4 +94,5 @@ export function beginMissionFromMap(
   } else {
     playReadyToReap();
   }
+  })();
 }

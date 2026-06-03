@@ -6,12 +6,12 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { GrimGrinderModeActor } from '../actors/GrimGrinderModeActor.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
 import {
-  GRIM_GRINDER_SKILL_ID,
   GRIM_GRINDER_SOUL_THRESHOLD,
 } from '../data/grim-grinder-config.js';
 import { grimVault } from '../game/GrimVault.js';
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
 
-const ICON_URL = '@project/assets/UI/grimtitle.webp';
+const ICON_URL = '@project/assets/UI/grimgrinder.webp';
 
 const HEALTH_BAR_BOTTOM = 20;
 const HEALTH_BAR_HEIGHT = 235 * 0.35;
@@ -42,11 +42,12 @@ export class GrimGrinderHUDUI {
     }
 
     GrimGrinderHUDUI._injectStyles(gc);
+    ensureMobileHudStyles(gc);
 
     const bottom = HEALTH_BAR_BOTTOM + HEALTH_BAR_HEIGHT + GAP_ABOVE_HEALTH + FIST_STACK_OFFSET;
 
     this._container = document.createElement('div');
-    this._container.className = 'grim-grinder-hud';
+    this._container.className = 'grim-grinder-hud grim-hud-grim-grinder';
     this._container.style.cssText = `
       position: absolute;
       bottom: ${bottom}px;
@@ -63,6 +64,7 @@ export class GrimGrinderHUDUI {
     `;
 
     const keyHint = document.createElement('span');
+    keyHint.setAttribute('data-grim-hud-key', '');
     keyHint.textContent = 'F';
     keyHint.style.cssText = `
       font-family: Montserrat, sans-serif;
@@ -74,6 +76,7 @@ export class GrimGrinderHUDUI {
     `;
 
     this._iconWrap = document.createElement('div');
+    this._iconWrap.setAttribute('data-grim-hud-icon', '');
     this._iconWrap.style.cssText = `width: ${ICON_SIZE}px; height: ${ICON_SIZE}px;`;
 
     const icon = document.createElement('img');
@@ -91,6 +94,7 @@ export class GrimGrinderHUDUI {
     this._iconWrap.append(icon);
 
     this._progressEl = document.createElement('div');
+    this._progressEl.setAttribute('data-grim-hud-progress', '');
     this._progressEl.style.cssText = `
       width: ${ICON_SIZE + 8}px;
       height: 5px;
@@ -168,8 +172,21 @@ export class GrimGrinderHUDUI {
       inst = new GrimGrinderHUDUI(world);
       GrimGrinderHUDUI.instances.set(world, inst);
       await inst._show();
+    } else {
+      inst._syncUnlockVisibility();
     }
     return inst;
+  }
+
+  /** Re-show HUD after unlocking transform mid-session (e.g. shop then mission). */
+  private _syncUnlockVisibility(): void {
+    if (!this._container || !this._initialized) {
+      return;
+    }
+    if (grimVault.hasGrimGrinderUnlocked() && !GrimGrinderModeActor.isActive()) {
+      this._container.style.display = 'flex';
+      this._container.style.opacity = '1';
+    }
   }
 
   private async _show(): Promise<void> {
@@ -191,7 +208,7 @@ export class GrimGrinderHUDUI {
       return;
     }
 
-    const equipped = grimVault.getSkillLevel(GRIM_GRINDER_SKILL_ID) >= 1;
+    const equipped = grimVault.hasGrimGrinderUnlocked();
     if (!equipped || GrimGrinderModeActor.isActive()) {
       this._container.style.display = 'none';
       this._container.classList.remove('grim-grinder-ready');

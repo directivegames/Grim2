@@ -42704,6 +42704,288 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "2060c995-6fa0-446d-89c8-b592c5c5ef03"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "969834f4-2c52-44e9-9c40-57e784d1db3f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a1e5db30-9365-4000-b3a9-d9f5722e96cf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a45b23dd-3d50-4d09-aef9-d6a5e53929b1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ca41476c-774e-4d6b-8522-b01399f63073"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d0c306b8-7179-42e0-97f6-8a3cb81b6277"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "34fcce5e-726d-44db-9172-de7903b75718"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "82bc34e7-f0f0-4b3f-ba6e-297b55997292"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3b765238-0d82-41bf-b029-a1eebd105c12"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5e6fcc61-47bb-40d8-83c1-f2ed8a4d0c58"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2f8a3384-cbf4-4894-b222-e8bd201f3ab9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "37b897bd-c0f9-45d5-83b2-a8b993884e97"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dba4869e-9d48-464e-b23b-51d7afc9e460"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5c5ace3c-e9d7-4855-9599-2d56767ea9ad"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "598e1163-3ec6-49ec-bbbe-20b8318aa1e2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "70466d86-dd47-4dda-89c8-ec107683f5dc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3d373938-926b-4358-b94f-7c7302f96b9c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0832e7ec-bcaa-4f7f-95a2-2f65776a69da"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a57bb573-b24c-48d9-9a2e-27369d8e2d8e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "43849d41-7304-44d1-af71-2e2809bdafcb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "61022881-a75d-4734-b8bc-9cff7fc92d0a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a95280ed-322b-4e51-b364-3f3e7d2bb3af"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a68f1030-e981-4c02-bfd8-fe92477c1bb4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "120ebadc-c60a-4ae8-8dd9-b674eddd7ecb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ba0d2065-be24-4e67-a7b7-63b6476148f3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a4d9d691-b6cf-4ba5-a46a-6ebf32628580"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ea936b2e-f903-4001-861c-acb6d8dbb961"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "28c625f0-eba5-42d1-ba28-4122854d6612"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f5464819-6678-4182-852b-418f6bd88a56"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fd3dfed0-fbbc-4b68-9b2a-2669dcf63a8f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "97fd0c94-44dc-45e5-9672-d97b046ab68c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ebee07e8-54ad-4547-86d7-7fbc69d2cdc1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a2d5628c-2ee7-4226-a9be-b4d4cc7eecf5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "859eb6ae-f012-4fa3-894c-abefb93012af"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fee03fbf-54bb-48bb-bb35-6d96495bf645"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4ef163c6-dbfe-4633-8294-986b5d0fdf60"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8ca04d01-057d-4eb7-910b-043f4dd88ede"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c7a7cf74-9f84-472b-9cef-29607caaaf42"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "53633fe2-1365-4616-9d9c-db800ef56ee2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4f66acf5-7118-4251-a777-5d40a05d2550"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "781d93e0-8c9a-4b15-ad85-8782db74071a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a5cb286a-f437-4261-ac66-9a3d0f2f3854"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "848bacae-b320-4669-83c2-af7c90adfa4b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f738c802-e563-40f7-9b27-911c723f6a2c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dbf22fd9-bd9c-4f9b-959d-3fad38a170af"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "27e3fcef-5b12-475e-b934-7e8bbb047ecd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e9effb99-0fa5-4154-9046-bc29a6b86d81"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f8bdcc69-f42c-4f8b-9dfc-468ba1156250"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -53148,6 +53430,288 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "47c513a6-9fe9-4ef0-babe-57ec90159453"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "af99396e-e755-46b1-80ab-e59fd94df901"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "85552669-83b4-4fca-bec0-8e222f1125c0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6905c20f-71a8-4f4a-a33e-672479905b35"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eaad9780-01b2-4ab3-8607-81522d5b0534"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7bed3a70-9365-4f4e-9dd2-88358344c1a4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "64bd819b-b653-427c-9363-a4561356cede"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "add1b1e7-0902-4a22-abd8-2b81d8afa971"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5115ac5c-2aba-4401-bbcb-668cf0f1c673"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "60cb7096-8030-4bf7-aa50-33dbd63d33d0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1dc41ae7-2927-413b-861b-90f8e1f30aeb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4e83b778-ce6d-4781-b93b-2d0d9c55b6a5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "da15e99c-1ad2-4822-8631-a9c9f335bbb0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4de42733-3e1b-4d51-a5c1-82ed6fd2be63"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "db31d79e-ce7c-4283-86ed-7537a21c67e5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8b06ac2e-5610-4261-a897-6eda3dc455d9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "255a05e2-0d08-46cb-933c-b27712f51432"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eb835526-8dc0-49de-ac99-d87e5b5e8672"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f2615ea2-08e7-45d8-a90c-1dd1e071a3ea"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0259f89f-ae77-46fa-bb4c-fa077000f2c4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "22ec2fea-a7a4-4214-8b22-3a04d303a80d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3c0361d3-0772-450b-a8e9-c57b1229f2e5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8d5ce9cc-5be1-4530-b599-a02debab97f2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8b9d9ae4-467f-49d3-a4c6-efbf9ee5849d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f1f95c1f-6fb6-4fb1-af43-0a3ab145ce1b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "750b17ce-e295-4c69-9815-fefb9cc19ec3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7ebf9702-0d22-4337-b5de-86b876646d89"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "42782878-ce86-4b65-bedf-df6a13da532c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a480c115-78e9-4b17-a100-33b109eb5c36"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "397219ee-9857-46af-a9c3-006d156ed5b7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b019d825-481c-4dbd-aeb2-63f0460bfecd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ed86e137-4c2c-4abf-82b7-100d637b1af7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "879dfa58-007f-4ff8-b2a5-c5b48ddedbe4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ae6b6870-769f-47d7-8eb7-512e123416b2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "003a91d2-81b5-4189-bef3-a5b38e35c9ea"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ad9a2596-a113-41f8-a2ca-5e5029852fe3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "57a42fd3-8709-40e4-8c3b-40f2dda9d50a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ce5058b7-7d5a-4b00-8415-9d67f177d85f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "703924c2-4838-46ac-876d-9bae65b6fff4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b3306e2e-eaa9-4bd7-84c1-8f07aaaf825c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2d2a4b44-8d30-4b51-9265-a0a380eda492"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3534c84e-e394-4f51-a6a4-faf783168b64"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bd1803ef-6458-4597-85a2-4b66cdd2066b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eaff778b-8976-49c7-8778-e3a4604f211f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "767450f0-9642-4842-b9fb-bf5645189037"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9442d3d5-27fd-4b3f-a02c-e6589171e5ca"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "85960bee-07be-41fd-b27c-039b5ffeb04b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "025c2300-7f65-4e8a-9af3-df773579bc42"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -56919,6 +57483,288 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "ad9bf962-d917-47db-bf05-2b98bddc1a1c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "84cc1c98-a743-41d5-97ca-5cea0b312993"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fb250910-8994-4c8a-8a8e-76950699928e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "655baa1b-0136-4eda-aa1b-89b1e53a6d49"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3c2c71b1-44d0-4143-94b4-3b80307f96a2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0e142ecc-23f7-4fc1-bca8-18e6ca48408b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "58711ab4-6908-4eec-878d-5c4cbe7f313f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "385fe605-9c4c-4fd5-b267-1ff97901d4ea"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7ff93996-f355-4842-b0f0-ee139b74f563"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "759ce29e-362c-4170-a4d9-28de810b41b0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7775f0f2-6d25-42d1-a651-9f6ac0d00c38"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4c72bdcf-a28e-4fc4-86a3-00c8a1e43932"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f95d2e9b-9950-4848-a844-66aa5b32d9af"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b168677c-13ee-4f92-9d15-a244ae901ad9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1d07499c-cfa5-40f0-98e5-478720520988"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3a4b76b4-22cb-4c41-966c-5ba10780b05c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fe1336b9-bb90-4f00-9028-663f110e1536"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6a9b0abc-aba1-449e-910d-fb4c3eae4f4e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5764eb87-6199-43b5-ae65-fb5aae07f5b7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2e365eb3-8483-405b-b4b3-12a343e4c129"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "23072db1-3df4-48a0-a608-293ad433edb5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c4ae370a-b756-47ef-98b9-c31a68e9e33d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "39f46b3b-6e2d-4fa0-b250-e42adfe60efa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f88b561b-69fb-4d8a-aaa3-4ea5161de6c6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6d454709-cb19-4bbd-afd1-adbd2e8809e8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "847797ab-72b2-4505-899d-d1864f4593a9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2d222914-43b5-4198-bf5e-5be3ce94bf9c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2b514bf7-0fed-4553-9425-9b90f9018549"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2fe18f3d-a218-43dc-8782-1fc3e4565f72"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "822f231a-989d-411c-8430-5347d9543450"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "304e3089-e45f-4d34-9c49-c179226e7736"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "da4f2bf3-7a81-4677-8530-3b319e599b89"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8a3799ae-4ba2-407f-b6ab-51d510de3f9e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "29c9a8e1-045d-4126-ae56-08e820f8cb7a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bb07e072-9ad5-4a4a-945e-b50194384571"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3abcb7c8-157d-479d-85f9-ec6d96f39580"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dce2cbf6-eb17-474d-a157-98672725e2d6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "96242fbc-6381-4b5d-b3df-4e9b06b03031"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "19961186-02d3-446f-a588-faf55161951d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f6e07d7f-aea0-4066-8acc-04ae95bd4dfd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eb59cdcf-4886-44fb-9520-8628ff4fd42c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "17b5e732-8eaf-4a67-9f07-f6846c55ef66"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6009fcea-a7ca-493d-ae2e-e63fcf3d241b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "058f0325-feae-4a27-9e0c-d2d11755891e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6db2ee8e-bd24-4479-820e-acac13221d0e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6c92fa34-d04b-42cb-acdd-f0279861c000"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6e13f984-a90e-414a-80e2-5d656979d7e1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cdde8818-2be6-4abf-91f9-061f02147b5f"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -57086,7 +57932,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "fd24f49a-de8a-4d7b-aec9-d6d870789b95"
+            "uuid": "3f15ba97-aced-468c-9110-a2e90fbfb6ff"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -57146,7 +57992,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "7d6dd8fb-c371-4f7c-9d59-80af5c3052e4"
+            "uuid": "7fad3a56-ffe9-4e56-8287-bfd9b5f691ac"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -57206,7 +58052,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "0407a0a9-d542-4e78-b228-82965a2f0f4d"
+            "uuid": "7a0150b8-f892-489e-b4ee-d68e97d16f24"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -57266,7 +58112,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "e5bd70c9-9a2e-45cb-b3f2-f19853c87671"
+            "uuid": "453dd977-3446-4929-a605-937cbbf6acf4"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -57326,7 +58172,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "8951d41c-3d7d-4a49-8ed6-03139b070a04"
+            "uuid": "2a1bd1ce-be53-46ba-97aa-c577207f3c2d"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -57386,7 +58232,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "9cbaafa9-0961-4828-8a64-f6c35a0b6ff5"
+            "uuid": "170a89b1-cfcd-4e9c-869d-cc0dc6022812"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -57446,7 +58292,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "67712c62-a871-4664-9eea-5f93cbb76323"
+            "uuid": "03225f06-c39a-4196-90f5-a038e1e76691"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -57507,7 +58353,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8e416578-09f8-444a-92eb-a3a7e45a6beb"
+            "uuid": "4252a0f6-033c-4867-9cf1-7f01746f3fd6"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57561,7 +58407,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "13e7adc9-2142-46cd-a992-622fd77a18d6"
+            "uuid": "33f99276-7cda-405d-86b3-0884cec3c84e"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57615,7 +58461,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "60ff8d56-37bb-462c-aa00-3f90943cf5fa"
+            "uuid": "eb06ecf0-3167-442b-8c0c-d480a5642e04"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57669,7 +58515,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "3c5528c8-a8c8-4318-948a-d44a0234732f"
+            "uuid": "49ef95e8-af86-409c-b782-6ccf3aba64d8"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57723,7 +58569,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "9e0befb4-e53b-4d68-a0aa-208245a2fbfd"
+            "uuid": "02778d87-3522-4884-b3a2-80b68fff235a"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57777,7 +58623,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "c2858a96-7d20-44d8-ada4-b59a37dc09df"
+            "uuid": "a93817f6-5880-416f-ab64-6843a6296a77"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57831,7 +58677,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "99da52f5-c866-4eba-aa35-0370b7c52ff9"
+            "uuid": "4d25aa9b-1c92-401c-adb4-2a4f9f4e7782"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57885,7 +58731,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "ba8bb8b9-e11f-4bd3-9bf9-08c427b05ac0"
+            "uuid": "056d1cae-72b1-40e5-bcdf-1f66413bdba2"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57939,7 +58785,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "d2f3c41b-e5f9-4830-adf7-a9bc0f041084"
+            "uuid": "df0fd40c-4e12-4984-943f-eb259b0f112f"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -57993,7 +58839,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "d06db2ee-acea-43b5-9b4c-44946e12d5a7"
+            "uuid": "c8b27625-c348-4408-b877-dd358ef377ec"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -58047,7 +58893,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "acd3a1ec-9506-4920-bab2-e5b5f99c1709"
+            "uuid": "234be544-d817-4c62-ac7f-ee32457ff26f"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -58101,7 +58947,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "20a12ee6-f42d-484f-a373-14f7c0111887"
+            "uuid": "73786903-4540-4d66-b74f-b926a01781f1"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -58155,7 +59001,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "973908d4-f6b0-4e41-8920-f290f0598848"
+            "uuid": "446252a5-7600-4def-855d-20cddc9d63e8"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -58209,7 +59055,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "9db9a278-b5cf-4e84-a911-584979a5b57f"
+            "uuid": "66cec938-1320-4066-93f0-38d70650d27e"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -58263,7 +59109,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "151d04ab-dc54-4aa6-9bab-ba4134457b81"
+            "uuid": "41873c08-c5e6-4926-b51f-18fb630d7006"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -58317,7 +59163,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "9e4818f0-3f23-48ce-804c-20df43c042ae"
+            "uuid": "b7f236a7-7c75-4663-9623-51aa6b70047d"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -58370,7 +59216,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "c59f2bb0-db4d-41f3-a8d4-7ca82d91234e"
+            "uuid": "aa6c086d-fbc6-4d72-9c28-6f7669a30fba"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58422,7 +59268,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "5894f158-f4ae-4c86-bfe9-748d02595384"
+            "uuid": "62a82e76-dd08-452d-bef8-0e7714406733"
           },
           "name": "MeshComponent",
           "position": {
@@ -58471,7 +59317,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "571620c3-3172-4138-9298-20db1f48dab2"
+            "uuid": "6b281810-79c2-427f-ae36-edf69a684b26"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58523,7 +59369,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "734f6a20-c5f3-40cc-b076-ccb417f02ed4"
+            "uuid": "52c709d1-2838-455e-bd3b-5facfab88ecb"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58575,7 +59421,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "513f6ea6-1245-425c-8166-e714fafe0337"
+            "uuid": "7ac4d860-8699-4b50-a355-3e7e819845f1"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58627,7 +59473,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "6658935e-45d2-44c8-ab19-a9b34a9dec4d"
+            "uuid": "31586198-d740-464b-be20-1e932f5183fc"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58679,7 +59525,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "cefde436-0e4d-4f63-b75e-76a9ad77dc3c"
+            "uuid": "c299188b-4f30-4856-8d16-18e29744e73f"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58731,7 +59577,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "afc3ce6b-d1f4-4598-9986-939f58ba571b"
+            "uuid": "4feabe36-b448-4a31-a2ec-296b77ca62ed"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58783,7 +59629,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "23ccbbb8-5091-4085-9f2d-f71c66bcf15b"
+            "uuid": "8be8f148-bc03-4a31-a4be-dc59dc89e31e"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58835,7 +59681,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "945693ac-e288-49b6-ad97-adff41aa242a"
+            "uuid": "7629bd80-35fc-4504-a5d7-03873d08eba2"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58887,7 +59733,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "2dadb73f-67e7-43e1-bb02-6dbf74941024"
+            "uuid": "52ff7fca-0502-4820-be9c-91377983cf5b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58939,7 +59785,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7d29cda5-5a6f-4f2b-9f5b-add5cbaa2252"
+            "uuid": "b3c54efa-c10c-4c7f-a7bd-1cefcedb70a7"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58991,7 +59837,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "99696b4b-5528-49e4-96a1-75309fe29a9b"
+            "uuid": "99958e5a-288a-40a7-a964-2998037da56e"
           },
           "name": "MeshComponent",
           "position": {
@@ -66178,6 +67024,288 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "f7e1f9a9-444b-43a2-90d0-ae634e98d068"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b6d7142e-6c51-41b4-8640-030a95a98922"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3d0f3db4-8386-4189-8e1b-a9feaffcb61b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0368f35b-177a-4cb6-9b51-6d20d5b32c41"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5d836822-ef77-479a-a350-588a0355b071"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bbc1a8f1-5198-4587-bb65-89a876fb05d5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3891b41c-406c-4416-9476-895f9b02dafa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c56eb464-e9e5-47dc-a273-d3e1ea660db8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b2d59ccf-65d8-4db9-9451-51cee37c0387"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "78412fda-7bd2-429d-801f-27246067d4b5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5dc0bffc-3245-43b2-a8fb-8cb3a89d9e95"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5ba2bf14-bf6f-4701-b9d3-f5f0358057f6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "62eb6c41-df18-453f-acda-0408107ee2cf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b4c3b5c6-a316-4fff-a4dc-b7064e6689ef"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5a7fa696-499a-4362-8d4a-a2c8995f502b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cf3a2101-006d-4de1-b629-2c2531644360"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e325f95c-3060-467c-a889-79d00453ced6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5a8bb28c-d0eb-4117-a2da-d9fc8e5d2f1e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9d1de49a-bc1c-4f58-93a8-b0068b2f9cf3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "08a33946-4f1e-40b9-94e8-b6dc0bbd4baa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fa86413e-f2b6-4365-a50f-60972ae628cb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f4a82bd9-5777-4630-b894-e3f99c4f28fb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "808560ac-f91a-40e6-b8e4-c99a47893758"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "868a1c80-ca37-4e85-bc57-7b9cae8288bf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "aae0220e-aac4-49aa-a1ca-ddce29aeba39"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9d22e813-85a4-4b80-accb-ead59d0aa863"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "48547789-f049-4ee4-b1b0-ac1434c557ce"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "029f56bb-00c3-45e9-b9b0-74edada6e8cc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "14ac8255-c3f3-44ba-90dc-a1cbfbea9b93"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ec3df25c-2282-48fd-bdaa-2c1b83d233e0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b0f86811-e01d-4789-92a5-e4be3457929a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "74aa132d-b811-4867-8e5b-0782202b9d8d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b305f438-c17a-48e8-8027-a1cfa6c1e3b3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2e0f457e-3f82-4e8f-b529-8616536d7bac"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5ef06913-520f-4dd2-9310-43f9e08c06b7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "46c77eaa-a188-41b7-b6b1-e33183f2e2bb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "77b861e9-c98e-4aea-ae7e-a7582286577b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "20fa6b3c-d887-4807-ab9d-e844c330355f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "83842c3c-8e70-44ca-9044-169506f30e3f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f7a56414-62fe-4939-876e-3119a4c8d401"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9599613b-419b-47de-bc90-80c06fe930aa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "765acd6c-ec19-4467-b3a8-f460f4c36afe"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1d118c6c-ff23-49df-80fb-32d39a7b1285"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "83ba785f-2423-4c15-be6d-39b6dc69092e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a16c3286-09c9-469c-ac24-1827684ffbc7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2dd1d376-0221-42b1-8da4-311493335918"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1a40729d-28f2-4aa7-b6f8-0680e88a5e64"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "55a59689-ac8d-4ae5-9a49-bbaa79e88202"
             }
           ],
           "emissiveIntensity": 0.64,
@@ -69985,6 +71113,288 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "e9c89df8-33a3-4642-8778-43861017afbe"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "652c64da-596a-4f32-b113-33205bbcf6ff"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "49888cbf-9d30-434f-a515-779a03b42e4d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8e19e190-6408-4449-96a7-bd8e79f8990f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d74cce56-1d99-4a7e-bfd6-55075155ddf0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "844f420f-17ff-4134-80f3-5164575b0c0c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d0371e3a-0d9f-471c-bcda-d881cc80d9fd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9ab0e848-a383-4a15-9f83-1c3d5e618d77"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "57ba95f7-eac5-4de5-9c4e-fbb31ba4d5d7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fd085ba0-b32b-4bf3-a2a8-c7c4785ac51d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c4adc32f-754a-4071-b7e1-98bd41fba7a6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3949c2b1-016c-4201-99f9-a2de37429cc0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7c3ac8bd-ffe6-4908-86b3-f8c6dc34abed"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9a715bc2-8b92-4fe8-879c-32127ff4ca69"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f1623028-b307-432d-890a-79660277f0bb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "abeb05e7-f722-40ee-96fc-585ad01a7bd4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b1783fa2-34ce-4137-a8ff-9891e7aa6ade"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "768ab81b-99a4-4432-9e84-dc6608863630"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "228ec6cb-ff38-44e1-b81b-dd712933d8e6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4e3e4439-3075-4c5e-a9d2-5e98e8fa8cb5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0734c6ee-a4b0-4355-adc9-e08fbe56769a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "da7c4c8c-2fc2-41f4-af83-d37f794ed34e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "00690fcd-4867-4a0d-871f-cb646fe80d1f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3abd6818-18d9-4544-b6b9-e0c9b7d919e9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "792ba38d-1328-4a66-b7cb-b4e434128c6c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "46b1e94f-1df5-418c-9a43-9f4df028de58"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "14ed89b9-9229-4952-a22c-fe9f1aa137ff"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "55b56307-0528-4210-b2f6-7cce84320100"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1718e023-4d22-4a56-9e9b-0e26cafa3032"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7a195648-429f-495c-8c35-109d50f355e6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "920f7daa-eaa8-4ee4-8421-7078d294fef9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2422fb37-57e3-470e-8904-32cb337e2b9a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eef70778-d5c7-4daa-b446-9ea3ba225a96"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eceb7c14-099a-4044-ab9c-0e660990451c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6142bada-78fe-4171-be85-14b9f27821c0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "243f52f0-014c-4481-9563-a5a9a11382f7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "424e5db3-08a9-4c77-b994-9c07bd444e2f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4da7ca46-b836-47a1-b52a-0cb86fbe338e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c4bbb7ab-06e3-43bc-a23b-ed7d489a43a0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "64c83549-55dc-4d39-9990-6643f9754104"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "23965f95-0105-44df-a72b-65f5111f7d9e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2891481c-2f53-49b5-ae9e-a51f5a8e1f7e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "18df68c1-4eff-4d50-a81c-fe82ab85ef63"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "51163fb5-0561-4ae0-9218-9601e2af2e2b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d38dac86-b5c4-4231-9ed2-f2b91bc76ff6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "33d99a2b-df73-4c8f-b184-d1ea7849ae26"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5bfde78c-1893-4b0c-b783-ec9bb74daa6b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6ad18ea2-d4d9-4bb3-a9a4-d1b5ad637b64"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -73762,6 +75172,288 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "b9e7f101-1e3f-4445-939b-c45d30de62f0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "67cb955c-b730-41a7-b089-ed02a98cec0e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "137dae3f-6c23-4df4-a33a-1a8b1d527266"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "39ca86e9-e0c6-4758-ae61-20c7022e143d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a8f95402-cf31-4180-8fdb-4bd6ef294f6d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "23600f3f-9882-4baa-9fca-d69bf970d66b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0997113c-77d9-492a-b90a-1051e3d727e9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "17766200-b5f3-43fc-84d5-8ee09cf59cd5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "01930a7b-9211-472f-8274-5ad3d631d24e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a760680a-f94c-4687-9a3f-d4aa5702dc98"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "481e5f1f-35dd-4cd9-bda3-d0bce3b84759"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ae5ff8bf-b912-4531-881c-f21406deb0e0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8e4c1320-f5b6-496c-bb92-9ec648a7dcc5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c8d1e19b-28a0-4a0b-a85d-e34bbbc50423"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "16a4a40f-e906-443e-bc59-4eeb6f230175"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e405544c-f6de-416f-9ea5-6e710ed2f9f9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0dc30a16-2213-4d62-9e64-d3d896ecab01"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b20c8809-20b9-41b7-9e12-12dfc1899f88"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "62569b4a-66f0-4d53-b0eb-67e04c9bc526"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bef1eb63-9e10-472d-b044-1b036f879c1e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eec596c7-89ee-453a-92f3-f2f83827cf59"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "bc874610-68f1-4aad-b694-d478f499d8d1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b615af69-13ee-4ebf-8235-ddb3a0fced23"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9505531f-4ed0-4ca9-a8a2-003f8d84834c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "44d849ab-19ae-4f2d-9559-a8ff714ef098"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "daae430a-9833-41e3-9f6b-d449d454c4c2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "07e77be2-7414-41bf-8cc4-d775cacc8823"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "55b0bd00-ad16-43d3-b755-e6cec9b50cb1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "08ce7273-ba39-4c08-8fde-46f688842ceb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e8e9661d-e4b6-4eef-8fef-3faaea97a0af"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8af5d924-f966-48bf-a118-00eac36b8304"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9ae92bbd-e322-432c-bde7-827243c7f39f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "25e57098-0d39-433d-b4fb-3ead57e92c9a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6e043280-0c26-46c2-af49-dde9b073357f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6784b085-a246-48d3-95c6-c188e1368246"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "804ee43a-d766-4961-a462-9898df26e11d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "930ae07c-be06-4aea-9ddf-a307bf8061bd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6a3f4c5e-653d-4090-957f-6ac6b8dd0b53"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f201cbff-3522-434a-a74c-bbbe22ff5863"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cc52702c-f852-4e5b-a7a1-1214555f985d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8bf4f5be-93f3-441d-bd5c-a2db731d567b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "aec31711-f993-4ef3-be97-ade255e7e241"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "193f55ef-59cf-4d83-bb0e-5e3679fca3fd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "58839d6b-a42b-42e4-812a-f1d627c0cf9e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5110dca0-30a9-4e9f-b693-de60b121d1aa"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6db63c83-8782-4d47-b1b7-bf7c03a90fb3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4eeec58f-8cca-4c8c-a38e-5b139dd55cd5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "67953f90-dba5-4275-b7aa-fe80f2c15514"
             }
           ],
           "emissiveIntensity": 0.64,
@@ -77539,6 +79231,288 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "91f85888-7290-417c-8da7-7a94d3f016ce"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c881ff07-b390-4198-b7ad-447489a13df1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7fe795b6-12db-429a-b886-187f9324c49a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "cd3d2053-2e6d-4e5d-b893-94e525f043b9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "87b36069-5d42-428f-bb57-d523310ca6b3"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6199b6a6-9bca-428b-b0bd-de2b499ffc53"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "78139385-27e8-4fc6-9fb7-d4d137300627"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6a1ee0bb-1501-492a-8854-f1d2ad2067cf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dbedff76-45ec-472f-97ef-6aacd31c2603"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4ff8d4cc-5bce-475d-8a90-5ae6de9843f9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "13eb36ef-51a7-43c3-9d6d-7b24627aae8e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ee4dbc66-3043-4086-acf1-a87df7563e73"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4e2822f8-2c3a-46c8-8d2d-d196b6ebbab1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "268f24e3-cecf-4d24-b5ac-242e9dbebc57"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9251c7e5-ede2-47d9-b3ad-b1edf640e094"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b0c3949c-5671-41b1-8b0c-f3ed0babb4c2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f532693a-df2c-4710-b41c-d39b7628fd48"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "afd74284-2f9a-4585-82b9-7124b8bbff78"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "775b514d-2fe0-4622-bb8f-c172f1037849"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d50ee344-5cc9-4b5f-84c9-6e588576c6bb"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "30b3bd39-2704-4dd2-9cb6-54674a587422"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "222751d2-102e-4314-9c0d-e3b190e98f78"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "63f26f7b-c3be-4bc9-8c29-3a17194568c1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dd4fac4e-5904-4392-b1a6-de2cc2b54679"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "dc794150-2018-4105-8369-f7d6b35f6dab"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d89952d2-2763-49f9-a375-12793e8daedf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6a128614-49da-4926-872c-6a3ef4b70c1e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fc697a22-876d-4d19-b689-73d2ebb8572c"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5abda79c-3172-498a-ac5e-3e66e204e255"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d17c47dc-8e02-4600-8722-22bfbdc47cdd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "962e9e94-53ba-47da-828f-042966f8ac1a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2a7fda72-b3da-40c2-9bfa-a37dd27bb1cc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d04d75f7-6b9f-410c-b3d8-8f5240dcdce6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e4f56551-b664-4e68-a3f2-181567e03290"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2595d14e-4727-4bf8-a83c-49269d1f01fe"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "78897380-73b0-4e68-959a-ae8ec3e29e88"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2f0f312f-4356-4813-bc70-eebc0d4296a8"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "d2cc56b6-9f51-4e70-9043-8331cde1fb9a"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3166b383-43ea-43f9-986a-f7424d84e5a0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0c80d94a-7bc2-49a7-8769-8b882bceaada"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "328f8a51-ea8d-4c7d-8a89-b951ecb013bf"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9bb64d00-34f1-459c-942e-a2962be06c33"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e47ede8d-4d62-42a2-aea8-c64a0202ff99"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "966b0694-252e-4b6f-9ef0-638c8c72f566"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7b8f05ca-058e-4960-bb5f-4758440d9b95"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "0c9b9a04-91c5-4652-a752-3462e15e0962"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "917fb9ac-aad5-451b-b5f8-0ec6c244194d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "54925bda-67e6-4252-b905-a975184ef926"
             }
           ],
           "emissiveIntensity": 0.49,

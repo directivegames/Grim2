@@ -20,6 +20,9 @@ import {
   resolveAndCacheUiImage,
 } from '../utils/ui-image-cache.js';
 import { LOADING_SCREEN_ATTR, LoadingScreenUI, LoadingStages } from './LoadingScreenUI.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
+import { MobileCombatChromeUI } from './MobileCombatChromeUI.js';
+import { prepareMobileForGameplay } from '../utils/mobile-startup.js';
 
 const SHATTER_COLS = 8;
 const SHATTER_ROWS = 6;
@@ -485,9 +488,16 @@ export class StartMenuUI {
     // Black out and start grim intro immediately — never expose the street view
     // while the menu shatter runs or the intro actor spins up.
     if (this._onPlay) {
-      ensureGrimIntroBlackCover(this._world);
-      this._onPlay();
-      this._customPlayStarted = true;
+      const startCustomPlay = (): void => {
+        ensureGrimIntroBlackCover(this._world);
+        this._onPlay!();
+        this._customPlayStarted = true;
+      };
+      if (isMobileDevice()) {
+        void prepareMobileForGameplay(this._world).then(startCustomPlay);
+      } else {
+        startCustomPlay();
+      }
     }
 
     const gameContainer = this._gameContainer();
@@ -590,16 +600,25 @@ export class StartMenuUI {
     this._playLabel = null;
     StartMenuUI.byWorld.delete(this._world);
 
-    if (this._customPlayStarted) {
-      this._customPlayStarted = false;
-    } else if (this._onPlay) {
-      this._onPlay();
+    const runAfterMenu = (): void => {
+      if (this._customPlayStarted) {
+        this._customPlayStarted = false;
+      } else if (this._onPlay) {
+        this._onPlay();
+      } else {
+        // Default flow — show the dramatic intro then unlock gameplay.
+        void ReadyToReapUI.play(this._world, () => {
+          this._setInput(true);
+          setGameplayUnlocked(true);
+          MobileCombatChromeUI.attach(this._world)?.refreshVisibility();
+        });
+      }
+    };
+
+    if (isMobileDevice()) {
+      void prepareMobileForGameplay(this._world).then(runAfterMenu);
     } else {
-      // Default flow — show the dramatic intro then unlock gameplay.
-      void ReadyToReapUI.play(this._world, () => {
-        this._setInput(true);
-        setGameplayUnlocked(true);
-      });
+      runAfterMenu();
     }
   }
 

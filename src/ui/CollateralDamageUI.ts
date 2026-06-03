@@ -4,6 +4,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+
 const MONTserrat_BOLD_URL =
   '@project/assets/UI/Bree_Serif,Montserrat/Montserrat/static/Montserrat-Bold.ttf';
 
@@ -79,8 +81,11 @@ export class CollateralDamageUI {
     const gameContainer = this._gameContainer();
     if (!gameContainer || this._container) return;
 
+    ensureMobileHudStyles(gameContainer);
+
     this._container = document.createElement('div');
     this._container.setAttribute('data-collateral-damage-ui', '');
+    this._container.className = 'grim-hud-collateral';
     this._container.style.cssText = `
       position: absolute;
       top: 14px;

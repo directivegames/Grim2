@@ -14,6 +14,7 @@ import {
   GRIM_STAT_UPGRADES,
   type ItemCost,
 } from '../data/upgrades.js';
+import { GRIM_GRINDER_SKILL_ID } from '../data/grim-grinder-config.js';
 import { satisfiesItemCost, spendItemCost } from './item-cost.js';
 import {
   BASE_GRIM_STATS,
@@ -314,6 +315,11 @@ class GrimVaultImpl {
       return stored;
     }
     return DEFAULT_SKILL_LEVEL[skillId] ?? 0;
+  }
+
+  /** True after Grim Grinder is purchased in the Skills tab. */
+  public hasGrimGrinderUnlocked(): boolean {
+    return this.getSkillLevel(GRIM_GRINDER_SKILL_ID) >= 1;
   }
 
   /** Index into levelCosts for upgrading from the current level to the next. */

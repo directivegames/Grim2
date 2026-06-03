@@ -3,6 +3,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+
 const MONTserrat_BOLD_URL =
   '@project/assets/UI/Bree_Serif,Montserrat/Montserrat/static/Montserrat-Bold.ttf';
 
@@ -81,8 +83,11 @@ export class InnocentSaveProgressUI {
     const gc = this._gameContainer();
     if (!gc || this._container) return;
 
+    ensureMobileHudStyles(gc);
+
     this._container = document.createElement('div');
     this._container.setAttribute('data-innocent-save-progress', '');
+    this._container.className = 'grim-hud-mission-objective';
     this._container.style.cssText = `
       position: absolute;
       top: 48px;

@@ -19,11 +19,15 @@ import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
 import { withMenuSelectSound } from '../utils/menu-audio.js';
 import { injectBreeSerifFont } from './uiTypography.js';
 import { ShopItemIconsHUDUI } from './ShopItemIconsHUDUI.js';
+import { GrimGrinderHUDUI } from './GrimGrinderHUDUI.js';
 import {
   formatStatBonusPerLevel,
   skillCurrentDescription,
   skillLevelPips,
 } from './upgrade-shop-format.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
+import { ensureMobileMenuStyles } from './mobile-menus-layout.js';
+import { MobileCombatChromeUI } from './MobileCombatChromeUI.js';
 
 const BG_URL = '@project/assets/UI/Shopbackground.webp';
 const UPGRADE_WINDOW_URL = '@project/assets/UI/Upgradewindow.webp';
@@ -31,8 +35,9 @@ const SHOP_WINDOW_URL = '@project/assets/UI/shopwindow.webp';
 const BTN_URL = '@project/assets/UI/menuelement.webp';
 const SHOP_OVERLAY_ATTR = 'data-grim-upgrade-shop';
 
-const ACTION_BTN_MIN_WIDTH = 132;
-const ACTION_BTN_HEIGHT = 50;
+const ACTION_BTN_WIDTH = '152px';
+const ACTION_BTN_ASPECT = 3.4;
+const CLOSE_BTN_WIDTH = 'min(220px, 56%)';
 const SHOP_TOAST_ATTR = 'data-grim-shop-toast';
 const SOULS_COUNTER_ATTR = 'data-grim-shop-souls-counter';
 const SHOP_SOULS_SHAKE_CLASS = 'grim-shop-souls-shake';
@@ -164,6 +169,9 @@ export class UpgradeShopUI {
 
     const backdrop = document.createElement('div');
     backdrop.setAttribute(SHOP_OVERLAY_ATTR, '');
+    if (isMobileDevice()) {
+      backdrop.classList.add('grim-shop-mobile');
+    }
     // Keep hidden until icons are warmed in cache (prevents broken-image flash).
     backdrop.style.opacity = '0';
     backdrop.style.cssText = `
@@ -244,6 +252,7 @@ export class UpgradeShopUI {
     `;
 
     this._listHost = document.createElement('div');
+    this._listHost.setAttribute('data-grim-shop-list', '');
     this._listHost.style.cssText = `
       position: absolute;
       left: 10%;
@@ -261,12 +270,12 @@ export class UpgradeShopUI {
 
     const closeBtn = this._createActionButton('CLOSE', true, () => {
       this._destroy();
-    });
+    }, undefined, true);
+    closeBtn.classList.add('grim-shop-close');
     closeBtn.style.cssText += `
       position: relative;
       z-index: 3;
       margin: clamp(8px, 1vh, 14px) auto 0;
-      min-width: 140px;
       align-self: center;
     `;
 
@@ -289,9 +298,12 @@ export class UpgradeShopUI {
     gc.appendChild(backdrop);
     this._overlay = backdrop;
     UpgradeShopUI._injectSoulsShakeStyles(gc);
+    ensureMobileMenuStyles(gc);
 
     this._applyWindowFrame();
     this._refresh();
+
+    MobileCombatChromeUI.attach(this._world)?.refreshVisibility();
 
     requestAnimationFrame(() => {
       if (!this._overlay) return;
@@ -499,10 +511,11 @@ export class UpgradeShopUI {
       locked ? 'LOCKED' : atMax ? 'MAX' : 'UPGRADE',
       canBuy,
       () => {
-        const wasUnlocked = grimVault.getSkillLevel(def.id) >= 1;
+        const wasGrimGrinderUnlocked = grimVault.hasGrimGrinderUnlocked();
         if (grimVault.purchaseSkillUpgrade(def.id)) {
-          if (def.id === GRIM_GRINDER_SKILL_ID && !wasUnlocked) {
+          if (def.id === GRIM_GRINDER_SKILL_ID && !wasGrimGrinderUnlocked) {
             this._showTransformUnlockPopup();
+            void GrimGrinderHUDUI.getInstance(this._world);
           }
           this._refresh();
         }
@@ -565,10 +578,11 @@ export class UpgradeShopUI {
 
   private _createRowShell(): HTMLDivElement {
     const row = document.createElement('div');
+    row.className = 'grim-shop-row';
     row.style.cssText = `
       display: grid;
-      grid-template-columns: 1fr minmax(${ACTION_BTN_MIN_WIDTH}px, max-content);
-      gap: 10px 12px;
+      grid-template-columns: 1fr minmax(${ACTION_BTN_WIDTH}, 42%);
+      gap: 12px 14px;
       align-items: center;
       padding: 10px 12px;
       background: rgba(0, 0, 0, 0.45);
@@ -857,12 +871,14 @@ export class UpgradeShopUI {
     enabled: boolean,
     onClick: () => void,
     onDisabledClick?: () => void,
+    wide = false,
   ): HTMLDivElement {
     const wrap = document.createElement('div');
+    wrap.className = 'grim-shop-action';
     wrap.style.cssText = `
-      min-width: ${ACTION_BTN_MIN_WIDTH}px;
-      height: ${ACTION_BTN_HEIGHT}px;
-      padding: 0 16px;
+      width: ${wide ? CLOSE_BTN_WIDTH : '100%'};
+      max-width: ${wide ? 'none' : ACTION_BTN_WIDTH};
+      aspect-ratio: ${ACTION_BTN_ASPECT} / 1;
       box-sizing: border-box;
       flex-shrink: 0;
       display: flex;
@@ -872,7 +888,7 @@ export class UpgradeShopUI {
       opacity: ${enabled ? '1' : '0.45'};
       font-family: Montserrat, sans-serif;
       font-weight: 800;
-      font-size: 12px;
+      font-size: clamp(10px, 1.6vw, 12px);
       letter-spacing: 0.12em;
       color: rgba(255, 240, 210, 0.95);
       white-space: nowrap;
@@ -880,7 +896,7 @@ export class UpgradeShopUI {
     `;
     if (this._btnUrl) {
       wrap.style.backgroundImage = `url("${this._btnUrl}")`;
-      wrap.style.backgroundSize = '100% 100%';
+      wrap.style.backgroundSize = '100% auto';
       wrap.style.backgroundRepeat = 'no-repeat';
       wrap.style.backgroundPosition = 'center';
     } else {
@@ -923,5 +939,6 @@ export class UpgradeShopUI {
     this._soulsEl = null;
     this._soulsWrap = null;
     UpgradeShopUI.byWorld.delete(this._world);
+    MobileCombatChromeUI.attach(this._world)?.refreshVisibility();
   }
 }

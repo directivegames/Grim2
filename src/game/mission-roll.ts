@@ -212,8 +212,8 @@ MODIFIERS: (coming soon)`;
       const mins = Math.floor(config.timeLimitSec / 60);
       const secs = config.timeLimitSec % 60;
       const timeStr = mins > 0 ? (secs > 0 ? `${mins}m ${secs}s` : `${mins}m`) : `${secs}s`;
-      return `GOALS: ${config.killsRequired} combo kills (>10)
-WHAT: Keep your combo alive and chain kills—timer starts on your first kill (${timeStr}).
+      return `GOALS: ${config.killsRequired} combo kills (combo 10+)
+WHAT: Build combo to 10+ — then kills count. Drop the combo and progress pauses until you rebuild. Finish before collateral hits 100% (${timeStr} limit once chain is live).
 MODIFIERS: (coming soon)`;
     }
     case 'boss-fight':

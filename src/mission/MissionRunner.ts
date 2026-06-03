@@ -189,7 +189,7 @@ class MissionRunnerImpl {
       if (config.type === 'survive') {
         surviveTimerUi.setTimer(config.durationSec, config.durationSec, 'SURVIVE');
       } else if (config.type === 'chain-reap') {
-        surviveTimerUi.setTimer(config.timeLimitSec, config.timeLimitSec, 'AWAIT FIRST KILL');
+        surviveTimerUi.setTimer(config.timeLimitSec, config.timeLimitSec, 'AWAIT COMBO 10+');
       } else {
         surviveTimerUi.setTimer(config.timeLimitSec, config.timeLimitSec, 'TIME LEFT');
       }

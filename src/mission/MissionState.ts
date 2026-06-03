@@ -15,8 +15,7 @@ import {
   missionUsesCollateral,
   missionUsesInnocents,
 } from '../data/mission-types.js';
-import { CHAIN_REAP_MIN_COMBO } from '../game/risk5-plus.js';
-import { comboMeterTracker } from '../actors/ComboMeterTracker.js';
+import { chainReapKillCounts } from '../game/risk5-plus.js';
 import { ItemCollectedToastUI } from '../ui/ItemCollectedToastUI.js';
 import type { RiskLevel } from '../data/risk-levels.js';
 
@@ -87,10 +86,9 @@ class MissionStateImpl {
   private _timeLimitRemainingSec = 0;
   private _comboGraceElapsedSec = 0;
 
-  private _chainReapStarted = false;
+  private _chainTimerActive = false;
   private _chainKillsCounted = 0;
   private _chainTimeRemainingSec = 0;
-  private _chainComboGraceSec = 0;
 
   private _innocentSaveTimerSec = 0;
   private _activeInnocent = false;
@@ -198,10 +196,9 @@ class MissionStateImpl {
     this._surviveRemainingSec = 0;
     this._timeLimitRemainingSec = 0;
     this._comboGraceElapsedSec = 0;
-    this._chainReapStarted = false;
+    this._chainTimerActive = false;
     this._chainKillsCounted = 0;
     this._chainTimeRemainingSec = 0;
-    this._chainComboGraceSec = 0;
     this._innocentSaveTimerSec = 0;
     this._activeInnocent = false;
     this._innocentSpawnPending = false;
@@ -223,7 +220,9 @@ class MissionStateImpl {
             ? config.collateralTickPerSecond
             : isReapBeforeCollateralMission(config)
               ? config.collateralTickPerSecond
-              : 0;
+              : isChainReapMission(config)
+                ? config.collateralTickPerSecond
+                : 0;
 
       this._collateralDamage = Math.min(100, this._collateralDamage + tickRate * deltaTime);
       this._listeners.onCollateralChanged?.(this._collateralDamage);
@@ -261,7 +260,7 @@ class MissionStateImpl {
     }
 
     if (isChainReapMission(config)) {
-      if (this._chainReapStarted) {
+      if (this._chainTimerActive) {
         this._chainTimeRemainingSec = Math.max(0, this._chainTimeRemainingSec - deltaTime);
         this._listeners.onSurviveTimerChanged?.(
           this._chainTimeRemainingSec,
@@ -273,17 +272,6 @@ class MissionStateImpl {
           this._chainKillsCounted < config.killsRequired
         ) {
           this._endFailed('time-expired');
-          return;
-        }
-      }
-
-      const combo = comboMeterTracker.getComboCount();
-      if (combo > CHAIN_REAP_MIN_COMBO) {
-        this._chainComboGraceSec = 0;
-      } else if (this._chainReapStarted) {
-        this._chainComboGraceSec += deltaTime;
-        if (this._chainComboGraceSec >= config.comboGracePeriodSec) {
-          this._endFailed('combo-lost');
           return;
         }
       }
@@ -323,17 +311,16 @@ class MissionStateImpl {
 
     const config = this._config;
 
-    if (!this._chainReapStarted) {
-      this._chainReapStarted = true;
-      this._chainTimeRemainingSec = config.timeLimitSec;
-      this._listeners.onSurviveTimerChanged?.(
-        this._chainTimeRemainingSec,
-        config.timeLimitSec,
-        'TIME LEFT',
-      );
-    }
-
-    if (comboAfterKill > CHAIN_REAP_MIN_COMBO) {
+    if (chainReapKillCounts(comboAfterKill)) {
+      if (!this._chainTimerActive) {
+        this._chainTimerActive = true;
+        this._chainTimeRemainingSec = config.timeLimitSec;
+        this._listeners.onSurviveTimerChanged?.(
+          this._chainTimeRemainingSec,
+          config.timeLimitSec,
+          'TIME LEFT',
+        );
+      }
       this._chainKillsCounted++;
       this._notifyProgress();
       this._checkWin();
@@ -442,7 +429,7 @@ class MissionStateImpl {
       this._soulsCollected = Math.max(this._soulsCollected, config.soulsRequired);
       this._innocentsSaved = Math.max(this._innocentsSaved, config.innocentsToSave);
     } else if (isChainReapMission(config)) {
-      this._chainReapStarted = true;
+      this._chainTimerActive = true;
       this._chainKillsCounted = Math.max(this._chainKillsCounted, config.killsRequired);
     } else if (isReapMission(config) || isReapBeforeCollateralMission(config) || isSpeedReapMission(config)) {
       this._soulsCollected = Math.max(this._soulsCollected, config.soulsRequired);
@@ -580,7 +567,7 @@ class MissionStateImpl {
         this._chainKillsCounted,
         config.killsRequired,
       );
-      if (this._chainReapStarted) {
+      if (this._chainTimerActive) {
         this._listeners.onSurviveTimerChanged?.(
           this._chainTimeRemainingSec,
           config.timeLimitSec,

@@ -89,6 +89,12 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
     return null;
   }
 
+  /** Mobile virtual stick → planar movement input. */
+  public setMobileStickInput(forward: number, right: number): void {
+    this.forwardInput.value = forward;
+    this.rightInput.value = right;
+  }
+
   /** Clear cached input/velocity when restarting a mission from a fresh spawn. */
   public resetRuntimeMotion(): void {
     this.forwardInput.value = 0;

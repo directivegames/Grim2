@@ -5,6 +5,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { FIST_COOLDOWN_SEC, SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
 import { grimVault } from '../game/GrimVault.js';
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
 
 const FIST_ICON_URL = '@project/assets/UI/fistofa.webp';
 
@@ -33,9 +34,12 @@ export class FistAbilityHUDUI {
       return;
     }
 
+    ensureMobileHudStyles(gc);
+
     const bottom = HEALTH_BAR_BOTTOM + HEALTH_BAR_HEIGHT + GAP_ABOVE_HEALTH;
 
     this._container = document.createElement('div');
+    this._container.className = 'grim-hud-fist';
     this._container.style.cssText = `
       position: absolute;
       bottom: ${bottom}px;
@@ -52,6 +56,7 @@ export class FistAbilityHUDUI {
     `;
 
     const keyHint = document.createElement('span');
+    keyHint.setAttribute('data-grim-hud-key', '');
     keyHint.textContent = 'E';
     keyHint.style.cssText = `
       font-family: Montserrat, sans-serif;
@@ -67,6 +72,7 @@ export class FistAbilityHUDUI {
     `;
 
     const iconWrap = document.createElement('div');
+    iconWrap.setAttribute('data-grim-hud-icon', '');
     iconWrap.style.cssText = `
       position: relative;
       width: ${ICON_SIZE}px;

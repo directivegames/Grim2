@@ -1264,6 +1264,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._healthBarUI = null;
     this._fistAbilityHUD?.destroy();
     this._fistAbilityHUD = null;
+    this._grimGrinderHUD?.destroy();
+    this._grimGrinderHUD = null;
     // Clean up KO sign UI
     this._koSignUI?.destroy();
     this._koSignUI = null;

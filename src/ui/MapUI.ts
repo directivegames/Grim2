@@ -18,12 +18,15 @@ import {
   type MissionBoard,
 } from '../game/MissionSelector.js';
 import { applyRisk5PlusToMission } from '../game/mission-risk5-plus.js';
-import { GRIM_GRINDER_SKILL_ID } from '../data/grim-grinder-config.js';
 import { grimVault } from '../game/GrimVault.js';
 import { UpgradeShopUI } from './UpgradeShopUI.js';
 import { playShopOpenSound, withMenuSelectSound } from '../utils/menu-audio.js';
 import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 import { fadeInElement, fadeOutIntroBlackCover } from '../utils/screen-transition.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
+import { ensureMobileMenuStyles } from './mobile-menus-layout.js';
+import { MobileCombatChromeUI } from './MobileCombatChromeUI.js';
+import { attachMobileMapPanZoom } from './mobile-map-viewport.js';
 
 /** Set true only when testing map debug keys (R / L). */
 const SHOW_MAP_DEBUG_HINT = false;
@@ -88,6 +91,7 @@ export class MapUI {
   private readonly _resolvedIconUrls = new Map<string, string>();
   private _missionBoard: MissionBoard = {};
   private _activePoolId = 'suburbs';
+  private _mobileMapCleanup: (() => void) | null = null;
 
   private readonly _escapeKeyHandler = (e: KeyboardEvent): void => {
     if (e.key !== 'Escape' || !this._root) {
@@ -114,6 +118,26 @@ export class MapUI {
 
     returnToMainMenu(this._world);
   };
+
+  /** Same flow as Escape — used by the mobile-only map back button. */
+  private _handleMapBackAction(): void {
+    if (UpgradeShopUI.isOpen(this._world)) {
+      UpgradeShopUI.close(this._world);
+      return;
+    }
+
+    if (this._briefing) {
+      this._closeBriefing();
+      return;
+    }
+
+    if (this._controlsPanel) {
+      this._closeControls();
+      return;
+    }
+
+    returnToMainMenu(this._world);
+  }
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -237,7 +261,7 @@ export class MapUI {
 
     const root = document.createElement('div');
     root.setAttribute(MAP_OVERLAY_ATTR, '');
-    root.className = 'grim-map-root';
+    root.className = isMobileDevice() ? 'grim-map-root grim-map-mobile' : 'grim-map-root';
     root.style.cssText = `
       position: absolute;
       inset: 0;
@@ -251,65 +275,30 @@ export class MapUI {
       overflow: hidden;
     `;
 
-    const mapWrap = document.createElement('div');
-    mapWrap.style.cssText = `
-      position: relative;
-      width: min(96vw, 140vh * 1.45);
-      max-height: 96vh;
-      aspect-ratio: 1.45 / 1;
-    `;
+    if (isMobileDevice()) {
+      root.appendChild(this._createMobileBackButton());
+      const viewport = document.createElement('div');
+      viewport.className = 'grim-map-mobile-viewport';
+      viewport.setAttribute('data-grim-map-pan-surface', '');
+      viewport.style.cssText = `
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        touch-action: none;
+        z-index: 1;
+      `;
 
-    const mapImg = document.createElement('div');
-    mapImg.style.cssText = `
-      position: absolute;
-      inset: 0;
-      background-image: url("${this._resolvedMapUrl}");
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-    `;
-    mapWrap.appendChild(mapImg);
+      const mapWrap = this._createMapStage(true);
+      viewport.appendChild(mapWrap);
+      root.appendChild(viewport);
+      root.appendChild(this._createMobileMapChrome());
 
-    const vignette = document.createElement('div');
-    vignette.className = 'grim-map-vignette';
-    mapWrap.appendChild(vignette);
+      this._mobileMapCleanup = attachMobileMapPanZoom(viewport, mapWrap, { fillViewport: true });
+    } else {
+      const mapWrap = this._createMapStage(false);
+      root.appendChild(mapWrap);
+    }
 
-    const scanlines = document.createElement('div');
-    scanlines.className = 'grim-map-scanlines';
-    mapWrap.appendChild(scanlines);
-
-    const markersLayer = document.createElement('div');
-    markersLayer.style.cssText = `
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    `;
-
-    MISSIONS.forEach((mission, index) => {
-      markersLayer.appendChild(this._createMarker(mission, index));
-    });
-    markersLayer.appendChild(this._createShopMarker(MISSIONS.length));
-    mapWrap.appendChild(markersLayer);
-
-    const compass = document.createElement('div');
-    compass.className = 'grim-map-compass';
-    compass.style.cssText = `
-      position: absolute;
-      left: 2%;
-      bottom: 4%;
-      width: clamp(56px, 8vw, 88px);
-      height: clamp(56px, 8vw, 88px);
-      background-image: url("${this._resolvedCompassUrl}");
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      pointer-events: none;
-      opacity: 0.95;
-    `;
-    mapWrap.appendChild(compass);
-    mapWrap.appendChild(this._createControlsButton());
-
-    root.appendChild(mapWrap);
     if (SHOW_MAP_DEBUG_HINT) {
       root.appendChild(this._createDebugRerollHint());
     }
@@ -318,6 +307,7 @@ export class MapUI {
     document.addEventListener('keydown', this._escapeKeyHandler, true);
 
     MapUI._injectStyles(gameContainer);
+    ensureMobileMenuStyles(gameContainer);
     MapMusicActor.ensurePlaying(this._world);
 
     const introCover = gameContainer.querySelector(
@@ -328,6 +318,8 @@ export class MapUI {
     }
 
     this._refreshMissionBoard('suburbs');
+
+    MobileCombatChromeUI.attach(this._world)?.refreshVisibility();
 
     fadeInElement(root, 480);
     void fadeOutIntroBlackCover(this._world, 520);
@@ -368,6 +360,210 @@ export class MapUI {
     console.info(
       `[Debug] Forced Postman boss fight on unlocked risks (L). Select risk ${postmanRisk} and START.`,
     );
+  }
+
+  private _createMapStage(mobile: boolean): HTMLDivElement {
+    const mapWrap = document.createElement('div');
+    mapWrap.className = 'grim-map-stage';
+    mapWrap.setAttribute('data-grim-map-pan-surface', '');
+
+    if (mobile) {
+      mapWrap.style.cssText = `
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        transform-origin: 0 0;
+        will-change: transform;
+      `;
+    } else {
+      mapWrap.style.cssText = `
+        position: relative;
+        width: min(96vw, 140vh * 1.45);
+        max-height: 96vh;
+        aspect-ratio: 1.45 / 1;
+      `;
+    }
+
+    const mapImg = document.createElement('div');
+    mapImg.setAttribute('data-grim-map-pan-surface', '');
+    mapImg.style.cssText = `
+      position: absolute;
+      inset: 0;
+      background-image: url("${this._resolvedMapUrl}");
+      background-size: ${mobile ? 'cover' : 'contain'};
+      background-position: center;
+      background-repeat: no-repeat;
+    `;
+    mapWrap.appendChild(mapImg);
+
+    const vignette = document.createElement('div');
+    vignette.className = 'grim-map-vignette';
+    mapWrap.appendChild(vignette);
+
+    const scanlines = document.createElement('div');
+    scanlines.className = 'grim-map-scanlines';
+    mapWrap.appendChild(scanlines);
+
+    const markersLayer = document.createElement('div');
+    markersLayer.style.cssText = `
+      position: absolute;
+      inset: 0;
+      pointer-events: ${mobile ? 'auto' : 'none'};
+      z-index: 20;
+    `;
+
+    MISSIONS.forEach((mission, index) => {
+      markersLayer.appendChild(this._createMarker(mission, index, mobile));
+    });
+    markersLayer.appendChild(this._createShopMarker(MISSIONS.length, mobile));
+    mapWrap.appendChild(markersLayer);
+
+    if (!mobile) {
+      mapWrap.appendChild(this._createCompassElement());
+      mapWrap.appendChild(this._createControlsButton());
+    }
+
+    return mapWrap;
+  }
+
+  private _createCompassElement(): HTMLDivElement {
+    const compass = document.createElement('div');
+    compass.className = 'grim-map-compass';
+    compass.style.cssText = `
+      position: absolute;
+      left: 2%;
+      bottom: 4%;
+      width: clamp(56px, 8vw, 88px);
+      height: clamp(56px, 8vw, 88px);
+      background-image: url("${this._resolvedCompassUrl}");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      pointer-events: none;
+      opacity: 0.95;
+    `;
+    return compass;
+  }
+
+  private _createMobileMapChrome(): HTMLDivElement {
+    const chrome = document.createElement('div');
+    chrome.className = 'grim-map-mobile-chrome';
+    chrome.style.cssText = `
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 6;
+    `;
+
+    const compass = this._createCompassElement();
+    compass.style.left = 'auto';
+    compass.style.right = 'max(10px, env(safe-area-inset-right))';
+    compass.style.bottom = 'max(12px, env(safe-area-inset-bottom))';
+    compass.style.width = 'clamp(44px, 10vw, 64px)';
+    compass.style.height = 'clamp(44px, 10vw, 64px)';
+
+    chrome.append(compass);
+    return chrome;
+  }
+
+  /**
+   * Pointer + click activation for map markers (touch, mouse, and mobile preview).
+   */
+  private _bindMarkerActivate(el: HTMLElement, onTap: () => void): void {
+    let activePointerId: number | null = null;
+    let startX = 0;
+    let startY = 0;
+    let startTime = 0;
+    let handledByPointer = false;
+
+    const tryActivate = (clientX: number, clientY: number): void => {
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+      if (dx * dx + dy * dy > 42 * 42) {
+        return;
+      }
+      if (performance.now() - startTime > 700) {
+        return;
+      }
+      handledByPointer = true;
+      onTap();
+    };
+
+    el.addEventListener('pointerdown', (e) => {
+      if (!e.isPrimary || e.button !== 0) {
+        return;
+      }
+      activePointerId = e.pointerId;
+      handledByPointer = false;
+      startX = e.clientX;
+      startY = e.clientY;
+      startTime = performance.now();
+      e.stopPropagation();
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {
+        /* */
+      }
+    });
+
+    const onPointerEnd = (e: PointerEvent): void => {
+      if (activePointerId !== e.pointerId) {
+        return;
+      }
+      tryActivate(e.clientX, e.clientY);
+      activePointerId = null;
+      e.stopPropagation();
+      try {
+        el.releasePointerCapture(e.pointerId);
+      } catch {
+        /* */
+      }
+    };
+
+    el.addEventListener('pointerup', onPointerEnd);
+    el.addEventListener('pointercancel', () => {
+      activePointerId = null;
+    });
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!handledByPointer) {
+        onTap();
+      }
+      handledByPointer = false;
+    });
+  }
+
+  private _createMobileBackButton(): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'grim-map-mobile-back';
+    btn.setAttribute('aria-label', 'Back to main menu');
+    btn.textContent = 'BACK';
+    btn.style.cssText = `
+      position: absolute;
+      top: max(10px, env(safe-area-inset-top));
+      left: max(10px, env(safe-area-inset-left));
+      z-index: 30;
+      pointer-events: auto;
+      padding: 10px 16px;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(10px, 2.5vw, 12px);
+      letter-spacing: 0.14em;
+      color: rgba(220, 228, 236, 0.95);
+      background: rgba(8, 12, 18, 0.9);
+      border: 1px solid rgba(0, 220, 255, 0.5);
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+    `;
+    btn.addEventListener('click', withMenuSelectSound(this._world, () => {
+      this._handleMapBackAction();
+    }));
+    return btn;
   }
 
   private _createControlsButton(): HTMLButtonElement {
@@ -413,8 +609,8 @@ export class MapUI {
     }
     this._closeControls();
 
-    const transformUnlocked = grimVault.getSkillLevel(GRIM_GRINDER_SKILL_ID) >= 1;
-    const lines: { keys: string; action: string; muted?: boolean }[] = [
+    const transformUnlocked = grimVault.hasGrimGrinderUnlocked();
+    const lines: { keys: string; action: string }[] = [
       { keys: 'W A S D', action: 'Move' },
       { keys: 'Left Click', action: 'Attack' },
       { keys: 'Right Click', action: 'Throw weapon' },
@@ -423,8 +619,7 @@ export class MapUI {
         keys: 'F',
         action: transformUnlocked
           ? 'Transform — reap 50 souls in a mission, then press F'
-          : 'Transform (once unlocked from shop) — buy Grim Grinder in upgrades',
-        muted: !transformUnlocked,
+          : 'Transform (once unlocked) — buy Grim Grinder in Upgrades → Skills',
       },
     ];
 
@@ -496,14 +691,14 @@ export class MapUI {
         font-family: Montserrat, system-ui, sans-serif;
         font-size: clamp(0.68rem, 1.45vw, 0.82rem);
         line-height: 1.4;
-        color: ${line.muted ? 'rgba(140, 150, 165, 0.75)' : 'rgba(200, 220, 235, 0.95)'};
+        color: rgba(200, 220, 235, 0.95);
       `;
       const keys = document.createElement('span');
       keys.textContent = line.keys;
       keys.style.cssText = `
         font-weight: 800;
         letter-spacing: 0.06em;
-        color: ${line.muted ? 'rgba(120, 130, 145, 0.85)' : 'rgba(160, 245, 255, 0.95)'};
+        color: rgba(160, 245, 255, 0.95);
       `;
       const action = document.createElement('span');
       action.textContent = line.action;
@@ -561,12 +756,14 @@ export class MapUI {
     return hint;
   }
 
-  private _createMarker(mission: MissionDef, markerIndex: number): HTMLDivElement {
+  private _createMarker(mission: MissionDef, markerIndex: number, mobile = false): HTMLDivElement {
     const wrap = document.createElement('div');
     const iconResolved = this._resolvedIconUrls.get(mission.id) ?? '';
     const selectable = mission.selectable;
 
     wrap.className = 'grim-map-marker-enter';
+    const iconW = mobile ? 'clamp(52px, 10vw, 88px)' : 'clamp(72px, 12vw, 140px)';
+    const iconH = mobile ? 'clamp(30px, 6vw, 48px)' : 'clamp(40px, 7vw, 72px)';
     wrap.style.cssText = `
       position: absolute;
       left: ${mission.mapX * 100}%;
@@ -578,8 +775,10 @@ export class MapUI {
       gap: clamp(4px, 0.5vw, 8px);
       pointer-events: auto;
       cursor: ${selectable ? 'pointer' : 'not-allowed'};
-      z-index: 3;
-      max-width: min(40vw, 320px);
+      z-index: 8;
+      touch-action: manipulation;
+      padding: ${mobile ? '8px' : '0'};
+      max-width: ${mobile ? 'min(32vw, 180px)' : 'min(40vw, 320px)'};
       opacity: 0;
       animation: grim-map-marker-in 0.5s ease forwards;
       animation-delay: ${120 + markerIndex * 70}ms;
@@ -590,8 +789,8 @@ export class MapUI {
     iconEl.setAttribute('aria-label', mission.mapTitle);
     iconEl.style.cssText = `
       flex-shrink: 0;
-      width: clamp(72px, 12vw, 140px);
-      height: clamp(40px, 7vw, 72px);
+      width: ${iconW};
+      height: ${iconH};
       background-image: ${iconResolved ? `url("${iconResolved}")` : 'none'};
       background-size: contain;
       background-repeat: no-repeat;
@@ -686,19 +885,26 @@ export class MapUI {
     });
 
     if (selectable) {
-      wrap.addEventListener('click', () => {
+      const openBriefing = withMenuSelectSound(this._world, () => {
         this._showBriefing(mission);
       });
+      if (mobile) {
+        this._bindMarkerActivate(wrap, openBriefing);
+      } else {
+        wrap.addEventListener('click', openBriefing);
+      }
     }
 
     return wrap;
   }
 
-  private _createShopMarker(markerIndex: number): HTMLDivElement {
+  private _createShopMarker(markerIndex: number, mobile = false): HTMLDivElement {
     const wrap = document.createElement('div');
     const iconResolved = this._resolvedShopIconUrl;
 
     wrap.className = 'grim-map-marker-enter';
+    const iconW = mobile ? 'clamp(52px, 10vw, 88px)' : 'clamp(72px, 12vw, 140px)';
+    const iconH = mobile ? 'clamp(30px, 6vw, 48px)' : 'clamp(40px, 7vw, 72px)';
     wrap.style.cssText = `
       position: absolute;
       left: ${SHOP_MAP_X * 100}%;
@@ -710,8 +916,9 @@ export class MapUI {
       gap: clamp(4px, 0.5vw, 8px);
       pointer-events: auto;
       cursor: pointer;
-      z-index: 4;
-      max-width: min(40vw, 320px);
+      z-index: 8;
+      touch-action: manipulation;
+      max-width: ${mobile ? 'min(32vw, 180px)' : 'min(40vw, 320px)'};
       opacity: 0;
       animation: grim-map-marker-in 0.5s ease forwards;
       animation-delay: ${120 + markerIndex * 70}ms;
@@ -723,8 +930,8 @@ export class MapUI {
     iconEl.className = 'grim-map-icon-pulse';
     iconEl.style.cssText = `
       flex-shrink: 0;
-      width: clamp(72px, 12vw, 140px);
-      height: clamp(40px, 7vw, 72px);
+      width: ${iconW};
+      height: ${iconH};
       background-image: ${iconResolved ? `url("${iconResolved}")` : 'none'};
       background-size: contain;
       background-repeat: no-repeat;
@@ -805,10 +1012,15 @@ export class MapUI {
       iconEl.style.filter = 'drop-shadow(0 0 8px rgba(255, 200, 80, 0.35))';
     });
 
-    wrap.addEventListener('click', () => {
+    const openShop = withMenuSelectSound(this._world, () => {
       playShopOpenSound(this._world);
       UpgradeShopUI.open(this._world);
     });
+    if (mobile) {
+      this._bindMarkerActivate(wrap, openShop);
+    } else {
+      wrap.addEventListener('click', openShop);
+    }
 
     return wrap;
   }
@@ -854,6 +1066,7 @@ export class MapUI {
       `;
 
     const panel = document.createElement('div');
+    panel.className = isMobileDevice() ? 'grim-map-briefing-panel' : '';
     panel.style.cssText = `
       position: relative;
       width: min(480px, 92vw);
@@ -1086,6 +1299,9 @@ export class MapUI {
     highlight: boolean,
   ): HTMLDivElement {
     const wrap = document.createElement('div');
+    if (isMobileDevice()) {
+      wrap.className = 'grim-map-briefing-btn';
+    }
     wrap.style.cssText = `
       position: relative;
       width: min(280px, 78%);
@@ -1160,6 +1376,8 @@ export class MapUI {
   }
 
   public destroy(): void {
+    this._mobileMapCleanup?.();
+    this._mobileMapCleanup = null;
     document.removeEventListener('keydown', this._escapeKeyHandler, true);
     UpgradeShopUI.close(this._world);
     this._closeBriefing();
@@ -1170,6 +1388,7 @@ export class MapUI {
     this._root = null;
     MapUI.byWorld.delete(this._world);
     MapMusicActor.stopAll(this._world);
+    MobileCombatChromeUI.attach(this._world)?.refreshVisibility();
   }
 
   private static _injectStyles(container: HTMLElement): void {
@@ -1227,6 +1446,25 @@ export class MapUI {
           rgba(0, 220, 255, 0.15) 2px,
           rgba(0, 220, 255, 0.15) 3px
         );
+      }
+      .grim-map-mobile.grim-map-root {
+        align-items: stretch;
+        justify-content: stretch;
+        background: #050508;
+      }
+      .grim-map-mobile .grim-map-stage .grim-map-vignette {
+        opacity: 0.85;
+      }
+      .grim-map-mobile-viewport {
+        cursor: grab;
+      }
+      .grim-map-mobile-viewport:active {
+        cursor: grabbing;
+      }
+      .grim-map-mobile .grim-map-marker-enter {
+        -webkit-tap-highlight-color: transparent;
+        pointer-events: auto !important;
+        cursor: pointer;
       }
     `;
     container.appendChild(st);

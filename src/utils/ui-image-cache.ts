@@ -2,6 +2,7 @@
  * Resolve, cache, and preload @project UI images so menus/HUD can mount instantly.
  */
 import { resolveProjectAssetUrl } from './resolve-project-asset.js';
+import { isMobileDevice } from './mobile-device.js';
 
 /** Shared menu chrome used by start/pause/options/mission UIs. */
 export const UI_MENU_PANEL = '@project/assets/UI/menuelement.webp';
@@ -60,6 +61,18 @@ export const UI_ASSET_PATHS: readonly string[] = [
   '@project/assets/UI/factory.webp',
   '@project/assets/UI/police.webp',
 ];
+
+/** Menu-boot subset on phones — full HUD/map assets load on demand later. */
+export const MOBILE_UI_PRELOAD_PATHS: readonly string[] = [
+  UI_START_BG,
+  UI_MENU_PANEL,
+  UI_OPTIONS_FRAME,
+  UI_OPTIONS_LOGO,
+];
+
+export function getUiPreloadPaths(): readonly string[] {
+  return isMobileDevice() ? MOBILE_UI_PRELOAD_PATHS : UI_ASSET_PATHS;
+}
 
 const resolvedUrls = new Map<string, string>();
 const pendingResolves = new Map<string, Promise<string>>();
@@ -135,18 +148,19 @@ export type UiPreloadProgressCallback = (loaded: number, total: number) => void;
 
 /** Preload all UI images (safe to call multiple times). */
 export function preloadUiImages(onProgress?: UiPreloadProgressCallback): Promise<void> {
+  const paths = getUiPreloadPaths();
   if (!warmupPromise) {
-    const total = UI_ASSET_PATHS.length;
+    const total = paths.length;
     let loaded = 0;
     warmupPromise = Promise.all(
-      UI_ASSET_PATHS.map(async path => {
+      paths.map(async path => {
         await resolveAndCacheUiImage(path);
         loaded += 1;
         onProgress?.(loaded, total);
       }),
     ).then(() => undefined);
   } else if (onProgress) {
-    onProgress(UI_ASSET_PATHS.length, UI_ASSET_PATHS.length);
+    onProgress(paths.length, paths.length);
   }
   return warmupPromise;
 }

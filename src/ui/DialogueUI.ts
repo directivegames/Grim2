@@ -21,12 +21,13 @@ const SPEAKER_PANEL_BOTTOM_PX = 36;
 const SPEAKER_PANEL_SIDE_RESERVE_PX = 600;
 const SPEAKER_PANEL_MIN_WIDTH_PX = 320;
 /**
- * Text plaque region inside SpeakerUI.png (fractions of panel size).
+ * Text plaque region inside SpeakerUI.webp (fractions of panel size).
+ * Tuned to the dark inner rectangle on the lower half of the frame art.
  */
-const TEXT_INSET_LEFT = 0.13;
-const TEXT_INSET_RIGHT = 0.10;
-const TEXT_INSET_TOP = 0.28;
-const TEXT_INSET_BOTTOM = 0.18;
+const TEXT_INSET_LEFT = 0.14;
+const TEXT_INSET_RIGHT = 0.11;
+const TEXT_INSET_TOP = 0.44;
+const TEXT_INSET_BOTTOM = 0.20;
 const HINT_INSET_RIGHT = 0.10;
 const HINT_INSET_BOTTOM = 0.10;
 const STYLE_ID = 'grim-dialogue-keyframes';
@@ -34,8 +35,8 @@ const TYPEWRITER_MS_PER_CHAR = 35;
 const PANEL_ENTER_MS = 420;
 const PANEL_EXIT_MS = 380;
 const SPEAKER_FADE_MS = 220;
-/** Reserve vertical space for the speaker label inside the clip area. */
-const SPEAKER_LABEL_RESERVE_PX = 22;
+/** Space between speaker label and the top of the dialogue frame. */
+const SPEAKER_GAP_ABOVE_PANEL_PX = 6;
 
 const SPEAKER_COLORS: Record<string, string> = {
   Grim: '#e8dcc8',
@@ -82,6 +83,7 @@ export class DialogueUI {
   private _typewriterTimer: ReturnType<typeof setInterval> | null = null;
   private _closing = false;
   private _removeSkipButton: (() => void) | null = null;
+  private _boundResizePanel: (() => void) | null = null;
 
   private constructor(world: ENGINE.World, lines: DialogueScript, onComplete: () => void) {
     this._world = world;
@@ -171,8 +173,10 @@ export class DialogueUI {
       this._panel.style.opacity = '1';
       this._panel.style.transform = 'translate(-50%, 0)';
     }
+    this._syncPanelHeight();
 
     await delay(PANEL_ENTER_MS);
+    this._syncPanelHeight();
     this._playbackLines = this._expandLines(this._sourceLines);
     this._showLine(0);
   }
@@ -189,20 +193,47 @@ export class DialogueUI {
       font-family: 'Bree Serif', serif;
     `;
 
+    const panelWidth = `min(${SPEAKER_PANEL_MAX_WIDTH_PX}px, 82vw, max(${SPEAKER_PANEL_MIN_WIDTH_PX}px, calc(100vw - ${SPEAKER_PANEL_SIDE_RESERVE_PX}px)))`;
+
     const panel = document.createElement('div');
     panel.className = 'grim-dialogue-panel';
     panel.style.cssText = `
       position: absolute;
       left: 50%;
       bottom: ${SPEAKER_PANEL_BOTTOM_PX}px;
-      width: min(${SPEAKER_PANEL_MAX_WIDTH_PX}px, 82vw, max(${SPEAKER_PANEL_MIN_WIDTH_PX}px, calc(100vw - ${SPEAKER_PANEL_SIDE_RESERVE_PX}px)));
+      width: ${panelWidth};
       max-width: ${SPEAKER_PANEL_MAX_WIDTH_PX}px;
       aspect-ratio: ${SPEAKER_PANEL_ASPECT};
-      height: auto;
+      box-sizing: border-box;
       transform: translate(-50%, 110%);
       opacity: 0;
       transition: transform ${PANEL_ENTER_MS * 0.001}s cubic-bezier(0.22, 1, 0.36, 1),
                   opacity ${PANEL_ENTER_MS * 0.001}s ease;
+    `;
+
+    const speaker = document.createElement('span');
+    speaker.className = 'grim-dialogue-speaker';
+    speaker.style.cssText = `
+      position: absolute;
+      left: calc(50% - var(--grim-dialogue-w-px, 270px) / 2 + var(--grim-dialogue-w-px, 270px) * ${TEXT_INSET_LEFT});
+      bottom: calc(
+        ${SPEAKER_PANEL_BOTTOM_PX}px
+        + var(--grim-dialogue-h-px, 180px)
+        + ${SPEAKER_GAP_ABOVE_PANEL_PX}px
+      );
+      max-width: calc(var(--grim-dialogue-w-px, 270px) * ${1 - TEXT_INSET_LEFT - TEXT_INSET_RIGHT});
+      margin: 0;
+      font-size: clamp(12px, 1.65vw, 15px);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      z-index: 3;
+      transition: opacity ${SPEAKER_FADE_MS * 0.001}s ease;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
     `;
 
     const bg = document.createElement('div');
@@ -232,23 +263,6 @@ export class DialogueUI {
       gap: 0.35em;
       box-sizing: border-box;
       pointer-events: none;
-    `;
-
-    const speaker = document.createElement('span');
-    speaker.className = 'grim-dialogue-speaker';
-    speaker.style.cssText = `
-      flex-shrink: 0;
-      font-size: clamp(11px, 1.5vw, 14px);
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin: 0;
-      transition: opacity ${SPEAKER_FADE_MS * 0.001}s ease;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.85);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
     `;
 
     const body = document.createElement('p');
@@ -282,15 +296,16 @@ export class DialogueUI {
     `;
     hint.textContent = 'Click — Next';
 
-    clip.appendChild(speaker);
     clip.appendChild(body);
     panel.appendChild(bg);
     panel.appendChild(clip);
     panel.appendChild(hint);
+    root.appendChild(speaker);
     root.appendChild(panel);
     container.appendChild(root);
 
     root.addEventListener('click', () => this._onAdvanceClick());
+    this._bindPanelResizeSync();
 
     this._root = root;
     this._panel = panel;
@@ -298,6 +313,37 @@ export class DialogueUI {
     this._speakerEl = speaker;
     this._bodyEl = body;
     this._hintEl = hint;
+  }
+
+  /** Panel height + pixel vars used to anchor the speaker label above the frame. */
+  private _syncPanelHeight(): void {
+    const panel = this._panel;
+    const root = this._root;
+    if (!panel || !root) {
+      return;
+    }
+    const w = panel.offsetWidth;
+    if (w > 0) {
+      const h = w / SPEAKER_PANEL_ASPECT;
+      panel.style.height = `${h}px`;
+      root.style.setProperty('--grim-dialogue-w-px', `${w}px`);
+      root.style.setProperty('--grim-dialogue-h-px', `${h}px`);
+    }
+  }
+
+  private _bindPanelResizeSync(): void {
+    this._unbindPanelResizeSync();
+    const handler = (): void => this._syncPanelHeight();
+    this._boundResizePanel = handler;
+    window.addEventListener('resize', handler, { passive: true });
+    requestAnimationFrame(handler);
+  }
+
+  private _unbindPanelResizeSync(): void {
+    if (this._boundResizePanel) {
+      window.removeEventListener('resize', this._boundResizePanel);
+      this._boundResizePanel = null;
+    }
   }
 
   /** Split long lines so every page fits inside the text plaque. */
@@ -331,7 +377,7 @@ export class DialogueUI {
 
     return {
       maxWidth: Math.max(120, clipWidth),
-      maxBodyHeight: Math.max(40, clipHeight - SPEAKER_LABEL_RESERVE_PX),
+      maxBodyHeight: Math.max(40, clipHeight),
     };
   }
 
@@ -509,6 +555,7 @@ export class DialogueUI {
     void callComplete;
     this._removeSkipButton?.();
     this._removeSkipButton = null;
+    this._unbindPanelResizeSync();
     this._stopTypewriter();
     this._measurer?.remove();
     this._measurer = null;
@@ -530,6 +577,9 @@ export class DialogueUI {
     style.textContent = `
       .grim-dialogue-panel {
         image-rendering: auto;
+      }
+      .grim-dialogue-panel > * {
+        position: absolute;
       }
     `;
     container.appendChild(style);

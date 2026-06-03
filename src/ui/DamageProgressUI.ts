@@ -3,6 +3,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
 export class DamageProgressUI {
@@ -43,8 +45,11 @@ export class DamageProgressUI {
     const gc = this._gameContainer();
     if (!gc || this._container) return;
 
+    ensureMobileHudStyles(gc);
+
     this._container = document.createElement('div');
     this._container.setAttribute('data-damage-progress-ui', '');
+    this._container.className = 'grim-hud-mission-objective';
     this._container.style.cssText = `
       position: absolute;
       top: 48px;

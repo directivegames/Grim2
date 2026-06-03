@@ -7,6 +7,7 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { FONT_URL, injectBreeSerifFont, sunsetNumberTextCss } from './uiTypography.js';
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
 
 const SOULS_BG_URL = '@project/assets/UI/SoulsBG.webp';
 
@@ -48,10 +49,12 @@ export class SoulCounterUI {
     const gameContainer = (world as unknown as { gameContainer?: HTMLElement }).gameContainer;
     if (!gameContainer) return;
 
+    ensureMobileHudStyles(gameContainer);
     void injectBreeSerifFont();
 
-    // Main container - positioned bottom-right
+    // Main container — bottom-right on desktop; .grim-mobile overrides to top-right
     this._container = document.createElement('div');
+    this._container.className = 'grim-hud-souls';
     this._container.style.cssText = `
       position: absolute;
       bottom: 20px;
@@ -70,6 +73,7 @@ export class SoulCounterUI {
 
     // Count display - positioned inside the frame
     this._countDisplay = document.createElement('span');
+    this._countDisplay.setAttribute('data-grim-soul-count', '');
     this._countDisplay.style.cssText = `
       position: absolute;
       right: 80px;
