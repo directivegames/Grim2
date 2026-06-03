@@ -43220,6 +43220,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "93af96f5-4689-4dad-930f-cb85c8faad5f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "da836fb8-78a5-4bb1-9522-f2cce9c11f11"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -54180,6 +54186,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "8d20f25a-70d5-4b8e-b7b5-3c572a93057f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b6ce8f08-ae84-4a27-b9d3-d21b27018850"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -58467,6 +58479,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "902727cf-d390-4212-ac74-68ba152e8912"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3df362da-1734-464c-abe3-9d43ddc73212"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -58634,7 +58652,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "7f6e9bae-0ba4-46da-8d2a-c3ea3b7eb7a5"
+            "uuid": "3edb4ff7-7a3f-43d4-8868-dadf5d7e13dc"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58694,7 +58712,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "74e686f4-717c-4107-aa7e-db8aeca8cdfa"
+            "uuid": "31c86fb3-b7e2-4223-b938-b5b04dbb6cc5"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58754,7 +58772,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "f3423eeb-dc2a-415f-ad2f-85badb614f6d"
+            "uuid": "231f3fd8-fac9-4018-b19a-69f96cd36b2d"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58814,7 +58832,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "10c66fc9-5637-4f1f-8eb8-6d8e3caf62d4"
+            "uuid": "cd7866cb-7638-41d9-835f-2590a0324846"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58874,7 +58892,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "ce38e363-6ffd-408a-a699-f4b16ce068d1"
+            "uuid": "13282820-de98-436a-b485-d712f6de911f"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58934,7 +58952,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "e62e0ecb-360c-4256-b767-cf8af238051e"
+            "uuid": "eae7df17-f5f3-470d-81a5-8436ea0e129f"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -58994,7 +59012,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "d056226b-52e0-4c73-b8e5-b59076ac4d08"
+            "uuid": "fac31567-06c8-4ecc-9239-adf2a208e5bc"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -59055,7 +59073,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "cfd1b09f-b90a-4bfa-b306-86dc442de187"
+            "uuid": "adf2ebf0-70bb-467b-9d85-afdb9f9ec2af"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59109,7 +59127,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "fb39a8b1-a5d5-45f9-9c88-93ea3fd54a52"
+            "uuid": "e8bd9edf-46ab-420c-b36f-736658dd8bea"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59163,7 +59181,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "ac1043be-799d-472e-8496-ff6f553029d6"
+            "uuid": "4b9b01fe-e056-4da3-8ce2-840280afeb9f"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59217,7 +59235,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "af1e49de-9045-4cfb-969b-0f09c319972b"
+            "uuid": "96b40152-b654-4d0e-bd1e-d29b699c22a0"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59271,7 +59289,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "cc3f2cc5-c8e6-4875-be0a-8f4ed433fb6f"
+            "uuid": "371226e8-33aa-415e-922a-7f3064f5ff7e"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59325,7 +59343,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0cc5f59a-912b-4f24-b42d-ca3e34834680"
+            "uuid": "8806720a-8034-434c-a176-669043864f62"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59379,7 +59397,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "cd939658-7282-4511-9b2c-1787e5b530b0"
+            "uuid": "9f969f02-1042-4c97-9ee7-d56475ba0f89"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59433,7 +59451,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "374e03cd-a16b-4d4d-836a-39c39f07e023"
+            "uuid": "d481cf4d-c9b2-40e8-830c-46c8ab8d1f7a"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59487,7 +59505,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0a7559eb-6786-476b-8c4e-1f521a1a89d4"
+            "uuid": "b48e2744-601d-467a-a71b-5b3ae8d828c7"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59541,7 +59559,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "2db09494-d11d-4bc9-a834-d96001797718"
+            "uuid": "8f061755-7a1f-46ca-8a16-f442837275ba"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59595,7 +59613,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "1a8c44cd-726f-480d-8ecc-622b371ed541"
+            "uuid": "f919418e-1e4f-4b24-a602-39aa6849f8b5"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59649,7 +59667,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8081fcd9-2147-434b-a6cf-328c8bee7d0c"
+            "uuid": "e93dcbf2-bd46-4bdd-b4cf-55c5f79d91e3"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59703,7 +59721,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "a091c3d0-5b1b-43b6-bf31-afc5c61dbe28"
+            "uuid": "912a08e6-1939-4f85-ade0-2d770bbb3b7b"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59757,7 +59775,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "79232a58-ec9f-4df4-857b-a2b977282001"
+            "uuid": "1411958a-6c5a-4de4-80dc-e379b52ed239"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59811,7 +59829,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "101554c1-abfb-4766-a5ed-cffe141ece8a"
+            "uuid": "886d836b-029d-47b0-90e8-9b3d74bf6b4e"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59865,7 +59883,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "72fead47-fefc-423c-b703-0901ca11c2da"
+            "uuid": "e9cefe9b-ddbe-4afe-9ed5-961204db1195"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -59918,7 +59936,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "3b95a47b-6556-4775-af03-af215ce71b81"
+            "uuid": "a2b8d4f4-4ec2-4f26-88f4-849bbc8505d3"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -59970,7 +59988,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "fe4036df-7139-45e4-8404-2acb46e3a880"
+            "uuid": "dfd49aa7-f27b-49db-a27b-a14cb433578f"
           },
           "name": "MeshComponent",
           "position": {
@@ -60019,7 +60037,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "36d1f21c-67fb-40af-9574-f0e7b82c901b"
+            "uuid": "eb5ceacc-b00d-4e26-8939-45c4f56b8b9a"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60071,7 +60089,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "e9d69fa8-9c04-45ff-8e83-25afa577927a"
+            "uuid": "8248bd15-37b1-4417-b49b-f894686bd90b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60123,7 +60141,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "b86ab677-cba6-4097-84e5-faf9ffe90863"
+            "uuid": "25f9a909-9663-4421-8169-f8389e9dcb47"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60175,7 +60193,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "1d864654-53d4-4517-ad57-93b9ff368022"
+            "uuid": "8b317e19-d5b9-4ee4-9b9f-1db51ba8a6e6"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60227,7 +60245,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "60a755fa-9bc2-4d85-86d8-0e4f391b6a4e"
+            "uuid": "ddb78e40-48bd-412e-8be6-fa270081c478"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60279,7 +60297,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "a8a5fecb-5744-40b9-83f2-50880bf98158"
+            "uuid": "0dfacf57-78a1-45a2-b944-5c69e8bf72b3"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60331,7 +60349,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0a5864da-a8ef-464e-986a-b5cf9d2e20d2"
+            "uuid": "e849b65e-eb95-42b1-812d-e4d38375ade0"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60383,7 +60401,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "95183d4f-3f03-405c-a448-f23ce5185e6f"
+            "uuid": "19dd42be-5f2a-472e-88d8-2c6c4f13f075"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60435,7 +60453,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "e4e01ba5-475f-4409-81e5-9dafb673cf8a"
+            "uuid": "816c60cc-2990-493f-a7f6-4b5da88e7abb"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60487,7 +60505,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "e9966890-09b2-49ff-adee-6539e77f6a4e"
+            "uuid": "57d6e683-0358-48ce-af1c-76e23178cb3a"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -60539,7 +60557,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8a4b5bca-f35b-47a5-81f2-a135d2ded511"
+            "uuid": "c2484efe-a1af-4ff0-b684-4c75ac50f11a"
           },
           "name": "MeshComponent",
           "position": {
@@ -68242,6 +68260,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "f0953ba8-36d1-48aa-be5f-4e62291dd466"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f3b99446-e437-411c-810c-0015156273c3"
             }
           ],
           "emissiveIntensity": 0.64,
@@ -72565,6 +72589,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "b4e51959-dfb5-46c2-8f89-a4e1c39610fc"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3d0f0cb5-4ce6-42fd-98a7-2b74baddd398"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -76858,6 +76888,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "6b1d0a1a-beb5-494a-9ad4-50838ec83cf0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b5448a1f-ee14-415a-98fa-3e3f50a572bd"
             }
           ],
           "emissiveIntensity": 0.64,
@@ -81151,6 +81187,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "fef022f0-280f-4912-824e-09038f6c93ae"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "171cf926-a2e9-47da-99b6-1f6c045f4a0c"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -81432,7 +81474,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "8b4743cd-aeee-42b6-b6d3-f5c4bfd331ae"
+            "uuid": "cdc0e7fd-298d-4b4d-89ea-c30a51bb5873"
           },
           "name": "MeshComponent",
           "physicsOptions": {
