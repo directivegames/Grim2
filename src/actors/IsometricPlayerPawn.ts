@@ -269,6 +269,20 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     return meshComponent;
   }
 
+  protected override createRootComponent(): ENGINE.SceneComponent {
+    const radius = ENGINE.CHARACTER_WIDTH / 2;
+    return ENGINE.MeshComponent.create({
+      name: 'RootComponent',
+      geometry: new THREE.CapsuleGeometry(radius, ENGINE.CHARACTER_HEIGHT - radius * 2),
+      material: new THREE.MeshStandardMaterial({ visible: false }),
+      physicsOptions: {
+        enabled: true,
+        motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
+        collisionProfile: ENGINE.DefaultCollisionProfile.Character,
+      },
+    });
+  }
+
   protected override createMovementComponent(): ENGINE.BasePawnMovementComponent {
     const mc = IsometricMovementComponent.create();
     mc.accelerationLambda = 30;

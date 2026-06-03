@@ -61,6 +61,8 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
   // ── Internal state ────────────────────────────────────────────────────────
 
   private _worldVelocity = new THREE.Vector3();
+  /** Deferred world position applied on the next character-controller step. */
+  private teleportPosition: THREE.Vector3 | null = null;
   // Scratch vector to avoid per-frame allocations in hot path
   private readonly _deltaScratch = new THREE.Vector3();
   private static readonly _worldPosScratch = new THREE.Vector3();
@@ -104,6 +106,8 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
   // Jumping disabled.
   public override jump(_strength: number = 1): void { /* no-op */ }
   public override stopJump(): void { /* no-op */ }
+  // Movement runs in tickPostPhysics; suppress parent's tickPrePhysics path.
+  protected override performMovementStep(_deltaTime: number): void { /* no-op */ }
 
   // ── Tick ─────────────────────────────────────────────────────────────────
 

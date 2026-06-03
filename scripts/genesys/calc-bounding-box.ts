@@ -116,7 +116,7 @@ async function calculateGLBBoundingBox(
   // Update world matrix to ensure transformations are applied
   transformedObject.updateMatrixWorld(true);
 
-  const boundingBox = ENGINE.GLTFMeshComponent.calcBoundingBoxFromGLTF(gltf);
+  const boundingBox = ENGINE.ModelMeshComponent.calcBoundingBoxFromGLTF(gltf);
   return extractBoundingBoxData(boundingBox);
 }
 
@@ -128,7 +128,7 @@ async function calculateGLBBoundingBox(
 async function calculateGLBOriginalBoundingBox(glbFilePath: string): Promise<ENGINE.TBoundingBox> {
   const gltf = await loadGLBFile(glbFilePath);
 
-  const boundingBox = ENGINE.GLTFMeshComponent.calcBoundingBoxFromGLTF(gltf);
+  const boundingBox = ENGINE.ModelMeshComponent.calcBoundingBoxFromGLTF(gltf);
   return extractBoundingBoxData(boundingBox);
 }
 

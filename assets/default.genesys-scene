@@ -715,6 +715,7 @@
             "name": "DefaultMaterial"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4024,6 +4025,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Lampost.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4120,6 +4122,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4148,6 +4151,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4176,6 +4180,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4264,6 +4269,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4292,6 +4298,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4320,6 +4327,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4963,6 +4971,7 @@
           "modelMaterial": "@project/assets/models/material_0_002_material_02.material.json",
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -4992,6 +5001,7 @@
           "modelMaterial": "@project/assets/models/material_0_002_material_02.material.json",
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -5144,6 +5154,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -5172,6 +5183,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -8685,6 +8697,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -8713,6 +8726,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -8741,6 +8755,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -8769,6 +8784,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -8820,6 +8836,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/lamp for chrcu.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -8843,6 +8860,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -8897,6 +8915,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tunnelredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9012,6 +9031,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tunnelredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9043,6 +9063,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9074,6 +9095,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9105,6 +9127,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9598,6 +9621,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9906,6 +9930,7 @@
           "modelMaterial": "@project/assets/textures/car.material.json",
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9946,6 +9971,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -9987,6 +10013,7 @@
           "modelMaterials": [],
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10027,6 +10054,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10067,6 +10095,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10107,6 +10136,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10147,6 +10177,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10187,6 +10218,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10227,6 +10259,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10267,6 +10300,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10307,6 +10341,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10347,6 +10382,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10387,6 +10423,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10427,6 +10464,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10467,6 +10505,7 @@
           "modelMaterial": "@project/assets/textures/Grave.material.json",
           "modelUrl": "@project/assets/models/Grave.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10526,6 +10565,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/lamp for chrcu.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10569,6 +10609,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/lamp for chrcu.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10612,6 +10653,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/lamp for chrcu.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -10749,6 +10791,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -11197,6 +11240,7 @@
           "modelMaterial": "@project/assets/textures/car.material.json",
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -14030,6 +14074,7 @@
           "modelMaterial": "@project/assets/textures/Police.material.json",
           "modelUrl": "@project/assets/models/policerdone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -24726,6 +24771,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Lampost.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -25094,6 +25140,7 @@
           "modelMaterial": "@project/assets/textures/car.material.json",
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -25178,6 +25225,7 @@
           "modelMaterial": "@project/assets/textures/Police.material.json",
           "modelUrl": "@project/assets/models/policerdone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -25263,6 +25311,7 @@
           "modelMaterial": "@project/assets/textures/Police.material.json",
           "modelUrl": "@project/assets/models/policerdone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -25546,6 +25595,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Wall.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -25615,6 +25665,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Wall.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -25682,6 +25733,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Wall.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -25717,6 +25769,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Wall.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -25834,6 +25887,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -25866,6 +25920,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -27508,6 +27563,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -27548,6 +27604,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -27588,6 +27645,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -27955,6 +28013,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28119,6 +28178,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28159,6 +28219,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28199,6 +28260,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28544,6 +28606,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28584,6 +28647,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28624,6 +28688,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28664,6 +28729,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28704,6 +28770,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28744,6 +28811,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28784,6 +28852,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28824,6 +28893,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28864,6 +28934,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28904,6 +28975,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -28944,6 +29016,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29007,6 +29080,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newspookyhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29030,6 +29104,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29289,6 +29364,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newstore.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29616,6 +29692,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29656,6 +29733,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29696,6 +29774,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29735,6 +29814,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29843,6 +29923,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29882,6 +29963,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29921,6 +30003,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29960,6 +30043,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -29999,6 +30083,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -30039,6 +30124,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -30079,6 +30165,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -30119,6 +30206,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -32945,6 +33033,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Lampost.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -35736,6 +35825,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Lampost.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -38527,6 +38617,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Lampost.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -38889,6 +38980,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/lamp for chrcu.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -42524,6 +42616,36 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "0216359c-a169-49e5-98f0-2e262a29f1f6"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4148a065-c658-4b5c-a199-0ffd9262a14b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2909a824-d93f-4660-8792-0358ee4dfdff"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e5eeb98b-f5d4-4c58-b64b-c4d0a6348622"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5eb0f64d-e218-4635-b39b-01954993dac4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a74c7bb2-b148-4c0a-b432-2e72f559f664"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -43019,6 +43141,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -43059,6 +43182,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -43099,6 +43223,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -43261,6 +43386,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -43488,6 +43614,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/2ndnewhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -43965,6 +44092,7 @@
           "modelMaterial": "@project/assets/textures/Police.material.json",
           "modelUrl": "@project/assets/models/policerdone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44001,6 +44129,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44029,6 +44158,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44061,6 +44191,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44177,6 +44308,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44217,6 +44349,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44257,6 +44390,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44297,6 +44431,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44337,6 +44472,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44377,6 +44513,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44417,6 +44554,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44608,6 +44746,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44757,6 +44896,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -44797,6 +44937,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -45386,6 +45527,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tunnelredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -45718,6 +45860,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -45749,6 +45892,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -45788,6 +45932,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/2ndnewhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -58523,6 +58668,161 @@
                 ]
               },
               "uuid": "4637356a-5cd8-4625-b201-c0b421795064"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "6d7c89f6-4175-4d52-8923-de1a65ea8615"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "fa31a894-e492-460f-9600-a3ef5fd38910"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "0d93e4b8-ee4a-4151-a400-3debe40254fd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "4eb2097c-da17-444d-ba29-a8907d7f6c82"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "frustumCulled": false,
+              "name": "CloudShadowOverlayPlane",
+              "position": {
+                "$bc": "v3",
+                "_": [
+                  0,
+                  0.01,
+                  0
+                ]
+              },
+              "renderOrder": 2,
+              "rotation": {
+                "$bc": "e",
+                "_": [
+                  -1.570796,
+                  0,
+                  0
+                ]
+              },
+              "scale": {
+                "$bc": "v3",
+                "_": [
+                  992,
+                  992,
+                  1
+                ]
+              },
+              "uuid": "d20a8618-a3e4-4468-ba13-8022aa345fed"
             }
           ],
           "cloudHigh": 0.81,
@@ -59320,6 +59620,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -59501,6 +59802,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/rocksredone.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -59649,6 +59951,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/2ndnewhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60138,6 +60441,7 @@
           "modelMaterial": "@project/assets/textures/car.material.json",
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60178,6 +60482,7 @@
           "modelMaterial": "@project/assets/textures/car.material.json",
           "modelUrl": "@project/assets/models/Car1redon.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60382,6 +60687,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60422,6 +60728,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60462,6 +60769,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60502,6 +60810,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60699,6 +61008,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60727,6 +61037,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60755,6 +61066,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/tombs.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -60786,6 +61098,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61141,6 +61454,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/newhouse.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61509,6 +61823,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61549,6 +61864,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61589,6 +61905,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61629,6 +61946,7 @@
           "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
           "modelUrl": "@project/assets/models/Newtree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61669,6 +61987,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Wall.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -61703,6 +62022,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61742,6 +62062,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61781,6 +62102,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -61820,6 +62142,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/spookytree.glb",
           "name": "RootComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -65477,6 +65800,36 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "7ebd75ab-e7ff-4971-8e53-b9a1a1c4a6d5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "679ad454-5571-4e2b-8300-7a17a07dc6ed"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fa23a0b1-bdd5-4335-a1a9-bcf4b6c3f7ab"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c588f1c9-e792-47d6-882c-599116af3e66"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "3893fb3c-bfce-49e2-a0b0-c3144776c256"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "6dfed704-cf0c-493a-ba4b-94d76948dc97"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -69152,6 +69505,36 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "eaef8900-eece-4929-b456-51a483fadd39"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5de84f83-9f10-4302-a53a-eb13a879ece4"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "e5c39431-0502-4640-8556-f910417678d1"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fb003d33-59d2-4d13-a908-5689239d75d2"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f260e097-bb3f-4fc8-b760-d9741a91b63d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "4f788922-26c2-4a58-8047-bad504b917fe"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -69238,6 +69621,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -69266,6 +69650,7 @@
           "excludeFromNavigation": true,
           "modelUrl": "@project/assets/models/Police block.glb",
           "name": "GLTFMeshComponent",
+          "navigationGeometryRole": "exclude",
           "position": {
             "$bc": "v3",
             "_": [
@@ -69317,7 +69702,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "e129c1c8-5eb1-4442-bfd2-3ffae3decd29"
+            "uuid": "11d75c62-1706-4d4e-863b-0de7dabda468"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -69377,7 +69762,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "85b2aeec-ca62-467d-9a60-f5814eb038dd"
+            "uuid": "e473c24b-d786-495e-87fd-4b8f4c6b3e86"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -69437,7 +69822,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "f8deb3d8-f224-4680-a7bd-1db48c8dce65"
+            "uuid": "6d7d3970-037f-4b68-9486-075d1eadd0a4"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -69497,7 +69882,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "f28c6f2c-bcab-4510-8efc-597d0687f6e8"
+            "uuid": "0bb0164e-bb1f-41c6-bedf-a4575e4b6942"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -69557,7 +69942,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "8f5b67a3-3aac-4b15-b535-2c8b70cfe59d"
+            "uuid": "feedaaea-7c76-4a5d-8808-c87747d3a876"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -69617,7 +70002,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "435c2035-09e4-4aa8-856b-64e022ac7e67"
+            "uuid": "d6731322-fbe9-4aa9-bd26-4004a542e825"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -69677,7 +70062,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "694f114c-093f-454f-a077-4f5463477512"
+            "uuid": "40db6e41-dc60-49a9-96bd-9d2c0bc2f088"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -69738,9 +70123,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7d16f6fd-1836-40de-b64d-50a86aa74dc4"
+            "uuid": "6b7df8c9-d023-47e8-9507-1d9321b81abc"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -69791,9 +70177,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7cbe735d-39b4-4f78-99b7-ed6b51d84eb2"
+            "uuid": "533e46cf-cfe2-49cb-a4b6-014eae9ca4ca"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -69844,9 +70231,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "62b2b571-3fec-4c5e-8c7c-be8b91770a56"
+            "uuid": "68290d72-f0db-4e8e-b628-84e5094f37dc"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -69897,9 +70285,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "4cbbd07f-94f2-40df-85fc-6d9ed099ba27"
+            "uuid": "61014445-a864-4395-bfd1-8fb0ff9df419"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -69950,9 +70339,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "4861962d-e702-400c-bd20-f9f4d7532a5c"
+            "uuid": "e3995b73-3c46-4f3b-80ed-5f471531774b"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70003,9 +70393,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "b1468fbe-02c9-4fe1-9685-ce3d9c72721a"
+            "uuid": "41162de5-452b-4131-8587-5ecb78eb865d"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70056,9 +70447,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "54fb8906-d005-4903-9de6-9bae36284d4e"
+            "uuid": "1d865e83-e5ca-41ba-9f0e-1de7f98290b1"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70109,9 +70501,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "e45c2c29-173a-4707-b57f-3401f33a047c"
+            "uuid": "81cc2c88-242f-4363-98f1-a54781f60124"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70162,9 +70555,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "5309e0c8-8cf6-4f56-bb3a-064bff1b55f4"
+            "uuid": "a71a3d40-fad9-441e-a342-c7d0d2bc1109"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70215,9 +70609,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0b421fa2-d812-470d-969b-7b97758c6e75"
+            "uuid": "c52e27a4-7e7d-4b5b-bd2d-247660d94fcb"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70268,9 +70663,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7402670c-13d3-4125-9b3b-9426924775f7"
+            "uuid": "06795ed4-90ad-4651-8e25-f1f4e95e5808"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70321,9 +70717,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "6718c68b-8533-42d7-baab-730dc626e219"
+            "uuid": "1c70baa6-b7d3-4bba-991c-b098bfa41241"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70374,9 +70771,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "1ea1c47b-bc59-4882-872b-fb4a1f73ba38"
+            "uuid": "a92a5755-89ec-4349-a335-7ab13bb09686"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70427,9 +70825,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "30df2784-50fc-4c33-87a8-dbd3929bc566"
+            "uuid": "3f1ff534-6fb8-4da6-a488-f8b963d070e5"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70480,9 +70879,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "6ca1126d-8d54-4d4d-be06-8c1e1cbb0684"
+            "uuid": "be15394c-ad8d-4fbe-b779-d32dc980fed4"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70533,9 +70933,10 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "86d5bea9-3242-4fbc-9922-5c608caedd5b"
+            "uuid": "0a5098ad-9f66-4e48-aa32-97948e598f93"
           },
           "name": "MeshComponent",
+          "navigationGeometryRole": "exclude",
           "physicsOptions": {
             "enabled": false
           },
@@ -70585,7 +70986,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "eba37cc5-fb87-4667-b65c-7a358ff51476"
+            "uuid": "a5191a53-de35-4d70-9169-b2923ca01902"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -70637,7 +71038,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "2ae1b296-1a38-47ce-9265-d74ffe268224"
+            "uuid": "927dbba9-eaca-495e-bd4d-f15595253f02"
           },
           "name": "MeshComponent",
           "position": {
@@ -70686,7 +71087,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "a16da823-6e7c-46b8-9bbe-2bd69aa73680"
+            "uuid": "4c363286-2b8f-4aea-9916-c0576e5ee126"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -70738,7 +71139,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8cf18fb0-ce34-49b6-8aee-173ff7aa478c"
+            "uuid": "3df7236e-6b1a-430d-935a-7a51503c772c"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -70790,7 +71191,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "88298c11-b432-4c6c-bd71-1bf31c573fd6"
+            "uuid": "73a68d22-1853-41a9-a1cd-50c4b54a3b26"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -70842,7 +71243,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "f59758e0-c719-45e6-8a8a-8004d4dfc04a"
+            "uuid": "5a6d1ab0-171d-401d-9549-f3c05b596a71"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -70894,7 +71295,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "d5972169-4191-47c1-89d7-df16e8090739"
+            "uuid": "48911455-7cca-481d-88f3-621ba8aaafe2"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -70946,7 +71347,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "c3ba0450-bae2-4e39-bc12-2508b0361486"
+            "uuid": "71275f80-673d-42e8-82d3-03c6b6c77082"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -70998,7 +71399,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "147f8107-2ed2-4e78-9223-bdd3cd1310c4"
+            "uuid": "08f22aaf-ae0a-4e75-bdf2-036537ec0f0c"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -71050,7 +71451,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "67274144-fb3d-4e7a-9154-f3ecfccafff1"
+            "uuid": "4ffddefe-7222-4abc-aeac-ab777699f366"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -71102,7 +71503,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "07f6c7f8-8516-4fd1-9e01-7768666c1c22"
+            "uuid": "3f7c420f-1156-43c1-91c8-b4f904b6892a"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -71154,7 +71555,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "d2b916a7-487a-4c9f-ac36-1522d404c1ab"
+            "uuid": "14545f3d-e1fb-4e21-8b1d-ca1d58c9af90"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -71206,7 +71607,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "317141d0-d51f-4d77-9fdc-ab36f2467d38"
+            "uuid": "2aeb0ce8-eaf7-4581-a3e7-2ec429ce861d"
           },
           "name": "MeshComponent",
           "position": {
@@ -78297,6 +78698,36 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "170f4470-8841-4c84-b1aa-b305727c0652"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "f96fe394-44a0-432b-9709-1663dc241395"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "77191afd-8aab-43af-82ec-62d289c80ad9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "eb7457db-0e5b-486b-8493-12147c5d6be7"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "654c879f-7098-403e-bc7d-d00584474105"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ab38324f-5b37-417d-b9d1-74291fc9e620"
             }
           ],
           "emissiveIntensity": 0.64,
@@ -82008,6 +82439,36 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "d9d1a35f-7359-4af6-8557-033cb5ff8062"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "2417aaa0-d500-4bd7-a9a0-2edc62b6e79b"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "9ba974f5-abb5-42e7-863b-c275dfc8ed3d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "8b087920-1d36-4fee-adfe-885bfd97c76d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "fe849d17-905d-40ae-9a56-87883db497b9"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "b0a70434-cf8e-4b68-9a7d-23673c486a9d"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -85689,6 +86150,36 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "f0e9b147-001e-454c-9b93-2cfecc1b04cd"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "959f7417-dcd9-45a9-9961-d306e39addf0"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "be6da889-0170-47d5-a6d0-217fe7ceb435"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "7533246e-9a26-48e3-a0b8-9d46b8f8bc7f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "1d19c580-7c61-4448-bdc5-c066a5950299"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "805dadf9-a183-44af-8f5e-e5ed5c7b8f6b"
             }
           ],
           "emissiveIntensity": 0.64,
@@ -89370,6 +89861,36 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "48a53819-290c-43f8-a7b7-364bba362fb5"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "21766e22-2330-44f3-885a-b45bffaff067"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "286cddad-dadd-4c76-915d-5b11b7c5afde"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c577d9a6-d549-49b6-bf77-e3cffa20049d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "aed14b2e-e149-4004-9760-9b82fdcb017f"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "317baaa9-bf36-41ca-9007-c8485d11d44c"
             }
           ],
           "emissiveIntensity": 0.49,
