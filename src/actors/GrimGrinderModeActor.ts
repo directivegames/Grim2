@@ -15,6 +15,7 @@ import {
   GRIM_GRINDER_SOUL_THRESHOLD,
 } from '../data/grim-grinder-config.js';
 import { grimVault } from '../game/GrimVault.js';
+import { flushGameplayInput } from '../utils/flush-gameplay-input.js';
 import { isGameplayUnlocked, setGameplayUnlocked } from '../utils/game-pause.js';
 import { GrimGrinderControllerComponent } from '../components/GrimGrinderControllerComponent.js';
 import { GrimGrinderUI } from '../ui/GrimGrinderUI.js';
@@ -230,6 +231,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
     const w = worldSlomo(world);
     this._savedSlomo = w.slomo ?? 1;
     w.slomo = 0;
+    flushGameplayInput(world);
     world.inputManager.setInputEnabled(false);
     setGameplayUnlocked(false);
   }

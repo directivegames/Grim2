@@ -16,7 +16,7 @@ const SPEAKER_PANEL_ASPECT = 1536 / 1024;
 /** Fits in the horizontal gap between health (left) and souls (right) HUD. */
 const SPEAKER_PANEL_MAX_WIDTH_PX = 540;
 /** Sits in the bottom-centre gap; HUD only occupies the corners. */
-const SPEAKER_PANEL_BOTTOM_PX = 36;
+const SPEAKER_PANEL_BOTTOM_PX = 16;
 /** Side reserve for corner HUD (health ~302px + souls ~241px at 0.35 scale). */
 const SPEAKER_PANEL_SIDE_RESERVE_PX = 600;
 const SPEAKER_PANEL_MIN_WIDTH_PX = 320;
@@ -26,7 +26,7 @@ const SPEAKER_PANEL_MIN_WIDTH_PX = 320;
  */
 const TEXT_INSET_LEFT = 0.14;
 const TEXT_INSET_RIGHT = 0.11;
-const TEXT_INSET_TOP = 0.44;
+const TEXT_INSET_TOP = 0.37;
 const TEXT_INSET_BOTTOM = 0.20;
 const HINT_INSET_RIGHT = 0.10;
 const HINT_INSET_BOTTOM = 0.10;
@@ -35,8 +35,13 @@ const TYPEWRITER_MS_PER_CHAR = 35;
 const PANEL_ENTER_MS = 420;
 const PANEL_EXIT_MS = 380;
 const SPEAKER_FADE_MS = 220;
-/** Space between speaker label and the top of the dialogue frame. */
-const SPEAKER_GAP_ABOVE_PANEL_PX = 6;
+/**
+ * Fixed speaker label position on the overlay (not measured from the panel).
+ * Tuned for ~1080p with the dialogue box at SPEAKER_PANEL_BOTTOM_PX.
+ */
+const SPEAKER_LABEL_BOTTOM = '28vh';
+const SPEAKER_LABEL_LEFT = 'calc(50% - 194px)';
+const SPEAKER_LABEL_MAX_WIDTH_PX = 400;
 
 const SPEAKER_COLORS: Record<string, string> = {
   Grim: '#e8dcc8',
@@ -173,10 +178,8 @@ export class DialogueUI {
       this._panel.style.opacity = '1';
       this._panel.style.transform = 'translate(-50%, 0)';
     }
-    this._syncPanelHeight();
-
     await delay(PANEL_ENTER_MS);
-    this._syncPanelHeight();
+    this._syncPanelSize();
     this._playbackLines = this._expandLines(this._sourceLines);
     this._showLine(0);
   }
@@ -209,31 +212,6 @@ export class DialogueUI {
       opacity: 0;
       transition: transform ${PANEL_ENTER_MS * 0.001}s cubic-bezier(0.22, 1, 0.36, 1),
                   opacity ${PANEL_ENTER_MS * 0.001}s ease;
-    `;
-
-    const speaker = document.createElement('span');
-    speaker.className = 'grim-dialogue-speaker';
-    speaker.style.cssText = `
-      position: absolute;
-      left: calc(50% - var(--grim-dialogue-w-px, 270px) / 2 + var(--grim-dialogue-w-px, 270px) * ${TEXT_INSET_LEFT});
-      bottom: calc(
-        ${SPEAKER_PANEL_BOTTOM_PX}px
-        + var(--grim-dialogue-h-px, 180px)
-        + ${SPEAKER_GAP_ABOVE_PANEL_PX}px
-      );
-      max-width: calc(var(--grim-dialogue-w-px, 270px) * ${1 - TEXT_INSET_LEFT - TEXT_INSET_RIGHT});
-      margin: 0;
-      font-size: clamp(12px, 1.65vw, 15px);
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      z-index: 3;
-      transition: opacity ${SPEAKER_FADE_MS * 0.001}s ease;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.5);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      pointer-events: none;
     `;
 
     const bg = document.createElement('div');
@@ -296,6 +274,28 @@ export class DialogueUI {
     `;
     hint.textContent = 'Click — Next';
 
+    const speaker = document.createElement('span');
+    speaker.className = 'grim-dialogue-speaker';
+    speaker.style.cssText = `
+      position: absolute;
+      left: ${SPEAKER_LABEL_LEFT};
+      bottom: ${SPEAKER_LABEL_BOTTOM};
+      top: auto;
+      max-width: ${SPEAKER_LABEL_MAX_WIDTH_PX}px;
+      margin: 0;
+      font-size: clamp(12px, 1.65vw, 15px);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      z-index: 4;
+      transition: opacity ${SPEAKER_FADE_MS * 0.001}s ease;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
+    `;
+
     clip.appendChild(body);
     panel.appendChild(bg);
     panel.appendChild(clip);
@@ -315,25 +315,20 @@ export class DialogueUI {
     this._hintEl = hint;
   }
 
-  /** Panel height + pixel vars used to anchor the speaker label above the frame. */
-  private _syncPanelHeight(): void {
+  private _syncPanelSize(): void {
     const panel = this._panel;
-    const root = this._root;
-    if (!panel || !root) {
+    if (!panel) {
       return;
     }
     const w = panel.offsetWidth;
     if (w > 0) {
-      const h = w / SPEAKER_PANEL_ASPECT;
-      panel.style.height = `${h}px`;
-      root.style.setProperty('--grim-dialogue-w-px', `${w}px`);
-      root.style.setProperty('--grim-dialogue-h-px', `${h}px`);
+      panel.style.height = `${w / SPEAKER_PANEL_ASPECT}px`;
     }
   }
 
   private _bindPanelResizeSync(): void {
     this._unbindPanelResizeSync();
-    const handler = (): void => this._syncPanelHeight();
+    const handler = (): void => this._syncPanelSize();
     this._boundResizePanel = handler;
     window.addEventListener('resize', handler, { passive: true });
     requestAnimationFrame(handler);
@@ -478,6 +473,8 @@ export class DialogueUI {
       this._speakerEl.style.color = speakerColor(line.speaker);
     }
 
+    this._syncPanelSize();
+
     this._stopTypewriter();
     if (this._bodyEl) {
       this._bodyEl.textContent = '';
@@ -579,6 +576,9 @@ export class DialogueUI {
         image-rendering: auto;
       }
       .grim-dialogue-panel > * {
+        position: absolute;
+      }
+      .grim-dialogue-root .grim-dialogue-speaker {
         position: absolute;
       }
     `;

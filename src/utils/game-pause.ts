@@ -4,6 +4,7 @@ import { OptionsMenuUI } from '../ui/OptionsMenuUI.js';
 import { StartMenuUI } from '../ui/StartMenuUI.js';
 import { TUT_SOUL_OVERLAY_ATTR } from '../ui/TutSoulUI.js';
 import { applyMusicVolumeToWorld } from './apply-music-volume.js';
+import { flushGameplayInput } from './flush-gameplay-input.js';
 import { gameSettings } from './game-settings.js';
 
 let _gameplayUnlocked = false;
@@ -86,6 +87,8 @@ export function pauseGame(world: ENGINE.World): void {
   w.slomo = 0;
   _paused = true;
   duckMusic(world);
+
+  flushGameplayInput(world);
 
   try {
     world.inputManager.setInputEnabled(false);

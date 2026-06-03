@@ -104,6 +104,20 @@ export class MobileCombatActor extends ENGINE.Actor {
     applyMobileAimFromStick(world, stickX, stickY, active);
   }
 
+  /** Clear virtual stick state when gameplay input is flushed. */
+  public resetCombatInput(): void {
+    this._moveX = 0;
+    this._moveY = 0;
+    this._moveActive = false;
+    this._autoMeleeCooldown = 0;
+
+    const pawn = this.getWorld()?.getFirstPlayerPawn();
+    if (pawn instanceof IsometricPlayerPawn) {
+      const move = pawn.getComponents(IsometricMovementComponent)[0];
+      move?.setMobileStickInput(0, 0);
+    }
+  }
+
   public static ensureExists(world: ENGINE.World): MobileCombatActor {
     const existing = world.getActors().find(
       (a): a is MobileCombatActor => a instanceof MobileCombatActor,

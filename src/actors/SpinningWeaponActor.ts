@@ -1,13 +1,13 @@
 /**
- * SpinningWeaponActor - Click-triggered three-hit combo weapon.
+ * SpinningWeaponActor - Three-hit combo weapon (click or hold LMB).
  *
- * Each left-click fires the next hit in the combo sequence:
+ * Left-click or hold fires the combo sequence:
  *   1. 180° sweep from right to left
  *   2. 180° sweep from left to right
  *   3. Full 360° orbit
  *
  * The weapon disappears after each hit. The combo index is remembered
- * so subsequent clicks continue the sequence. It only resets to hit 1
+ * so subsequent clicks or a held button continue the sequence. It only resets to hit 1
  * after the third hit fully completes.
  */
 import * as THREE from 'three';
@@ -203,6 +203,9 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   /** Buffered melee input - set when clicked during active attack. */
   private _queuedMelee = false;
 
+  /** Hold LMB to chain combo hits without repeated clicks. */
+  private _leftMouseHeld = false;
+
   private _scratchPos        = new THREE.Vector3();
   private _scratchPlayerPos  = new THREE.Vector3();
   private _scratchZombiePos  = new THREE.Vector3();
@@ -227,17 +230,25 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   // ── Input handler ─────────────────────────────────────────────────────────
 
   /**
-   * Minimal input handler — only listens for left mouse-down to trigger attacks.
-   * Declared as an arrow-function property so `this` is always correct when the
-   * engine calls it through the IInputHandler interface.
+   * Minimal input handler — left mouse down/up for attacks and soul throw on right click.
    */
   private readonly _inputHandler: ENGINE.IInputHandler = {
     handleMouseDown: (button: ENGINE.MouseButton): boolean => {
-      if (button === ENGINE.MouseButton.Left)  { this._onLeftClick();  return false; }
+      if (button === ENGINE.MouseButton.Left) {
+        this._leftMouseHeld = true;
+        this._onLeftClick();
+        return false;
+      }
       if (button === ENGINE.MouseButton.Right) { this._onRightClick(); return false; }
       return false;
     },
-    handleMouseUp:    () => false,
+    handleMouseUp: (button: ENGINE.MouseButton): boolean => {
+      if (button === ENGINE.MouseButton.Left) {
+        this._leftMouseHeld = false;
+        return false;
+      }
+      return false;
+    },
     handleMouseMove:  () => false,
     handleMouseClick: () => false,
     handleKeyDown:    (e: KeyboardEvent): boolean => {
@@ -353,15 +364,15 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       this._recoveryRemainingSec -= deltaTime;
       if (this._recoveryRemainingSec <= 0) {
         this._meleePhase = 'idle';
-        if (this._queuedMelee) {
-          this._queuedMelee = false;
-          this._startAttack(player);
-        }
+        this._tryChainMelee(player);
       }
       return;
     }
 
-    if (this._meleePhase === 'idle') return;
+    if (this._meleePhase === 'idle') {
+      this._tryChainMelee(player);
+      return;
+    }
     if (this._isWeaponSlotUsedBySoulBlade(0)) return;
 
     if (this._meleePhase === 'windup') {
@@ -424,6 +435,21 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._startAttack(player);
   }
 
+  /** Continue combo when idle if LMB is held or a click was buffered. */
+  private _tryChainMelee(player: ENGINE.Pawn): void {
+    if (this._meleePhase !== 'idle') {
+      return;
+    }
+    if (!this._queuedMelee && !this._leftMouseHeld) {
+      return;
+    }
+    if (GrimGrinderModeActor.isActive() || this._soulThrowBlocksMelee()) {
+      return;
+    }
+    this._queuedMelee = false;
+    this._startAttack(player);
+  }
+
   /** Mobile THROW button and external callers. */
   public triggerSoulThrow(): void {
     this._onRightClick();
@@ -446,6 +472,29 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
     this._onLeftClick();
     return true;
+  }
+
+  /** Clear held/buffered attack input when leaving gameplay (pause, map, fail screen). */
+  public releaseCombatInput(): void {
+    this._leftMouseHeld = false;
+    this._queuedMelee = false;
+
+    if (this._meleePhase === 'idle') {
+      return;
+    }
+
+    this._meleePhase = 'idle';
+    this._recoveryRemainingSec = 0;
+    this._windupElapsedSec = 0;
+    this._swingElapsedSec = 0;
+    this._setWeaponVisible(false);
+    this._swingLight?.endSwing();
+    this._slashComponent?.stopTrail();
+
+    const player = this.getWorld()?.getFirstPlayerPawn();
+    if (player instanceof IsometricPlayerPawn) {
+      player.setMeleeArcWindup(false);
+    }
   }
 
   private _onRightClick(): void {

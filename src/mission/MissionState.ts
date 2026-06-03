@@ -48,6 +48,8 @@ export interface MissionFailedResult {
   readonly innocentsSaved: number;
   readonly collateralDamage: number;
   readonly elapsedSec: number;
+  /** Item drops collected this run but not banked on defeat. */
+  readonly itemsLost: number;
 }
 
 export type MissionEndResult = MissionSuccessResult | MissionFailedResult;
@@ -76,7 +78,7 @@ class MissionStateImpl {
 
   /** Mission goal progress (reap types). */
   private _soulsCollected = 0;
-  /** Every enemy kill — used for vault banking and fail 10% retain. */
+  /** Every enemy kill — banked to vault on mission end. */
   private _runSoulsFromKills = 0;
   private _innocentsSaved = 0;
   private _collateralDamage = 0;
@@ -112,7 +114,7 @@ class MissionStateImpl {
     return this._soulsCollected;
   }
 
-  /** Total souls from enemy kills this run (vault / fail retain). */
+  /** Total souls from enemy kills this run (banked on mission end). */
   public get runSoulsFromKills(): number {
     return this._runSoulsFromKills;
   }
@@ -619,7 +621,7 @@ class MissionStateImpl {
     }
   }
 
-  /** Souls banked to vault on success, or used for 10% retain on fail. */
+  /** Souls banked to vault on mission end (success or defeat). */
   private _bankableSouls(): number {
     if (!this._config) return 0;
     if (isSoulSaverMission(this._config)) {
@@ -651,6 +653,7 @@ class MissionStateImpl {
     this._ended = true;
     this._active = false;
 
+    const itemsLost = this._pendingItemDrops.length;
     this._pendingItemDrops.length = 0;
 
     const cfg = this._config;
@@ -663,6 +666,7 @@ class MissionStateImpl {
       innocentsSaved: this._innocentsSaved,
       collateralDamage: this._collateralDamage,
       elapsedSec: this._elapsedSec,
+      itemsLost,
     };
     this._listeners.onMissionEnded?.(result);
   }

@@ -9,6 +9,7 @@ import { missionRunner } from '../mission/MissionRunner.js';
 import { ReadyToReapUI } from '../ui/ReadyToReapUI.js';
 import { TutSoulUI } from '../ui/TutSoulUI.js';
 import { getGameAudioManager } from './game-audio.js';
+import { flushGameplayInput } from './flush-gameplay-input.js';
 import { clearMissionPause, resumeGame, setGameplayUnlocked } from './game-pause.js';
 import {
   ensureGrimIntroBlackCover,
@@ -38,6 +39,7 @@ export function beginMissionFromMap(
 
   clearMissionPause(world);
   setGameplayUnlocked(false);
+  flushGameplayInput(world);
   try {
     world.inputManager.setInputEnabled(false);
   } catch {

@@ -18,6 +18,7 @@ import { MissionRewardsUI } from '../ui/MissionRewardsUI.js';
 import { UpgradeShopUI } from '../ui/UpgradeShopUI.js';
 import { TutSoulUI } from '../ui/TutSoulUI.js';
 import { beginMissionFromMap } from './begin-mission-from-map.js';
+import { flushGameplayInput } from './flush-gameplay-input.js';
 import { clearMissionPause, setGameplayUnlocked } from './game-pause.js';
 import { PauseMenuUI } from '../ui/PauseMenuUI.js';
 import {
@@ -39,6 +40,7 @@ export function cleanupAfterMission(world: ENGINE.World): void {
   // teleport queued below in resetMissionWorld commits while the map fades in.
   clearMissionPause(world);
   setGameplayUnlocked(false);
+  flushGameplayInput(world);
 
   slomoManager.forceReset(world);
   killStreakTracker.reset();

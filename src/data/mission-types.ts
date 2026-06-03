@@ -225,7 +225,7 @@ export function createBossFightMissionConfig(riskLevel: RiskLevel): BossFightMis
 
 export const SUBURBS_TUTORIAL_MISSION_CONFIG: ReapAndSaveMissionConfig =
   createReapAndSaveMissionConfig({
-    soulsRequired: 300,
+    soulsRequired: 150,
     innocentsToSave: 6,
     riskLevel: 1,
   });

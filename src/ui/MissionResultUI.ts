@@ -15,8 +15,6 @@ import { MissionRewardsUI } from './MissionRewardsUI.js';
 const PANEL_URL = '@project/assets/UI/menuelement.webp';
 const FRAME_URL = '@project/assets/UI/optionsbackground.webp';
 
-const FAIL_SOUL_RETAIN_FRACTION = 0.1;
-
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
 function formatElapsed(sec: number): string {
@@ -55,7 +53,7 @@ export class MissionResultUI {
     const won = result.outcome === 'success';
     let soulsBanked = 0;
     if (!won) {
-      soulsBanked = Math.floor(result.soulsCollected * FAIL_SOUL_RETAIN_FRACTION);
+      soulsBanked = result.soulsCollected;
       if (soulsBanked > 0) {
         grimVault.addSouls(soulsBanked);
       }
@@ -120,7 +118,7 @@ export class MissionResultUI {
     `;
     subtitle.textContent = won
       ? 'The reaping is complete.'
-      : failReasonText(result.reason);
+      : `${failReasonText(result.reason)} — souls recovered, items forfeited.`;
 
     const stats = document.createElement('div');
     stats.style.cssText = `
@@ -141,10 +139,14 @@ export class MissionResultUI {
       lines.push(`Collateral: ${Math.round(result.collateralDamage)}%`);
       lines.push(
         soulsBanked > 0
-          ? `Souls saved to vault (10%): ${soulsBanked}`
-          : 'Souls saved to vault (10%): 0',
+          ? `Souls recovered to vault: ${soulsBanked}`
+          : 'Souls recovered to vault: 0',
       );
-      lines.push('Items from this run are lost.');
+      if (result.itemsLost > 0) {
+        lines.push(`Items lost due to defeat: ${result.itemsLost}`);
+      } else {
+        lines.push('Items from this run were lost due to defeat.');
+      }
     }
     stats.innerHTML = lines.map((l) => `<div>${l}</div>`).join('');
 

@@ -141,11 +141,8 @@ class MissionRunnerImpl {
 
     const showCollateral = missionUsesCollateral(config);
     const showInnocents = missionUsesInnocents(config);
-    // Top-right HUD guard rail: only one progress widget may occupy the slot.
-    // Reap-and-save uses InnocentSaveProgressUI for the main objective, so hide SoulProgressUI.
     const showDamage = config.type === 'cause-damage';
     const showSoulProgress =
-      !showInnocents &&
       !showDamage &&
       (missionTracksSoulReap(config) || missionTracksChainKills(config));
     const showSurviveTimer =
@@ -174,13 +171,16 @@ class MissionRunnerImpl {
     }
 
     if (showSoulProgress) {
+      const stackBelowInnocents = isReapAndSaveMission(config);
+      soulProgressUi.setStackBelowInnocents(stackBelowInnocents);
       soulProgressUi.show();
       if (isChainReapMission(config)) {
         soulProgressUi.setProgress(0, config.killsRequired, 'CHAIN KILLS');
       } else if ('soulsRequired' in config) {
-        soulProgressUi.setProgress(0, config.soulsRequired);
+        soulProgressUi.setProgress(0, config.soulsRequired, 'SOULS REAPED');
       }
     } else {
+      soulProgressUi.setStackBelowInnocents(false);
       soulProgressUi.hide();
     }
 
@@ -311,7 +311,9 @@ class MissionRunnerImpl {
 
     if (this._innocentHandler.getWorldPosition(this._innocentWorldPos)) {
       indicatorUi.show();
-      indicatorUi.updateTarget(this._innocentWorldPos);
+      indicatorUi.updateTarget(this._innocentWorldPos, {
+        secondsRemaining: missionState.innocentSaveTimerSec,
+      });
       helpMeUi.show();
       helpMeUi.updateTarget(this._innocentWorldPos);
     } else {
@@ -412,6 +414,7 @@ class MissionRunnerImpl {
 
     this._innocentHandler.revealAt(world, pos, () => {
       missionState.onInnocentSpawned();
+      InnocentIndicatorUI.getInstance(world).playSpawnPing();
     });
   }
 

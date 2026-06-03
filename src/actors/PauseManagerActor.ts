@@ -3,6 +3,7 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { ensureGameplayInputFlushOnBlur } from '../utils/flush-gameplay-input.js';
 import {
   canOpenPause,
   isPaused,
@@ -62,7 +63,11 @@ export class PauseManagerActor extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
-    this.getWorld()?.inputManager.addInputHandler(this._inputHandler);
+    const world = this.getWorld();
+    if (world) {
+      ensureGameplayInputFlushOnBlur(world);
+      world.inputManager.addInputHandler(this._inputHandler);
+    }
   }
 
   protected override doEndPlay(): void {

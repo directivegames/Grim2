@@ -14,6 +14,10 @@ export class SoulProgressUI {
   private _container: HTMLDivElement | null = null;
   private _line: HTMLDivElement | null = null;
   private _visible = false;
+  private _stackBelowInnocents = false;
+
+  private static readonly DESKTOP_TOP_PX = 48;
+  private static readonly DESKTOP_STACKED_TOP_PX = 132;
 
   public static async getInstance(world: ENGINE.World | null): Promise<SoulProgressUI> {
     if (!world) {
@@ -69,6 +73,19 @@ export class SoulProgressUI {
     this._line.style.fontSize = 'clamp(14px, 1.25vw, 20px)';
     this._container.appendChild(this._line);
     gc.appendChild(this._container);
+  }
+
+  /** Stack under InnocentSaveProgressUI on reap-and-save missions. */
+  public setStackBelowInnocents(enabled: boolean): void {
+    this._stackBelowInnocents = enabled;
+    if (!this._container) return;
+    if (enabled) {
+      this._container.setAttribute('data-stack-below-innocent', '');
+      this._container.style.top = `${SoulProgressUI.DESKTOP_STACKED_TOP_PX}px`;
+    } else {
+      this._container.removeAttribute('data-stack-below-innocent');
+      this._container.style.top = `${SoulProgressUI.DESKTOP_TOP_PX}px`;
+    }
   }
 
   public show(): void {

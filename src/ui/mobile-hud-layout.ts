@@ -100,6 +100,9 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
       font-size: clamp(9px, 2.2vw, 11px) !important;
       margin-top: 2px !important;
     }
+    .grim-mobile [data-soul-progress-ui][data-stack-below-innocent] {
+      top: calc(${MOBILE_OBJECTIVE_TOP} + clamp(48px, 12vw, 68px)) !important;
+    }
 
     .grim-mobile .grim-hud-fist,
     .grim-mobile .grim-hud-grim-grinder {

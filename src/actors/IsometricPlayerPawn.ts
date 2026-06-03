@@ -45,6 +45,32 @@ const GRIM2_MATERIAL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/textures/Grim2t
 /** Editor-placed Grim2 prop to remove at runtime. */
 const SCENE_PLACEHOLDER_GRIM2_ACTOR_UUID = '7e97a710b8d5f00b';
 
+/** Grim walks through dynamic bodies / destructibles; still blocks on static world geometry. */
+const GRIM_COLLISION_PROFILE = 'GrimCharacter';
+
+function ensureGrimCollisionProfile(): void {
+  const cfg = ENGINE.CollisionConfig.getInstance();
+  if (cfg.getProfile(GRIM_COLLISION_PROFILE)) {
+    return;
+  }
+
+  const profile = new ENGINE.CollisionProfile(
+    GRIM_COLLISION_PROFILE,
+    ENGINE.CollisionMode.QueryAndPhysics,
+    ENGINE.CollisionChannel.Pawn,
+    [
+      { channel: ENGINE.CollisionChannel.Visibility, response: ENGINE.CollisionResponse.Ignore },
+      { channel: ENGINE.CollisionChannel.Vehicle, response: ENGINE.CollisionResponse.Overlap },
+      { channel: ENGINE.CollisionChannel.Camera, response: ENGINE.CollisionResponse.Ignore },
+      { channel: ENGINE.CollisionChannel.Pawn, response: ENGINE.CollisionResponse.Ignore },
+      { channel: ENGINE.CollisionChannel.PhysicsBody, response: ENGINE.CollisionResponse.Ignore },
+      { channel: ENGINE.CollisionChannel.Destructible, response: ENGINE.CollisionResponse.Ignore },
+    ],
+  );
+
+  (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
+}
+
 /** Spawn options for {@link IsometricPlayerPawn.create} (used by `pawnFactory` in `game.ts`). */
 export type IsometricPlayerPawnOptions = ENGINE.CharacterPawnOptions & {
   cameraDistance?: number;
@@ -270,6 +296,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   protected override createRootComponent(): ENGINE.SceneComponent {
+    ensureGrimCollisionProfile();
     const radius = ENGINE.CHARACTER_WIDTH / 2;
     return ENGINE.MeshComponent.create({
       name: 'RootComponent',
@@ -278,7 +305,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       physicsOptions: {
         enabled: true,
         motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
-        collisionProfile: ENGINE.DefaultCollisionProfile.Character,
+        collisionProfile: GRIM_COLLISION_PROFILE,
       },
     });
   }
