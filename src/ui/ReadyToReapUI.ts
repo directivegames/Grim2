@@ -10,8 +10,8 @@ import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
 import { gameSettings } from '../utils/game-settings.js';
 
-const READY_URL = '@project/assets/VFX/readyto.png';
-const REAP_URL = '@project/assets/VFX/REAP.png';
+const READY_URL = '@project/assets/VFX/readyto.webp';
+const REAP_URL = '@project/assets/VFX/REAP.webp';
 
 const STYLE_ID = 'grim-ready-to-reap-keyframes';
 

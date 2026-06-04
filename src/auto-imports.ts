@@ -163,6 +163,7 @@ import './utils/mission-enemy-drops.ts';
 import './utils/mission-reset-log.ts';
 import './utils/mobile-aim.ts';
 import './utils/mobile-device.ts';
+import './utils/mobile-melee-target.ts';
 import './utils/mobile-startup.ts';
 import './utils/mobile-touch-zones.ts';
 import './utils/player-combat-stats.ts';

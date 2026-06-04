@@ -762,8 +762,9 @@ export class MapUI {
     const selectable = mission.selectable;
 
     wrap.className = 'grim-map-marker-enter';
-    const iconW = mobile ? 'clamp(52px, 10vw, 88px)' : 'clamp(72px, 12vw, 140px)';
-    const iconH = mobile ? 'clamp(30px, 6vw, 48px)' : 'clamp(40px, 7vw, 72px)';
+    const iconW = mobile ? 'clamp(40px, 8vw, 64px)' : 'clamp(72px, 12vw, 140px)';
+    const iconH = mobile ? 'clamp(24px, 5vw, 38px)' : 'clamp(40px, 7vw, 72px)';
+    const markerGap = mobile ? 'clamp(2px, 0.35vw, 5px)' : 'clamp(4px, 0.5vw, 8px)';
     wrap.style.cssText = `
       position: absolute;
       left: ${mission.mapX * 100}%;
@@ -772,13 +773,13 @@ export class MapUI {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(4px, 0.5vw, 8px);
+      gap: ${markerGap};
       pointer-events: auto;
       cursor: ${selectable ? 'pointer' : 'not-allowed'};
       z-index: 8;
       touch-action: manipulation;
-      padding: ${mobile ? '8px' : '0'};
-      max-width: ${mobile ? 'min(32vw, 180px)' : 'min(40vw, 320px)'};
+      padding: ${mobile ? '4px' : '0'};
+      max-width: ${mobile ? 'min(28vw, 140px)' : 'min(40vw, 320px)'};
       opacity: 0;
       animation: grim-map-marker-in 0.5s ease forwards;
       animation-delay: ${120 + markerIndex * 70}ms;
@@ -903,8 +904,9 @@ export class MapUI {
     const iconResolved = this._resolvedShopIconUrl;
 
     wrap.className = 'grim-map-marker-enter';
-    const iconW = mobile ? 'clamp(52px, 10vw, 88px)' : 'clamp(72px, 12vw, 140px)';
-    const iconH = mobile ? 'clamp(30px, 6vw, 48px)' : 'clamp(40px, 7vw, 72px)';
+    const iconW = mobile ? 'clamp(40px, 8vw, 64px)' : 'clamp(72px, 12vw, 140px)';
+    const iconH = mobile ? 'clamp(24px, 5vw, 38px)' : 'clamp(40px, 7vw, 72px)';
+    const shopGap = mobile ? 'clamp(2px, 0.35vw, 5px)' : 'clamp(4px, 0.5vw, 8px)';
     wrap.style.cssText = `
       position: absolute;
       left: ${SHOP_MAP_X * 100}%;
@@ -913,12 +915,13 @@ export class MapUI {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(4px, 0.5vw, 8px);
+      gap: ${shopGap};
       pointer-events: auto;
       cursor: pointer;
       z-index: 8;
       touch-action: manipulation;
-      max-width: ${mobile ? 'min(32vw, 180px)' : 'min(40vw, 320px)'};
+      padding: ${mobile ? '4px' : '0'};
+      max-width: ${mobile ? 'min(28vw, 140px)' : 'min(40vw, 320px)'};
       opacity: 0;
       animation: grim-map-marker-in 0.5s ease forwards;
       animation-delay: ${120 + markerIndex * 70}ms;
@@ -1040,16 +1043,21 @@ export class MapUI {
     this._briefingGoalsEl = null;
     this._briefingSubEl = null;
 
+    const mobile = isMobileDevice();
+
     const backdrop = document.createElement('div');
     backdrop.style.cssText = `
       position: absolute;
       inset: 0;
       z-index: 10070;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       background: rgba(5, 5, 8, 0.75);
-      padding: clamp(12px, 3vw, 28px);
+      padding: clamp(16px, 4vh, 40px) clamp(12px, 3vw, 28px);
       box-sizing: border-box;
     `;
 
@@ -1066,16 +1074,19 @@ export class MapUI {
       `;
 
     const panel = document.createElement('div');
-    panel.className = isMobileDevice() ? 'grim-map-briefing-panel' : '';
+    panel.className = mobile ? 'grim-map-briefing-panel' : '';
     panel.style.cssText = `
       position: relative;
-      width: min(480px, 92vw);
+      width: min(460px, 92vw);
       box-sizing: border-box;
       ${frameStyle}
-      padding: clamp(36px, 5vh, 48px) clamp(24px, 4vw, 36px) clamp(28px, 4vh, 36px);
+      padding: ${mobile
+        ? 'clamp(20px, 3vh, 30px) clamp(14px, 3vw, 20px) clamp(16px, 2.5vh, 24px)'
+        : 'clamp(32px, 4.5vh, 44px) clamp(22px, 3.5vw, 32px) clamp(24px, 3.5vh, 32px)'};
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: ${mobile ? '6px' : '9px'};
+      margin: auto 0;
     `;
 
     const heading = document.createElement('h2');
@@ -1084,7 +1095,7 @@ export class MapUI {
       margin: 0;
       font-family: Montserrat, system-ui, sans-serif;
       font-weight: 800;
-      font-size: clamp(1rem, 2.4vw, 1.35rem);
+      font-size: clamp(0.88rem, 2vw, 1.15rem);
       letter-spacing: 0.12em;
       color: rgba(160, 245, 255, 0.98);
       text-align: center;
@@ -1097,7 +1108,7 @@ export class MapUI {
       margin: 0;
       text-align: center;
       font-family: Montserrat, system-ui, sans-serif;
-      font-size: clamp(0.65rem, 1.4vw, 0.78rem);
+      font-size: clamp(0.58rem, 1.2vw, 0.7rem);
       letter-spacing: 0.14em;
       color: rgba(200, 210, 220, 0.85);
     `;
@@ -1105,10 +1116,10 @@ export class MapUI {
     const riskLabel = document.createElement('p');
     riskLabel.textContent = 'SELECT RISK LEVEL';
     riskLabel.style.cssText = `
-      margin: 4px 0 0;
+      margin: 2px 0 0;
       text-align: center;
       font-family: Montserrat, system-ui, sans-serif;
-      font-size: clamp(0.58rem, 1.2vw, 0.72rem);
+      font-size: clamp(0.52rem, 1.1vw, 0.64rem);
       letter-spacing: 0.18em;
       color: rgba(160, 245, 255, 0.85);
     `;
@@ -1117,19 +1128,19 @@ export class MapUI {
     riskRow.style.cssText = `
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       justify-content: center;
-      margin-top: 6px;
+      margin-top: 4px;
     `;
 
     const unlockedMax = grimVault.getUnlockedRiskLevel();
     const styleRiskBtn = (btn: HTMLButtonElement, selected: boolean, enabled: boolean): void => {
       btn.style.cssText = `
-        min-width: 2.4rem;
-        padding: 6px 10px;
+        min-width: 2rem;
+        padding: 4px 8px;
         font-family: Montserrat, system-ui, sans-serif;
         font-weight: 700;
-        font-size: 0.75rem;
+        font-size: 0.66rem;
         letter-spacing: 0.08em;
         cursor: ${enabled ? 'pointer' : 'not-allowed'};
         opacity: ${enabled ? '1' : '0.35'};
@@ -1192,10 +1203,10 @@ export class MapUI {
     const goalsPreview = document.createElement('p');
     this._briefingGoalsEl = goalsPreview;
     goalsPreview.style.cssText = `
-      margin: 10px 0 0;
+      margin: ${mobile ? '2px' : '6px'} 0 0;
       font-family: Montserrat, system-ui, sans-serif;
-      font-size: clamp(0.68rem, 1.45vw, 0.8rem);
-      line-height: 1.45;
+      font-size: clamp(0.58rem, 1.25vw, 0.7rem);
+      line-height: 1.38;
       color: rgba(160, 245, 255, 0.92);
       text-align: center;
       white-space: pre-line;
@@ -1204,22 +1215,22 @@ export class MapUI {
     const desc = document.createElement('p');
     desc.textContent = mission.description;
     desc.style.cssText = `
-      margin: 8px 0 0;
+      margin: ${mobile ? '2px' : '6px'} 0 0;
       font-family: Montserrat, system-ui, sans-serif;
-      font-size: clamp(0.7rem, 1.5vw, 0.82rem);
-      line-height: 1.45;
+      font-size: clamp(0.58rem, 1.25vw, 0.7rem);
+      line-height: 1.38;
       color: rgba(180, 190, 200, 0.9);
       text-align: center;
     `;
 
     const objList = document.createElement('ul');
     objList.style.cssText = `
-      margin: 8px 0 0;
+      margin: ${mobile ? '2px' : '4px'} 0 0;
       padding: 0 0 0 1.2em;
       font-family: Montserrat, system-ui, sans-serif;
-      font-size: clamp(0.62rem, 1.3vw, 0.75rem);
+      font-size: clamp(0.55rem, 1.15vw, 0.68rem);
       color: rgba(160, 170, 180, 0.9);
-      line-height: 1.5;
+      line-height: 1.4;
     `;
     for (const obj of mission.objectives) {
       const li = document.createElement('li');
@@ -1231,8 +1242,8 @@ export class MapUI {
     btnRow.style.cssText = `
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 16px;
+      gap: ${mobile ? '4px' : '7px'};
+      margin-top: ${mobile ? '6px' : '10px'};
       align-items: center;
     `;
 
@@ -1304,8 +1315,8 @@ export class MapUI {
     }
     wrap.style.cssText = `
       position: relative;
-      width: min(280px, 78%);
-      aspect-ratio: 3.4 / 1;
+      width: min(240px, 72%);
+      aspect-ratio: 4.6 / 1;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1324,7 +1335,7 @@ export class MapUI {
     text.style.cssText = `
       font-family: Montserrat, system-ui, sans-serif;
       font-weight: ${highlight ? 800 : 700};
-      font-size: clamp(0.65rem, 1.7vw, 0.88rem);
+      font-size: clamp(0.6rem, 1.4vw, 0.78rem);
       letter-spacing: 0.22em;
       color: ${highlight ? 'rgba(160, 245, 255, 0.98)' : 'rgba(220, 228, 236, 0.92)'};
       text-shadow: ${highlight

@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 const SLASH_SPRITESHEET_PATH =
-  '@project/assets/VFX/SlashFX Combos/SlashFX Combo3 sheet.png';
+  '@project/assets/VFX/SlashFX Combos/SlashFX Combo3 sheet.webp';
 
 const FRAME_COUNT = 4;
 /** Matches SpinningWeaponActor — keeps sprite aligned with the blade model. */

@@ -14,7 +14,7 @@ import {
 } from '../components/vfx/BillboardSmokePuffs.js';
 
 const SMOKE_TEXTURE_PATH = '@project/assets/textures/vfx/Smoke.png';
-const SMOKE_TEXTURE_FALLBACK = '@project/assets/VFX/newfog.png';
+const SMOKE_TEXTURE_FALLBACK = '@project/assets/VFX/newfog.webp';
 
 const AREA_SIZE = 20;
 const FADE_IN_DURATION = 2.5;

@@ -3,7 +3,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+import { ensureMobileHudStyles, getMobileMissionColumn } from './mobile-hud-layout.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 
 const MONTserrat_BOLD_URL =
   '@project/assets/UI/Bree_Serif,Montserrat/Montserrat/static/Montserrat-Bold.ttf';
@@ -120,7 +121,7 @@ export class InnocentSaveProgressUI {
     this._remainLine.style.marginTop = '2px';
 
     this._container.append(this._mainLine, this._timerLine, this._remainLine);
-    gc.appendChild(this._container);
+    getMobileMissionColumn(gc).appendChild(this._container);
   }
 
   public show(): void {
@@ -163,9 +164,10 @@ export class InnocentSaveProgressUI {
     const urgent = secondsRemaining <= 15;
     const color = urgent ? TIMER_URGENT_COLOR : TIMER_COLOR;
 
+    const timerLabel = isMobileDevice() ? 'TIME: ' : 'TIME TO SAVE: ';
     this._timerLine.style.display = 'block';
     this._timerLine.innerHTML = `
-      <span style="color:${LABEL_COLOR}">TIME TO SAVE: </span>
+      <span style="color:${LABEL_COLOR}">${timerLabel}</span>
       <span style="color:${color}">${timeText}</span>
     `;
   }
@@ -177,19 +179,20 @@ export class InnocentSaveProgressUI {
     const clampedSaved = Math.max(0, Math.min(saved, required));
     const remaining = Math.max(0, required - clampedSaved);
 
+    const mobile = isMobileDevice();
+    const savedLabel = mobile ? 'SAVED: ' : 'SOULS SAVED: ';
     this._mainLine.innerHTML = `
-      <span style="color:${LABEL_COLOR}">SOULS SAVED: </span>
+      <span style="color:${LABEL_COLOR}">${savedLabel}</span>
       <span style="color:${SAVED_COLOR}">${clampedSaved}</span>
       <span style="color:${LABEL_COLOR}"> / ${required}</span>
     `;
 
     if (remaining > 0) {
-      this._remainLine.innerHTML = `
-        <span style="color:${REMAINING_COLOR}">${remaining} remaining</span>
-      `;
+      const remainLabel = mobile ? `${remaining} left` : `${remaining} remaining`;
+      this._remainLine.innerHTML = `<span style="color:${REMAINING_COLOR}">${remainLabel}</span>`;
       this._remainLine.style.display = 'block';
     } else {
-      this._remainLine.textContent = 'All souls saved';
+      this._remainLine.textContent = mobile ? 'All saved' : 'All souls saved';
       this._remainLine.style.color = SAVED_COLOR;
       this._remainLine.style.display = 'block';
     }

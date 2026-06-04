@@ -3,7 +3,7 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+import { ensureMobileHudStyles, getMobileMissionColumn } from './mobile-hud-layout.js';
 
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
@@ -72,7 +72,7 @@ export class SoulProgressUI {
     this._line = document.createElement('div');
     this._line.style.fontSize = 'clamp(14px, 1.25vw, 20px)';
     this._container.appendChild(this._line);
-    gc.appendChild(this._container);
+    getMobileMissionColumn(gc).appendChild(this._container);
   }
 
   /** Stack under InnocentSaveProgressUI on reap-and-save missions. */

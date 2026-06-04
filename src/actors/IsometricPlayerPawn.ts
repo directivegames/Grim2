@@ -314,6 +314,16 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     const mc = IsometricMovementComponent.create();
     mc.accelerationLambda = 30;
     mc.decelerationLambda = 25;
+    // Wider controller skin + higher auto-step to reduce snagging on floor edges / thin static geometry.
+    mc.characterControllerOptions = {
+      ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
+      offset: 0.04,
+      autoStepConfig: {
+        maxHeight: 0.6,
+        minWidth: 0,
+        includeDynamicBodies: false,
+      },
+    };
     return mc;
   }
 

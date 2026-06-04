@@ -4,10 +4,11 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { getItemById, itemIconProjectPath, type ItemRarity } from '../data/items.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 import { resolveProjectAssetUrl } from '../utils/resolve-project-asset.js';
 import { injectBreeSerifFont } from './uiTypography.js';
 
-/** Match SoulCounterUI placement. */
+/** Match SoulCounterUI placement (desktop). */
 const SOULS_BG_HEIGHT = 302;
 const UI_SCALE = 0.35;
 const SOUL_COUNTER_BOTTOM = 20;
@@ -37,6 +38,7 @@ export class ItemCollectedToastUI {
   private _container: HTMLDivElement | null = null;
   private _hideTimer = 0;
   private _iconUrlCache = new Map<string, string>();
+  private _mobile = false;
 
   public static async notify(world: ENGINE.World, itemId: string): Promise<void> {
     const ui = await ItemCollectedToastUI.getInstance(world);
@@ -71,19 +73,30 @@ export class ItemCollectedToastUI {
     const gc = this._gameContainer();
     if (!gc || this._container) return;
 
+    this._mobile = isMobileDevice();
+    const mobile = this._mobile;
+    // Mobile: centre at bottom of screen, 50% of desktop width.
+    const positionCss = mobile
+      ? `bottom: max(24px, env(safe-area-inset-bottom, 0px) + 24px);
+         left: 50%;
+         right: auto;
+         transform: translateX(-50%) translateY(8px);
+         width: clamp(140px, 38vw, 200px);`
+      : `bottom: ${TOAST_BOTTOM}px;
+         right: ${SOUL_COUNTER_RIGHT}px;
+         left: auto;
+         width: ${TOAST_WIDTH}px;`;
+
     this._container = document.createElement('div');
     this._container.setAttribute('data-item-collected-toast', '');
     this._container.style.cssText = `
       position: absolute;
-      bottom: ${TOAST_BOTTOM}px;
-      right: ${SOUL_COUNTER_RIGHT}px;
-      width: ${TOAST_WIDTH}px;
+      ${positionCss}
       z-index: 1001;
       pointer-events: none;
       user-select: none;
       display: none;
       opacity: 0;
-      transform: translateY(8px);
       transition: opacity ${FADE_MS}ms ease, transform ${FADE_MS}ms ease;
     `;
     gc.appendChild(this._container);
@@ -111,14 +124,15 @@ export class ItemCollectedToastUI {
     this._container.replaceChildren();
     this._container.appendChild(this._buildToastRow(def.name, def.rarity, iconUrl ?? ''));
 
+    const xShift = this._mobile ? 'translateX(-50%) ' : '';
     this._container.style.display = 'flex';
     this._container.style.opacity = '0';
-    this._container.style.transform = 'translateY(8px)';
+    this._container.style.transform = `${xShift}translateY(8px)`;
 
     requestAnimationFrame(() => {
       if (!this._container) return;
       this._container.style.opacity = '1';
-      this._container.style.transform = 'translateY(0)';
+      this._container.style.transform = `${xShift}translateY(0)`;
     });
 
     this._hideTimer = globalThis.setTimeout(() => this._fadeOut(), DISPLAY_MS) as unknown as number;
@@ -147,8 +161,9 @@ export class ItemCollectedToastUI {
   private _fadeOut(): void {
     this._hideTimer = 0;
     if (!this._container) return;
+    const xShift = this._mobile ? 'translateX(-50%) ' : '';
     this._container.style.opacity = '0';
-    this._container.style.transform = 'translateY(-6px)';
+    this._container.style.transform = `${xShift}translateY(-6px)`;
     globalThis.setTimeout(() => {
       if (this._container) {
         this._container.style.display = 'none';
@@ -159,22 +174,25 @@ export class ItemCollectedToastUI {
 
   private _buildToastRow(name: string, rarity: ItemRarity, iconUrl: string): HTMLDivElement {
     const row = document.createElement('div');
+    const pad = this._mobile ? '3px 8px' : '6px 12px';
+    const gap = this._mobile ? '6px' : '10px';
     row.style.cssText = `
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 10px;
-      padding: 6px 12px;
-      border-radius: 8px;
+      gap: ${gap};
+      padding: ${pad};
+      border-radius: 6px;
       background: rgba(8, 10, 14, 0.88);
       border: 1px solid ${RARITY_ACCENT[rarity]};
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
     `;
 
     const text = document.createElement('div');
+    const fontSize = this._mobile ? 'clamp(9px, 2.4vw, 11px)' : 'clamp(11px, 1.6vw, 13px)';
     text.style.cssText = `
       font-family: Montserrat, 'Segoe UI', sans-serif;
-      font-size: clamp(11px, 1.6vw, 13px);
+      font-size: ${fontSize};
       font-weight: 700;
       letter-spacing: 0.04em;
       color: rgba(230, 236, 244, 0.98);
@@ -187,10 +205,11 @@ export class ItemCollectedToastUI {
     row.append(text);
 
     if (iconUrl) {
+      const imgSize = this._mobile ? 18 : 32;
       const img = document.createElement('img');
       img.src = iconUrl;
       img.alt = name;
-      img.style.cssText = 'width: 32px; height: 32px; object-fit: contain; flex-shrink: 0;';
+      img.style.cssText = `width: ${imgSize}px; height: ${imgSize}px; object-fit: contain; flex-shrink: 0;`;
       row.appendChild(img);
     }
 

@@ -4,7 +4,7 @@
 import * as ENGINE from '@gnsx/genesys.js';
 import * as THREE from 'three';
 
-const AIM_DEADZONE = 0.12;
+const AIM_DEADZONE = 0.07;
 const AIM_NDC_RADIUS = 0.42;
 
 let aimX = 0;
@@ -23,6 +23,27 @@ export function isMobileAimActive(): boolean {
 
 export function getMobileAimVector(): { x: number; y: number } {
   return { x: aimX, y: aimY };
+}
+
+/** World-space planar unit vector for stick aim (iso: +X = stick right, +Z = stick up). */
+export function getMobileAimWorldDirection(out: THREE.Vector3): boolean {
+  if (!isMobileAimActive()) {
+    return false;
+  }
+  const len = Math.hypot(aimX, aimY);
+  if (len <= AIM_DEADZONE) {
+    return false;
+  }
+  out.set(aimX / len, 0, -aimY / len);
+  return true;
+}
+
+/** Re-apply synthetic mouse NDC from current stick aim (for attack direction). */
+export function syncMobileAimMouse(world: ENGINE.World): void {
+  if (!isMobileAimActive()) {
+    return;
+  }
+  applyMobileAimFromStick(world, aimX, aimY, true);
 }
 
 /**

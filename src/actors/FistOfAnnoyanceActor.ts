@@ -41,7 +41,7 @@ const FLASH_GEO = new THREE.SphereGeometry(1, 16, 12);
 const SHOCKWAVE_GEO = new THREE.TorusGeometry(1, 0.035, 6, 32);
 
 const EXPLOSION_CLOUD_VFX = '@project/assets/VFX/explosion-cloud.vfx.json';
-const ROCK_DEBRIS_TEXTURE_PATH = '@project/assets/VFX/rockdebris.png';
+const ROCK_DEBRIS_TEXTURE_PATH = '@project/assets/VFX/rockdebris.webp';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

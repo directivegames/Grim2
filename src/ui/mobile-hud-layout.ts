@@ -4,21 +4,16 @@
 import { isMobileDevice } from '../utils/mobile-device.js';
 
 const MOBILE_HUD_STYLE_ID = 'grim-mobile-hud-styles';
+const MOBILE_MISSION_COL_ID = 'grim-mobile-mission-col';
 
 const TOP_SAFE = 'max(8px, env(safe-area-inset-top, 0px))';
 const LEFT_SAFE = 'max(10px, env(safe-area-inset-left, 0px))';
 const RIGHT_SAFE = 'max(10px, env(safe-area-inset-right, 0px))';
 const BOTTOM_SAFE = 'max(16px, env(safe-area-inset-bottom, 0px))';
 
-const MOBILE_HEALTH_HEIGHT = 'clamp(44px, 11vw, 62px)';
-/** Souls frame height at mobile scale (aspect-ratio 688 / 302). */
-const MOBILE_SOULS_HEIGHT = 'clamp(58px, 14vw, 88px)';
-/** Single-line collateral row below the souls frame. */
-const MOBILE_COLLATERAL_LINE = 'clamp(14px, 3.5vw, 18px)';
-const MOBILE_STACK_GAP = '4px';
-
-const MOBILE_COLLATERAL_TOP = `calc(${TOP_SAFE} + ${MOBILE_SOULS_HEIGHT} + ${MOBILE_STACK_GAP})`;
-const MOBILE_OBJECTIVE_TOP = `calc(${TOP_SAFE} + ${MOBILE_SOULS_HEIGHT} + ${MOBILE_STACK_GAP} + ${MOBILE_COLLATERAL_LINE} + ${MOBILE_STACK_GAP})`;
+const MOBILE_HEALTH_HEIGHT = 'clamp(30px, 7.5vw, 46px)';
+/** Souls frame height at mobile scale — derived from width 20vw × (302/688) aspect. */
+const MOBILE_SOULS_HEIGHT = 'clamp(40px, 8.8vw, 62px)';
 
 /** Reserved bottom-right zone for the aim / right stick (step 5 controls). */
 export const MOBILE_RIGHT_STICK_SIZE = 'clamp(88px, 22vw, 110px)';
@@ -32,6 +27,21 @@ export const MOBILE_LEFT_STICK_BOTTOM = `calc(${BOTTOM_SAFE} + 8px)`;
 
 export function usesMobileHudLayout(): boolean {
   return isMobileDevice();
+}
+
+/**
+ * Returns the shared top-right mission-text column on mobile, creating it on first call.
+ * On desktop returns the host unchanged so callers can always do `parent.appendChild(el)`.
+ */
+export function getMobileMissionColumn(host: HTMLElement): HTMLElement {
+  if (!isMobileDevice()) return host;
+  let col = host.querySelector<HTMLElement>(`#${MOBILE_MISSION_COL_ID}`);
+  if (!col) {
+    col = document.createElement('div');
+    col.id = MOBILE_MISSION_COL_ID;
+    host.appendChild(col);
+  }
+  return col;
 }
 
 /** Inject shared mobile HUD rules once (scoped under .grim-mobile). */
@@ -50,7 +60,7 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
       left: ${LEFT_SAFE} !important;
       bottom: auto !important;
       right: auto !important;
-      width: clamp(160px, 38vw, 260px) !important;
+      width: clamp(110px, 26vw, 180px) !important;
       height: auto !important;
       aspect-ratio: 862 / 235;
     }
@@ -61,47 +71,61 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
       right: ${RIGHT_SAFE} !important;
       bottom: auto !important;
       left: auto !important;
-      width: clamp(130px, 30vw, 200px) !important;
+      width: clamp(90px, 20vw, 140px) !important;
       height: auto !important;
       aspect-ratio: 688 / 302;
     }
     .grim-mobile .grim-hud-souls [data-grim-soul-count] {
       right: 18% !important;
       top: 50% !important;
-      font-size: clamp(22px, 5.5vw, 34px) !important;
+      font-size: clamp(13px, 3.2vw, 20px) !important;
     }
 
-    .grim-mobile .grim-hud-collateral {
-      top: ${MOBILE_COLLATERAL_TOP} !important;
-      right: ${RIGHT_SAFE} !important;
-      left: auto !important;
-      bottom: auto !important;
-      max-width: min(46vw, 220px) !important;
-      font-size: clamp(9px, 2.2vw, 11px) !important;
-      line-height: 1.2 !important;
-      text-align: right !important;
-      white-space: normal !important;
+    /* ── Mission text column: single flex container, no brittle calc chains ── */
+    #${MOBILE_MISSION_COL_ID} {
+      position: absolute;
+      top: calc(${TOP_SAFE} + ${MOBILE_SOULS_HEIGHT} + 5px);
+      right: ${RIGHT_SAFE};
+      width: clamp(130px, 32vw, 180px);
+      max-height: clamp(90px, 22vh, 140px);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 1005;
+      pointer-events: none;
+      overflow: hidden;
     }
 
-    .grim-mobile .grim-hud-mission-objective,
-    .grim-mobile .grim-hud-soul-progress {
-      top: ${MOBILE_OBJECTIVE_TOP} !important;
-      right: ${RIGHT_SAFE} !important;
+    /* Stable visual order regardless of DOM insertion order. */
+    #${MOBILE_MISSION_COL_ID} .grim-hud-collateral            { order: 1; }
+    #${MOBILE_MISSION_COL_ID} .grim-hud-mission-objective:not(.grim-hud-soul-progress) { order: 2; }
+    #${MOBILE_MISSION_COL_ID} .grim-hud-soul-progress         { order: 3; }
+
+    /* Each panel: relative flow inside the column, one line per entry. */
+    #${MOBILE_MISSION_COL_ID} > * {
+      position: relative !important;
+      top: auto !important;
+      right: auto !important;
       left: auto !important;
       bottom: auto !important;
-      max-width: min(44vw, 200px) !important;
-      text-align: right !important;
-      font-size: clamp(9px, 2.2vw, 11px) !important;
+      max-width: none !important;
+      width: 100% !important;
+      font-size: clamp(10px, 2.2vw, 12px) !important;
       line-height: 1.3 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      text-align: right !important;
       letter-spacing: 0.04em !important;
     }
-    .grim-mobile .grim-hud-mission-objective > div,
-    .grim-mobile .grim-hud-soul-progress > div {
-      font-size: clamp(9px, 2.2vw, 11px) !important;
-      margin-top: 2px !important;
-    }
-    .grim-mobile [data-soul-progress-ui][data-stack-below-innocent] {
-      top: calc(${MOBILE_OBJECTIVE_TOP} + clamp(48px, 12vw, 68px)) !important;
+
+    /* Inner text rows (timer / progress lines). */
+    #${MOBILE_MISSION_COL_ID} > * > div {
+      font-size: clamp(10px, 2.2vw, 12px) !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      margin-top: 1px !important;
     }
 
     .grim-mobile .grim-hud-fist,
@@ -123,7 +147,13 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
       right: calc(${MOBILE_RIGHT_STICK_RIGHT} + clamp(12px, 3vw, 20px)) !important;
     }
 
-    .grim-mobile .grim-hud-fist [data-grim-hud-icon],
+    .grim-mobile .grim-hud-fist [data-grim-hud-icon] {
+      width: clamp(52px, 13vw, 62px) !important;
+      height: clamp(52px, 13vw, 62px) !important;
+      pointer-events: auto !important;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
     .grim-mobile .grim-hud-grim-grinder [data-grim-hud-icon] {
       width: clamp(40px, 10vw, 48px) !important;
       height: clamp(40px, 10vw, 48px) !important;
@@ -131,7 +161,9 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
     .grim-mobile .grim-hud-grim-grinder [data-grim-hud-progress] {
       width: clamp(48px, 12vw, 56px) !important;
     }
-    .grim-mobile .grim-hud-fist [data-grim-hud-key],
+    .grim-mobile .grim-hud-fist [data-grim-hud-key] {
+      display: none !important;
+    }
     .grim-mobile .grim-hud-grim-grinder [data-grim-hud-key] {
       font-size: clamp(9px, 2.2vw, 11px) !important;
     }

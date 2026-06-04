@@ -10,13 +10,20 @@ import {
   applyMobileAimFromStick,
   isMobileAimActive,
   resetMobileAim,
+  syncMobileAimMouse,
 } from '../utils/mobile-aim.js';
+import { hasMobileMeleeTargetInAim } from '../utils/mobile-melee-target.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { IsometricMovementComponent } from '../components/movement/IsometricMovementComponent.js';
 
 const MOVE_DEADZONE = 0.14;
-const AUTO_MELEE_COOLDOWN_SEC = 0.42;
+const AUTO_MELEE_COOLDOWN_SEC = 0.22;
+/** Quick right-stick tap with aim held → soul throw (hold + drag = aim / auto-melee). */
+const THROW_TAP_MAX_MS = 280;
+const THROW_TAP_MIN_DEFLECTION = 0.07;
+
+type InputHandlersList = { inputHandlers: ENGINE.IInputHandler[] };
 
 @ENGINE.GameClass()
 export class MobileCombatActor extends ENGINE.Actor {
@@ -24,6 +31,13 @@ export class MobileCombatActor extends ENGINE.Actor {
   private _moveY = 0;
   private _moveActive = false;
   private _autoMeleeCooldown = 0;
+  private _aimStartX = 0;
+  private _aimStartY = 0;
+  private _aimSessionStartMs = 0;
+  private _aimSessionPeak = 0;
+  private _aimSessionOpen = false;
+  private _aimLastNx = 0;
+  private _aimLastNy = 0;
 
   private readonly _inputHandler: ENGINE.IInputHandler = {
     handleVirtualJoystick: (
@@ -40,20 +54,31 @@ export class MobileCombatActor extends ENGINE.Actor {
       }
 
       const zone = this._zoneSize(index);
-      const nx = zone > 0 ? (data.position.x / zone) : 0;
-      const ny = zone > 0 ? (data.position.y / zone) : 0;
       const active = data.type !== 'end';
 
       if (index === ENGINE.VirtualJoystickIndex.Right) {
-        applyMobileAimFromStick(world, nx, ny, active);
+        if (data.type === 'start') {
+          this._aimStartX = data.position.x;
+          this._aimStartY = data.position.y;
+          this._beginAimSession();
+        }
+
+        if (!active) {
+          this._endAimStick(world);
+          return true;
+        }
+
+        const dx = data.position.x - this._aimStartX;
+        const dy = data.position.y - this._aimStartY;
+        const nx = zone > 0 ? THREE.MathUtils.clamp(dx / zone, -1, 1) : 0;
+        const ny = zone > 0 ? THREE.MathUtils.clamp(dy / zone, -1, 1) : 0;
+        this._updateAimStick(world, nx, ny);
         return true;
       }
 
       if (index === ENGINE.VirtualJoystickIndex.Left) {
-        this._moveX = active ? nx : 0;
-        this._moveY = active ? ny : 0;
-        this._moveActive = active && Math.hypot(nx, ny) > MOVE_DEADZONE;
-        return true;
+        // PlayerController uses delta-from-start; do not consume left stick here.
+        return false;
       }
 
       return false;
@@ -69,11 +94,18 @@ export class MobileCombatActor extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
-    this.getWorld()?.inputManager.addInputHandler(this._inputHandler);
+    const world = this.getWorld();
+    if (!world) {
+      return;
+    }
+    this._registerInputHandlerBeforePlayerController(world);
   }
 
   protected override doEndPlay(): void {
-    this.getWorld()?.inputManager.removeInputHandler(this._inputHandler);
+    const world = this.getWorld();
+    if (world) {
+      world.inputManager.removeInputHandler(this._inputHandler);
+    }
     resetMobileAim();
     super.doEndPlay();
   }
@@ -83,6 +115,11 @@ export class MobileCombatActor extends ENGINE.Actor {
 
     if (!isMobileDevice() || !isGameplayUnlocked()) {
       return;
+    }
+
+    const world = this.getWorld();
+    if (world) {
+      syncMobileAimMouse(world);
     }
 
     this._applyMoveInput();
@@ -101,7 +138,11 @@ export class MobileCombatActor extends ENGINE.Actor {
     if (!world) {
       return;
     }
-    applyMobileAimFromStick(world, stickX, stickY, active);
+    if (active) {
+      this._updateAimStick(world, stickX, stickY);
+    } else {
+      this._endAimStick(world);
+    }
   }
 
   /** Clear virtual stick state when gameplay input is flushed. */
@@ -110,6 +151,7 @@ export class MobileCombatActor extends ENGINE.Actor {
     this._moveY = 0;
     this._moveActive = false;
     this._autoMeleeCooldown = 0;
+    resetMobileAim();
 
     const pawn = this.getWorld()?.getFirstPlayerPawn();
     if (pawn instanceof IsometricPlayerPawn) {
@@ -131,6 +173,57 @@ export class MobileCombatActor extends ENGINE.Actor {
     return actor;
   }
 
+  /** Right stick aim must run before PlayerController; left stick passes through. */
+  private _registerInputHandlerBeforePlayerController(world: ENGINE.World): void {
+    const im = world.inputManager;
+    im.addInputHandler(this._inputHandler);
+    const handlers = (im as unknown as InputHandlersList).inputHandlers;
+    const idx = handlers.indexOf(this._inputHandler);
+    if (idx > 0) {
+      handlers.splice(idx, 1);
+      handlers.unshift(this._inputHandler);
+    }
+    this._inputHandler.setInputManager(im);
+  }
+
+  private _beginAimSession(): void {
+    this._aimSessionStartMs = performance.now();
+    this._aimSessionPeak = 0;
+    this._aimSessionOpen = true;
+    this._aimLastNx = 0;
+    this._aimLastNy = 0;
+  }
+
+  private _updateAimStick(world: ENGINE.World, nx: number, ny: number): void {
+    if (!this._aimSessionOpen) {
+      this._beginAimSession();
+    }
+    const mag = Math.hypot(nx, ny);
+    if (mag > this._aimSessionPeak) {
+      this._aimSessionPeak = mag;
+      this._aimLastNx = nx;
+      this._aimLastNy = ny;
+    }
+    applyMobileAimFromStick(world, nx, ny, true);
+  }
+
+  /** Short tap with stick deflected → throw; longer hold → aim/melee only. */
+  private _endAimStick(world: ENGINE.World): void {
+    if (this._aimSessionOpen) {
+      const elapsed = performance.now() - this._aimSessionStartMs;
+      const tapThrow =
+        this._aimSessionPeak >= THROW_TAP_MIN_DEFLECTION &&
+        elapsed <= THROW_TAP_MAX_MS;
+
+      if (tapThrow) {
+        applyMobileAimFromStick(world, this._aimLastNx, this._aimLastNy, true);
+        SpinningWeaponActor.triggerSoulThrow(world);
+      }
+      this._aimSessionOpen = false;
+    }
+    applyMobileAimFromStick(world, 0, 0, false);
+  }
+
   private _zoneSize(index: ENGINE.VirtualJoystickIndex): number {
     const sizeOpt = this.getWorld()?.inputManager.options.virtualJoystickOptions?.size;
     const size = sizeOpt ?? 120;
@@ -149,7 +242,6 @@ export class MobileCombatActor extends ENGINE.Actor {
     }
 
     if (!this._moveActive) {
-      move.setMobileStickInput(0, 0);
       return;
     }
 
@@ -162,11 +254,17 @@ export class MobileCombatActor extends ENGINE.Actor {
 
   private _tickAutoMelee(deltaTime: number): void {
     this._autoMeleeCooldown = Math.max(0, this._autoMeleeCooldown - deltaTime);
+
     if (this._autoMeleeCooldown > 0 || !isMobileAimActive()) {
       return;
     }
 
-    const weapon = this.getWorld()?.getActors().find(
+    const world = this.getWorld();
+    if (!world || !hasMobileMeleeTargetInAim(world)) {
+      return;
+    }
+
+    const weapon = world.getActors().find(
       (a): a is SpinningWeaponActor => a instanceof SpinningWeaponActor,
     );
     if (!weapon) {

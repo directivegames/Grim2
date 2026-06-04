@@ -4,7 +4,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+import { ensureMobileHudStyles, getMobileMissionColumn } from './mobile-hud-layout.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 
 const MONTserrat_BOLD_URL =
   '@project/assets/UI/Bree_Serif,Montserrat/Montserrat/static/Montserrat-Bold.ttf';
@@ -107,8 +108,9 @@ export class CollateralDamageUI {
         0 2px 8px rgba(0, 0, 0, 0.65);
     `;
 
+    const mobile = isMobileDevice();
     const label = document.createElement('span');
-    label.textContent = `${LABEL_TEXT} `;
+    label.textContent = mobile ? 'COLLATERAL: ' : `${LABEL_TEXT} `;
     label.style.color = LABEL_COLOR;
 
     this._valueEl = document.createElement('span');
@@ -116,7 +118,7 @@ export class CollateralDamageUI {
     this._valueEl.textContent = '0%';
 
     this._container.append(label, this._valueEl);
-    gameContainer.appendChild(this._container);
+    getMobileMissionColumn(gameContainer).appendChild(this._container);
   }
 
   public show(): void {

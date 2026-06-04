@@ -18,26 +18,21 @@ export function ensureMobileMenuStyles(host: HTMLElement): void {
   st.id = STYLE_ID;
   st.textContent = `
     .grim-mobile .grim-map-briefing-panel {
-      width: min(520px, 94vw) !important;
-      max-height: min(88vh, 720px);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: clamp(28px, 4vh, 40px) clamp(18px, 4vw, 28px) clamp(22px, 3vh, 32px) !important;
+      width: min(440px, 94vw) !important;
     }
     .grim-mobile .grim-map-briefing-panel button {
       min-height: 44px;
       min-width: 44px;
-      padding: 10px 14px !important;
-      font-size: 0.82rem !important;
+      padding: 8px 14px !important;
+      font-size: 0.8rem !important;
       touch-action: manipulation;
     }
     .grim-mobile .grim-map-briefing-btn {
-      width: min(320px, 88%) !important;
-      min-height: 48px !important;
-      aspect-ratio: unset !important;
+      width: min(260px, 82%) !important;
+      aspect-ratio: 4.6 / 1 !important;
     }
     .grim-mobile .grim-map-briefing-btn span {
-      font-size: clamp(0.72rem, 2.8vw, 0.92rem) !important;
+      font-size: clamp(0.6rem, 2.4vw, 0.78rem) !important;
     }
 
     .grim-mobile [data-grim-upgrade-shop] {

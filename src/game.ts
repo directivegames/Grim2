@@ -27,7 +27,6 @@ import { LoadingScreenUI, LoadingStages, mapWarmupProgress } from './ui/LoadingS
 import { setGameplayUnlocked } from './utils/game-pause.js';
 import { hideGameplayPresentation } from './utils/presentation-mode.js';
 import { isMobileDevice } from './utils/mobile-device.js';
-import { applyMobileMenuRenderingProfile } from './utils/mobile-startup.js';
 import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { GrimIntroActor } from './actors/GrimIntroActor.js';
@@ -44,33 +43,6 @@ function disableBrowserContextMenu(host: HTMLElement): void {
   host.addEventListener('contextmenu', (e) => {
     e.preventDefault();
   }, true);
-}
-
-/**
- * Cap device pixel ratio to 1. Genesys exposes {@link ENGINE.Renderer} with `.renderer` (IGenesysRenderer);
- * some hosts pass a different shape, so probe safely and never throw.
- */
-function trySetPixelRatioOne(wrapper: unknown): void {
-  if (wrapper == null || typeof wrapper !== 'object') {
-    return;
-  }
-  const w = wrapper as Record<string, unknown>;
-  const inner = w.renderer;
-  if (inner != null && typeof inner === 'object' && typeof (inner as { setPixelRatio?: (n: number) => void }).setPixelRatio === 'function') {
-    (inner as { setPixelRatio: (n: number) => void }).setPixelRatio(1);
-    return;
-  }
-  if (typeof (w as { setPixelRatio?: (n: number) => void }).setPixelRatio === 'function') {
-    (w as { setPixelRatio: (n: number) => void }).setPixelRatio(1);
-    return;
-  }
-  const getNative = (w as { getNativeRenderer?: () => unknown }).getNativeRenderer;
-  if (typeof getNative === 'function') {
-    const native = getNative.call(wrapper);
-    if (native != null && typeof native === 'object' && typeof (native as { setPixelRatio?: (n: number) => void }).setPixelRatio === 'function') {
-      (native as { setPixelRatio: (n: number) => void }).setPixelRatio(1);
-    }
-  }
 }
 
 @ENGINE.GameClass()
@@ -99,7 +71,7 @@ class MyGame extends ENGINE.BaseGameLoop {
       ...base,
       navigationOptions: {
         engine: ENGINE.NavigationEngine.RecastNavigation,
-        generateOnStartUp: !isMobileDevice(),
+        generateOnStartUp: true,
         options: {
           cs: 0.5,
           ch: 0.2,
@@ -131,20 +103,11 @@ class MyGame extends ENGINE.BaseGameLoop {
         antialias: false,
       },
     };
-    if (isMobileDevice()) {
-      options.rendererType = 'webgl';
-    }
     return options;
   }
 
-  /**
-   * After the game loop starts, cap the pixel ratio to 1.
-   * Without this, HiDPI / 2K / 4K monitors render at 1.5×–2× resolution
-   * (e.g. a 2560×1440 display renders at 3840×2160 internally).
-   */
   public override async start(): Promise<void> {
     await super.start();
-    trySetPixelRatioOne(this.renderer);
     // No lights in this scene use castShadow, so the shadow map system is
     // entirely unused. Disabling it removes per-frame shadow prep overhead
     // (frustum culling pass, map allocation checks) that the engine enables
@@ -159,10 +122,6 @@ class MyGame extends ENGINE.BaseGameLoop {
    */
   protected override async preStart(): Promise<void> {
     LoadingScreenUI.setProgress(LoadingStages.boot.percent, LoadingStages.boot.status);
-    const world = this.getWorld();
-    if (world) {
-      applyMobileMenuRenderingProfile(world);
-    }
     await super.preStart();
     StartMenuUI.preflightCover(this.getWorld());
   }
@@ -182,10 +141,8 @@ class MyGame extends ENGINE.BaseGameLoop {
     world.inputManager.setInputEnabled(false);
     this._disableSceneViewTargetCameras(world);
 
-    if (!isMobileDevice()) {
-      this._spawnScenicFogCards(world);
-      this._spawnCloudShadows(world);
-    }
+    this._spawnScenicFogCards(world);
+    this._spawnCloudShadows(world);
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
@@ -296,10 +253,8 @@ class MyGame extends ENGINE.BaseGameLoop {
 
   /** Compile shaders during the title screen, then enable PLAY when ready. */
   private _startWarmupSequence(world: ENGINE.World, startMenu: StartMenuUI): void {
-    if (!isMobileDevice()) {
-      const weaponActor = SpinningWeaponActor.create();
-      world.addActor(weaponActor);
-    }
+    const weaponActor = SpinningWeaponActor.create();
+    world.addActor(weaponActor);
 
     GameAudioManager.ensureExists(world);
 
@@ -327,17 +282,9 @@ export function main(container: HTMLElement, options?: Partial<ENGINE.BaseGameLo
   MobileLandscapeOverlayUI.ensureOnHost(container);
   disableBrowserContextMenu(container);
 
-  const rendererOptions = isMobileDevice()
-    ? { ...options?.rendererOptions, rendererType: 'webgl' as const }
-    : options?.rendererOptions;
-
-  if (isMobileDevice()) {
-    console.info('[Grim] Mobile device — WebGL renderer and lightweight startup');
-  }
-
   const mergedOptions: Partial<ENGINE.BaseGameLoopOptions> = {
     ...options,
-    rendererOptions,
+    rendererOptions: options?.rendererOptions,
     // Disable the Three.js GPU-timestamp inspector – it forces a CPU/GPU sync
     // barrier every frame and caps the renderer at ~30fps even on fast hardware.
     debugUIMode: 'none',

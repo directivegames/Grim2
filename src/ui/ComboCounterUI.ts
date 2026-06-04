@@ -6,6 +6,7 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { isMobileDevice } from '../utils/mobile-device.js';
 import { injectBreeSerifFont, sunsetNumberTextCss } from './uiTypography.js';
 
 const BG_URL = '@project/assets/UI/ComboBG.webp';
@@ -52,14 +53,16 @@ export class ComboCounterUI {
     const bgUrl = match ? match[1] : '';
 
     // Container
+    const mobile = isMobileDevice();
+    const effectiveScale = mobile ? UI_SCALE * 0.5 : UI_SCALE;
     this._container = document.createElement('div');
     this._container.style.cssText = `
       position: absolute;
-      right: ${20 * UI_SCALE}px;
+      right: ${20 * effectiveScale}px;
       top: 50%;
       transform: translateY(-50%);
-      width: ${BG_WIDTH * UI_SCALE}px;
-      height: ${BG_HEIGHT * UI_SCALE}px;
+      width: ${BG_WIDTH * effectiveScale}px;
+      height: ${BG_HEIGHT * effectiveScale}px;
       pointer-events: none;
       user-select: none;
       z-index: 1200;
@@ -84,7 +87,7 @@ export class ComboCounterUI {
     this._countDisplay = document.createElement('span');
     this._countDisplay.style.cssText = `
       position: relative;
-      ${sunsetNumberTextCss(80 * UI_SCALE)}
+      ${sunsetNumberTextCss(80 * effectiveScale)}
       z-index: 1;
     `;
     this._countDisplay.textContent = '0x';

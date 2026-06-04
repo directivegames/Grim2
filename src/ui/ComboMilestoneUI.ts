@@ -4,6 +4,7 @@
  * Shows at top-center with escalating animations based on milestone tier.
  */
 import * as ENGINE from '@gnsx/genesys.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 
 const MILESTONES = [
   { threshold: 10, image: '@project/assets/UI/Combo-10x.webp', tier: 'bronze' },
@@ -23,6 +24,11 @@ const MILESTONES = [
 const UI_SCALE = 0.3;
 const IMG_SIZE = 512;
 const DISPLAY_DURATION = 2500;
+
+/** Mobile: ~10vw, 50% of desktop — keeps milestone banners readable but small. */
+const MOBILE_IMG_VW = 10;
+const MOBILE_IMG_MIN = 46;
+const MOBILE_IMG_MAX = 62;
 
 export class ComboMilestoneUI {
   private static _instance: ComboMilestoneUI | null = null;
@@ -59,13 +65,20 @@ export class ComboMilestoneUI {
 
     // Create milestone display container (centered at top)
     this._milestoneContainer = document.createElement('div');
+    const mobile = isMobileDevice();
+    const sizeStr = mobile
+      ? `clamp(${MOBILE_IMG_MIN}px, ${MOBILE_IMG_VW}vw, ${MOBILE_IMG_MAX}px)`
+      : `${IMG_SIZE * UI_SCALE}px`;
+    const topStr = mobile
+      ? `clamp(8px, 2vw, 14px)`
+      : `${80 * UI_SCALE}px`;
     this._milestoneContainer.style.cssText = `
       position: absolute;
       left: 50%;
-      top: ${80 * UI_SCALE}px;
+      top: ${topStr};
       transform: translateX(-50%);
-      width: ${IMG_SIZE * UI_SCALE}px;
-      height: ${IMG_SIZE * UI_SCALE}px;
+      width: ${sizeStr};
+      height: ${sizeStr};
       pointer-events: none;
       user-select: none;
       z-index: 2000;

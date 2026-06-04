@@ -5,7 +5,9 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { FIST_COOLDOWN_SEC, SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
 import { grimVault } from '../game/GrimVault.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 import { ensureMobileHudStyles } from './mobile-hud-layout.js';
+import { withMenuSelectSound } from '../utils/menu-audio.js';
 
 const FIST_ICON_URL = '@project/assets/UI/fistofa.webp';
 
@@ -54,6 +56,8 @@ export class FistAbilityHUDUI {
       opacity: 0;
       will-change: opacity, filter;
     `;
+
+    const mobile = isMobileDevice();
 
     const keyHint = document.createElement('span');
     keyHint.setAttribute('data-grim-hud-key', '');
@@ -104,7 +108,19 @@ export class FistAbilityHUDUI {
     `;
 
     iconWrap.append(this._iconEl, this._cooldownOverlay);
-    this._container.append(keyHint, iconWrap);
+
+    if (mobile) {
+      iconWrap.style.pointerEvents = 'auto';
+      iconWrap.style.touchAction = 'manipulation';
+      iconWrap.style.cursor = 'pointer';
+      iconWrap.addEventListener('click', withMenuSelectSound(this._world, () => {
+        SpinningWeaponActor.triggerFistAbility(this._world);
+      }));
+      this._container.append(iconWrap);
+    } else {
+      this._container.append(keyHint, iconWrap);
+    }
+
     gc.appendChild(this._container);
   }
 

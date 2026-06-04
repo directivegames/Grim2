@@ -1,10 +1,9 @@
 /**
- * MobileCombatChromeUI — pause / throw buttons and touch fallback stick zones.
+ * MobileCombatChromeUI — pause button and touch fallback stick zones.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { MobileCombatActor } from '../actors/MobileCombatActor.js';
-import { SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
 import { MapUI } from './MapUI.js';
 import { PauseMenuUI } from './PauseMenuUI.js';
 import { UpgradeShopUI } from './UpgradeShopUI.js';
@@ -124,14 +123,6 @@ export class MobileCombatChromeUI {
       this._togglePause();
     }));
 
-    const throwBtn = document.createElement('button');
-    throwBtn.type = 'button';
-    throwBtn.className = 'grim-mobile-combat-btn grim-mobile-throw-btn';
-    throwBtn.textContent = 'THROW';
-    throwBtn.addEventListener('click', withMenuSelectSound(this._world, () => {
-      SpinningWeaponActor.triggerSoulThrow(this._world);
-    }));
-
     const moveZone = document.createElement('div');
     moveZone.className = 'grim-mobile-touch-fallback grim-mobile-touch-move';
     moveZone.setAttribute('aria-hidden', 'true');
@@ -140,7 +131,7 @@ export class MobileCombatChromeUI {
     aimZone.className = 'grim-mobile-touch-fallback grim-mobile-touch-aim';
     aimZone.setAttribute('aria-hidden', 'true');
 
-    root.append(pauseBtn, throwBtn, moveZone, aimZone);
+    root.append(pauseBtn, moveZone, aimZone);
     host.appendChild(root);
 
     this._root = root;

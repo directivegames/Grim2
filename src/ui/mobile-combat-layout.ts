@@ -1,5 +1,5 @@
 /**
- * Mobile combat chrome — pause / throw buttons and touch fallback zones.
+ * Mobile combat chrome — pause button and touch fallback stick zones.
  */
 import * as THREE from 'three';
 
@@ -64,11 +64,6 @@ export function ensureMobileCombatStyles(host: HTMLElement): void {
       position: absolute;
       top: max(8px, env(safe-area-inset-top, 0px));
       left: max(10px, env(safe-area-inset-left, 0px));
-    }
-    .grim-mobile [${ROOT_ATTR}] .grim-mobile-throw-btn {
-      position: absolute;
-      left: calc(${MOBILE_LEFT_STICK_LEFT} + ${MOBILE_LEFT_STICK_SIZE} + clamp(8px, 2vw, 14px));
-      bottom: calc(${MOBILE_LEFT_STICK_BOTTOM} + clamp(36px, 9vw, 52px));
     }
     .grim-mobile [${ROOT_ATTR}] .grim-mobile-touch-fallback {
       position: absolute;

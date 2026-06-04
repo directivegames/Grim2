@@ -462,12 +462,25 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     actor?.triggerSoulThrow();
   }
 
-  /** Auto-swing while mobile aim stick is held (returns true if attack started). */
+  /** Mobile HUD / external callers (same as E key). */
+  public triggerFistAbility(): void {
+    this._onEKey();
+  }
+
+  public static triggerFistAbility(world: ENGINE.World): void {
+    SpinningWeaponActor.findInWorld(world)?.triggerFistAbility();
+  }
+
+  /** Auto-swing while mobile aim stick is held (returns true if a new swing started). */
   public tryMobileAutoMelee(): boolean {
     if (!isMobileDevice()) {
       return false;
     }
-    if (GrimGrinderModeActor.isActive() || this._isMeleeBusy() || this._soulThrowBlocksMelee()) {
+    if (GrimGrinderModeActor.isActive() || this._soulThrowBlocksMelee()) {
+      return false;
+    }
+    if (this._isMeleeBusy()) {
+      this._queuedMelee = true;
       return false;
     }
     this._onLeftClick();

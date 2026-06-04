@@ -11,7 +11,7 @@ const ANIM_DURATION = 0.5;
 const SPLATTER_COUNT = 1;
 const MAX_POOL_SIZE = 32;
 
-const BLOOD_SPRITESHEET_PATH = '@project/assets/VFX/BloodFX/Blooduse.png';
+const BLOOD_SPRITESHEET_PATH = '@project/assets/VFX/BloodFX/Blooduse.webp';
 
 /** Second row (0-based index 1) — horizontal side-impact splatter. */
 const SPLATTER_ROW = 1;
