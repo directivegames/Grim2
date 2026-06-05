@@ -22,6 +22,7 @@ import './actors/IsometricPlayerPawn.ts';
 import './actors/KillStreakTracker.ts';
 import './actors/MapMusicActor.ts';
 import './actors/MenuMusicActor.ts';
+import './actors/mobile-scene-chunks.ts';
 import './actors/MobileCombatActor.ts';
 import './actors/MobileSceneChunkLoaderActor.ts';
 import './actors/NewZombieActor.ts';

@@ -2,98 +2,17 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { isMobileDevice } from '../utils/mobile-device.js';
+import { BEDROOM_CHUNK, ENVIRONMENT_CHUNKS, type GlbPlacement } from './mobile-scene-chunks.js';
 
-type GlbPlacement = {
-  name: string;
-  modelUrl: ENGINE.ModelPath;
-  position: THREE.Vector3;
-  scale?: THREE.Vector3;
-  rotation?: THREE.Euler;
-};
-
-const FRAME_DELAY_MS = 34;
 const HIDDEN_LOAD_Y = -1000;
 
-const BEDROOM_CHUNK: readonly GlbPlacement[] = [
-  {
-    name: 'MobileBedroom',
-    modelUrl: '@project/assets/models/Halloween game.glb' as ENGINE.ModelPath,
-    position: new THREE.Vector3(11.7, 2.3, -20.6),
-    scale: new THREE.Vector3(0.7, 0.7, 0.7),
-  },
-];
+/** Delay between individual placements so unique-model decodes don't spike at once. */
+const PLACEMENT_DELAY_MS = 24;
+/** Extra breather between chunks. */
+const CHUNK_DELAY_MS = 40;
 
-const HOUSE_CHUNK: readonly GlbPlacement[] = [
-  {
-    name: 'MobileHouse_A',
-    modelUrl: '@project/assets/models/Double house.glb' as ENGINE.ModelPath,
-    position: new THREE.Vector3(-1.7, 3.8, -20.1),
-  },
-  {
-    name: 'MobileHouse_B',
-    modelUrl: '@project/assets/models/Double house.glb' as ENGINE.ModelPath,
-    position: new THREE.Vector3(-30.1, 3.8, -20.1),
-  },
-];
-
-const PROP_CHUNKS: readonly (readonly GlbPlacement[])[] = [
-  [
-    {
-      name: 'MobileCar_A',
-      modelUrl: '@project/assets/models/car 2.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(-0.56824, 0.279418, -9.184645),
-      scale: new THREE.Vector3(0.25, 0.25, 0.25),
-    },
-  ],
-  [
-    {
-      name: 'MobileCar_B',
-      modelUrl: '@project/assets/models/Car.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(16.7, 0.2, -16.7),
-      scale: new THREE.Vector3(0.25, 0.25, 0.25),
-    },
-    {
-      name: 'MobileCar_C',
-      modelUrl: '@project/assets/models/Car.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(-26.214521, 0.2, -15.079049),
-      scale: new THREE.Vector3(0.25, 0.25, 0.25),
-    },
-  ],
-  [
-    {
-      name: 'MobileHedge_A',
-      modelUrl: '@project/assets/models/Hedge.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(4.867622, -0.884932, -17.342079),
-      scale: new THREE.Vector3(0.075321, 0.075321, 0.075321),
-    },
-    {
-      name: 'MobileHedge_B',
-      modelUrl: '@project/assets/models/Hedge.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(-8.320137, -0.884932, -25.489639),
-      scale: new THREE.Vector3(0.075321, 0.075321, 0.075321),
-    },
-    {
-      name: 'MobileHedge_C',
-      modelUrl: '@project/assets/models/Hedge.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(-8.320137, -0.884932, -17.055371),
-      scale: new THREE.Vector3(0.075321, 0.075321, 0.075321),
-    },
-  ],
-  [
-    {
-      name: 'MobileBin_A',
-      modelUrl: '@project/assets/models/Bin.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(7.569617, -0.3433, -10.3152),
-      scale: new THREE.Vector3(3, 3, 3),
-    },
-    {
-      name: 'MobileBin_B',
-      modelUrl: '@project/assets/models/Bin.glb' as ENGINE.ModelPath,
-      position: new THREE.Vector3(8.189708, -0.557035, -10.873028),
-      scale: new THREE.Vector3(3, 3, 3),
-    },
-  ],
-];
+/** Town combat area is authored around the origin; the bedroom diorama sits here. */
+const BEDROOM_ANCHOR = new THREE.Vector3(188.6, 3, -51);
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => window.setTimeout(resolve, ms));
@@ -144,11 +63,13 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     return actor;
   }
 
+  /** Loads the bedroom diorama + lighting first so the intro camera has something to frame. */
   public loadIntroBedroom(): Promise<void> {
     this._introPromise ??= this._loadIntroBedroom();
     return this._introPromise;
   }
 
+  /** Streams the rest of the town in nearest-to-origin order. */
   public startBackgroundLoad(): Promise<void> {
     this._backgroundPromise ??= this._loadBackgroundChunks();
     return this._backgroundPromise;
@@ -162,11 +83,9 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
 
   private async _loadBackgroundChunks(): Promise<void> {
     await this.loadIntroBedroom();
-    await delay(FRAME_DELAY_MS * 2);
-    await this._loadGlbChunk(HOUSE_CHUNK);
 
-    for (const chunk of PROP_CHUNKS) {
-      await delay(FRAME_DELAY_MS * 3);
+    for (const chunk of ENVIRONMENT_CHUNKS) {
+      await delay(CHUNK_DELAY_MS);
       await this._loadGlbChunk(chunk);
     }
   }
@@ -182,25 +101,35 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       return;
     }
 
-    const ambient = ENGINE.Actor.create({
+    world.addActor(ENGINE.Actor.create({
       name: 'MobileAmbientLight',
       rootComponent: ENGINE.AmbientLightComponent.create({
-        color: new THREE.Color(0.32, 0.25, 0.55),
-        intensity: 5.5,
+        color: new THREE.Color(0.42, 0.36, 0.62),
+        intensity: 4.5,
       }),
-    });
-    world.addActor(ambient);
+    }));
 
-    const fill = ENGINE.Actor.create({
-      name: 'MobileFillLight',
+    // Town fill (gameplay around origin).
+    world.addActor(ENGINE.Actor.create({
+      name: 'MobileTownLight',
       rootComponent: ENGINE.PointLightComponent.create({
-        color: new THREE.Color(0.74, 0.55, 1),
-        intensity: 18,
-        distance: 45,
-        position: new THREE.Vector3(0, 8, -8),
+        color: new THREE.Color(0.78, 0.6, 1),
+        intensity: 60,
+        distance: 120,
+        position: new THREE.Vector3(0, 14, 0),
       }),
-    });
-    world.addActor(fill);
+    }));
+
+    // Bedroom diorama fill (intro camera target).
+    world.addActor(ENGINE.Actor.create({
+      name: 'MobileBedroomLight',
+      rootComponent: ENGINE.PointLightComponent.create({
+        color: new THREE.Color(0.85, 0.62, 1),
+        intensity: 28,
+        distance: 40,
+        position: BEDROOM_ANCHOR.clone(),
+      }),
+    }));
   }
 
   private _ensureSimpleGround(): void {
@@ -214,56 +143,34 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       return;
     }
 
+    // Replace the placeholder ground from mobile-empty.genesys-scene with a dark
+    // atmospheric ground that spans both the town (origin) and bedroom (~188,-51).
+    const placeholder = world.getActors().find(actor => actor.name === 'MobileGround');
+    if (placeholder) {
+      world.removeActor(placeholder);
+    }
+
     const ground = ENGINE.Actor.create({
       name: 'MobileVisualGround',
       rootComponent: ENGINE.MeshComponent.create({
-        geometry: new THREE.BoxGeometry(90, 0.04, 90),
+        geometry: new THREE.BoxGeometry(440, 0.1, 440),
         material: new THREE.MeshStandardMaterial({
-          color: new THREE.Color(0.045, 0.035, 0.065),
+          color: new THREE.Color(0.05, 0.04, 0.07),
           roughness: 1,
         }),
-        position: new THREE.Vector3(0, -0.92, 0),
+        position: new THREE.Vector3(40, -1, -20),
         physicsOptions: { enabled: false },
         castShadow: false,
         receiveShadow: false,
       }),
     });
     world.addActor(ground);
-
-    const roadMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0.08, 0.075, 0.095),
-      roughness: 1,
-    });
-
-    for (const [index, rootComponent] of [
-      ENGINE.MeshComponent.create({
-        geometry: new THREE.BoxGeometry(70, 0.035, 8),
-        material: roadMat,
-        position: new THREE.Vector3(0, -0.88, -12),
-        physicsOptions: { enabled: false },
-        castShadow: false,
-        receiveShadow: false,
-      }),
-      ENGINE.MeshComponent.create({
-        geometry: new THREE.BoxGeometry(8, 0.035, 70),
-        material: roadMat,
-        position: new THREE.Vector3(-8, -0.87, 0),
-        physicsOptions: { enabled: false },
-        castShadow: false,
-        receiveShadow: false,
-      }),
-    ].entries()) {
-      world.addActor(ENGINE.Actor.create({
-        name: `MobileRoad_${index + 1}`,
-        rootComponent,
-      }));
-    }
   }
 
   private async _loadGlbChunk(chunk: readonly GlbPlacement[]): Promise<void> {
     for (const placement of chunk) {
       await this._spawnGlbPlacement(placement);
-      await delay(FRAME_DELAY_MS);
+      await delay(PLACEMENT_DELAY_MS);
     }
   }
 
@@ -275,6 +182,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
 
     const visual = ENGINE.GLTFMeshComponent.create({
       modelUrl: placement.modelUrl,
+      material: placement.material,
       position: placement.position.clone(),
       scale: placement.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
       rotation: placement.rotation?.clone() ?? new THREE.Euler(),

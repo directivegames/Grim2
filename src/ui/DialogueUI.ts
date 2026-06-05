@@ -19,6 +19,7 @@ const PANEL_BOTTOM_DESKTOP_PX = FIST_HUD_BOTTOM_PX + FIST_HUD_STACK_PX + PANEL_G
 
 const PANEL_HEIGHT_DESKTOP_PX = 130;
 const PANEL_HEIGHT_MOBILE_PX = 110;
+const PANEL_WIDTH_DESKTOP_PX = 560;
 const TEXT_INSET_LEFT_PX = 14;
 const TEXT_INSET_RIGHT_PX = 14;
 const TEXT_INSET_TOP_DESKTOP_PX = 32;
@@ -164,11 +165,11 @@ export class DialogueUI {
   }
 
   private _panelShownTransform(): string {
-    return 'translateY(0)';
+    return isMobileDevice() ? 'translateY(0)' : 'translate(-50%, 0)';
   }
 
   private _panelHiddenTransform(): string {
-    return 'translateY(110%)';
+    return isMobileDevice() ? 'translateY(110%)' : 'translate(-50%, 110%)';
   }
 
   private _mount(container: HTMLElement): void {
@@ -180,6 +181,13 @@ export class DialogueUI {
     const speakerFontSize = mobile ? '12px' : '14px';
     const bodyFontSize = mobile ? '14px' : '18px';
     const hintFontSize = mobile ? '10px' : '12px';
+    const panelWidth = mobile ? 'auto' : `min(${PANEL_WIDTH_DESKTOP_PX}px, 58vw)`;
+    const panelLeft = mobile ? '0' : '50%';
+    const panelRight = mobile ? '0' : 'auto';
+    const panelBorder = mobile
+      ? 'border-top: 2px solid rgba(110, 80, 140, 0.55);'
+      : 'border: 2px solid rgba(110, 80, 140, 0.55);';
+    const panelTransform = mobile ? 'translateY(110%)' : 'translate(-50%, 110%)';
 
     const root = document.createElement('div');
     root.className = 'grim-dialogue-root';
@@ -211,14 +219,16 @@ export class DialogueUI {
     panel.style.cssText = `
       position: absolute;
       bottom: ${panelBottom}px;
-      left: 0;
-      right: 0;
+      left: ${panelLeft};
+      right: ${panelRight};
+      width: ${panelWidth};
       height: ${panelHeight}px;
       background: rgba(8, 6, 14, 0.93);
-      border-top: 2px solid rgba(110, 80, 140, 0.55);
+      ${panelBorder}
+      border-radius: ${mobile ? '0' : '6px'};
       box-shadow: 0 -6px 28px rgba(0,0,0,0.75);
       box-sizing: border-box;
-      transform: translateY(110%);
+      transform: ${panelTransform};
       opacity: 0;
       transition: transform ${PANEL_ENTER_MS * 0.001}s cubic-bezier(0.22, 1, 0.36, 1),
                   opacity ${PANEL_ENTER_MS * 0.001}s ease;
