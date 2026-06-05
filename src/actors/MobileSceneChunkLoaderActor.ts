@@ -2,7 +2,14 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { isMobileDevice } from '../utils/mobile-device.js';
-import { BEDROOM_CHUNK, ENVIRONMENT_CHUNKS, type GlbPlacement } from './mobile-scene-chunks.js';
+import { downscaleModelTextures } from '../utils/downscale-model-textures.js';
+import {
+  BEDROOM_CHUNK,
+  ENVIRONMENT_CHUNKS,
+  GROUND_TILES,
+  type GlbPlacement,
+  type GroundTilePlacement,
+} from './mobile-scene-chunks.js';
 
 const HIDDEN_LOAD_Y = -1000;
 
@@ -10,6 +17,13 @@ const HIDDEN_LOAD_Y = -1000;
 const PLACEMENT_DELAY_MS = 24;
 /** Extra breather between chunks. */
 const CHUNK_DELAY_MS = 40;
+
+/**
+ * Max texture dimension on mobile. GLB-embedded textures are decoded at full size
+ * and uploaded to the GPU; capping them keeps the resident footprint under
+ * mobile Safari's per-tab memory limit. Bump up if the bedroom looks too soft.
+ */
+const MOBILE_TEXTURE_MAX_DIM = 512;
 
 /** Town combat area is authored around the origin; the bedroom diorama sits here. */
 const BEDROOM_ANCHOR = new THREE.Vector3(188.6, 3, -51);
@@ -84,10 +98,42 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
   private async _loadBackgroundChunks(): Promise<void> {
     await this.loadIntroBedroom();
 
+    // Floor first so the player has visible grass/road as soon as gameplay starts.
+    await this._loadGroundTiles();
+
     for (const chunk of ENVIRONMENT_CHUNKS) {
       await delay(CHUNK_DELAY_MS);
       await this._loadGlbChunk(chunk);
     }
+  }
+
+  private async _loadGroundTiles(): Promise<void> {
+    const TILES_PER_BATCH = 12;
+    for (let i = 0; i < GROUND_TILES.length; i++) {
+      this._spawnGroundTile(GROUND_TILES[i]);
+      if ((i + 1) % TILES_PER_BATCH === 0) {
+        await delay(PLACEMENT_DELAY_MS);
+      }
+    }
+  }
+
+  private _spawnGroundTile(tile: GroundTilePlacement): void {
+    const world = this.getWorld();
+    if (!world || world.getActors().some(actor => actor.name === tile.name)) {
+      return;
+    }
+
+    const mesh = ENGINE.MeshComponent.create({
+      material: tile.material,
+      position: tile.position.clone(),
+      scale: tile.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
+      rotation: tile.rotation?.clone() ?? new THREE.Euler(),
+      physicsOptions: { enabled: false },
+      castShadow: false,
+      receiveShadow: false,
+    });
+
+    world.addActor(ENGINE.Actor.create({ name: tile.name, rootComponent: mesh }));
   }
 
   private _ensureLighting(): void {
@@ -150,6 +196,9 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       world.removeActor(placeholder);
     }
 
+    // Physics-enabled so the kinematic character controller has a floor to stand on
+    // (the visual grass/road tiles spawned on top are non-colliding). Spans both the
+    // town (origin) and bedroom (~188,-51).
     const ground = ENGINE.Actor.create({
       name: 'MobileVisualGround',
       rootComponent: ENGINE.MeshComponent.create({
@@ -159,7 +208,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
           roughness: 1,
         }),
         position: new THREE.Vector3(40, -1, -20),
-        physicsOptions: { enabled: false },
+        physicsOptions: { enabled: true },
         castShadow: false,
         receiveShadow: false,
       }),
@@ -202,5 +251,12 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
         console.warn(`[MobileSceneChunkLoader] Failed to load ${placement.name}`, error);
       });
     }
+
+    // Shrink full-res textures to fit the mobile memory budget. Textures are shared
+    // across instances, so this only does real work the first time each is seen.
+    // Process both the displayed clone and the cached template (override meshes swap
+    // the clone's material but the template keeps the original full-size texture resident).
+    downscaleModelTextures(visual.getModel(), MOBILE_TEXTURE_MAX_DIM);
+    downscaleModelTextures(visual.getGLTF()?.scene, MOBILE_TEXTURE_MAX_DIM);
   }
 }

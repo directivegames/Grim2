@@ -156,6 +156,7 @@ import './utils/award-soul.ts';
 import './utils/begin-mission-from-map.ts';
 import './utils/browser-compat.ts';
 import './utils/debug-cheats.ts';
+import './utils/downscale-model-textures.ts';
 import './utils/flush-gameplay-input.ts';
 import './utils/game-audio.ts';
 import './utils/game-pause.ts';
