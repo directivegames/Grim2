@@ -84,7 +84,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'health',
     name: 'Vitality',
     description: 'Increases maximum health (+10 per level).',
-    baseSoulCost: 100,
+    baseSoulCost: 50,
     costMultiplier: 2,
     itemCostsPerLevel: BONE_SHARD_LADDER,
     statKey: 'maxHealth',
@@ -94,7 +94,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'attack',
     name: 'Strike',
     description: 'Increases damage dealt.',
-    baseSoulCost: 150,
+    baseSoulCost: 75,
     costMultiplier: 2,
     itemCostsPerLevel: BONE_SHARD_LADDER,
     statKey: 'attackMult',
@@ -104,7 +104,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'defence',
     name: 'Grim Guard',
     description: 'Reduces damage taken.',
-    baseSoulCost: 120,
+    baseSoulCost: 60,
     costMultiplier: 2,
     itemCostsPerLevel: CURSED_VIAL_LADDER,
     statKey: 'defence',
@@ -114,7 +114,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'speed',
     name: 'Haste',
     description: 'Increases movement speed.',
-    baseSoulCost: 100,
+    baseSoulCost: 50,
     costMultiplier: 2,
     itemCostsPerLevel: CURSED_VIAL_LADDER,
     statKey: 'moveSpeed',
@@ -124,7 +124,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'poisonRes',
     name: 'Poison Ward',
     description: 'Resistance to poison effects.',
-    baseSoulCost: 80,
+    baseSoulCost: 40,
     costMultiplier: 2,
     itemCostsPerLevel: BONE_SHARD_LADDER,
     statKey: 'poisonRes',
@@ -134,7 +134,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'possessionRes',
     name: 'Possession Ward',
     description: 'Resistance to possession effects.',
-    baseSoulCost: 80,
+    baseSoulCost: 40,
     costMultiplier: 2,
     itemCostsPerLevel: CURSED_VIAL_LADDER,
     statKey: 'possessionRes',
@@ -144,7 +144,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'fearRes',
     name: 'Fear Ward',
     description: 'Resistance to fear effects.',
-    baseSoulCost: 80,
+    baseSoulCost: 40,
     costMultiplier: 2,
     itemCostsPerLevel: SOUL_CRYSTAL_LADDER,
     statKey: 'fearRes',
@@ -154,7 +154,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'critChance',
     name: 'Critical Eye',
     description: 'Chance to land critical hits.',
-    baseSoulCost: 200,
+    baseSoulCost: 100,
     costMultiplier: 2,
     itemCostsPerLevel: SOUL_CRYSTAL_LADDER,
     statKey: 'critChance',
@@ -164,7 +164,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'luck',
     name: 'Fortune',
     description: 'Improves item drop rolls.',
-    baseSoulCost: 150,
+    baseSoulCost: 75,
     costMultiplier: 2,
     itemCostsPerLevel: GRIM_EMBER_LADDER,
     statKey: 'luck',
@@ -174,7 +174,7 @@ export const GRIM_STAT_UPGRADES: readonly GrimStatUpgradeDef[] = [
     id: 'soulLeech',
     name: 'Soul Leech',
     description: 'Restore more health per kill (+0.15 HP per level, stacks with base leech).',
-    baseSoulCost: 250,
+    baseSoulCost: 125,
     costMultiplier: 2.2,
     itemCostsPerLevel: [
       [],
@@ -203,7 +203,7 @@ export const SKILL_UPGRADES: readonly SkillUpgradeDef[] = [
     ],
     levelCosts: [
       {
-        souls: 500,
+        souls: 250,
         items: [
           { itemId: 'bone_shard', qty: 20 },
           { itemId: 'cursed_vial', qty: 5 },
@@ -236,7 +236,7 @@ export const SKILL_UPGRADES: readonly SkillUpgradeDef[] = [
     ],
     levelCosts: [
       {
-        souls: 200,
+        souls: 100,
         items: [
           { itemId: 'bone_shard', qty: 25 },
           { itemId: 'cursed_vial', qty: 5 },
@@ -257,7 +257,7 @@ export const SKILL_UPGRADES: readonly SkillUpgradeDef[] = [
     ],
     levelCosts: [
       {
-        souls: 400,
+        souls: 200,
         items: [
           { itemId: 'bone_shard', qty: 15 },
           { itemId: 'cursed_vial', qty: 3 },

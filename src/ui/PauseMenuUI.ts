@@ -14,6 +14,8 @@ import {
   getCachedUiImageUrl,
   resolveAndCacheUiImage,
 } from '../utils/ui-image-cache.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
+import { ensureMobileMenuStyles } from './mobile-menus-layout.js';
 
 type GameContainerWorld = ENGINE.World & {
   gameContainer?: HTMLElement;
@@ -72,11 +74,12 @@ export class PauseMenuUI {
     onClick: () => void,
     highlight = false,
   ): HTMLDivElement {
+    const mobile = isMobileDevice();
     const wrap = document.createElement('div');
     wrap.setAttribute('data-grim-menu-panel-btn', '');
     wrap.style.cssText = `
       position: relative;
-      width: min(300px, 78%);
+      width: ${mobile ? 'min(200px, 62%)' : 'min(300px, 78%)'};
       aspect-ratio: 3.4 / 1;
       margin: 0 auto;
       display: flex;
@@ -97,8 +100,8 @@ export class PauseMenuUI {
     text.style.cssText = `
       font-family: Montserrat, system-ui, sans-serif;
       font-weight: ${highlight ? 800 : 700};
-      font-size: clamp(0.65rem, 1.7vw, 0.88rem);
-      letter-spacing: 0.22em;
+      font-size: ${mobile ? 'clamp(0.52rem, 2.2vw, 0.64rem)' : 'clamp(0.65rem, 1.7vw, 0.88rem)'};
+      letter-spacing: ${mobile ? '0.16em' : '0.22em'};
       color: ${highlight ? 'rgba(160, 245, 255, 0.98)' : 'rgba(220, 228, 236, 0.92)'};
       text-shadow: ${highlight
         ? '0 0 18px rgba(0, 220, 255, 0.55), 0 2px 4px rgba(0,0,0,0.95)'
@@ -137,6 +140,9 @@ export class PauseMenuUI {
       return;
     }
 
+    ensureMobileMenuStyles(gameContainer);
+    const mobile = isMobileDevice();
+
     this._panelUrl = getCachedUiImageUrl(UI_MENU_PANEL);
 
     const overlay = document.createElement('div');
@@ -153,7 +159,7 @@ export class PauseMenuUI {
       box-sizing: border-box;
       user-select: none;
       padding: clamp(16px, 3vh, 32px) clamp(12px, 3vw, 28px);
-      overflow-y: auto;
+      overflow: ${mobile ? 'hidden' : 'auto'};
     `;
 
     const stack = document.createElement('div');
@@ -162,10 +168,12 @@ export class PauseMenuUI {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: min(480px, 90vw);
+      width: ${mobile ? 'min(420px, 88vw)' : 'min(480px, 90vw)'};
+      max-height: ${mobile ? 'min(88vh, 520px)' : 'none'};
     `;
 
     const panel = document.createElement('div');
+    panel.className = mobile ? 'grim-pause-panel' : '';
     panel.style.cssText = `
       position: relative;
       width: 100%;
@@ -174,11 +182,14 @@ export class PauseMenuUI {
       border: 2px solid rgba(100, 160, 200, 0.25);
       border-radius: 6px;
       box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
-      padding: clamp(44px, 6.5vh, 52px) clamp(28px, 4.5vw, 40px) clamp(36px, 5vh, 44px);
+      padding: ${mobile
+        ? 'clamp(28px, 4vh, 36px) clamp(36px, 7vw, 48px) clamp(44px, 5.5vh, 56px)'
+        : 'clamp(44px, 6.5vh, 52px) clamp(28px, 4.5vw, 40px) clamp(36px, 5vh, 44px)'};
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(10px, 1.8vh, 14px);
+      gap: ${mobile ? 'clamp(6px, 1.2vh, 10px)' : 'clamp(10px, 1.8vh, 14px)'};
+      overflow: hidden;
     `;
     applyBackgroundImageWhenReady(panel, UI_OPTIONS_FRAME, {
       backgroundSize: '100% 100%',
@@ -193,8 +204,8 @@ export class PauseMenuUI {
       text-align: center;
       font-family: Montserrat, system-ui, sans-serif;
       font-weight: 800;
-      font-size: clamp(1.35rem, 3.2vw, 1.85rem);
-      letter-spacing: 0.32em;
+      font-size: ${mobile ? 'clamp(1rem, 4.5vw, 1.35rem)' : 'clamp(1.35rem, 3.2vw, 1.85rem)'};
+      letter-spacing: ${mobile ? '0.22em' : '0.32em'};
       color: rgba(200, 210, 220, 0.95);
       text-shadow:
         0 2px 0 rgba(0, 0, 0, 0.9),

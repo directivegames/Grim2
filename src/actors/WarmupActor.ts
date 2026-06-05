@@ -9,8 +9,10 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
+import { DemonboxMailExplosionVFXActor } from './DemonboxMailExplosionVFXActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
 import { GameAudioManager } from './GameAudioManager.js';
+import { ZombieRiseVFXActor } from './ZombieRiseVFXActor.js';
 import { parkAllSceneFists, parkAllSceneWeapons } from '../utils/scene-visual-pool.js';
 import { LoadingScreenUI, mapUiPreloadProgress } from '../ui/LoadingScreenUI.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
@@ -18,6 +20,7 @@ import { preloadUiImages } from '../utils/ui-image-cache.js';
 
 /** Off-screen position for warmup actors - far enough to never be visible. */
 const HIDDEN_POS = new THREE.Vector3(0, -1000, 0);
+const FIST_EXPLOSION_CLOUD_VFX = '@project/assets/VFX/explosion-cloud.vfx.json';
 
 /** Time to keep warmup actors alive for GPU shader compilation. */
 const WARMUP_HOLD_MS = 500;
@@ -35,6 +38,7 @@ export class WarmupActor extends ENGINE.Actor {
   private _onComplete: WarmupCallback | null = null;
   private _onProgress: WarmupProgressCallback | null = null;
   private _warmupActors: ENGINE.Actor[] = [];
+  private _poolActors: Set<ENGINE.Actor> = new Set();
   private _audioManager: GameAudioManager | null = null;
   private _slashMesh: THREE.Mesh | null = null;
   private _startTime = 0;
@@ -59,7 +63,8 @@ export class WarmupActor extends ENGINE.Actor {
   public startWarmup(onComplete: WarmupCallback, onProgress?: WarmupProgressCallback): void {
     this._onComplete = onComplete;
     this._onProgress = onProgress ?? null;
-    this._minDurationMs = isMobileDevice() ? 800 : 2000;
+    const mobile = isMobileDevice();
+    this._minDurationMs = mobile ? 800 : 2000;
     this._startTime = performance.now();
 
     const world = this.getWorld();
@@ -89,7 +94,14 @@ export class WarmupActor extends ENGINE.Actor {
         this._reportProgress();
       });
 
-    const effectWarmupCount = isMobileDevice() ? 0 : 3;
+    const effectWarmupCount = mobile ? 0 : 3;
+
+    if (!mobile) {
+      // Desktop pre-caches combat/VFX assets for smooth first use; mobile loads them only when needed.
+      void ENGINE.resourceManager.loadModel(
+        ENGINE.AssetPath.fromString('@project/assets/models/demonletter.glb'),
+      );
+    }
 
     // 2. Pre-warm grave actors (spawn multiple to cover rapid kills)
     for (let i = 0; i < effectWarmupCount; i++) {
@@ -105,12 +117,32 @@ export class WarmupActor extends ENGINE.Actor {
       this._warmupActors.push(gore);
     }
 
+    if (effectWarmupCount > 0) {
+      const fistExplosionVfx = ENGINE.VFXComponent.create({
+        vfxPath: FIST_EXPLOSION_CLOUD_VFX,
+        autoStart: true,
+      });
+      this.rootComponent.add(fistExplosionVfx);
+    }
+
+    if (!mobile) {
+      // Pool actors stay in the world; they are NOT destroyed after warmup.
+      const pooledMails = DemonboxMailExplosionVFXActor.prewarmPool(world);
+      const pooledRises = ZombieRiseVFXActor.prewarmPool(world);
+      for (const a of [...pooledMails, ...pooledRises]) {
+        this._warmupActors.push(a);
+        this._poolActors.add(a);
+      }
+    }
+
     // 4. Park all scene fists / hide weapons until abilities use them
     parkAllSceneFists(world);
     parkAllSceneWeapons(world);
 
-    // 5. Force shader compilation by rendering frames
-    this._forceShaderCompilation();
+    if (!mobile) {
+      // 5. Force shader compilation by rendering frames
+      this._forceShaderCompilation();
+    }
 
     // 6. Schedule cleanup and completion check
     setTimeout(() => this._checkComplete(), WARMUP_HOLD_MS + CHECK_INTERVAL_MS);
@@ -224,11 +256,14 @@ export class WarmupActor extends ENGINE.Actor {
   }
 
   private _cleanupAndComplete(): void {
-    // Destroy warmup actors (they've served their purpose)
+    // Destroy transient warmup actors; pool actors stay alive in the world for reuse.
     for (const actor of this._warmupActors) {
-      actor.destroy();
+      if (!this._poolActors.has(actor)) {
+        actor.destroy();
+      }
     }
     this._warmupActors.length = 0;
+    this._poolActors.clear();
 
     this._isComplete = true;
     WarmupActor._hasCompletedOnce = true;

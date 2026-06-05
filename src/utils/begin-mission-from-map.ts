@@ -8,7 +8,7 @@ import type { MissionDef } from '../data/missions.js';
 import { missionRunner } from '../mission/MissionRunner.js';
 import { ReadyToReapUI } from '../ui/ReadyToReapUI.js';
 import { TutSoulUI } from '../ui/TutSoulUI.js';
-import { getGameAudioManager } from './game-audio.js';
+import { getGameAudioManager, resetGameplayAudioState } from './game-audio.js';
 import { flushGameplayInput } from './flush-gameplay-input.js';
 import { clearMissionPause, resumeGame, setGameplayUnlocked } from './game-pause.js';
 import {
@@ -64,17 +64,16 @@ export function beginMissionFromMap(
       bg.stop();
     }
 
+    // Resume physics/slomo BEFORE starting music so BackgroundMusicActor ticks
+    // with slomo=1 from the first frame and doesn't start at the kill-streak rate.
+    resumeGame(world);
+    resetGameplayAudioState(world);
+
     if (isBossFightMission(config)) {
       missionRunner.revealBossFight(world);
       PostmanBossMusicActor.ensurePlaying(world);
     } else {
       BackgroundMusicActor.ensurePlaying(world);
-    }
-
-    resumeGame(world);
-    const w = world as unknown as { slomo?: number };
-    if (typeof w.slomo === 'number' && w.slomo <= 0) {
-      w.slomo = 1;
     }
     try {
       world.inputManager.setInputEnabled(true);

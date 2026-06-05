@@ -3,7 +3,7 @@
  *
  * Spawns 7 demonletter GLB pieces flying outward with gravity and tumble,
  * plus an immediate orange flash sphere. All pieces fade/scale over a
- * short lifetime, then the actor self-destroys.
+ * short lifetime, then the actor returns to the pool instead of being destroyed.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -25,6 +25,9 @@ const SHOCKWAVE_GEOMETRY = new THREE.TorusGeometry(1, 0.04, 6, 32);
 
 const MAX_ACTIVE = 4;
 let _activeCount = 0;
+
+/** Idle (hidden) actors ready for reuse. */
+const _pool: DemonboxMailExplosionVFXActor[] = [];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -51,11 +54,11 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
   private _flash: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null = null;
   private _shockwave: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
   private _elapsed = 0;
+  private _isActive = false;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
 
-    // Orange flash sphere — visible immediately (no async load)
     const flashMat = new THREE.MeshBasicMaterial({
       color: 0xff6600,
       transparent: true,
@@ -67,7 +70,6 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     (root as unknown as THREE.Object3D).add(flash);
     this._flash = flash;
 
-    // Shockwave ring
     const waveMat = new THREE.MeshBasicMaterial({
       color: 0xff9900,
       transparent: true,
@@ -79,7 +81,6 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     (root as unknown as THREE.Object3D).add(wave);
     this._shockwave = wave;
 
-    // Letter pieces — spread evenly around the ring with random burst speed
     for (let i = 0; i < LETTER_COUNT; i++) {
       const angle = (i / LETTER_COUNT) * Math.PI * 2 + Math.random() * 0.6;
       const speed = 3.5 + Math.random() * 4.5;
@@ -119,24 +120,23 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
 
+    if (!this._isActive) return;
+
     this._elapsed += deltaTime;
     const progress = Math.min(this._elapsed / LIFETIME_SEC, 1);
 
-    // Flash sphere: expand and fade quickly
     if (this._flash) {
       const t = Math.min(this._elapsed / 0.3, 1);
       this._flash.scale.setScalar(THREE.MathUtils.lerp(0.3, 3.5, easeOutCubic(t)));
       this._flash.material.opacity = Math.max(0, 0.85 * (1 - t));
     }
 
-    // Shockwave ring: expand outward and fade
     if (this._shockwave) {
       const t = Math.min(this._elapsed / 0.45, 1);
       this._shockwave.scale.setScalar(THREE.MathUtils.lerp(0.2, 3.0, easeOutCubic(t)));
       this._shockwave.material.opacity = Math.max(0, 0.6 * (1 - t));
     }
 
-    // Letter pieces: fly outward, tumble, then fade out
     const fadeStart = 0.8;
     const letterAlpha = progress < fadeStart
       ? 1
@@ -151,7 +151,6 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
       letter.component.rotation.y += letter.spinY * deltaTime;
       letter.component.rotation.z += letter.spinZ * deltaTime;
 
-      // Fade the mesh by traversing the loaded GLTF meshes
       if (letterAlpha < 1) {
         (letter.component as unknown as THREE.Object3D).traverse((child: THREE.Object3D) => {
           if (child instanceof THREE.Mesh) {
@@ -170,8 +169,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     }
 
     if (this._elapsed >= LIFETIME_SEC) {
-      _activeCount = Math.max(0, _activeCount - 1);
-      this.destroy();
+      this._returnToPool();
     }
   }
 
@@ -190,21 +188,121 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     super.doEndPlay();
   }
 
+  // ─── Pool helpers ──────────────────────────────────────────────────────────
+
+  private _activate(position: THREE.Vector3): void {
+    this._elapsed = 0;
+    this._isActive = true;
+
+    if (this._flash) {
+      this._flash.scale.setScalar(0.3);
+      this._flash.material.opacity = 0.85;
+    }
+    if (this._shockwave) {
+      this._shockwave.scale.setScalar(0.2);
+      this._shockwave.material.opacity = 0.6;
+    }
+
+    for (let i = 0; i < this._letters.length; i++) {
+      const letter = this._letters[i]!;
+      const angle = (i / LETTER_COUNT) * Math.PI * 2 + Math.random() * 0.6;
+      const speed = 3.5 + Math.random() * 4.5;
+      const upward = 2.5 + Math.random() * 4;
+
+      letter.component.position.set(0, 0, 0);
+      letter.component.rotation.set(
+        Math.PI / 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+      );
+      letter.velocity.set(
+        Math.cos(angle) * speed,
+        upward,
+        Math.sin(angle) * speed,
+      );
+      letter.spinX = (Math.random() - 0.5) * 10;
+      letter.spinY = (Math.random() - 0.5) * 10;
+      letter.spinZ = (Math.random() - 0.5) * 10;
+
+      // Reset letter mesh material opacity from previous use
+      (letter.component as unknown as THREE.Object3D).traverse((child: THREE.Object3D) => {
+        if (child instanceof THREE.Mesh) {
+          const mats = Array.isArray(child.material)
+            ? (child.material as THREE.Material[])
+            : [child.material as THREE.Material];
+          for (const mat of mats) {
+            if ('opacity' in mat) {
+              (mat as THREE.MeshStandardMaterial).transparent = false;
+              (mat as THREE.MeshStandardMaterial).opacity = 1;
+            }
+          }
+        }
+      });
+    }
+
+    this.rootComponent.position.copy(position);
+    this.setHidden(false);
+  }
+
+  private _returnToPool(): void {
+    _activeCount = Math.max(0, _activeCount - 1);
+    this._isActive = false;
+    this.setHidden(true);
+    _pool.push(this);
+  }
+
+  // ─── Public API ────────────────────────────────────────────────────────────
+
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): DemonboxMailExplosionVFXActor | null {
+    const pooled = _pool.pop();
+    if (pooled) {
+      _activeCount++;
+      pooled._activate(position);
+      return pooled;
+    }
+
     if (_activeCount >= MAX_ACTIVE) return null;
     _activeCount++;
+
     const actor = DemonboxMailExplosionVFXActor.create({ position: position.clone() });
     world.addActor(actor);
+    actor._isActive = true;
     return actor;
   }
 
-  /** Clean up all active mail VFX actors on mission reset. */
+  /**
+   * Pre-create MAX_ACTIVE hidden instances and register them in the pool.
+   * Call this during the loading screen (WarmupActor) so the first in-game
+   * explosion reuses an already-loaded actor instead of paying the GLB clone cost.
+   * Returns the created actors so callers can track their load state.
+   */
+  public static prewarmPool(world: ENGINE.World): DemonboxMailExplosionVFXActor[] {
+    const created: DemonboxMailExplosionVFXActor[] = [];
+    for (let i = 0; i < MAX_ACTIVE; i++) {
+      const actor = DemonboxMailExplosionVFXActor.create({ position: new THREE.Vector3(0, -1000, 0) });
+      world.addActor(actor);
+      actor._isActive = false;
+      actor.setHidden(true);
+      _pool.push(actor);
+      created.push(actor);
+    }
+    return created;
+  }
+
+  /** Destroy all instances (active and pooled) and clear the pool. Call on world unload. */
   public static destroyAllRuntime(world: ENGINE.World): void {
     const toDestroy: DemonboxMailExplosionVFXActor[] = [];
     for (const actor of world.getActors()) {
-      if (actor instanceof DemonboxMailExplosionVFXActor) toDestroy.push(actor);
+      if (actor instanceof DemonboxMailExplosionVFXActor) {
+        toDestroy.push(actor);
+      }
     }
     for (const actor of toDestroy) actor.destroy();
     _activeCount = 0;
+    _pool.length = 0;
+  }
+
+  public override getEditorClassIcon(): string | null {
+    return 'Icon_Particle';
   }
 }

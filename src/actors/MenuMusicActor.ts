@@ -12,9 +12,11 @@ const MENU_TRACKS = [
 export class MenuMusicActor extends ENGINE.Actor {
   private _sound: ENGINE.SoundComponent | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
+  private _stopped = false;
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+    this._stopped = false;
 
     const pick = MENU_TRACKS[Math.floor(Math.random() * MENU_TRACKS.length)] ?? MENU_TRACKS[0];
 
@@ -25,17 +27,27 @@ export class MenuMusicActor extends ENGINE.Actor {
 
     this._sound = ENGINE.SoundComponent.create({
       loop: true,
-      autoPlay: true,
-      autoPlayClipKey: 'menuMusic',
+      autoPlay: false,
       positional: false,
       bus: 'Music',
       sounds: [soundResource],
     });
 
     this.addComponent(this._sound);
+
+    void this._sound.waitForLoad().then(async () => {
+      if (this._stopped || !this._sound) return;
+      const ctx = this._sound.getAudioContext();
+      if (ctx?.state === 'suspended') {
+        try { await ctx.resume(); } catch { /* blocked without user gesture */ }
+      }
+      if (this._stopped || !this._sound) return;
+      void this._sound.play('menuMusic');
+    });
   }
 
   public stopNow(): void {
+    this._stopped = true;
     this._sound?.stopAll();
   }
 
@@ -68,6 +80,7 @@ export class MenuMusicActor extends ENGINE.Actor {
   }
 
   protected override doEndPlay(): void {
+    this._stopped = true;
     this._sound?.stopAll();
     super.doEndPlay();
   }

@@ -26,9 +26,11 @@ import { MapUI } from '../ui/MapUI.js';
 import type { MissionDef } from '../data/missions.js';
 import { beginMissionFromMap } from '../utils/begin-mission-from-map.js';
 import { gameSettings } from '../utils/game-settings.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 import { setGameplayUnlocked } from '../utils/game-pause.js';
 import { mountCutsceneSkipButton, removeCutsceneSkipButton } from '../ui/CutsceneSkipUI.js';
 import { CutsceneMusicActor } from './CutsceneMusicActor.js';
+import { MobileSceneChunkLoaderActor } from './MobileSceneChunkLoaderActor.js';
 
 
 
@@ -181,14 +183,24 @@ export class GrimIntroActor extends ENGINE.Actor {
     world.inputManager.setInputEnabled(false);
     setGameplayUnlocked(false);
 
-    if (gameSettings.skipAllCutscenes) {
+    const mobile = isMobileDevice();
+    const mobileLoader = mobile ? MobileSceneChunkLoaderActor.ensureExists(world) : null;
+
+    if (mobileLoader) {
+      await mobileLoader.loadIntroBedroom();
+      void mobileLoader.startBackgroundLoad();
+    }
+
+    if (!mobile && gameSettings.skipAllCutscenes) {
       await this._finishIntro();
       return;
     }
 
-    this._removeSkipButton = mountCutsceneSkipButton(world, () => {
-      void this._requestSkip();
-    });
+    if (!mobile) {
+      this._removeSkipButton = mountCutsceneSkipButton(world, () => {
+        void this._requestSkip();
+      });
+    }
 
     this._disableSceneViewTargetCameras(world);
     this._setupIsometricCamera(world);

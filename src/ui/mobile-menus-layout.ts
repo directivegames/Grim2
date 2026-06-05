@@ -18,21 +18,37 @@ export function ensureMobileMenuStyles(host: HTMLElement): void {
   st.id = STYLE_ID;
   st.textContent = `
     .grim-mobile .grim-map-briefing-panel {
-      width: min(440px, 94vw) !important;
+      width: min(420px, 88vw) !important;
+      max-height: min(88vh, 520px) !important;
+      overflow: hidden !important;
+    }
+    .grim-mobile .grim-map-briefing-content {
+      overflow: hidden !important;
     }
     .grim-mobile .grim-map-briefing-panel button {
-      min-height: 44px;
-      min-width: 44px;
-      padding: 8px 14px !important;
-      font-size: 0.8rem !important;
+      min-height: 0;
+      min-width: 0;
+      padding: 3px 6px !important;
+      font-size: 0.56rem !important;
       touch-action: manipulation;
     }
     .grim-mobile .grim-map-briefing-btn {
-      width: min(260px, 82%) !important;
+      width: min(160px, 55%) !important;
       aspect-ratio: 4.6 / 1 !important;
     }
     .grim-mobile .grim-map-briefing-btn span {
-      font-size: clamp(0.6rem, 2.4vw, 0.78rem) !important;
+      font-size: clamp(0.48rem, 2.2vw, 0.58rem) !important;
+      letter-spacing: 0.16em !important;
+    }
+
+    .grim-mobile .grim-options-panel,
+    .grim-mobile .grim-pause-panel,
+    .grim-mobile .grim-mission-result-panel {
+      overflow: hidden !important;
+    }
+    .grim-mobile .grim-options-panel [data-grim-menu-panel-btn],
+    .grim-mobile .grim-pause-panel [data-grim-menu-panel-btn] {
+      width: min(200px, 62%) !important;
     }
 
     .grim-mobile [data-grim-upgrade-shop] {

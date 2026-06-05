@@ -25,7 +25,7 @@ export class BlobShadowComponent extends ENGINE.MeshComponent {
   public override initialize(options?: BlobShadowOptions): void {
     const radius   = options?.radius   ?? 0.5;
     const opacity  = options?.opacity  ?? 0.35;
-    const segments = options?.segments ?? 32;
+    const segments = options?.segments ?? 16;
     const yOffset  = options?.yOffset  ?? 0.02;
 
     const geometry = new THREE.CircleGeometry(radius, segments);

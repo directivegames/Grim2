@@ -15,6 +15,7 @@ import {
   type FogCardSettings,
   type FogCardTextures,
 } from './FogCardMaterial.js';
+import { shouldDisableWebGpuTslEffects } from '../utils/browser-compat.js';
 
 import type { ComponentDescriptionOptions } from '@gnsx/genesys.js';
 import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
@@ -26,6 +27,7 @@ const DEFAULT_NORMAL_MAP_URL = '@project/assets/textures/Fog/T_mountainFog_06_N.
 const DEFAULT_FLOW_MAP_URL = '@project/assets/textures/System/Flowmaps/T_Flowmap_01_Directional.PNG';
 const DEFAULT_BORDER_MASK_MAP_URL = '@project/assets/textures/System/T_borderMask.PNG';
 const DEFAULT_WIND_NOISE_MAP_URL = '@project/assets/textures/Fog/T_smoothCloudsNoise_01_D.PNG';
+const FOG_DEBUG_GLOBAL = '__GRIM_DEBUG_FOG';
 
 const _geometryBox = new THREE.Box3();
 const _geometryCenter = new THREE.Vector3();
@@ -159,7 +161,7 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
   public override renderOrder: number = 10;
 
   @ENGINE.property({ type: 'boolean', description: 'Print fog-card load/material diagnostics to the browser console' })
-  public debugLogging: boolean = true;
+  public debugLogging: boolean = false;
 
   private _mesh: THREE.Mesh<THREE.BufferGeometry, FogCardMaterial> | null = null;
   private _material: FogCardMaterial | null = null;
@@ -238,6 +240,11 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     const loadVersion = ++this._loadVersion;
     this._log('reload start', this._debugSnapshot());
     this._clearMesh();
+
+    if (shouldDisableWebGpuTslEffects()) {
+      this._log('reload skipped: WebGPU TSL fog disabled for this browser');
+      return;
+    }
 
     const [geometry, textures] = await Promise.all([
       this._loadCardGeometry(),
@@ -566,12 +573,19 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
   }
 
   private _log(message: string, data?: unknown): void {
-    if (!this.debugLogging) return;
+    if (!this.debugLogging || !FogSystemComponent._isDebugLoggingEnabled()) return;
     if (data === undefined) {
       console.log(`[FogCard:${this.name || this.uuid}] ${message}`);
       return;
     }
     console.log(`[FogCard:${this.name || this.uuid}] ${message}`, data);
+  }
+
+  private static _isDebugLoggingEnabled(): boolean {
+    if (typeof globalThis === 'undefined') {
+      return false;
+    }
+    return (globalThis as Record<string, unknown>)[FOG_DEBUG_GLOBAL] === true;
   }
 
   private _warn(message: string, data?: unknown): void {

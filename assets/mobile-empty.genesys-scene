@@ -1,0 +1,88 @@
+{
+  "$version": 2,
+  "$root": {
+    "$uuid": "mobile-empty-world",
+    "actors": {
+      "1": {
+        "rootComponent": {
+          "children": {
+            "$length": 1
+          },
+          "uvScaleTilesPerUnit": 0.2,
+          "geometry": {
+            "_": [
+              500,
+              0.1,
+              500
+            ],
+            "$bc": "THREE.BoxGeometry"
+          },
+          "material": {
+            "name": "DefaultMaterial",
+            "$bc": "$global"
+          },
+          "uuid": "mobile-ground-component",
+          "name": "MeshComponent",
+          "position": {
+            "_": [
+              0,
+              -1,
+              0
+            ],
+            "$bc": "v3"
+          },
+          "receiveShadow": false,
+          "$bc": "ENGINE.MeshComponent"
+        },
+        "uuid": "mobile-ground-actor",
+        "name": "MobileGround",
+        "$bc": "ENGINE.Actor"
+      },
+      "2": {
+        "rootComponent": {
+          "children": {
+            "$length": 1
+          },
+          "uuid": "mobile-player-start-component",
+          "name": "SceneComponent",
+          "position": {
+            "_": [
+              0,
+              0.9,
+              0
+            ],
+            "$bc": "v3"
+          },
+          "$bc": "ENGINE.SceneComponent"
+        },
+        "uuid": "mobile-player-start-actor",
+        "name": "Player Start",
+        "$bc": "ENGINE.PlayerStart"
+      },
+      "$length": 3
+    },
+    "resources": null,
+    "editorData": {
+      "sceneTree": {
+        "id": "mobile-empty-world",
+        "nodeType": "scene",
+        "children": [
+          {
+            "id": "mobile-ground-actor",
+            "nodeType": "actor"
+          },
+          {
+            "id": "mobile-player-start-actor",
+            "nodeType": "actor"
+          }
+        ]
+      }
+    },
+    "postProcessConfiguration": {
+      "effects": []
+    },
+    "settings": {},
+    "gameModeClass": null,
+    "$bc": "ENGINE.World"
+  }
+}

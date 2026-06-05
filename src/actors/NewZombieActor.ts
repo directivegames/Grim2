@@ -267,6 +267,7 @@ export class NewZombieActor extends ENGINE.Actor {
   private static readonly HIGH_LOD_DISTANCE_SQ = 20 * 20;
   private static readonly MEDIUM_LOD_DISTANCE_SQ = 35 * 35;
   private _lodLevel: 'high' | 'medium' | 'low' = 'high';
+  private _shadowVisible = true;
 
   // Frozen position during death animation - prevents any residual movement
   private _deathPosition: THREE.Vector3 | null = null;
@@ -668,6 +669,15 @@ export class NewZombieActor extends ENGINE.Actor {
     } else {
       this._lodLevel = 'low';
       this._isHighLOD = false;
+    }
+
+    // Cull blob shadow at low LOD — at >35 units isometric it's invisible anyway.
+    const wantShadow = this._lodLevel !== 'low' && !this._deathSequenceStarted && !this.isHiddenInGame();
+    if (wantShadow !== this._shadowVisible) {
+      this._shadowVisible = wantShadow;
+      if (this._blobShadow) {
+        this._blobShadow.visible = wantShadow;
+      }
     }
   }
 

@@ -7,12 +7,29 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 import { gameSettings } from '../utils/game-settings.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
+
+/** Browser console: `window.__GRIM_DEBUG_SFX = true` to log every SFX play. */
+const SFX_DEBUG_GLOBAL = '__GRIM_DEBUG_SFX';
+
+/** UI / voice / intro clips always play at normal speed (never inherit slomo). */
+const NORMAL_PLAYBACK_RATE_KEYS = new Set([
+  'menuSelect',
+  'letsReap',
+  'buying',
+  'postmanDebt',
+  'postmanMama',
+  'postmanOwnadog',
+  'postmanLine',
+  'postmanXmascard',
+]);
 
 @ENGINE.GameClass()
 export class GameAudioManager extends ENGINE.Actor {
   private _soundPools = new Map<string, ENGINE.SoundComponent[]>();
   private _poolCursors = new Map<string, number>();
   private _sfxVolumeScale = 1;
+  private _lazyLoadSounds = false;
 
   // Sound file paths — all WAV files are in assets/sounds/
   private static readonly SOUND_PATHS: Record<string, { path: string; volume: number; poolSize: number }> = {
@@ -43,27 +60,13 @@ export class GameAudioManager extends ENGINE.Actor {
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+    this._lazyLoadSounds = isMobileDevice();
 
-    // Pre-load small pools so rapid combat SFX can overlap instead of cutting off.
-    for (const [key, config] of Object.entries(GameAudioManager.SOUND_PATHS)) {
-      const pool: ENGINE.SoundComponent[] = [];
-      for (let i = 0; i < config.poolSize; i++) {
-        const soundResource = new ENGINE.SoundResource();
-        soundResource.name = key;
-        soundResource.audioPath = config.path;
-        soundResource.volume = config.volume;
-
-        const soundComponent = ENGINE.SoundComponent.create({
-          sounds: [soundResource],
-          positional: false,
-          loop: false,
-        });
-
-        pool.push(soundComponent);
-        this.addComponent(soundComponent);
+    if (!this._lazyLoadSounds) {
+      // Desktop keeps the eager pools so rapid combat SFX can overlap without first-use latency.
+      for (const key of Object.keys(GameAudioManager.SOUND_PATHS)) {
+        this._ensureSoundPool(key);
       }
-      this._soundPools.set(key, pool);
-      this._poolCursors.set(key, 0);
     }
 
     this.applySfxVolume(gameSettings.sfxVolume);
@@ -102,11 +105,9 @@ export class GameAudioManager extends ENGINE.Actor {
 
     void sound.play(key, undefined, forceRestart);
 
-    // Match playback rate to world slomo so SFX stays in sync with slow-motion.
-    const world = this.getWorld();
-    const slomo = world ? ((world as unknown as { slomo: number }).slomo ?? 1.0) : 1.0;
-    const rate = slomo < 0.9 ? Math.max(0.05, slomo) : 1.0;
+    const rate = this._resolvePlaybackRate(key);
     sound.getAudio(key)?.setPlaybackRate(rate);
+    this._logSfxPlay(key, rate);
 
     // Reset volume back to default after playing
     if (clampedVolume < baseVolume) {
@@ -142,6 +143,36 @@ export class GameAudioManager extends ENGINE.Actor {
     this.play(key, volumeScale, true);
   }
 
+  private _resolvePlaybackRate(key: string): number {
+    if (NORMAL_PLAYBACK_RATE_KEYS.has(key)) {
+      return 1.0;
+    }
+
+    const world = this.getWorld();
+    const slomo = world ? ((world as unknown as { slomo: number }).slomo ?? 1.0) : 1.0;
+    if (slomo < 0.9) {
+      return Math.max(0.05, slomo);
+    }
+    return 1.0;
+  }
+
+  private _logSfxPlay(key: string, rate: number): void {
+    const path = GameAudioManager.SOUND_PATHS[key]?.path ?? '?';
+    const world = this.getWorld();
+    const slomo = world ? ((world as unknown as { slomo: number }).slomo ?? 1.0) : 1.0;
+
+    if (GameAudioManager._isSfxDebugEnabled()) {
+      console.log(`[GameAudioManager] play "${key}" (${path}) slomo=${slomo.toFixed(3)} rate=${rate.toFixed(3)}`);
+    }
+  }
+
+  private static _isSfxDebugEnabled(): boolean {
+    if (typeof globalThis === 'undefined') {
+      return false;
+    }
+    return (globalThis as Record<string, unknown>)[SFX_DEBUG_GLOBAL] === true;
+  }
+
   private getDefaultVolume(key: string): number {
     const config = GameAudioManager.SOUND_PATHS[key];
     return config?.volume ?? 1.0;
@@ -168,6 +199,10 @@ export class GameAudioManager extends ENGINE.Actor {
   }
 
   private getNextSound(key: string): ENGINE.SoundComponent | null {
+    if (this._lazyLoadSounds) {
+      this._ensureSoundPool(key);
+    }
+
     const pool = this._soundPools.get(key);
     if (!pool || pool.length === 0) return null;
 
@@ -175,6 +210,36 @@ export class GameAudioManager extends ENGINE.Actor {
     const sound = pool[cursor];
     this._poolCursors.set(key, (cursor + 1) % pool.length);
     return sound;
+  }
+
+  private _ensureSoundPool(key: string): void {
+    if (this._soundPools.has(key)) {
+      return;
+    }
+
+    const config = GameAudioManager.SOUND_PATHS[key];
+    if (!config) {
+      return;
+    }
+
+    const pool: ENGINE.SoundComponent[] = [];
+    for (let i = 0; i < config.poolSize; i++) {
+      const soundResource = new ENGINE.SoundResource();
+      soundResource.name = key;
+      soundResource.audioPath = config.path;
+      soundResource.volume = config.volume * this._sfxVolumeScale;
+
+      const soundComponent = ENGINE.SoundComponent.create({
+        sounds: [soundResource],
+        positional: false,
+        loop: false,
+      });
+
+      pool.push(soundComponent);
+      this.addComponent(soundComponent);
+    }
+    this._soundPools.set(key, pool);
+    this._poolCursors.set(key, 0);
   }
 
   /**

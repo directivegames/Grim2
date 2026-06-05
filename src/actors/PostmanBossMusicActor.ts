@@ -12,9 +12,11 @@ const BOSS_TRACK = '@project/assets/sounds/postmanhell.mp3';
 export class PostmanBossMusicActor extends ENGINE.Actor {
   private _sound: ENGINE.SoundComponent | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
+  private _stopped = false;
 
   protected override doBeginPlay(): void {
     super.doBeginPlay();
+    this._stopped = false;
 
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'postmanBossMusic';
@@ -23,17 +25,27 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
 
     this._sound = ENGINE.SoundComponent.create({
       loop: true,
-      autoPlay: true,
-      autoPlayClipKey: 'postmanBossMusic',
+      autoPlay: false,
       positional: false,
       bus: 'Music',
       sounds: [soundResource],
     });
 
     this.addComponent(this._sound);
+
+    void this._sound.waitForLoad().then(async () => {
+      if (this._stopped || !this._sound) return;
+      const ctx = this._sound.getAudioContext();
+      if (ctx?.state === 'suspended') {
+        try { await ctx.resume(); } catch { /* blocked without user gesture */ }
+      }
+      if (this._stopped || !this._sound) return;
+      void this._sound.play('postmanBossMusic');
+    });
   }
 
   public stopNow(): void {
+    this._stopped = true;
     this._sound?.stopAll();
   }
 
@@ -64,6 +76,7 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
   }
 
   protected override doEndPlay(): void {
+    this._stopped = true;
     this._sound?.stopAll();
     super.doEndPlay();
   }

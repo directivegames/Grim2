@@ -37,10 +37,15 @@ import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
 import type { RiskLevel } from '../data/risk-levels.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 
 // Configuration
 const MAX_ACTIVE_ZOMBIES = 65;
 const RESUME_SPAWN_THRESHOLD = 50;
+const MOBILE_MAX_ACTIVE_ZOMBIES = 30;
+const MOBILE_RESUME_SPAWN_THRESHOLD = 22;
+const MOBILE_WAVE_SIZE = 8;
+const MOBILE_IDLE_POOL_LIMIT = 10;
 const KILLS_TO_ACTIVATE_HORDE = 10;
 const MAX_TOTAL_KILLS = 500;
 
@@ -92,6 +97,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
   private _maxActiveZombies = MAX_ACTIVE_ZOMBIES;
   private _resumeSpawnThreshold = RESUME_SPAWN_THRESHOLD;
   private _waveIntervalSec = WAVE_INTERVAL_SEC;
+  private _mobileMemoryMode = false;
 
   /** Placed-zombie references — cleared in doEndPlay to avoid dangling callbacks. */
   private _placedZombies: NewZombieActor[] = [];
@@ -129,9 +135,18 @@ export class ZombieHordeManager extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     super.doBeginPlay();
     this._needsHookPlaced = true;
+    this._mobileMemoryMode = isMobileDevice();
+    if (this._mobileMemoryMode) {
+      this._maxActiveZombies = MOBILE_MAX_ACTIVE_ZOMBIES;
+      this._resumeSpawnThreshold = MOBILE_RESUME_SPAWN_THRESHOLD;
+    }
 
     for (const type of this._hordeEnemyTypes) {
       this._activeEliteActors.set(type.id, new Set());
+    }
+
+    if (this._mobileMemoryMode) {
+      return;
     }
 
     // Warm GLB caches so first reveals are not blocked on async load.
@@ -327,7 +342,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       return;
     }
 
-    const toSpawn = Math.min(WAVE_SIZE, this._maxActiveZombies - this._activeZombies.size);
+    const toSpawn = Math.min(this._getWaveSize(), this._maxActiveZombies - this._activeZombies.size);
     if (toSpawn <= 0) return;
 
     for (let i = 0; i < toSpawn; i++) {
@@ -440,6 +455,12 @@ export class ZombieHordeManager extends ENGINE.Actor {
     }
     type.clearDeathHook(actor);
     zombieSpatialManager.unregisterZombie(actor);
+
+    if (this._mobileMemoryMode) {
+      destroyActorWhenGltfIdle(actor);
+      return;
+    }
+
     actor.setHiddenInGame(true);
     actor.rootComponent.position.set(0, -1000, 0);
     let pool = this._idleElitePools.get(type.id);
@@ -578,6 +599,12 @@ export class ZombieHordeManager extends ENGINE.Actor {
       return;
     }
     zombie.onDied = null;
+
+    if (this._mobileMemoryMode && this._idlePool.size >= MOBILE_IDLE_POOL_LIMIT) {
+      destroyActorWhenGltfIdle(zombie);
+      return;
+    }
+
     zombie.parkForHordeReset();
     this._idlePool.add(zombie);
   }
@@ -590,6 +617,10 @@ export class ZombieHordeManager extends ENGINE.Actor {
     for (const actor of world.getActors()) {
       if (actor instanceof NewZombieActor && actor.isPooled && actor.isHiddenInGame()) {
         actor.onDied = null;
+        if (this._mobileMemoryMode && this._idlePool.size >= MOBILE_IDLE_POOL_LIMIT) {
+          destroyActorWhenGltfIdle(actor);
+          continue;
+        }
         this._idlePool.add(actor);
       }
     }
@@ -763,11 +794,13 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._missionRiskLevel = riskLevel;
 
     if (options?.spawnCap !== undefined) {
-      this._maxActiveZombies = options.spawnCap;
+      this._maxActiveZombies = this._mobileMemoryMode
+        ? Math.min(options.spawnCap, MOBILE_MAX_ACTIVE_ZOMBIES)
+        : options.spawnCap;
       this._resumeSpawnThreshold = Math.max(20, Math.floor(this._maxActiveZombies * 0.77));
     } else {
-      this._maxActiveZombies = MAX_ACTIVE_ZOMBIES;
-      this._resumeSpawnThreshold = RESUME_SPAWN_THRESHOLD;
+      this._maxActiveZombies = this._getDefaultMaxActiveZombies();
+      this._resumeSpawnThreshold = this._getDefaultResumeSpawnThreshold();
     }
 
     const baseInterval = options?.aggressiveSpawn ? 4 : WAVE_INTERVAL_SEC;
@@ -783,8 +816,8 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._riskDamageMult = 1;
     this._riskEliteSpawnWeightBonus = 0;
     this._missionRiskLevel = 1;
-    this._maxActiveZombies = MAX_ACTIVE_ZOMBIES;
-    this._resumeSpawnThreshold = RESUME_SPAWN_THRESHOLD;
+    this._maxActiveZombies = this._getDefaultMaxActiveZombies();
+    this._resumeSpawnThreshold = this._getDefaultResumeSpawnThreshold();
     this.waveInterval = WAVE_INTERVAL_SEC;
     this._waveIntervalSec = WAVE_INTERVAL_SEC;
     this._applyRiskToAllZombies();
@@ -813,6 +846,18 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   private _applyRiskToZombie(zombie: NewZombieActor): void {
     zombie.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
+  }
+
+  private _getWaveSize(): number {
+    return this._mobileMemoryMode ? MOBILE_WAVE_SIZE : WAVE_SIZE;
+  }
+
+  private _getDefaultMaxActiveZombies(): number {
+    return this._mobileMemoryMode ? MOBILE_MAX_ACTIVE_ZOMBIES : MAX_ACTIVE_ZOMBIES;
+  }
+
+  private _getDefaultResumeSpawnThreshold(): number {
+    return this._mobileMemoryMode ? MOBILE_RESUME_SPAWN_THRESHOLD : RESUME_SPAWN_THRESHOLD;
   }
 
   public getStats(): {

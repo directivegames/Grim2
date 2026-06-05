@@ -1,47 +1,35 @@
 /**
- * DialogueUI — reusable bottom-centred dialogue box using SpeakerUI.png.
+ * DialogueUI — reusable bottom dialogue bar.
  *
  * Click once to complete typewriter, again to advance. Long lines are split
- * automatically so text always fits inside the frame.
+ * automatically so text always fits inside the bar.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { DialogueLine, DialogueScript } from '../dialogue/DialogueTypes.js';
 import { gameSettings } from '../utils/game-settings.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
 import { mountCutsceneSkipButton } from './CutsceneSkipUI.js';
 
-const SPEAKER_PANEL_URL = '@project/assets/UI/SpeakerUI.webp';
-/** Matches assets/UI/SpeakerUI.webp (1536×1024) */
-const SPEAKER_PANEL_ASPECT = 1536 / 1024;
-/** Fits in the horizontal gap between health (left) and souls (right) HUD. */
-const SPEAKER_PANEL_MAX_WIDTH_PX = 540;
-/** Sits in the bottom-centre gap; HUD only occupies the corners. */
-const SPEAKER_PANEL_BOTTOM_PX = 16;
-/** Side reserve for corner HUD (health ~302px + souls ~241px at 0.35 scale). */
-const SPEAKER_PANEL_SIDE_RESERVE_PX = 600;
-const SPEAKER_PANEL_MIN_WIDTH_PX = 320;
-/**
- * Text plaque region inside SpeakerUI.webp (fractions of panel size).
- * Tuned to the dark inner rectangle on the lower half of the frame art.
- */
-const TEXT_INSET_LEFT = 0.14;
-const TEXT_INSET_RIGHT = 0.11;
-const TEXT_INSET_TOP = 0.37;
-const TEXT_INSET_BOTTOM = 0.20;
-const HINT_INSET_RIGHT = 0.10;
-const HINT_INSET_BOTTOM = 0.10;
+/** Match FistAbilityHUDUI placement so dialogue clears the E skill stack. */
+const FIST_HUD_BOTTOM_PX = 20 + 235 * 0.35 + 10;
+const FIST_HUD_STACK_PX = 11 + 3 + 52;
+const PANEL_GAP_ABOVE_FIST_PX = 36;
+const PANEL_BOTTOM_DESKTOP_PX = FIST_HUD_BOTTOM_PX + FIST_HUD_STACK_PX + PANEL_GAP_ABOVE_FIST_PX;
+
+const PANEL_HEIGHT_DESKTOP_PX = 130;
+const PANEL_HEIGHT_MOBILE_PX = 110;
+const TEXT_INSET_LEFT_PX = 14;
+const TEXT_INSET_RIGHT_PX = 14;
+const TEXT_INSET_TOP_DESKTOP_PX = 32;
+const TEXT_INSET_TOP_MOBILE_PX = 28;
+const TEXT_INSET_BOTTOM_DESKTOP_PX = 30;
+const TEXT_INSET_BOTTOM_MOBILE_PX = 26;
 const STYLE_ID = 'grim-dialogue-keyframes';
 const TYPEWRITER_MS_PER_CHAR = 35;
 const PANEL_ENTER_MS = 420;
 const PANEL_EXIT_MS = 380;
 const SPEAKER_FADE_MS = 220;
-/**
- * Fixed speaker label position on the overlay (not measured from the panel).
- * Tuned for ~1080p with the dialogue box at SPEAKER_PANEL_BOTTOM_PX.
- */
-const SPEAKER_LABEL_BOTTOM = '28vh';
-const SPEAKER_LABEL_LEFT = 'calc(50% - 194px)';
-const SPEAKER_LABEL_MAX_WIDTH_PX = 400;
 
 const SPEAKER_COLORS: Record<string, string> = {
   Grim: '#e8dcc8',
@@ -80,7 +68,6 @@ export class DialogueUI {
 
   private _playbackLines: DialogueLine[] = [];
   private _lineIndex = 0;
-  private _resolvedPanelUrl = '';
   private _currentSpeaker = '';
   private _fullLineText = '';
   private _revealedChars = 0;
@@ -88,7 +75,6 @@ export class DialogueUI {
   private _typewriterTimer: ReturnType<typeof setInterval> | null = null;
   private _closing = false;
   private _removeSkipButton: (() => void) | null = null;
-  private _boundResizePanel: (() => void) | null = null;
 
   private constructor(world: ENGINE.World, lines: DialogueScript, onComplete: () => void) {
     this._world = world;
@@ -160,12 +146,6 @@ export class DialogueUI {
       /* */
     }
 
-    const resolved = await ENGINE.resolveAssetPathsInText(
-      `url("${SPEAKER_PANEL_URL}")`,
-    );
-    const match = resolved.match(/url\("([^"]+)"\)/);
-    this._resolvedPanelUrl = match?.[1] ?? '';
-
     DialogueUI._injectKeyframes(container);
     this._mount(container);
 
@@ -176,15 +156,31 @@ export class DialogueUI {
     await delay(50);
     if (this._panel) {
       this._panel.style.opacity = '1';
-      this._panel.style.transform = 'translate(-50%, 0)';
+      this._panel.style.transform = this._panelShownTransform();
     }
     await delay(PANEL_ENTER_MS);
-    this._syncPanelSize();
     this._playbackLines = this._expandLines(this._sourceLines);
     this._showLine(0);
   }
 
+  private _panelShownTransform(): string {
+    return 'translateY(0)';
+  }
+
+  private _panelHiddenTransform(): string {
+    return 'translateY(110%)';
+  }
+
   private _mount(container: HTMLElement): void {
+    const mobile = isMobileDevice();
+    const panelHeight = mobile ? PANEL_HEIGHT_MOBILE_PX : PANEL_HEIGHT_DESKTOP_PX;
+    const panelBottom = mobile ? 0 : PANEL_BOTTOM_DESKTOP_PX;
+    const textInsetTop = mobile ? TEXT_INSET_TOP_MOBILE_PX : TEXT_INSET_TOP_DESKTOP_PX;
+    const textInsetBottom = mobile ? TEXT_INSET_BOTTOM_MOBILE_PX : TEXT_INSET_BOTTOM_DESKTOP_PX;
+    const speakerFontSize = mobile ? '12px' : '14px';
+    const bodyFontSize = mobile ? '14px' : '18px';
+    const hintFontSize = mobile ? '10px' : '12px';
+
     const root = document.createElement('div');
     root.className = 'grim-dialogue-root';
     root.style.cssText = `
@@ -196,116 +192,102 @@ export class DialogueUI {
       font-family: 'Bree Serif', serif;
     `;
 
-    const panelWidth = `min(${SPEAKER_PANEL_MAX_WIDTH_PX}px, 82vw, max(${SPEAKER_PANEL_MIN_WIDTH_PX}px, calc(100vw - ${SPEAKER_PANEL_SIDE_RESERVE_PX}px)))`;
-
     const panel = document.createElement('div');
     panel.className = 'grim-dialogue-panel';
+
+    const clip = document.createElement('div');
+    clip.className = 'grim-dialogue-clip';
+
+    const body = document.createElement('p');
+    body.className = 'grim-dialogue-body';
+
+    const hint = document.createElement('span');
+    hint.className = 'grim-dialogue-hint';
+    hint.textContent = 'Click — Next';
+
+    const speaker = document.createElement('span');
+    speaker.className = 'grim-dialogue-speaker';
+
     panel.style.cssText = `
       position: absolute;
-      left: 50%;
-      bottom: ${SPEAKER_PANEL_BOTTOM_PX}px;
-      width: ${panelWidth};
-      max-width: ${SPEAKER_PANEL_MAX_WIDTH_PX}px;
-      aspect-ratio: ${SPEAKER_PANEL_ASPECT};
+      bottom: ${panelBottom}px;
+      left: 0;
+      right: 0;
+      height: ${panelHeight}px;
+      background: rgba(8, 6, 14, 0.93);
+      border-top: 2px solid rgba(110, 80, 140, 0.55);
+      box-shadow: 0 -6px 28px rgba(0,0,0,0.75);
       box-sizing: border-box;
-      transform: translate(-50%, 110%);
+      transform: translateY(110%);
       opacity: 0;
       transition: transform ${PANEL_ENTER_MS * 0.001}s cubic-bezier(0.22, 1, 0.36, 1),
                   opacity ${PANEL_ENTER_MS * 0.001}s ease;
     `;
 
-    const bg = document.createElement('div');
-    bg.style.cssText = `
+    speaker.style.cssText = `
       position: absolute;
-      inset: 0;
-      background-image: url("${this._resolvedPanelUrl}");
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      filter: drop-shadow(0 8px 22px rgba(0,0,0,0.7));
+      top: 10px;
+      left: ${TEXT_INSET_LEFT_PX}px;
+      font-size: ${speakerFontSize};
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition: opacity ${SPEAKER_FADE_MS * 0.001}s ease;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       pointer-events: none;
+      z-index: 4;
     `;
 
-    const clip = document.createElement('div');
-    clip.className = 'grim-dialogue-clip';
     clip.style.cssText = `
       position: absolute;
-      left: ${TEXT_INSET_LEFT * 100}%;
-      right: ${TEXT_INSET_RIGHT * 100}%;
-      top: ${TEXT_INSET_TOP * 100}%;
-      bottom: ${TEXT_INSET_BOTTOM * 100}%;
+      top: ${textInsetTop}px;
+      left: ${TEXT_INSET_LEFT_PX}px;
+      right: ${TEXT_INSET_RIGHT_PX}px;
+      bottom: ${textInsetBottom}px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
       align-items: flex-start;
-      gap: 0.35em;
-      box-sizing: border-box;
       pointer-events: none;
     `;
 
-    const body = document.createElement('p');
-    body.className = 'grim-dialogue-body';
     body.style.cssText = `
-      flex: 0 1 auto;
       margin: 0;
-      font-size: clamp(12px, 1.65vw, 16px);
-      line-height: 1.4;
+      font-size: ${bodyFontSize};
+      line-height: 1.45;
       color: #f0ebe3;
       width: 100%;
       overflow: hidden;
       text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     `;
 
-    const hint = document.createElement('span');
-    hint.className = 'grim-dialogue-hint';
     hint.style.cssText = `
       position: absolute;
-      right: ${HINT_INSET_RIGHT * 100}%;
-      bottom: ${HINT_INSET_BOTTOM * 100}%;
-      font-size: clamp(9px, 1.1vw, 11px);
+      right: ${TEXT_INSET_RIGHT_PX}px;
+      bottom: 9px;
+      font-size: ${hintFontSize};
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(232, 220, 200, 0.55);
+      color: rgba(232, 220, 200, 0.5);
       opacity: 0;
       transition: opacity 0.25s ease;
       white-space: nowrap;
       pointer-events: none;
       text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     `;
-    hint.textContent = 'Click — Next';
-
-    const speaker = document.createElement('span');
-    speaker.className = 'grim-dialogue-speaker';
-    speaker.style.cssText = `
-      position: absolute;
-      left: ${SPEAKER_LABEL_LEFT};
-      bottom: ${SPEAKER_LABEL_BOTTOM};
-      top: auto;
-      max-width: ${SPEAKER_LABEL_MAX_WIDTH_PX}px;
-      margin: 0;
-      font-size: clamp(12px, 1.65vw, 15px);
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      z-index: 4;
-      transition: opacity ${SPEAKER_FADE_MS * 0.001}s ease;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.5);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      pointer-events: none;
-    `;
 
     clip.appendChild(body);
-    panel.appendChild(bg);
     panel.appendChild(clip);
     panel.appendChild(hint);
-    root.appendChild(speaker);
+    panel.appendChild(speaker);
     root.appendChild(panel);
     container.appendChild(root);
 
     root.addEventListener('click', () => this._onAdvanceClick());
-    this._bindPanelResizeSync();
 
     this._root = root;
     this._panel = panel;
@@ -313,32 +295,6 @@ export class DialogueUI {
     this._speakerEl = speaker;
     this._bodyEl = body;
     this._hintEl = hint;
-  }
-
-  private _syncPanelSize(): void {
-    const panel = this._panel;
-    if (!panel) {
-      return;
-    }
-    const w = panel.offsetWidth;
-    if (w > 0) {
-      panel.style.height = `${w / SPEAKER_PANEL_ASPECT}px`;
-    }
-  }
-
-  private _bindPanelResizeSync(): void {
-    this._unbindPanelResizeSync();
-    const handler = (): void => this._syncPanelSize();
-    this._boundResizePanel = handler;
-    window.addEventListener('resize', handler, { passive: true });
-    requestAnimationFrame(handler);
-  }
-
-  private _unbindPanelResizeSync(): void {
-    if (this._boundResizePanel) {
-      window.removeEventListener('resize', this._boundResizePanel);
-      this._boundResizePanel = null;
-    }
   }
 
   /** Split long lines so every page fits inside the text plaque. */
@@ -364,10 +320,13 @@ export class DialogueUI {
     let clipHeight = clip?.getBoundingClientRect().height ?? 0;
 
     if (clipWidth <= 0 || clipHeight <= 0) {
-      const panelWidth = panel?.getBoundingClientRect().width ?? SPEAKER_PANEL_MAX_WIDTH_PX;
-      const panelHeight = panelWidth / SPEAKER_PANEL_ASPECT;
-      clipWidth = panelWidth * (1 - TEXT_INSET_LEFT - TEXT_INSET_RIGHT);
-      clipHeight = panelHeight * (1 - TEXT_INSET_TOP - TEXT_INSET_BOTTOM);
+      const panelWidth = panel?.getBoundingClientRect().width ?? 0;
+      const panelHeight = panel?.getBoundingClientRect().height
+        ?? (isMobileDevice() ? PANEL_HEIGHT_MOBILE_PX : PANEL_HEIGHT_DESKTOP_PX);
+      const textInsetTop = isMobileDevice() ? TEXT_INSET_TOP_MOBILE_PX : TEXT_INSET_TOP_DESKTOP_PX;
+      const textInsetBottom = isMobileDevice() ? TEXT_INSET_BOTTOM_MOBILE_PX : TEXT_INSET_BOTTOM_DESKTOP_PX;
+      clipWidth = Math.max(0, panelWidth - TEXT_INSET_LEFT_PX - TEXT_INSET_RIGHT_PX);
+      clipHeight = Math.max(0, panelHeight - textInsetTop - textInsetBottom);
     }
 
     return {
@@ -394,8 +353,8 @@ export class DialogueUI {
 
     const bodyStyle = this._bodyEl ? getComputedStyle(this._bodyEl) : null;
     this._measurer.style.width = `${maxWidth}px`;
-    this._measurer.style.fontSize = bodyStyle?.fontSize ?? 'clamp(12px, 1.65vw, 16px)';
-    this._measurer.style.lineHeight = bodyStyle?.lineHeight ?? '1.4';
+    this._measurer.style.fontSize = bodyStyle?.fontSize ?? (isMobileDevice() ? '14px' : '18px');
+    this._measurer.style.lineHeight = bodyStyle?.lineHeight ?? '1.45';
     this._measurer.style.fontFamily = bodyStyle?.fontFamily ?? "'Bree Serif', serif";
     return this._measurer;
   }
@@ -473,8 +432,6 @@ export class DialogueUI {
       this._speakerEl.style.color = speakerColor(line.speaker);
     }
 
-    this._syncPanelSize();
-
     this._stopTypewriter();
     if (this._bodyEl) {
       this._bodyEl.textContent = '';
@@ -533,7 +490,7 @@ export class DialogueUI {
 
     if (this._panel) {
       this._panel.style.transition = `transform ${PANEL_EXIT_MS * 0.001}s ease-in, opacity ${PANEL_EXIT_MS * 0.001}s ease`;
-      this._panel.style.transform = 'translate(-50%, 110%)';
+      this._panel.style.transform = this._panelHiddenTransform();
       this._panel.style.opacity = '0';
       await delay(PANEL_EXIT_MS + 40);
     }
@@ -552,7 +509,6 @@ export class DialogueUI {
     void callComplete;
     this._removeSkipButton?.();
     this._removeSkipButton = null;
-    this._unbindPanelResizeSync();
     this._stopTypewriter();
     this._measurer?.remove();
     this._measurer = null;
@@ -576,9 +532,6 @@ export class DialogueUI {
         image-rendering: auto;
       }
       .grim-dialogue-panel > * {
-        position: absolute;
-      }
-      .grim-dialogue-root .grim-dialogue-speaker {
         position: absolute;
       }
     `;

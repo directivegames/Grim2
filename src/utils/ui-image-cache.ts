@@ -60,6 +60,8 @@ export const UI_ASSET_PATHS: readonly string[] = [
   '@project/assets/UI/hosptial.webp',
   '@project/assets/UI/factory.webp',
   '@project/assets/UI/police.webp',
+  '@project/assets/VFX/readyto.webp',
+  '@project/assets/VFX/REAP.webp',
 ];
 
 /** Menu-boot subset on phones — full HUD/map assets load on demand later. */
@@ -68,6 +70,8 @@ export const MOBILE_UI_PRELOAD_PATHS: readonly string[] = [
   UI_MENU_PANEL,
   UI_OPTIONS_FRAME,
   UI_OPTIONS_LOGO,
+  '@project/assets/VFX/readyto.webp',
+  '@project/assets/VFX/REAP.webp',
 ];
 
 export function getUiPreloadPaths(): readonly string[] {

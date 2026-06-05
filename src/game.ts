@@ -23,20 +23,25 @@ import { StartMenuUI } from './ui/StartMenuUI.js';
 import { MobileLandscapeOverlayUI } from './ui/MobileLandscapeOverlayUI.js';
 import { MobileCombatChromeUI } from './ui/MobileCombatChromeUI.js';
 import { MobileCombatActor } from './actors/MobileCombatActor.js';
+import { MobileSceneChunkLoaderActor } from './actors/MobileSceneChunkLoaderActor.js';
 import { LoadingScreenUI, LoadingStages, mapWarmupProgress } from './ui/LoadingScreenUI.js';
 import { setGameplayUnlocked } from './utils/game-pause.js';
 import { hideGameplayPresentation } from './utils/presentation-mode.js';
 import { isMobileDevice } from './utils/mobile-device.js';
 import { DebugCheatsActor } from './actors/DebugCheatsActor.js';
+import { EnemySpawnPointActor } from './actors/EnemySpawnPointActor.js';
 import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { GrimIntroActor } from './actors/GrimIntroActor.js';
+import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
 import { GrimGrinderControllerComponent } from './components/GrimGrinderControllerComponent.js';
 import { MenuMusicActor } from './actors/MenuMusicActor.js';
 import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
 import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
+import { shouldDisableWebGpuTslEffects } from './utils/browser-compat.js';
 
 /** Spring-arm length (world units). */
 const ISO_CAMERA_DISTANCE = 20;
+const MOBILE_STARTUP_SCENE_PATH = ENGINE.AssetPath.fromString('@project/assets/mobile-empty.genesys-scene');
 
 /** Block browser right-click menu so RMB can throw weapons without interruption. */
 function disableBrowserContextMenu(host: HTMLElement): void {
@@ -67,25 +72,26 @@ class MyGame extends ENGINE.BaseGameLoop {
 
   public override getWorldConfiguration(): ENGINE.WorldOptions {
     const base = super.getWorldConfiguration();
+    const mobile = isMobileDevice();
     return {
       ...base,
       navigationOptions: {
         engine: ENGINE.NavigationEngine.RecastNavigation,
         generateOnStartUp: true,
         options: {
-          cs: 0.5,
-          ch: 0.2,
+          cs: mobile ? 0.9 : 0.5,
+          ch: mobile ? 0.3 : 0.2,
           walkableSlopeAngle: 35,
           walkableHeight: 2,
-          walkableClimb: 0.3,
-          walkableRadius: 0.5,
-          maxEdgeLen: 12,
-          maxSimplificationError: 1.3,
-          minRegionArea: 8,
-          mergeRegionArea: 20,
+          walkableClimb: mobile ? 0.45 : 0.3,
+          walkableRadius: mobile ? 0.7 : 0.5,
+          maxEdgeLen: mobile ? 18 : 12,
+          maxSimplificationError: mobile ? 2.0 : 1.3,
+          minRegionArea: mobile ? 16 : 8,
+          mergeRegionArea: mobile ? 40 : 20,
           maxVertsPerPoly: 6,
-          detailSampleDist: 6,
-          detailSampleMaxError: 1,
+          detailSampleDist: mobile ? 12 : 6,
+          detailSampleMaxError: mobile ? 2 : 1,
         },
       },
     };
@@ -141,8 +147,10 @@ class MyGame extends ENGINE.BaseGameLoop {
     world.inputManager.setInputEnabled(false);
     this._disableSceneViewTargetCameras(world);
 
-    this._spawnScenicFogCards(world);
-    this._spawnCloudShadows(world);
+    if (!isMobileDevice() && !shouldDisableWebGpuTslEffects()) {
+      this._spawnScenicFogCards(world);
+      this._spawnCloudShadows(world);
+    }
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
@@ -154,6 +162,8 @@ class MyGame extends ENGINE.BaseGameLoop {
     MobileLandscapeOverlayUI.attach(world);
     MobileCombatChromeUI.attach(world);
     if (isMobileDevice()) {
+      this._ensureMobileRuntimeSceneActors(world);
+      MobileSceneChunkLoaderActor.ensureExists(world);
       MobileCombatActor.ensureExists(world);
     }
 
@@ -227,6 +237,38 @@ class MyGame extends ENGINE.BaseGameLoop {
     return false;
   }
 
+  /**
+   * Mobile starts from a tiny scene to avoid decoding the full editor scene at boot.
+   * Spawn only gameplay-critical marker/manager actors here; desktop keeps the scene-authored setup.
+   */
+  private _ensureMobileRuntimeSceneActors(world: ENGINE.World): void {
+    if (!world.getActors().some(actor => actor instanceof ZombieHordeManager)) {
+      world.addActor(ZombieHordeManager.create({ name: 'MobileZombieHordeManager' }));
+    }
+
+    if (world.getActors(EnemySpawnPointActor).length > 0) {
+      return;
+    }
+
+    const placements = [
+      new THREE.Vector3(0, 0, -18),
+      new THREE.Vector3(14, 0, -14),
+      new THREE.Vector3(18, 0, 0),
+      new THREE.Vector3(14, 0, 14),
+      new THREE.Vector3(0, 0, 18),
+      new THREE.Vector3(-14, 0, 14),
+      new THREE.Vector3(-18, 0, 0),
+      new THREE.Vector3(-14, 0, -14),
+    ];
+
+    placements.forEach((position, index) => {
+      world.addActor(EnemySpawnPointActor.create({
+        name: `MobileEnemySpawn_${index + 1}`,
+        position,
+      }));
+    });
+  }
+
   /** World-space cloud shadows — flat multiply overlay plane. */
   private _spawnCloudShadows(world: ENGINE.World): void {
     world.addActor(CloudShadowActor.create({
@@ -290,6 +332,9 @@ export function main(container: HTMLElement, options?: Partial<ENGINE.BaseGameLo
     debugUIMode: 'none',
     gameContextConfig: {
       ...options?.gameContextConfig,
+      initialWorldPath: isMobileDevice()
+        ? MOBILE_STARTUP_SCENE_PATH
+        : options?.gameContextConfig?.initialWorldPath,
       defaultGameModeClass: MyGameMode,
     },
   };

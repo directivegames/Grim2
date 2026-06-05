@@ -17,6 +17,8 @@ import {
   ensureUiImagesReady,
   getCachedUiImageUrl,
 } from '../utils/ui-image-cache.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
+import { ensureMobileMenuStyles } from './mobile-menus-layout.js';
 
 /** Reserved header width for Options.webp (1536×1024); height comes from aspect-ratio on the slot. */
 const OPTIONS_LOGO_MAX_WIDTH_PX = 540;
@@ -342,7 +344,9 @@ export class OptionsMenuUI {
     await ensureUiImagesReady([UI_OPTIONS_LOGO, UI_OPTIONS_FRAME, UI_MENU_PANEL]);
 
     this._ensureStyles(gameContainer);
+    ensureMobileMenuStyles(gameContainer);
 
+    const mobile = isMobileDevice();
     const logoUrl = getCachedUiImageUrl(UI_OPTIONS_LOGO);
     const frameUrl = getCachedUiImageUrl(UI_OPTIONS_FRAME);
     const menuPanelUrl = getCachedUiImageUrl(UI_MENU_PANEL);
@@ -361,7 +365,8 @@ export class OptionsMenuUI {
       box-sizing: border-box;
       user-select: none;
       padding: clamp(16px, 3vh, 32px) clamp(12px, 3vw, 28px);
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
     `;
 
     const menuStack = document.createElement('div');
@@ -370,7 +375,7 @@ export class OptionsMenuUI {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: min(560px, 94vw);
+      width: ${mobile ? 'min(420px, 88vw)' : 'min(560px, 94vw)'};
       flex-shrink: 0;
       margin: auto;
     `;
@@ -416,6 +421,7 @@ export class OptionsMenuUI {
       : '';
 
     const panel = document.createElement('div');
+    panel.className = mobile ? 'grim-options-panel' : '';
     panel.style.cssText = `
       position: relative;
       width: 100%;
@@ -424,11 +430,14 @@ export class OptionsMenuUI {
       border: 2px solid rgba(100, 160, 200, 0.25);
       border-radius: 6px;
       box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
-      padding: clamp(48px, 7vh, 56px) clamp(32px, 5vw, 44px) clamp(40px, 5.5vh, 48px);
+      padding: ${mobile
+        ? 'clamp(28px, 4vh, 36px) clamp(36px, 7vw, 48px) clamp(44px, 5.5vh, 56px)'
+        : 'clamp(48px, 7vh, 56px) clamp(32px, 5vw, 44px) clamp(40px, 5.5vh, 48px)'};
       display: flex;
       flex-direction: column;
       align-items: stretch;
       flex-shrink: 0;
+      overflow: hidden;
       ${panelFrameBg}
     `;
 
@@ -505,7 +514,7 @@ export class OptionsMenuUI {
     const resetWrap = document.createElement('div');
     resetWrap.style.cssText = `
       position: relative;
-      width: min(280px, 72%);
+      width: ${mobile ? 'min(200px, 62%)' : 'min(280px, 72%)'};
       aspect-ratio: 3.4 / 1;
       margin: 8px auto 0;
       display: flex;
@@ -544,9 +553,9 @@ export class OptionsMenuUI {
     const backWrap = document.createElement('div');
     backWrap.style.cssText = `
       position: relative;
-      width: min(280px, 72%);
+      width: ${mobile ? 'min(200px, 62%)' : 'min(280px, 72%)'};
       aspect-ratio: 3.4 / 1;
-      margin: 22px auto 0;
+      margin: ${mobile ? '14px auto 0' : '22px auto 0'};
       display: flex;
       align-items: center;
       justify-content: center;
@@ -586,10 +595,10 @@ export class OptionsMenuUI {
     defaultsBtn.title = 'Defaults';
     defaultsBtn.style.cssText = `
       position: absolute;
-      right: clamp(28px, 4.5vw, 40px);
-      bottom: clamp(24px, 3.5vh, 32px);
-      width: clamp(52px, 8vw, 64px);
-      height: clamp(52px, 8vw, 64px);
+      right: ${mobile ? 'clamp(36px, 7vw, 48px)' : 'clamp(28px, 4.5vw, 40px)'};
+      bottom: ${mobile ? 'clamp(44px, 5.5vh, 56px)' : 'clamp(24px, 3.5vh, 32px)'};
+      width: ${mobile ? 'clamp(44px, 10vw, 52px)' : 'clamp(52px, 8vw, 64px)'};
+      height: ${mobile ? 'clamp(44px, 10vw, 52px)' : 'clamp(52px, 8vw, 64px)'};
       border: 1px solid rgba(120, 140, 160, 0.4);
       border-radius: 4px;
       background: rgba(18, 22, 28, 0.92);

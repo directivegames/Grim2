@@ -11,6 +11,8 @@ import { returnToMap } from '../utils/return-to-map.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeToBlackThen } from '../utils/screen-transition.js';
 import { MissionRewardsUI } from './MissionRewardsUI.js';
+import { isMobileDevice } from '../utils/mobile-device.js';
+import { ensureMobileMenuStyles } from './mobile-menus-layout.js';
 
 const PANEL_URL = '@project/assets/UI/menuelement.webp';
 const FRAME_URL = '@project/assets/UI/optionsbackground.webp';
@@ -64,6 +66,9 @@ export class MissionResultUI {
       MissionResultUI._resolveUrl(FRAME_URL),
     ]);
 
+    ensureMobileMenuStyles(gc);
+    const mobile = isMobileDevice();
+
     const backdrop = document.createElement('div');
     backdrop.setAttribute('data-mission-result', '');
     backdrop.style.cssText = `
@@ -75,18 +80,26 @@ export class MissionResultUI {
       align-items: center;
       justify-content: center;
       pointer-events: auto;
+      padding: clamp(12px, 3vh, 28px) clamp(10px, 3vw, 24px);
+      box-sizing: border-box;
+      overflow: ${mobile ? 'hidden' : 'visible'};
     `;
 
     const panel = document.createElement('div');
+    panel.className = mobile ? 'grim-mission-result-panel' : '';
     panel.style.cssText = `
       position: relative;
-      width: min(520px, 92vw);
-      min-height: 320px;
-      padding: 48px 36px 36px;
+      width: ${mobile ? 'min(420px, 88vw)' : 'min(520px, 92vw)'};
+      max-height: ${mobile ? 'min(88vh, 520px)' : 'none'};
+      min-height: ${mobile ? '0' : '320px'};
+      padding: ${mobile
+        ? 'clamp(28px, 4vh, 36px) clamp(36px, 7vw, 48px) clamp(44px, 5.5vh, 56px)'
+        : '48px 36px 36px'};
       display: flex;
       flex-direction: column;
       align-items: center;
       box-sizing: border-box;
+      overflow: hidden;
     `;
     if (frameUrl) {
       panel.style.backgroundImage = `url("${frameUrl}")`;
@@ -97,9 +110,9 @@ export class MissionResultUI {
     const title = document.createElement('h1');
     title.textContent = won ? 'REAP SUCCESSFUL' : 'REAP FAILED';
     title.style.cssText = `
-      margin: 0 0 8px;
+      margin: 0 0 ${mobile ? '4px' : '8px'};
       font-family: 'BreeSerif', Georgia, serif;
-      font-size: clamp(28px, 5vw, 42px);
+      font-size: ${mobile ? 'clamp(20px, 5.5vw, 28px)' : 'clamp(28px, 5vw, 42px)'};
       font-weight: 900;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -110,9 +123,10 @@ export class MissionResultUI {
 
     const subtitle = document.createElement('p');
     subtitle.style.cssText = `
-      margin: 0 0 20px;
+      margin: 0 0 ${mobile ? '12px' : '20px'};
       font-family: Montserrat, 'Segoe UI', sans-serif;
-      font-size: clamp(13px, 2vw, 16px);
+      font-size: ${mobile ? 'clamp(11px, 2.4vw, 13px)' : 'clamp(13px, 2vw, 16px)'};
+      line-height: 1.35;
       color: rgba(200, 210, 220, 0.95);
       text-align: center;
     `;
@@ -123,11 +137,11 @@ export class MissionResultUI {
     const stats = document.createElement('div');
     stats.style.cssText = `
       width: 100%;
-      margin-bottom: 24px;
+      margin-bottom: ${mobile ? '14px' : '24px'};
       font-family: Montserrat, 'Segoe UI', sans-serif;
-      font-size: clamp(12px, 1.8vw, 15px);
+      font-size: ${mobile ? 'clamp(10px, 2.2vw, 12px)' : 'clamp(12px, 1.8vw, 15px)'};
       color: rgba(180, 190, 200, 0.95);
-      line-height: 1.7;
+      line-height: 1.5;
       text-align: center;
     `;
     const lines = [
@@ -154,14 +168,14 @@ export class MissionResultUI {
     btn.textContent = won ? 'NEXT →' : 'RETURN TO MAP';
     btn.style.cssText = `
       position: relative;
-      width: min(300px, 80%);
+      width: ${mobile ? 'min(200px, 62%)' : 'min(300px, 80%)'};
       aspect-ratio: 3.4 / 1;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       font-family: 'BreeSerif', Georgia, serif;
-      font-size: clamp(16px, 2.5vw, 22px);
+      font-size: ${mobile ? 'clamp(13px, 2.8vw, 16px)' : 'clamp(16px, 2.5vw, 22px)'};
       font-weight: 900;
       letter-spacing: 0.08em;
       color: #ffe8b0;

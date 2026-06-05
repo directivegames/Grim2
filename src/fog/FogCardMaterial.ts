@@ -202,13 +202,20 @@ export class FogCardMaterial extends MeshBasicNodeMaterial {
         .mul(uniforms.uFlowMapIntensity);
     })() : vec2(0.0, 0.0);
 
-    const animatedTime = time.mul(uniforms.uFlowMapSpeed);
-    const phaseA = fract(animatedTime);
-    const phaseB = fract(animatedTime.add(0.5));
-    const flowBlend = abs(phaseA.mul(2.0).sub(1.0));
-    const opacityA = texture(textures.opacityMap, baseUv.add(flowVec.mul(phaseA))).r;
-    const opacityB = texture(textures.opacityMap, baseUv.add(flowVec.mul(phaseB))).r;
-    let opacity = mix(opacityA, opacityB, flowBlend);
+    let opacity;
+    if (textures.flowMap) {
+      // Flow map active — dual-phase sample to animate opacity smoothly.
+      const animatedTime = time.mul(uniforms.uFlowMapSpeed);
+      const phaseA = fract(animatedTime);
+      const phaseB = fract(animatedTime.add(0.5));
+      const flowBlend = abs(phaseA.mul(2.0).sub(1.0));
+      const opacityA = texture(textures.opacityMap, baseUv.add(flowVec.mul(phaseA))).r;
+      const opacityB = texture(textures.opacityMap, baseUv.add(flowVec.mul(phaseB))).r;
+      opacity = mix(opacityA, opacityB, flowBlend);
+    } else {
+      // No flow map — single sample; saves one texture read per fragment.
+      opacity = texture(textures.opacityMap, baseUv).r;
+    }
 
     const cameraOffset = cameraPosition.sub(positionWorld);
     const cameraFade = smoothstep(float(0.0), uniforms.uCameraFadingDistance, cameraOffset.length());

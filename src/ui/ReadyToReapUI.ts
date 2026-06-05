@@ -9,6 +9,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import { BackgroundMusicActor } from '../actors/BackgroundMusicActor.js';
 import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
 import { gameSettings } from '../utils/game-settings.js';
+import { resolveAndCacheUiImage } from '../utils/ui-image-cache.js';
 
 const READY_URL = '@project/assets/VFX/readyto.webp';
 const REAP_URL = '@project/assets/VFX/REAP.webp';
@@ -87,8 +88,8 @@ export class ReadyToReapUI {
     ReadyToReapUI._injectKeyframes(container);
 
     const [readyUrl, reapUrl] = await Promise.all([
-      ENGINE.resolveAssetPathsInText(READY_URL),
-      ENGINE.resolveAssetPathsInText(REAP_URL),
+      resolveAndCacheUiImage(READY_URL),
+      resolveAndCacheUiImage(REAP_URL),
     ]);
 
     // No screen fades here — this should be a transparent overlay over gameplay.

@@ -9,6 +9,7 @@ import {
   type CloudShadowOverlaySettings,
 } from './CloudShadowOverlayMaterial.js';
 import { DEFAULT_CLOUD_SHADOW_MAP, DEFAULT_CLOUD_SHADOW_SETTINGS } from './CloudShadowState.js';
+import { shouldDisableWebGpuTslEffects } from '../utils/browser-compat.js';
 
 import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
@@ -269,6 +270,11 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
   public async reload(): Promise<void> {
     const loadVersion = ++this._loadVersion;
     this._clearOverlay();
+
+    if (shouldDisableWebGpuTslEffects()) {
+      return;
+    }
+
     this._loadStarted = true;
 
     try {
