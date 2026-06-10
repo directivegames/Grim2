@@ -3,7 +3,7 @@
  */
 
 /** Applied on top of per-risk enemyDamageMult in MissionRunner. */
-export const ENEMY_DAMAGE_GLOBAL_MULT = 1.25;
+export const ENEMY_DAMAGE_GLOBAL_MULT = 0.9375;
 
 /** NewZombieActor melee damage before risk scaling. */
 export const ZOMBIE_BASE_ATTACK_DAMAGE = 14;

@@ -40,6 +40,41 @@ export function isMobileDevice(): boolean {
   return false;
 }
 
+/**
+ * True ONLY for Apple WebKit devices (iPhone / iPad / iPod). Explicitly false on
+ * Android and desktop.
+ *
+ * This is a strict, additive subset of {@link isMobileDevice} used to apply
+ * iOS-only memory / performance reductions. It MUST NOT be used to gate anything
+ * that would alter Android or desktop behaviour — those paths continue to rely on
+ * isMobileDevice() / desktop defaults exactly as before.
+ */
+export function isIosDevice(): boolean {
+  if (typeof navigator === 'undefined') {
+    return false;
+  }
+
+  const ua = navigator.userAgent;
+
+  // Android is never iOS — guard first so nothing here can affect Android.
+  if (/Android/i.test(ua)) {
+    return false;
+  }
+
+  // Classic iOS user-agents.
+  if (/iPhone|iPad|iPod/i.test(ua)) {
+    return true;
+  }
+
+  // iPadOS 13+ reports as desktop Safari but is touch-capable Apple hardware.
+  // A real desktop Mac reports maxTouchPoints === 0, so this stays false there.
+  if (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints ?? 0) > 1) {
+    return true;
+  }
+
+  return false;
+}
+
 export function isLandscapeViewport(): boolean {
   if (typeof window === 'undefined') {
     return true;

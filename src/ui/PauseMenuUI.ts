@@ -5,7 +5,6 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { withMenuSelectSound } from '../utils/menu-audio.js';
 import { pauseGame, resumeGame } from '../utils/game-pause.js';
-import { OptionsMenuUI } from './OptionsMenuUI.js';
 import { returnToMap } from '../utils/return-to-map.js';
 import {
   UI_MENU_PANEL,
@@ -15,6 +14,7 @@ import {
   resolveAndCacheUiImage,
 } from '../utils/ui-image-cache.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
+import { MobileCombatChromeUI } from './MobileCombatChromeUI.js';
 import { ensureMobileMenuStyles } from './mobile-menus-layout.js';
 
 type GameContainerWorld = ENGINE.World & {
@@ -248,15 +248,6 @@ export class PauseMenuUI {
       this._createMenuButton('RESUME', () => this._onResume(), true),
     );
     buttonCol.appendChild(
-      this._createMenuButton('OPTIONS', () => {
-        this.close();
-        OptionsMenuUI.open(this._world, () => {
-          pauseGame(this._world);
-          void PauseMenuUI.open(this._world);
-        });
-      }),
-    );
-    buttonCol.appendChild(
       this._createMenuButton('QUIT', () => this._onQuit()),
     );
 
@@ -288,6 +279,9 @@ export class PauseMenuUI {
   private _onResume(): void {
     this.close();
     resumeGame(this._world);
+    if (isMobileDevice()) {
+      MobileCombatChromeUI.attach(this._world)?.refreshVisibility();
+    }
   }
 
   private _onQuit(): void {

@@ -3,12 +3,19 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { isMobileDevice } from '../utils/mobile-device.js';
 import { downscaleModelTextures } from '../utils/downscale-model-textures.js';
+import { SpawnBlockerActor } from './SpawnBlockerActor.js';
+import { InnocentSpawnPointActor } from './InnocentSpawnPointActor.js';
 import {
   BEDROOM_CHUNK,
   ENVIRONMENT_CHUNKS,
   GROUND_TILES,
+  SPAWN_BLOCKERS,
+  INNOCENT_PROP,
+  INNOCENT_SPAWN_POINTS,
   type GlbPlacement,
   type GroundTilePlacement,
+  type SpawnBlockerPlacement,
+  type SpawnPointPlacement,
 } from './mobile-scene-chunks.js';
 
 const HIDDEN_LOAD_Y = -1000;
@@ -39,7 +46,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
   private _introPromise: Promise<void> | null = null;
   private _backgroundPromise: Promise<void> | null = null;
   private _lightingReady = false;
-  private _simpleGroundReady = false;
+  private _groundReady = false;
 
   public override initialize(options?: ENGINE.ActorOptions): void {
     const root = ENGINE.SceneComponent.create();
@@ -89,9 +96,14 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     return this._backgroundPromise;
   }
 
+  /** Returns the in-flight background load promise, or a resolved promise if not yet started. */
+  public waitForBackgroundLoad(): Promise<void> {
+    return this._backgroundPromise ?? Promise.resolve();
+  }
+
   private async _loadIntroBedroom(): Promise<void> {
     this._ensureLighting();
-    this._ensureSimpleGround();
+    this._ensureGroundSetup();
     await this._loadGlbChunk(BEDROOM_CHUNK);
   }
 
@@ -100,11 +112,150 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
 
     // Floor first so the player has visible grass/road as soon as gameplay starts.
     await this._loadGroundTiles();
+    this._spawnSpawnBlockers();
+
+    // Innocent markers + prop early so the mission can reveal innocents at their
+    // authored places (InnocentHandler binds to the "innocent" actor at mission start).
+    this._spawnInnocentSpawnPoints();
+    await this._spawnInnocentProp();
 
     for (const chunk of ENVIRONMENT_CHUNKS) {
       await delay(CHUNK_DELAY_MS);
       await this._loadGlbChunk(chunk);
     }
+  }
+
+  private _spawnInnocentSpawnPoints(): void {
+    const world = this.getWorld();
+    if (!world) {
+      return;
+    }
+
+    for (const point of INNOCENT_SPAWN_POINTS) {
+      this._spawnInnocentSpawnPoint(point);
+    }
+  }
+
+  private _spawnInnocentSpawnPoint(point: SpawnPointPlacement): void {
+    const world = this.getWorld();
+    if (!world || world.getActors().some(actor => actor.name === point.name)) {
+      return;
+    }
+
+    world.addActor(InnocentSpawnPointActor.create({
+      name: point.name,
+      position: point.position.clone(),
+      scale: point.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
+      rotation: point.rotation?.clone() ?? new THREE.Euler(),
+    }));
+  }
+
+  /**
+   * Recreate the single scene "innocent" prop. InnocentHandler.bind() looks up the
+   * actor literally named "innocent" and drives it; the mobile empty scene has none,
+   * so without this innocents never reveal. Spawned hidden — the handler positions /
+   * reveals it on demand.
+   */
+  private async _spawnInnocentProp(): Promise<void> {
+    const world = this.getWorld();
+    if (!world || !INNOCENT_PROP) {
+      return;
+    }
+    if (world.getActors().some(actor => actor.name.toLowerCase() === 'innocent')) {
+      return;
+    }
+
+    const visual = ENGINE.GLTFMeshComponent.create({
+      modelUrl: INNOCENT_PROP.modelUrl,
+      material: INNOCENT_PROP.material,
+      position: INNOCENT_PROP.position.clone(),
+      scale: INNOCENT_PROP.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
+      rotation: INNOCENT_PROP.rotation?.clone() ?? new THREE.Euler(),
+      physicsOptions: { enabled: false },
+      castShadow: false,
+      receiveShadow: false,
+    });
+
+    const actor = ENGINE.Actor.create({ name: 'innocent', rootComponent: visual });
+    world.addActor(actor);
+    actor.setHiddenInGame(true);
+
+    if (!visual.isModelLoaded()) {
+      await visual.waitForLoad().catch((error) => {
+        console.warn('[MobileSceneChunkLoader] Failed to load innocent prop', error);
+      });
+    }
+
+    downscaleModelTextures(visual.getModel(), MOBILE_TEXTURE_MAX_DIM);
+    downscaleModelTextures(visual.getModelTemplate(), MOBILE_TEXTURE_MAX_DIM);
+  }
+
+  /**
+   * The startup navmesh + collision floor is the `MobileGround` actor from
+   * mobile-empty.genesys-scene (top ≈ y -0.95). Hide its mesh so it no longer
+   * z-fights with / buries the real grass-road tiles (which sit at ≈ -0.93..-1.0),
+   * while keeping its physics body and navmesh contribution. A separate low grey
+   * backdrop fills gaps between tiles without ever covering them.
+   */
+  private _ensureGroundSetup(): void {
+    if (this._groundReady) {
+      return;
+    }
+    this._groundReady = true;
+
+    const world = this.getWorld();
+    if (!world) {
+      return;
+    }
+
+    const placeholder = world.getActors().find(actor => actor.name === 'MobileGround');
+    const placeholderMesh = placeholder?.rootComponent;
+    if (placeholderMesh instanceof ENGINE.MeshComponent && placeholderMesh.mesh) {
+      // Keep physics + navmesh, drop only the visual so tiles render on top.
+      placeholderMesh.mesh.visible = false;
+    }
+
+    // Low grey backdrop (visual only) below all tiles — fills the gaps the desktop
+    // scene's large base Ground used to cover. Spans town + bedroom.
+    world.addActor(ENGINE.Actor.create({
+      name: 'MobileGroundBackdrop',
+      rootComponent: ENGINE.MeshComponent.create({
+        geometry: new THREE.BoxGeometry(520, 0.1, 520),
+        material: new THREE.MeshStandardMaterial({
+          color: new THREE.Color(0.07, 0.07, 0.08),
+          roughness: 1,
+        }),
+        position: new THREE.Vector3(40, -1.35, -20),
+        physicsOptions: { enabled: false },
+        castShadow: false,
+        receiveShadow: false,
+      }),
+    }));
+  }
+
+  private _spawnSpawnBlockers(): void {
+    const world = this.getWorld();
+    if (!world) {
+      return;
+    }
+
+    for (let i = 0; i < SPAWN_BLOCKERS.length; i++) {
+      this._spawnSpawnBlocker(SPAWN_BLOCKERS[i]!);
+    }
+  }
+
+  private _spawnSpawnBlocker(blocker: SpawnBlockerPlacement): void {
+    const world = this.getWorld();
+    if (!world || world.getActors().some(actor => actor.name === blocker.name)) {
+      return;
+    }
+
+    world.addActor(SpawnBlockerActor.create({
+      name: blocker.name,
+      position: blocker.position.clone(),
+      scale: blocker.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
+      rotation: blocker.rotation?.clone() ?? new THREE.Euler(),
+    }));
   }
 
   private async _loadGroundTiles(): Promise<void> {
@@ -178,44 +329,6 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     }));
   }
 
-  private _ensureSimpleGround(): void {
-    if (this._simpleGroundReady) {
-      return;
-    }
-    this._simpleGroundReady = true;
-
-    const world = this.getWorld();
-    if (!world) {
-      return;
-    }
-
-    // Replace the placeholder ground from mobile-empty.genesys-scene with a dark
-    // atmospheric ground that spans both the town (origin) and bedroom (~188,-51).
-    const placeholder = world.getActors().find(actor => actor.name === 'MobileGround');
-    if (placeholder) {
-      world.removeActor(placeholder);
-    }
-
-    // Physics-enabled so the kinematic character controller has a floor to stand on
-    // (the visual grass/road tiles spawned on top are non-colliding). Spans both the
-    // town (origin) and bedroom (~188,-51).
-    const ground = ENGINE.Actor.create({
-      name: 'MobileVisualGround',
-      rootComponent: ENGINE.MeshComponent.create({
-        geometry: new THREE.BoxGeometry(440, 0.1, 440),
-        material: new THREE.MeshStandardMaterial({
-          color: new THREE.Color(0.05, 0.04, 0.07),
-          roughness: 1,
-        }),
-        position: new THREE.Vector3(40, -1, -20),
-        physicsOptions: { enabled: true },
-        castShadow: false,
-        receiveShadow: false,
-      }),
-    });
-    world.addActor(ground);
-  }
-
   private async _loadGlbChunk(chunk: readonly GlbPlacement[]): Promise<void> {
     for (const placement of chunk) {
       await this._spawnGlbPlacement(placement);
@@ -229,13 +342,20 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       return;
     }
 
+    // Fences and walls have no collision on mobile so enemies can path through freely.
+    const url = placement.modelUrl.toLowerCase();
+    const noCollision =
+      url.includes('woodenfence') ||
+      url.includes('wall.glb');
     const visual = ENGINE.GLTFMeshComponent.create({
       modelUrl: placement.modelUrl,
       material: placement.material,
       position: placement.position.clone(),
       scale: placement.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
       rotation: placement.rotation?.clone() ?? new THREE.Euler(),
-      physicsOptions: { enabled: false },
+      physicsOptions: noCollision
+        ? { enabled: false }
+        : { enabled: true, motionType: ENGINE.PhysicsMotionType.Static },
       castShadow: false,
       receiveShadow: false,
     });
@@ -257,6 +377,6 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     // Process both the displayed clone and the cached template (override meshes swap
     // the clone's material but the template keeps the original full-size texture resident).
     downscaleModelTextures(visual.getModel(), MOBILE_TEXTURE_MAX_DIM);
-    downscaleModelTextures(visual.getGLTF()?.scene, MOBILE_TEXTURE_MAX_DIM);
+    downscaleModelTextures(visual.getModelTemplate(), MOBILE_TEXTURE_MAX_DIM);
   }
 }

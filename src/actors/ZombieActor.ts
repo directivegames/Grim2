@@ -165,7 +165,7 @@ export class ZombieActor extends ENGINE.Actor {
   public attackRange: number = 1.05;
 
   @ENGINE.property({ type: 'number', min: 0, max: 500, step: 1, category: 'Zombie' })
-  public attackDamage: number = 10;
+  public attackDamage: number = 8;
 
   @ENGINE.property({ type: 'number', min: 0.1, max: 10, step: 0.05, category: 'Zombie' })
   public attackCooldown: number = 0.65;
@@ -881,7 +881,7 @@ export class ZombieActor extends ENGINE.Actor {
     if (!world) return;
 
     const landPos = this._ragdollLandPos ?? deathPos;
-    const gravePos = landPos.clone().add(new THREE.Vector3(0, 0.5, 0));
+    const gravePos = landPos.clone();
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
   }
 

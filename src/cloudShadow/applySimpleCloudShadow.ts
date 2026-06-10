@@ -112,7 +112,7 @@ function patchOneMaterial(
     return mat;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const m = mat as any;
   const isNode = m.isNodeMaterial === true;
   const isStd = m.isMeshStandardMaterial === true || mat.type === 'MeshStandardMaterial';
@@ -129,7 +129,7 @@ function patchOneMaterial(
   );
 
   if (isNode) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     m.colorNode = (materialColor as any).mul(multiplier);
     mat.userData[CLOUD_PATCHED] = true;
     mat.needsUpdate = true;
@@ -138,12 +138,12 @@ function patchOneMaterial(
   }
 
   const nodeMat = new MeshBasicNodeMaterial();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (nodeMat as any).copy(mat);
   nodeMat.name = mat.name;
 
   const matColor = nodeMat.color ?? new THREE.Color(1, 1, 1);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (nodeMat as any).colorNode = (color(matColor) as any).mul(multiplier);
 
   nodeMat.userData = { ...mat.userData, [CLOUD_PATCHED]: true };

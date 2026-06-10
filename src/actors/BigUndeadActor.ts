@@ -719,7 +719,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     if (!world) return;
 
     const landPos = this._ragdollLandPos ?? deathPos;
-    const gravePos = landPos.clone().add(new THREE.Vector3(0, 0.5, 0));
+    const gravePos = landPos.clone();
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
 
     const smokeActor = ENGINE.Actor.create();

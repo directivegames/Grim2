@@ -17,7 +17,7 @@ const HEALTH_BAR_BOTTOM = 20;
 const HEALTH_BAR_HEIGHT = 235 * 0.35;
 const ICON_SIZE = 52;
 const GAP_ABOVE_HEALTH = 10;
-const FIST_STACK_OFFSET = ICON_SIZE + 24;
+const FIST_STACK_OFFSET = 80 + 24;
 const GRIM_GRINDER_HUD_STYLE_ID = 'grim-grinder-hud-styles';
 
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };

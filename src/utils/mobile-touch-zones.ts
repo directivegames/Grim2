@@ -65,13 +65,10 @@ export function alignMobileJoystickZones(host: HTMLElement): JoystickZoneRefs {
     refs.left.style.zIndex = '12';
   }
   if (refs.right) {
+    // Right stick is disabled — hide the engine zone so it doesn't capture taps
+    // intended for skill buttons occupying the bottom-right corner.
     refs.right.classList.add(RIGHT_CLASS);
-    refs.right.style.right = MOBILE_RIGHT_STICK_RIGHT;
-    refs.right.style.left = 'auto';
-    refs.right.style.bottom = MOBILE_RIGHT_STICK_BOTTOM;
-    refs.right.style.width = MOBILE_RIGHT_STICK_SIZE;
-    refs.right.style.height = MOBILE_RIGHT_STICK_SIZE;
-    refs.right.style.zIndex = '12';
+    refs.right.style.display = 'none';
   }
   return refs;
 }

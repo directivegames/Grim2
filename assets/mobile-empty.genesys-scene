@@ -23,6 +23,9 @@
           },
           "uuid": "mobile-ground-component",
           "name": "MeshComponent",
+          "physicsOptions": {
+            "enabled": true
+          },
           "position": {
             "_": [
               0,
@@ -47,9 +50,9 @@
           "name": "SceneComponent",
           "position": {
             "_": [
+              51.244,
               0,
-              0.9,
-              0
+              -2.041
             ],
             "$bc": "v3"
           },

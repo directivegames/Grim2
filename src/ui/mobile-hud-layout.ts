@@ -73,7 +73,9 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
       left: auto !important;
       width: clamp(90px, 20vw, 140px) !important;
       height: auto !important;
+      min-height: ${MOBILE_SOULS_HEIGHT} !important;
       aspect-ratio: 688 / 302;
+      z-index: 1010 !important;
     }
     .grim-mobile .grim-hud-souls [data-grim-soul-count] {
       right: 18% !important;
@@ -128,32 +130,65 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
       margin-top: 1px !important;
     }
 
+    /* ── Shared reset for all right-side skill tap buttons ── */
     .grim-mobile .grim-hud-fist,
+    .grim-mobile .grim-hud-soul-throw,
+    .grim-mobile .grim-hud-grimgrinder-skill,
     .grim-mobile .grim-hud-grim-grinder {
       top: auto !important;
       left: auto !important;
       pointer-events: none;
     }
 
-    /* E — left of the right-stick zone */
+    /* ── Skill row (right edge, bottom) ── */
+    /* Row bottom baseline shared by all three tap buttons */
+
+    /* Fist of Annoyance — rightmost tap button */
     .grim-mobile .grim-hud-fist {
-      bottom: calc(${MOBILE_RIGHT_STICK_BOTTOM} + clamp(24px, 6vw, 36px)) !important;
-      right: calc(${MOBILE_RIGHT_STICK_RIGHT} + ${MOBILE_RIGHT_STICK_SIZE} + clamp(6px, 1.5vw, 10px)) !important;
+      bottom: calc(${BOTTOM_SAFE} + 12px) !important;
+      right: ${RIGHT_SAFE} !important;
     }
 
-    /* F — above-right of the right-stick zone */
+    /* Soul Throw — centre tap button */
+    .grim-mobile .grim-hud-soul-throw {
+      position: absolute !important;
+      bottom: calc(${BOTTOM_SAFE} + 12px) !important;
+      right: calc(${RIGHT_SAFE} + clamp(52px, 13vw, 62px) + 8px) !important;
+    }
+
+    /* Grim Grinder skill (tap-to-activate) — leftmost tap button */
+    .grim-mobile .grim-hud-grimgrinder-skill {
+      position: absolute !important;
+      bottom: calc(${BOTTOM_SAFE} + 12px) !important;
+      right: calc(${RIGHT_SAFE} + (clamp(52px, 13vw, 62px) + 8px) * 2) !important;
+    }
+
+    /* Grim Grinder charge gauge — above the fist (right edge) */
     .grim-mobile .grim-hud-grim-grinder {
-      bottom: calc(${MOBILE_RIGHT_STICK_BOTTOM} + ${MOBILE_RIGHT_STICK_SIZE} - clamp(8px, 2vw, 12px)) !important;
-      right: calc(${MOBILE_RIGHT_STICK_RIGHT} + clamp(12px, 3vw, 20px)) !important;
+      bottom: calc(${BOTTOM_SAFE} + clamp(72px, 18vw, 90px) + 12px) !important;
+      right: ${RIGHT_SAFE} !important;
     }
 
-    .grim-mobile .grim-hud-fist [data-grim-hud-icon] {
+    /* ── Icon sizes — all three tap buttons the same size ── */
+    .grim-mobile .grim-hud-fist [data-grim-hud-icon],
+    .grim-mobile .grim-hud-soul-throw [data-grim-hud-icon],
+    .grim-mobile .grim-hud-grimgrinder-skill [data-grim-hud-icon] {
       width: clamp(52px, 13vw, 62px) !important;
       height: clamp(52px, 13vw, 62px) !important;
+    }
+    .grim-mobile .grim-hud-fist [data-grim-hud-icon],
+    .grim-mobile .grim-hud-soul-throw [data-grim-hud-icon] {
       pointer-events: auto !important;
       touch-action: manipulation;
       cursor: pointer;
     }
+    .grim-mobile .grim-hud-grimgrinder-skill [data-grim-hud-icon] {
+      pointer-events: auto !important;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    /* Charge gauge icon sizing (separate HUD element, not a tap button) */
     .grim-mobile .grim-hud-grim-grinder [data-grim-hud-icon] {
       width: clamp(40px, 10vw, 48px) !important;
       height: clamp(40px, 10vw, 48px) !important;
@@ -161,7 +196,11 @@ export function ensureMobileHudStyles(host: HTMLElement): void {
     .grim-mobile .grim-hud-grim-grinder [data-grim-hud-progress] {
       width: clamp(48px, 12vw, 56px) !important;
     }
-    .grim-mobile .grim-hud-fist [data-grim-hud-key] {
+
+    /* Hide key hints on all skill buttons on mobile */
+    .grim-mobile .grim-hud-fist [data-grim-hud-key],
+    .grim-mobile .grim-hud-soul-throw [data-grim-hud-key],
+    .grim-mobile .grim-hud-grimgrinder-skill [data-grim-hud-key] {
       display: none !important;
     }
     .grim-mobile .grim-hud-grim-grinder [data-grim-hud-key] {

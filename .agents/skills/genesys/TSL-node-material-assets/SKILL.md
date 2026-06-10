@@ -16,7 +16,6 @@ Use this skill when a game project needs custom WebGPU TSL material shaders that
 - Use `@ENGINE.GameClass(...)` for game-defined asset classes (never `EngineClass` in game code).
 - Mark authored fields with `@ENGINE.property(...)`.
 - Every editor-authored field must use explicit metadata: `@ENGINE.property({ type, description, ... })`.
-- Mark class instances as serializable: `readonly [ENGINE.ISerializableObjectTag] = true as const;`
 - Build the TSL shader node graph in a dedicated `rebuild()` method.
 
 ## Implementation Checklist

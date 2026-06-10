@@ -7,8 +7,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { ensureGrimIntroBlackCover } from '../actors/GrimIntroActor.js';
 import { MenuMusicActor } from '../actors/MenuMusicActor.js';
-import { ReadyToReapUI } from './ReadyToReapUI.js';
 import { OptionsMenuUI } from './OptionsMenuUI.js';
+import { ReadyToReapUI } from './ReadyToReapUI.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import { fadeInElement } from '../utils/screen-transition.js';
 import { setGameplayUnlocked } from '../utils/game-pause.js';
@@ -307,7 +307,6 @@ export class StartMenuUI {
       cursor: not-allowed;
       transition: filter 0.35s ease, opacity 0.35s ease, transform 0.25s ease;
     `;
-    applyBackgroundImageWhenReady(playWrap, UI_MENU_PANEL, panelBtnBg);
 
     const playLabel = document.createElement('span');
     playLabel.textContent = 'PLAY';
@@ -329,7 +328,6 @@ export class StartMenuUI {
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.2s ease;
     `;
-    applyBackgroundImageWhenReady(quitWrap, UI_MENU_PANEL, panelBtnBg);
     quitWrap.style.filter = 'brightness(0.82)';
     const quitLabel = document.createElement('span');
     quitLabel.textContent = 'QUIT';
@@ -357,39 +355,37 @@ export class StartMenuUI {
     bar.appendChild(quitWrap);
     bottomDock.appendChild(bar);
 
-    const optionsWrap = document.createElement('div');
-    optionsWrap.style.cssText = `
+    const optionsBtn = document.createElement('div');
+    optionsBtn.style.cssText = `
       position: absolute;
-      left: clamp(12px, 2.5vw, 28px);
-      bottom: clamp(12px, 2.5vh, 28px);
+      bottom: clamp(12px, 2vh, 22px);
+      left: clamp(12px, 2vw, 22px);
       z-index: 3;
-      width: clamp(64px, 8vw, 84px);
-      height: clamp(72px, 9vw, 96px);
-      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
+      gap: 5px;
       cursor: pointer;
       pointer-events: auto;
-      background: linear-gradient(180deg, rgba(28, 32, 38, 0.95), rgba(14, 16, 20, 0.98));
-      border: 1px solid rgba(120, 140, 160, 0.45);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.06),
-        0 4px 14px rgba(0, 0, 0, 0.55);
-      clip-path: polygon(
-        8% 0%, 92% 0%, 100% 8%, 100% 92%, 92% 100%, 8% 100%, 0% 92%, 0% 8%
-      );
+      user-select: none;
       transition: transform 0.15s ease, filter 0.2s ease;
     `;
 
-    const gearIcon = document.createElement('span');
-    gearIcon.textContent = '⚙';
-    gearIcon.style.cssText = `
-      font-size: clamp(1.1rem, 2.4vw, 1.45rem);
-      color: rgba(200, 210, 220, 0.92);
-      line-height: 1;
+    const optionsGear = document.createElement('div');
+    optionsGear.textContent = '⚙';
+    optionsGear.style.cssText = `
+      width: clamp(38px, 4.5vw, 52px);
+      height: clamp(38px, 4.5vw, 52px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.1rem, 2.4vw, 1.55rem);
+      color: rgba(0, 220, 255, 0.88);
+      background: rgba(8, 12, 18, 0.82);
+      border: 1px solid rgba(0, 200, 240, 0.3);
+      border-radius: 6px;
+      box-shadow: 0 0 14px rgba(0, 220, 255, 0.18), inset 0 0 8px rgba(0, 0, 0, 0.6);
+      text-shadow: 0 0 10px rgba(0, 220, 255, 0.5);
       pointer-events: none;
     `;
 
@@ -398,35 +394,39 @@ export class StartMenuUI {
     optionsLabel.style.cssText = `
       font-family: Montserrat, system-ui, sans-serif;
       font-weight: 700;
-      font-size: clamp(0.42rem, 1vw, 0.55rem);
-      letter-spacing: 0.12em;
-      color: rgba(200, 210, 220, 0.9);
-      text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+      font-size: clamp(0.42rem, 0.9vw, 0.58rem);
+      letter-spacing: 0.18em;
+      color: rgba(160, 175, 190, 0.75);
       pointer-events: none;
     `;
 
-    optionsWrap.appendChild(gearIcon);
-    optionsWrap.appendChild(optionsLabel);
-    optionsWrap.addEventListener('click', () => {
+    optionsBtn.appendChild(optionsGear);
+    optionsBtn.appendChild(optionsLabel);
+    optionsBtn.addEventListener('click', () => {
       playMenuSelectSound(this._world);
       OptionsMenuUI.open(this._world);
     });
-    optionsWrap.addEventListener('mouseenter', () => {
-      optionsWrap.style.transform = 'scale(1.04)';
-      optionsWrap.style.filter = 'brightness(1.08)';
+    optionsBtn.addEventListener('mouseenter', () => {
+      optionsBtn.style.transform = 'scale(1.08)';
+      optionsBtn.style.filter = 'brightness(1.2)';
     });
-    optionsWrap.addEventListener('mouseleave', () => {
-      optionsWrap.style.transform = 'scale(1)';
-      optionsWrap.style.filter = 'none';
+    optionsBtn.addEventListener('mouseleave', () => {
+      optionsBtn.style.transform = 'scale(1)';
+      optionsBtn.style.filter = 'none';
     });
 
-    bottomDock.appendChild(optionsWrap);
     root.appendChild(bg);
     root.appendChild(vignette);
     root.appendChild(bottomDock);
+    root.appendChild(optionsBtn);
 
     root.style.opacity = '0';
     gameContainer.appendChild(root);
+
+    // Apply button backgrounds after root is in the DOM so isConnected checks pass
+    // even when images are already cached from warmup.
+    applyBackgroundImageWhenReady(playWrap, UI_MENU_PANEL, panelBtnBg);
+    applyBackgroundImageWhenReady(quitWrap, UI_MENU_PANEL, panelBtnBg);
     applyBackgroundImageWhenReady(bg, UI_START_BG, {
       backgroundSize: 'cover',
       backgroundRepeat: 'no-repeat',

@@ -30,6 +30,7 @@ import { getGameAudioManager } from '../utils/game-audio.js';
 import { HitNumberUI } from '../ui/HitNumberUI.js';
 import { missionState } from '../mission/MissionState.js';
 import { collectSceneWeapons } from '../utils/scene-visual-pool.js';
+import { getMobileAimWorldDirection } from '../utils/mobile-aim.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
 
 // ─── Collision Profile ───────────────────────────────────────────────────────
@@ -37,6 +38,7 @@ import { isMobileDevice } from '../utils/mobile-device.js';
 const WEAPON_COLLISION_PROFILE = 'WeaponNoBlock';
 
 type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
+const weaponAsyncPhysicsDisableQueued = new WeakSet<ENGINE.Actor>();
 
 function ensureWeaponCollisionProfile(): void {
   const cfg = ENGINE.CollisionConfig.getInstance();
@@ -65,9 +67,46 @@ function ensureWeaponCollisionProfile(): void {
   (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
 }
 
+function disableWeaponActorPhysics(weaponActor: ENGINE.Actor): void {
+  ensureWeaponCollisionProfile();
+
+  const disableMeshPhysics = (component: ENGINE.SceneComponent): void => {
+    if (component instanceof ENGINE.MeshComponent) {
+      component.overridePhysicsOptions({
+        enabled: false,
+        collisionProfile: WEAPON_COLLISION_PROFILE,
+      });
+    }
+  };
+
+  disableMeshPhysics(weaponActor.rootComponent);
+  for (const mesh of weaponActor.getComponents(ENGINE.MeshComponent)) {
+    disableMeshPhysics(mesh);
+  }
+
+  // GLTF physics can be created after begin play when the model finishes loading.
+  // Queue one post-load disable pass per actor so no late Rapier body can remain.
+  const gltfMeshes = weaponActor.getComponents(ENGINE.GLTFMeshComponent);
+  if (gltfMeshes.length === 0 || weaponAsyncPhysicsDisableQueued.has(weaponActor)) {
+    return;
+  }
+
+  weaponAsyncPhysicsDisableQueued.add(weaponActor);
+  void Promise.all(gltfMeshes.map(mesh => mesh.waitForLoad().catch(() => undefined))).then(() => {
+    if (!weaponActor.getWorld()) {
+      return;
+    }
+    disableMeshPhysics(weaponActor.rootComponent);
+    for (const mesh of weaponActor.getComponents(ENGINE.MeshComponent)) {
+      disableMeshPhysics(mesh);
+    }
+  });
+}
+
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const WEAPON_ACTOR_NAME = 'weapon';
+const WEAPON_PARK_Y = -1000;
 
 const WEAPON_HEIGHT    = 0.6;
 const HANDLE_OFFSET    = 2.7;
@@ -103,7 +142,7 @@ const BOOMERANG_HIT_RADIUS   = 1.1;          // damage sphere radius while in fl
 const BOOMERANG_LAUNCH_OFFSET = 1.5;         // units in front of Grim at launch
 
 const SOUL_THROW_SKILL_ID       = 'soulThrow';
-const SOUL_THROW_COOLDOWN_L3    = 10;          // shared cooldown at rank 3
+export const SOUL_THROW_COOLDOWN_L3 = 10;          // shared cooldown at rank 3
 const SOUL_THROW_ARC_HALF_SPREAD = 0.28;       // radians between center and side blades
 const SOUL_THROW_DAMAGE_MULT_L3 = 0.55;        // rank 3 per-blade damage multiplier
 
@@ -276,13 +315,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       ensureWeaponCollisionProfile();
 
       for (const weaponActor of this._sceneWeaponActors) {
-        const root = weaponActor.rootComponent;
-        if (root instanceof ENGINE.MeshComponent) {
-          root.overridePhysicsOptions({
-            enabled: false,
-            collisionProfile: WEAPON_COLLISION_PROFILE,
-          });
-        }
+        disableWeaponActorPhysics(weaponActor);
         weaponActor.rootComponent.visible = false;
         this._weaponBaseQuats.push(weaponActor.rootComponent.quaternion.clone());
       }
@@ -471,6 +504,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     SpinningWeaponActor.findInWorld(world)?.triggerFistAbility();
   }
 
+  public static triggerGrimGrinder(world: ENGINE.World): void {
+    GrimGrinderModeActor.tryActivate(world);
+  }
+
   /** Auto-swing while mobile aim stick is held (returns true if a new swing started). */
   public tryMobileAutoMelee(): boolean {
     if (!isMobileDevice()) {
@@ -585,6 +622,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const nearby = zombieSpatialManager.getNearbyZombies(this._scratchPlayerPos, FIST_MAX_RANGE);
     const candidates: ENGINE.Actor[] = [];
 
+    // On mobile the player explicitly taps the skill button — allow targeting enemies
+    // at any distance within max range (no minimum), so close-combat zombies are valid.
+    const minRangeSq = isMobileDevice() ? 0 : FIST_MIN_RANGE * FIST_MIN_RANGE;
+
     for (const zombie of nearby) {
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
@@ -593,7 +634,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const dz = this._scratchZombiePos.z - this._scratchPlayerPos.z;
       const distSq = dx * dx + dz * dz;
 
-      if (distSq < FIST_MIN_RANGE * FIST_MIN_RANGE) continue;
+      if (distSq < minRangeSq) continue;
       if (distSq > FIST_MAX_RANGE * FIST_MAX_RANGE) continue;
 
       candidates.push(zombie);
@@ -802,6 +843,15 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _resolveAimDirection(player: ENGINE.Pawn, out: THREE.Vector3): void {
+    if (isMobileDevice()) {
+      if (getMobileAimWorldDirection(out)) {
+        return;
+      }
+      const yaw = player instanceof IsometricPlayerPawn ? player.getMovementYaw() : 0;
+      out.set(Math.sin(yaw), 0, Math.cos(yaw));
+      return;
+    }
+
     const world = this.getWorld();
     let dirSet = false;
 
@@ -885,6 +935,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const weapon = this._getSceneWeapon(visualSlot);
     if (weapon) {
       weapon.rootComponent.position.copy(launchPos);
+      // The thrown weapon is visual-only; damage uses manual swept checks.
+      disableWeaponActorPhysics(weapon);
       weapon.rootComponent.visible = true;
       if (visualSlot === 0 && this._summonVFX) {
         this._summonVFX.burst(launchPos, APPEAR_COUNT);
@@ -947,9 +999,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const weapon = this._getSceneWeapon(blade.visualSlot);
     if (weapon) {
       weapon.rootComponent.visible = false;
+      disableWeaponActorPhysics(weapon);
       if (blade.visualSlot === 0 && this._summonVFX) {
         this._summonVFX.burst(blade.pos, DISMISS_COUNT);
       }
+      weapon.rootComponent.position.y = WEAPON_PARK_Y;
     }
   }
 
@@ -1194,6 +1248,30 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   public isFistReady(): boolean {
     return this.getFistCooldownRemaining() <= 0;
+  }
+
+  /** Remaining cooldown in seconds for the rank-3 Soul Throw (0 at ranks 1–2 or when ready). */
+  public getSoulThrowCooldownRemaining(): number {
+    if (this._getSoulThrowLevel() < 3) return 0;
+    const world = this.getWorld();
+    if (!world) return 0;
+    const elapsed = world.getGameTime() - this._lastSoulThrowTime;
+    return Math.max(0, SOUL_THROW_COOLDOWN_L3 - elapsed);
+  }
+
+  /** True while rank 1–2 blades are in flight (blocks re-throw until they return). */
+  public hasSoulBladesInFlight(): boolean {
+    return this._hasActiveSoulBlades();
+  }
+
+  /** True during wind-up, swing, or recovery (Soul Throw blocked below rank 3). */
+  public isMeleeBusy(): boolean {
+    return this._isMeleeBusy();
+  }
+
+  /** Current soulThrow skill level (0 = not unlocked). */
+  public getSoulThrowSkillLevel(): number {
+    return this._getSoulThrowLevel();
   }
 
   public static findInWorld(world: ENGINE.World): SpinningWeaponActor | null {

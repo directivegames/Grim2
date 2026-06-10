@@ -955,6 +955,7 @@ export class NewZombieActor extends ENGINE.Actor {
     (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
       enabled: true,
       motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
+      collisionProfile: NEW_ZOMBIE_NPC_PROFILE,
     });
 
     this.setHiddenInGame(false);
@@ -1047,17 +1048,14 @@ export class NewZombieActor extends ENGINE.Actor {
    * The HordeManager will later call softReset() to respawn it.
    */
   private recycle(): void {
-    // Restore ragdoll state and physics for respawn.
     this._ragdollVelocity.set(0, 0, 0);
-    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
-      enabled: true,
-      motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
-    });
 
     // Hide the zombie
     this.setHiddenInGame(true);
 
-    // Disable physics while parked — removes Rapier body cost for idle pool zombies.
+    // Physics is already disabled from the death sequence — keep it off while
+    // parked so there is no Rapier body at the death location between now and
+    // softReset(), which re-enables it at the correct spawn position.
     (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
       enabled: false,
       motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
@@ -1145,6 +1143,7 @@ export class NewZombieActor extends ENGINE.Actor {
     (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
       enabled: true,
       motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
+      collisionProfile: NEW_ZOMBIE_NPC_PROFILE,
     });
 
     // Reset aggro / BT state
@@ -1287,7 +1286,7 @@ export class NewZombieActor extends ENGINE.Actor {
     if (!world) return;
 
     const landPos = this._ragdollLandPos ?? deathPos;
-    const gravePos = landPos.clone().add(new THREE.Vector3(0, 0.5, 0));
+    const gravePos = landPos.clone();
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
 
     const smokeActor = ENGINE.Actor.create();

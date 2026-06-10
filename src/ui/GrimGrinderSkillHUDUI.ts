@@ -1,33 +1,47 @@
 /**
- * FistAbilityHUDUI — Fist of Annoyance icon above the health bar with E key hint.
+ * GrimGrinderSkillHUDUI — F key skill button for Grim Grinder, sits to the
+ * right of the Soul Throw (RMB) icon in the bottom-left skill row.
+ *
+ * Only visible after grimGrinder is unlocked. Dims while soul progress has not
+ * yet reached the activation threshold; full brightness when ready to use.
+ * Hidden while Grim Grinder mode is actively running.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import { FIST_COOLDOWN_SEC, SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
+import { GrimGrinderModeActor } from '../actors/GrimGrinderModeActor.js';
+import { SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
+import { IsometricPlayerPawn } from '../actors/IsometricPlayerPawn.js';
+import { GRIM_GRINDER_SOUL_THRESHOLD } from '../data/grim-grinder-config.js';
 import { grimVault } from '../game/GrimVault.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
-import { ensureMobileHudStyles } from './mobile-hud-layout.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
+import { ensureMobileHudStyles } from './mobile-hud-layout.js';
 
-const FIST_ICON_URL = '@project/assets/UI/fistofa.webp';
+const ICON_URL = '@project/assets/UI/grimgrinderskill.webp';
 
-/** Match HealthBarUI placement. */
 const HEALTH_BAR_BOTTOM = 20;
 const HEALTH_BAR_HEIGHT = 235 * 0.35;
-const ICON_SIZE = 80;
 const GAP_ABOVE_HEALTH = 10;
+
+// Position — immediately right of the Soul Throw icon
+const FIST_ICON_LEFT   = 36;
+const FIST_ICON_SIZE   = 80;
+const GAP              = 8;
+const SOUL_THROW_SIZE  = 64;
+const ICON_LEFT        = FIST_ICON_LEFT + FIST_ICON_SIZE + GAP + SOUL_THROW_SIZE + GAP; // 196
+const ICON_SIZE        = 52;
 
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
-export class FistAbilityHUDUI {
-  private static readonly instances = new Map<ENGINE.World, FistAbilityHUDUI>();
+export class GrimGrinderSkillHUDUI {
+  private static readonly instances = new Map<ENGINE.World, GrimGrinderSkillHUDUI>();
 
   private readonly _world: ENGINE.World;
   private _container: HTMLDivElement | null = null;
   private _iconEl: HTMLImageElement | null = null;
   private _cooldownOverlay: HTMLDivElement | null = null;
   private _initialized = false;
-  private _wasOnCooldown = false;
+  private _wasReady = false;
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -41,11 +55,11 @@ export class FistAbilityHUDUI {
     const bottom = HEALTH_BAR_BOTTOM + HEALTH_BAR_HEIGHT + GAP_ABOVE_HEALTH;
 
     this._container = document.createElement('div');
-    this._container.className = 'grim-hud-fist';
+    this._container.className = 'grim-hud-grimgrinder-skill';
     this._container.style.cssText = `
       position: absolute;
       bottom: ${bottom}px;
-      left: 36px;
+      left: ${ICON_LEFT}px;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -61,7 +75,7 @@ export class FistAbilityHUDUI {
 
     const keyHint = document.createElement('span');
     keyHint.setAttribute('data-grim-hud-key', '');
-    keyHint.textContent = 'E';
+    keyHint.textContent = 'F';
     keyHint.style.cssText = `
       font-family: Montserrat, sans-serif;
       font-weight: 800;
@@ -84,7 +98,7 @@ export class FistAbilityHUDUI {
     `;
 
     this._iconEl = document.createElement('img');
-    this._iconEl.alt = 'Fist of Annoyance';
+    this._iconEl.alt = 'Grim Grinder';
     this._iconEl.style.cssText = `
       width: 100%;
       height: 100%;
@@ -94,49 +108,47 @@ export class FistAbilityHUDUI {
       filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
     `;
 
+    // Overlay drains upward as souls are collected — full when empty, gone when ready.
     this._cooldownOverlay = document.createElement('div');
     this._cooldownOverlay.style.cssText = `
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
-      height: 0%;
+      height: 100%;
       background: rgba(8, 6, 12, 0.55);
       border-radius: 4px;
       pointer-events: none;
-      transition: height 0.08s linear;
+      transition: height 0.12s linear;
     `;
 
     iconWrap.append(this._iconEl, this._cooldownOverlay);
 
-    if (mobile) {
+    if (!mobile) {
+      this._container.append(keyHint, iconWrap);
+    } else {
       iconWrap.style.pointerEvents = 'auto';
       iconWrap.style.touchAction = 'manipulation';
       iconWrap.style.cursor = 'pointer';
-      // Use touchstart for instant, zero-delay response on all iOS/Android browsers.
-      // preventDefault stops the browser synthesising a duplicate click event.
       iconWrap.addEventListener('touchstart', (e) => {
         e.preventDefault();
         playMenuSelectSound(this._world);
-        SpinningWeaponActor.triggerFistAbility(this._world);
+        SpinningWeaponActor.triggerGrimGrinder(this._world);
       }, { passive: false });
       this._container.append(iconWrap);
-    } else {
-      this._container.append(keyHint, iconWrap);
     }
 
     gc.appendChild(this._container);
   }
 
-  public static async getInstance(world: ENGINE.World | null): Promise<FistAbilityHUDUI | null> {
+  public static async getInstance(world: ENGINE.World | null): Promise<GrimGrinderSkillHUDUI | null> {
     if (!world) {
       return null;
     }
-
-    let inst = FistAbilityHUDUI.instances.get(world);
+    let inst = GrimGrinderSkillHUDUI.instances.get(world);
     if (!inst) {
-      inst = new FistAbilityHUDUI(world);
-      FistAbilityHUDUI.instances.set(world, inst);
+      inst = new GrimGrinderSkillHUDUI(world);
+      GrimGrinderSkillHUDUI.instances.set(world, inst);
       await inst._initializeAsync();
     }
     return inst;
@@ -147,7 +159,7 @@ export class FistAbilityHUDUI {
       return;
     }
 
-    const resolved = await ENGINE.resolveAssetPathsInText(FIST_ICON_URL);
+    const resolved = await ENGINE.resolveAssetPathsInText(ICON_URL);
     this._iconEl.src = resolved;
 
     this._container.style.display = 'flex';
@@ -165,41 +177,42 @@ export class FistAbilityHUDUI {
       return;
     }
 
-    const equipped = grimVault.getSkillLevel('fistOfAnnoyance') >= 1;
-    if (!equipped) {
+    if (!grimVault.hasGrimGrinderUnlocked() || GrimGrinderModeActor.isActive()) {
       this._container.style.display = 'none';
       return;
     }
 
     this._container.style.display = 'flex';
 
-    const weapon = SpinningWeaponActor.findInWorld(this._world);
-    const remaining = weapon?.getFistCooldownRemaining() ?? 0;
-    const onCooldown = remaining > 0;
-    const cdFraction = onCooldown ? remaining / FIST_COOLDOWN_SEC : 0;
+    const pawn = this._world.getFirstPlayerPawn();
+    const progress = pawn instanceof IsometricPlayerPawn ? pawn.grimGrinderSoulProgress : 0;
+    const ready = progress >= GRIM_GRINDER_SOUL_THRESHOLD;
+    const fillFrac = Math.min(1, progress / GRIM_GRINDER_SOUL_THRESHOLD);
 
-    if (onCooldown) {
+    // Overlay height fills DOWN from full when uncharged, drains to 0 when ready.
+    const overlayPct = ((1 - fillFrac) * 100).toFixed(1);
+    this._cooldownOverlay.style.height = `${overlayPct}%`;
+
+    if (ready) {
+      this._iconEl.style.filter = 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55))';
+      this._iconEl.style.opacity = '1';
+      if (!this._wasReady) {
+        this._container.animate(
+          [
+            { transform: 'scale(1)' },
+            { transform: 'scale(1.12)' },
+            { transform: 'scale(1)' },
+          ],
+          { duration: 180, easing: 'ease-out' },
+        );
+      }
+    } else {
       this._iconEl.style.filter =
         'grayscale(1) brightness(0.5) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45))';
       this._iconEl.style.opacity = '0.72';
-    } else {
-      this._iconEl.style.filter = 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55))';
-      this._iconEl.style.opacity = '1';
     }
 
-    this._cooldownOverlay.style.height = `${(cdFraction * 100).toFixed(1)}%`;
-
-    if (onCooldown !== this._wasOnCooldown && !onCooldown) {
-      this._container.animate(
-        [
-          { transform: 'scale(1)' },
-          { transform: 'scale(1.12)' },
-          { transform: 'scale(1)' },
-        ],
-        { duration: 180, easing: 'ease-out' },
-      );
-    }
-    this._wasOnCooldown = onCooldown;
+    this._wasReady = ready;
   }
 
   public destroy(): void {
@@ -208,6 +221,6 @@ export class FistAbilityHUDUI {
     this._iconEl = null;
     this._cooldownOverlay = null;
     this._initialized = false;
-    FistAbilityHUDUI.instances.delete(this._world);
+    GrimGrinderSkillHUDUI.instances.delete(this._world);
   }
 }

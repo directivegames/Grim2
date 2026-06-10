@@ -718,7 +718,7 @@ export class DemonboxActor extends ENGINE.Actor {
       if (w) {
         const landPos = this._ragdollLandPos ?? this.rootComponent.position.clone();
         GoreExplosionActor.spawnAt(w, landPos);
-        DeadGraveActor.spawnAt(w, landPos.clone().add(new THREE.Vector3(0, 0.5, 0)), new THREE.Vector3(0, 0, 0));
+        DeadGraveActor.spawnAt(w, landPos.clone(), new THREE.Vector3(0, 0, 0));
         getGameAudioManager(w).play('zombieDeath', 1.0, true);
       }
 

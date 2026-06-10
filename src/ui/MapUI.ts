@@ -1287,8 +1287,9 @@ export class MapUI {
     contentHost.appendChild(btnRow);
     backdrop.appendChild(panel);
 
+    const briefingOpenedAt = performance.now();
     backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) {
+      if (e.target === backdrop && performance.now() - briefingOpenedAt > 350) {
         this._closeBriefing();
       }
     });
@@ -1305,10 +1306,20 @@ export class MapUI {
     }
 
     if (this._briefingSubEl) {
+      const riskDifficultyLabel: Record<number, string> = {
+        1: 'Easy',
+        2: 'Easy',
+        3: 'Normal',
+        4: 'Hard',
+        5: 'Extreme',
+      };
+      const difficultyLabel = this._useRisk5Plus
+        ? 'Extreme'
+        : (riskDifficultyLabel[this._selectedRiskLevel] ?? mission.difficulty);
       const riskLabel = this._useRisk5Plus
         ? `Risk 5+ (+${grimVault.getRisk5PlusCompletions()})`
         : `Risk Level ${this._selectedRiskLevel}`;
-      this._briefingSubEl.textContent = `${riskLabel} · ${mission.difficulty}`;
+      this._briefingSubEl.textContent = `${riskLabel} · ${difficultyLabel}`;
     }
 
     if (this._briefingGoalsEl && mission.missionPoolId) {

@@ -16,10 +16,10 @@ import { CloudShadowState } from './CloudShadowState.js';
 
 import type { Node } from 'three/webgpu';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 let _cachedMultiplier: any = null;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 function buildLayer(scaleMul: any, speedMul: any) {
   const scale = CloudShadowState.uCloudScale.mul(scaleMul);
   const wind = CloudShadowState.uWindDir;
@@ -36,7 +36,7 @@ function buildLayer(scaleMul: any, speedMul: any) {
     windOrtho.mul(CloudShadowState.uTime).mul(CloudShadowState.uCloudSpeed).mul(speedMul),
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const texMap = CloudShadowState.uCloudMap as any;
   const sX = texMap.uv(uvX).r;
   const sY = texMap.uv(uvY).r;

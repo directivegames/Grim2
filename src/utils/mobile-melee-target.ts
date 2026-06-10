@@ -67,3 +67,37 @@ export function hasMobileMeleeTargetInAim(world: ENGINE.World): boolean {
 
   return false;
 }
+
+/**
+ * Nearest living enemy within melee range, ignoring aim direction. Used as a
+ * proximity fallback so mobile attacks always land when an enemy is in reach,
+ * even if the right-stick aim never registers as "active".
+ */
+export function getNearestMobileMeleeTarget(world: ENGINE.World): ENGINE.Actor | null {
+  const pawn = world.getFirstPlayerPawn();
+  if (!pawn) {
+    return null;
+  }
+
+  pawn.rootComponent.getWorldPosition(_playerPos);
+
+  const nearby = zombieSpatialManager.getNearbyZombies(_playerPos, MOBILE_MELEE_RANGE);
+  let best: ENGINE.Actor | null = null;
+  let bestDistSq = MOBILE_MELEE_RANGE_SQ;
+
+  for (const zombie of nearby) {
+    if (!isLivingZombie(zombie)) {
+      continue;
+    }
+    zombie.rootComponent.getWorldPosition(_zombiePos);
+    const dx = _zombiePos.x - _playerPos.x;
+    const dz = _zombiePos.z - _playerPos.z;
+    const distSq = dx * dx + dz * dz;
+    if (distSq <= bestDistSq) {
+      bestDistSq = distSq;
+      best = zombie;
+    }
+  }
+
+  return best;
+}

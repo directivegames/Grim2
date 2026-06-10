@@ -1,8 +1,9 @@
 /**
- * DeadGraveActor - Physics grave that falls when a zombie dies.
+ * DeadGraveActor - Grave visual spawned when a zombie dies.
  *
- * Uses an invisible box as the physics root so the collider is ready
- * immediately (not dependent on async GLB loading). The GLB is a visual child.
+ * Uses an invisible box root with brief Dynamic physics so the grave falls
+ * and settles onto the ground, then physics is disabled so Grim can never
+ * bump into a lingering tombstone collider.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -13,38 +14,60 @@ const GRAVE_MODEL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grave.glb` 
 
 // Shared geometry and material reused across every grave to avoid churning
 // Three.js buffers/programs when many graves spawn. The material is invisible
-// (the physics root is never rendered) — the visible GLB is a child.
-// NOTE: Geometry sized for 0.2 GLB scale (was 0.35,0.55,0.15 for 0.1 scale)
+// (the root is never rendered) — the visible GLB is a child.
 const SHARED_ROOT_GEOMETRY = new THREE.BoxGeometry(0.7, 1.1, 0.3);
 const SHARED_ROOT_MATERIAL = new THREE.MeshStandardMaterial({ visible: false });
 
-/** Ensure grave collision profile exists — blocks everything except Pawn. */
-function ensureGraveCollisionProfile(): void {
-  const cfg = ENGINE.CollisionConfig.getInstance();
-  const existing = cfg.getProfile('DeadGraveNoPawnBlock');
-  if (existing) return;
+// ─── Collision profile ────────────────────────────────────────────────────────
 
+const DEAD_GRAVE_PROFILE = 'DeadGraveNoPawnBlock';
+
+type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
+
+function patchDeadGraveResponses(profile: ENGINE.CollisionProfile): void {
+  const responses = (profile as unknown as { responses: MutableProfileResponses }).responses;
+  const set = (channel: ENGINE.CollisionChannel, response: ENGINE.CollisionResponse): void => {
+    const ch = channel as unknown as string;
+    const i = responses.findIndex(r => r.channel === ch);
+    if (i >= 0) responses[i] = { channel: ch, response };
+    else responses.push({ channel: ch, response });
+  };
+  // Land on static world geometry (ground, roads, etc.)
+  set(ENGINE.CollisionChannel.WorldStatic, ENGINE.CollisionResponse.Block);
+  // Never block Grim or any other pawn
+  set(ENGINE.CollisionChannel.Pawn, ENGINE.CollisionResponse.Ignore);
+  // Graves pass through each other and other dynamic bodies
+  set(ENGINE.CollisionChannel.WorldDynamic, ENGINE.CollisionResponse.Ignore);
+  set(ENGINE.CollisionChannel.PhysicsBody, ENGINE.CollisionResponse.Ignore);
+}
+
+function ensureDeadGraveCollisionProfile(): void {
+  const cfg = ENGINE.CollisionConfig.getInstance();
+  const existing = cfg.getProfile(DEAD_GRAVE_PROFILE);
+  if (existing) {
+    patchDeadGraveResponses(existing);
+    return;
+  }
   const profile = new ENGINE.CollisionProfile(
-    'DeadGraveNoPawnBlock',
+    DEAD_GRAVE_PROFILE,
     ENGINE.CollisionMode.QueryAndPhysics,
     ENGINE.CollisionChannel.WorldDynamic,
-    [
-      { channel: ENGINE.CollisionChannel.WorldStatic, response: ENGINE.CollisionResponse.Block },
-      { channel: ENGINE.CollisionChannel.WorldDynamic, response: ENGINE.CollisionResponse.Block },
-      { channel: ENGINE.CollisionChannel.Pawn, response: ENGINE.CollisionResponse.Ignore },
-    ]
+    [],
   );
+  patchDeadGraveResponses(profile);
   (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
 }
 
 /** Seconds before non-pooled grave auto-destroys (pooled graves never destroy). */
 const GRAVE_LIFETIME_SEC = 8;
 
-/** After this many seconds, switch dynamic body to static — removes from Rapier island. */
-const GRAVE_SETTLE_SEC = 1.5;
-
 /** Max simultaneous graves — oldest (FIFO) gets recycled when limit hit. */
 const MAX_GRAVES = 25;
+
+/** After this many seconds, or once movement stops, drop physics for good. */
+const GRAVE_SETTLE_MAX_SEC = 0.75;
+const GRAVE_SETTLE_MIN_SEC = 0.12;
+const GRAVE_SETTLE_MOVE_EPS_SQ = 0.000004;
 
 // Grave pool management (FIFO: shift front, push back on recycle)
 interface PooledGrave {
@@ -58,30 +81,28 @@ let gravePool: PooledGrave[] = [];
 export class DeadGraveActor extends ENGINE.Actor {
   private _aliveSec = 0;
   private _isPooled = false;
-  private _physicsSettled = false;
+  private _physicsActive = true;
+  private _settleElapsedSec = 0;
+  private readonly _lastSettlePos = new THREE.Vector3();
 
   public override initialize(options?: ActorOptions): void {
-    ensureGraveCollisionProfile();
+    ensureDeadGraveCollisionProfile();
 
-    // Invisible box as the physics root - ready immediately, no async loading needed
-    // Use custom collision profile that ignores Pawn so zombies can walk through graves
     const root = ENGINE.MeshComponent.create({
+      name: 'GraveRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
       physicsOptions: {
         enabled: true,
         motionType: ENGINE.PhysicsMotionType.Dynamic,
-        collisionProfile: 'DeadGraveNoPawnBlock',
-        gravityScale: 3.5,
-        density: 3.0,
+        collisionProfile: DEAD_GRAVE_PROFILE,
       },
     });
 
-    // Random rotation for variety
     root.rotation.y = Math.random() * Math.PI * 2;
 
-    // GLB is visual only - no physics on the mesh itself
     const visual = ENGINE.GLTFMeshComponent.create({
+      name: 'GraveVisual',
       modelUrl: GRAVE_MODEL_URL,
       scale: new THREE.Vector3(0.2, 0.2, 0.2),
       physicsOptions: { enabled: false },
@@ -96,49 +117,19 @@ export class DeadGraveActor extends ENGINE.Actor {
   protected override doBeginPlay(): void {
     super.doBeginPlay();
     this._aliveSec = 0;
-    this._physicsSettled = false;
-
-    // Apply heavy damping so the gravestone settles quickly and feels weighty
-    const physics = this.getPhysicsEngine();
-    const root = this.rootComponent as ENGINE.MeshComponent;
-    if (physics && root) {
-      // Use string literals that match the enum values
-      type ScalarParam = 'linearDamping' | 'angularDamping' | 'gravityScale';
-      physics.setScalarParam(root, 'linearDamping' as ScalarParam as any, 0.6);
-      physics.setScalarParam(root, 'angularDamping' as ScalarParam as any, 0.8);
-    }
+    this._beginSettling();
   }
 
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
     this._aliveSec += deltaTime;
 
-    if (!this._physicsSettled && this._aliveSec >= GRAVE_SETTLE_SEC) {
-      this._freezePhysics();
+    if (this._physicsActive) {
+      this._tickSettle(deltaTime);
     }
 
     if (!this._isPooled && this._aliveSec >= GRAVE_LIFETIME_SEC) {
       this.destroy();
-    }
-  }
-
-  /** Stop simulating this grave in Rapier once it has landed. */
-  private _freezePhysics(): void {
-    if (this._physicsSettled) return;
-    this._physicsSettled = true;
-
-    const root = this.rootComponent as ENGINE.MeshComponent;
-    root.overridePhysicsOptions({
-      enabled: true,
-      motionType: ENGINE.PhysicsMotionType.Static,
-      collisionProfile: 'DeadGraveNoPawnBlock',
-    });
-
-    const physics = this.getPhysicsEngine();
-    if (physics && root) {
-      type VectorParam = 'linearVelocity' | 'angularVelocity';
-      physics.setVectorParam(root, 'linearVelocity' as VectorParam as any, [0, 0, 0]);
-      physics.setVectorParam(root, 'angularVelocity' as VectorParam as any, [0, 0, 0]);
     }
   }
 
@@ -147,43 +138,31 @@ export class DeadGraveActor extends ENGINE.Actor {
   }
 
   /**
-   * Spawn a grave at the given position with velocity.
+   * Spawn a grave at the given position.
    * Uses pooling — recycles oldest grave if at cap.
    */
   public static spawnAt(
     world: ENGINE.World,
     position: THREE.Vector3,
-    velocity?: THREE.Vector3
+    _velocity?: THREE.Vector3,
   ): DeadGraveActor {
-    // Clean up destroyed graves from pool (check if actor is still in world)
+    void _velocity;
     gravePool = gravePool.filter(g => g.actor.getWorld() !== null);
 
     const spawnGameTime = world.getGameTime();
 
-    // FIFO: front of queue is oldest when pool is at cap
     if (gravePool.length >= MAX_GRAVES) {
       const oldest = gravePool.shift();
       if (oldest) {
-        oldest.actor.recycle(position, velocity);
+        oldest.actor.recycle(position);
         gravePool.push({ actor: oldest.actor, spawnGameTime });
         return oldest.actor;
       }
     }
 
-    // Create new grave
     const grave = DeadGraveActor.create({ position: position.clone() });
     grave._isPooled = true;
     world.addActor(grave);
-
-    // Apply velocity if provided
-    if (velocity) {
-      const physics = world.getPhysicsEngine();
-      const root = grave.rootComponent as ENGINE.MeshComponent;
-      if (physics && root) {
-        type VectorParam = 'linearVelocity' | 'angularVelocity';
-        physics.setVectorParam(root, 'linearVelocity' as VectorParam as any, velocity.toArray() as [number, number, number]);
-      }
-    }
 
     gravePool.push({ actor: grave, spawnGameTime });
     return grave;
@@ -203,34 +182,53 @@ export class DeadGraveActor extends ENGINE.Actor {
     gravePool = [];
   }
 
-  /**
-   * Recycle this grave to a new position with new velocity.
-   */
-  private recycle(position: THREE.Vector3, velocity?: THREE.Vector3): void {
-    this._physicsSettled = false;
+  private recycle(position: THREE.Vector3): void {
     this._aliveSec = 0;
+    this.rootComponent.position.copy(position);
+    this.rootComponent.rotation.y = Math.random() * Math.PI * 2;
+    this.rootComponent.updateMatrixWorld();
+    this._enableSettlingPhysics();
+  }
 
-    const root = this.rootComponent as ENGINE.MeshComponent;
-    root.overridePhysicsOptions({
+  private _beginSettling(): void {
+    this._settleElapsedSec = 0;
+    this._lastSettlePos.copy(this.rootComponent.position);
+    this._physicsActive = true;
+  }
+
+  private _enableSettlingPhysics(): void {
+    this._beginSettling();
+    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
       enabled: true,
       motionType: ENGINE.PhysicsMotionType.Dynamic,
-      collisionProfile: 'DeadGraveNoPawnBlock',
-      gravityScale: 3.5,
-      density: 3.0,
+      collisionProfile: DEAD_GRAVE_PROFILE,
     });
+  }
 
-    this.rootComponent.position.copy(position);
-    this.rootComponent.updateMatrixWorld();
+  private _tickSettle(deltaTime: number): void {
+    this._settleElapsedSec += deltaTime;
 
-    this.rootComponent.rotation.y = Math.random() * Math.PI * 2;
+    const movedSq = this.rootComponent.position.distanceToSquared(this._lastSettlePos);
+    this._lastSettlePos.copy(this.rootComponent.position);
 
-    const world = this.getWorld();
-    if (world && velocity) {
-      const physics = world.getPhysicsEngine();
-      if (physics && root) {
-        type VectorParam = 'linearVelocity' | 'angularVelocity';
-        physics.setVectorParam(root, 'linearVelocity' as VectorParam as any, velocity.toArray() as [number, number, number]);
-      }
+    const stoppedMoving =
+      this._settleElapsedSec >= GRAVE_SETTLE_MIN_SEC &&
+      movedSq <= GRAVE_SETTLE_MOVE_EPS_SQ;
+    const timedOut = this._settleElapsedSec >= GRAVE_SETTLE_MAX_SEC;
+
+    if (stoppedMoving || timedOut) {
+      this._freezePhysics();
     }
+  }
+
+  /** Remove the Rapier body once the grave has landed — visual stays put. */
+  private _freezePhysics(): void {
+    if (!this._physicsActive) {
+      return;
+    }
+    this._physicsActive = false;
+    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
+      enabled: false,
+    });
   }
 }

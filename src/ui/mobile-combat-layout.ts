@@ -62,8 +62,13 @@ export function ensureMobileCombatStyles(host: HTMLElement): void {
     }
     .grim-mobile [${ROOT_ATTR}] .grim-mobile-pause-btn {
       position: absolute;
-      top: max(8px, env(safe-area-inset-top, 0px));
-      left: max(10px, env(safe-area-inset-left, 0px));
+      bottom: max(16px, env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 28px;
+      z-index: 20;
+      font-size: clamp(18px, 4.5vw, 24px);
+      line-height: 1;
     }
     .grim-mobile [${ROOT_ATTR}] .grim-mobile-touch-fallback {
       position: absolute;

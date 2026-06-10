@@ -28,7 +28,7 @@ function shouldSkip(mat: THREE.Material, log: (m: string) => void): boolean {
 }
 
 function applyToNodeMaterial(mat: THREE.Material, log: (m: string) => void): boolean {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const nm = mat as any;
   const cloudMul = getCloudShadowMultiplierNode();
   if (nm.colorNode) {
@@ -57,10 +57,10 @@ function upgradeMeshSlot(mesh: THREE.Mesh, slotIdx: number, log: (m: string) => 
 
   const cloudMul = getCloudShadowMultiplierNode();
   const nodeMat = isPhys ? new MeshPhysicalNodeMaterial() : new MeshStandardNodeMaterial();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (nodeMat as any).copy(mat);
   nodeMat.name = mat.name;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (nodeMat as any).colorNode = (materialColor as unknown as CloudShadowColorNode).mul(cloudMul as never);
   nodeMat.needsUpdate = true;
   nodeMat.userData = { ...mat.userData, [APPLIED_FLAG]: true };

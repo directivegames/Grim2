@@ -12,7 +12,10 @@ import {
   resetMobileAim,
   syncMobileAimMouse,
 } from '../utils/mobile-aim.js';
-import { hasMobileMeleeTargetInAim } from '../utils/mobile-melee-target.js';
+import {
+  getNearestMobileMeleeTarget,
+  hasMobileMeleeTargetInAim,
+} from '../utils/mobile-melee-target.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { IsometricMovementComponent } from '../components/movement/IsometricMovementComponent.js';
@@ -38,6 +41,7 @@ export class MobileCombatActor extends ENGINE.Actor {
   private _aimSessionOpen = false;
   private _aimLastNx = 0;
   private _aimLastNy = 0;
+  private readonly _swingAimScratch = new THREE.Vector3();
 
   private readonly _inputHandler: ENGINE.IInputHandler = {
     handleVirtualJoystick: (
@@ -57,23 +61,8 @@ export class MobileCombatActor extends ENGINE.Actor {
       const active = data.type !== 'end';
 
       if (index === ENGINE.VirtualJoystickIndex.Right) {
-        if (data.type === 'start') {
-          this._aimStartX = data.position.x;
-          this._aimStartY = data.position.y;
-          this._beginAimSession();
-        }
-
-        if (!active) {
-          this._endAimStick(world);
-          return true;
-        }
-
-        const dx = data.position.x - this._aimStartX;
-        const dy = data.position.y - this._aimStartY;
-        const nx = zone > 0 ? THREE.MathUtils.clamp(dx / zone, -1, 1) : 0;
-        const ny = zone > 0 ? THREE.MathUtils.clamp(dy / zone, -1, 1) : 0;
-        this._updateAimStick(world, nx, ny);
-        return true;
+        // Right stick is disabled — proximity auto-attack handles attacking.
+        return false;
       }
 
       if (index === ENGINE.VirtualJoystickIndex.Left) {
@@ -133,16 +122,8 @@ export class MobileCombatActor extends ENGINE.Actor {
     this._moveActive = active && Math.hypot(stickX, stickY) > MOVE_DEADZONE;
   }
 
-  public setTouchAim(stickX: number, stickY: number, active: boolean): void {
-    const world = this.getWorld();
-    if (!world) {
-      return;
-    }
-    if (active) {
-      this._updateAimStick(world, stickX, stickY);
-    } else {
-      this._endAimStick(world);
-    }
+  public setTouchAim(_stickX: number, _stickY: number, _active: boolean): void {
+    // Right stick / aim is disabled — proximity auto-attack handles attacking.
   }
 
   /** Clear virtual stick state when gameplay input is flushed. */
@@ -255,12 +236,20 @@ export class MobileCombatActor extends ENGINE.Actor {
   private _tickAutoMelee(deltaTime: number): void {
     this._autoMeleeCooldown = Math.max(0, this._autoMeleeCooldown - deltaTime);
 
-    if (this._autoMeleeCooldown > 0 || !isMobileAimActive()) {
+    if (this._autoMeleeCooldown > 0) {
       return;
     }
 
     const world = this.getWorld();
-    if (!world || !hasMobileMeleeTargetInAim(world)) {
+    if (!world) {
+      return;
+    }
+
+    // Primary: swing toward the held aim direction. Fallback: auto-attack the
+    // nearest enemy in reach (so attacks land even if aim never registers active).
+    const aimTarget = isMobileAimActive() && hasMobileMeleeTargetInAim(world);
+    const proximityTarget = aimTarget ? null : getNearestMobileMeleeTarget(world);
+    if (!aimTarget && !proximityTarget) {
       return;
     }
 
@@ -271,8 +260,28 @@ export class MobileCombatActor extends ENGINE.Actor {
       return;
     }
 
+    // Point the swing at the enemy when relying on the proximity fallback.
+    if (proximityTarget) {
+      this._aimSwingAt(world, proximityTarget);
+    }
+
     if (weapon.tryMobileAutoMelee()) {
       this._autoMeleeCooldown = AUTO_MELEE_COOLDOWN_SEC;
     }
+  }
+
+  /** Set the synthetic aim cursor toward `target` so the melee arc faces it. */
+  private _aimSwingAt(world: ENGINE.World, target: ENGINE.Actor): void {
+    const camera = world.getActiveCamera();
+    if (!camera) {
+      return;
+    }
+    target.rootComponent.getWorldPosition(this._swingAimScratch);
+    this._swingAimScratch.project(camera);
+    const mouse = (world.inputManager as unknown as { mousePosition: THREE.Vector2 }).mousePosition;
+    mouse.set(
+      THREE.MathUtils.clamp(this._swingAimScratch.x, -1, 1),
+      THREE.MathUtils.clamp(this._swingAimScratch.y, -1, 1),
+    );
   }
 }

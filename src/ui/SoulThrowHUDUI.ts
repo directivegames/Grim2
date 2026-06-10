@@ -1,33 +1,36 @@
 /**
- * FistAbilityHUDUI — Fist of Annoyance icon above the health bar with E key hint.
+ * SoulThrowHUDUI — Soul Throw icon next to the E skill, with RMB key hint on desktop.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import { FIST_COOLDOWN_SEC, SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
+import { SOUL_THROW_COOLDOWN_L3, SpinningWeaponActor } from '../actors/SpinningWeaponActor.js';
 import { grimVault } from '../game/GrimVault.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
 import { ensureMobileHudStyles } from './mobile-hud-layout.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 
-const FIST_ICON_URL = '@project/assets/UI/fistofa.webp';
+const SOUL_THROW_ICON_URL = '@project/assets/UI/soulthrow.webp';
 
-/** Match HealthBarUI placement. */
 const HEALTH_BAR_BOTTOM = 20;
 const HEALTH_BAR_HEIGHT = 235 * 0.35;
-const ICON_SIZE = 80;
+const ICON_SIZE = 64;
 const GAP_ABOVE_HEALTH = 10;
+/** Horizontal gap between the Fist (E) icon and this icon. */
+const FIST_ICON_LEFT = 36;
+const FIST_ICON_SIZE = 80;
+const ICON_HORIZONTAL_GAP = 8;
 
 type GameContainerWorld = ENGINE.World & { gameContainer?: HTMLElement };
 
-export class FistAbilityHUDUI {
-  private static readonly instances = new Map<ENGINE.World, FistAbilityHUDUI>();
+export class SoulThrowHUDUI {
+  private static readonly instances = new Map<ENGINE.World, SoulThrowHUDUI>();
 
   private readonly _world: ENGINE.World;
   private _container: HTMLDivElement | null = null;
   private _iconEl: HTMLImageElement | null = null;
   private _cooldownOverlay: HTMLDivElement | null = null;
   private _initialized = false;
-  private _wasOnCooldown = false;
+  private _wasBlocked = false;
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -39,13 +42,14 @@ export class FistAbilityHUDUI {
     ensureMobileHudStyles(gc);
 
     const bottom = HEALTH_BAR_BOTTOM + HEALTH_BAR_HEIGHT + GAP_ABOVE_HEALTH;
+    const left = FIST_ICON_LEFT + FIST_ICON_SIZE + ICON_HORIZONTAL_GAP;
 
     this._container = document.createElement('div');
-    this._container.className = 'grim-hud-fist';
+    this._container.className = 'grim-hud-soul-throw';
     this._container.style.cssText = `
       position: absolute;
       bottom: ${bottom}px;
-      left: 36px;
+      left: ${left}px;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -61,7 +65,7 @@ export class FistAbilityHUDUI {
 
     const keyHint = document.createElement('span');
     keyHint.setAttribute('data-grim-hud-key', '');
-    keyHint.textContent = 'E';
+    keyHint.textContent = 'RMB';
     keyHint.style.cssText = `
       font-family: Montserrat, sans-serif;
       font-weight: 800;
@@ -84,7 +88,7 @@ export class FistAbilityHUDUI {
     `;
 
     this._iconEl = document.createElement('img');
-    this._iconEl.alt = 'Fist of Annoyance';
+    this._iconEl.alt = 'Soul Throw';
     this._iconEl.style.cssText = `
       width: 100%;
       height: 100%;
@@ -113,12 +117,10 @@ export class FistAbilityHUDUI {
       iconWrap.style.pointerEvents = 'auto';
       iconWrap.style.touchAction = 'manipulation';
       iconWrap.style.cursor = 'pointer';
-      // Use touchstart for instant, zero-delay response on all iOS/Android browsers.
-      // preventDefault stops the browser synthesising a duplicate click event.
       iconWrap.addEventListener('touchstart', (e) => {
         e.preventDefault();
         playMenuSelectSound(this._world);
-        SpinningWeaponActor.triggerFistAbility(this._world);
+        SpinningWeaponActor.triggerSoulThrow(this._world);
       }, { passive: false });
       this._container.append(iconWrap);
     } else {
@@ -128,15 +130,15 @@ export class FistAbilityHUDUI {
     gc.appendChild(this._container);
   }
 
-  public static async getInstance(world: ENGINE.World | null): Promise<FistAbilityHUDUI | null> {
+  public static async getInstance(world: ENGINE.World | null): Promise<SoulThrowHUDUI | null> {
     if (!world) {
       return null;
     }
 
-    let inst = FistAbilityHUDUI.instances.get(world);
+    let inst = SoulThrowHUDUI.instances.get(world);
     if (!inst) {
-      inst = new FistAbilityHUDUI(world);
-      FistAbilityHUDUI.instances.set(world, inst);
+      inst = new SoulThrowHUDUI(world);
+      SoulThrowHUDUI.instances.set(world, inst);
       await inst._initializeAsync();
     }
     return inst;
@@ -147,7 +149,7 @@ export class FistAbilityHUDUI {
       return;
     }
 
-    const resolved = await ENGINE.resolveAssetPathsInText(FIST_ICON_URL);
+    const resolved = await ENGINE.resolveAssetPathsInText(SOUL_THROW_ICON_URL);
     this._iconEl.src = resolved;
 
     this._container.style.display = 'flex';
@@ -165,8 +167,8 @@ export class FistAbilityHUDUI {
       return;
     }
 
-    const equipped = grimVault.getSkillLevel('fistOfAnnoyance') >= 1;
-    if (!equipped) {
+    const skillLevel = grimVault.getSkillLevel('soulThrow');
+    if (skillLevel < 1) {
       this._container.style.display = 'none';
       return;
     }
@@ -174,11 +176,18 @@ export class FistAbilityHUDUI {
     this._container.style.display = 'flex';
 
     const weapon = SpinningWeaponActor.findInWorld(this._world);
-    const remaining = weapon?.getFistCooldownRemaining() ?? 0;
-    const onCooldown = remaining > 0;
-    const cdFraction = onCooldown ? remaining / FIST_COOLDOWN_SEC : 0;
+    const cdRemaining = weapon?.getSoulThrowCooldownRemaining() ?? 0;
+    const inFlight = weapon?.hasSoulBladesInFlight() ?? false;
+    const soulThrowLevel = weapon?.getSoulThrowSkillLevel() ?? skillLevel;
+    const meleeBusy = weapon?.isMeleeBusy() ?? false;
 
-    if (onCooldown) {
+    const isBlocked =
+      cdRemaining > 0
+      || inFlight
+      || (meleeBusy && soulThrowLevel < 3);
+    const cdFraction = cdRemaining > 0 ? cdRemaining / SOUL_THROW_COOLDOWN_L3 : 0;
+
+    if (isBlocked) {
       this._iconEl.style.filter =
         'grayscale(1) brightness(0.5) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45))';
       this._iconEl.style.opacity = '0.72';
@@ -189,7 +198,7 @@ export class FistAbilityHUDUI {
 
     this._cooldownOverlay.style.height = `${(cdFraction * 100).toFixed(1)}%`;
 
-    if (onCooldown !== this._wasOnCooldown && !onCooldown) {
+    if (isBlocked !== this._wasBlocked && !isBlocked) {
       this._container.animate(
         [
           { transform: 'scale(1)' },
@@ -199,7 +208,7 @@ export class FistAbilityHUDUI {
         { duration: 180, easing: 'ease-out' },
       );
     }
-    this._wasOnCooldown = onCooldown;
+    this._wasBlocked = isBlocked;
   }
 
   public destroy(): void {
@@ -208,6 +217,6 @@ export class FistAbilityHUDUI {
     this._iconEl = null;
     this._cooldownOverlay = null;
     this._initialized = false;
-    FistAbilityHUDUI.instances.delete(this._world);
+    SoulThrowHUDUI.instances.delete(this._world);
   }
 }

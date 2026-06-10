@@ -49,7 +49,15 @@ export class BackgroundMusicActor extends ENGINE.Actor {
       return;
     }
     this._started = true;
-    void this.soundComponent.play('backgroundMusic');
+    void this.soundComponent.waitForLoad().then(async () => {
+      if (!this._started || !this.soundComponent) return;
+      const ctx = this.soundComponent.getAudioContext();
+      if (ctx?.state === 'suspended') {
+        try { await ctx.resume(); } catch { /* blocked without user gesture */ }
+      }
+      if (!this._started || !this.soundComponent) return;
+      void this.soundComponent.play('backgroundMusic');
+    });
   }
 
   /** Stop playback (does not destroy the actor). */

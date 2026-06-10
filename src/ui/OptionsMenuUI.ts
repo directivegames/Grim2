@@ -468,7 +468,7 @@ export class OptionsMenuUI {
 
     panel.appendChild(this._createSectionHeader('AUDIO'));
 
-    const sfxRow = this._createSliderRow('SFX VOLUME', gameSettings.sfxVolume, value => {
+    const sfxRow = this._createSliderRow('VFX VOLUME', gameSettings.sfxVolume, value => {
       gameSettings.sfxVolume = value;
       this._applySfxVolume();
     });

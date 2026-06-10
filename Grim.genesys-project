@@ -1,6 +1,18 @@
 {
   "defaultScene": "./assets/default.genesys-scene",
-  "engineVersion": "11.0.0",
+  "engineVersion": "11.2.6",
   "rendererType": "webgpu",
-  "gameId": "5fa10acb-a7ba-42ff-b0a1-32a8a26e2929"
+  "gameId": "5fa10acb-a7ba-42ff-b0a1-32a8a26e2929",
+  "assetCompiler": {
+    "enabled": true,
+    "compileOnPlay": true,
+    "textureCompression": {
+      "enabled": true,
+      "quality": "medium"
+    },
+    "meshCompression": {
+      "enabled": true,
+      "level": "medium"
+    }
+  }
 }

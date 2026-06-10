@@ -29,7 +29,7 @@ export const BASE_GRIM_STATS: GrimStats = {
   critChance: 0,
   luck: 0,
   /** Fractional HP per kill — applied via accumulator in {@link applySoulHealOnPickup}. */
-  soulHeal: 0.2,
+  soulHeal: 0.8,
 };
 
 export interface PlayerProfile {

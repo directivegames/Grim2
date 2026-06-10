@@ -44,6 +44,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.MeshComponent.create({
       material: INVISIBLE_MATERIAL,
+      physicsOptions: { enabled: false },
       castShadow: false,
       receiveShadow: false,
     });

@@ -66,6 +66,11 @@ export class MissionRewardsUI {
       justify-content: center;
       pointer-events: auto;
     `;
+    backdrop.addEventListener('touchmove', (e) => {
+      if (e.target === backdrop) {
+        e.preventDefault();
+      }
+    }, { passive: false });
 
     const panel = document.createElement('div');
     panel.style.cssText = `
@@ -73,6 +78,8 @@ export class MissionRewardsUI {
       width: min(560px, 94vw);
       max-height: 90vh;
       overflow-y: auto;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
       padding: 44px 32px 32px;
       display: flex;
       flex-direction: column;

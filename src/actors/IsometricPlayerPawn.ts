@@ -18,6 +18,8 @@ import { BlobShadowComponent } from '../components/vfx/BlobShadowComponent.js';
 import { WeaponSwingArcComponent } from '../components/vfx/WeaponSwingArcComponent.js';
 import { FistAbilityHUDUI } from '../ui/FistAbilityHUDUI.js';
 import { GrimGrinderHUDUI } from '../ui/GrimGrinderHUDUI.js';
+import { GrimGrinderSkillHUDUI } from '../ui/GrimGrinderSkillHUDUI.js';
+import { SoulThrowHUDUI } from '../ui/SoulThrowHUDUI.js';
 import { GRIM_GRINDER_CAR_YAW_OFFSET, GRIM_GRINDER_SOUL_THRESHOLD } from '../data/grim-grinder-config.js';
 import { HealthBarUI } from '../ui/HealthBarUI.js';
 import { ShopItemIconsHUDUI } from '../ui/ShopItemIconsHUDUI.js';
@@ -45,12 +47,26 @@ const GRIM2_MATERIAL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/textures/Grim2t
 /** Editor-placed Grim2 prop to remove at runtime. */
 const SCENE_PLACEHOLDER_GRIM2_ACTOR_UUID = '7e97a710b8d5f00b';
 
-/** Grim walks through dynamic bodies / destructibles; still blocks on static world geometry. */
+/** Grim only blocks on static world geometry — all runtime/dynamic actors pass through. */
 const GRIM_COLLISION_PROFILE = 'GrimCharacter';
+const GRIM_STATIC_CHANNEL = ENGINE.CollisionChannel.WorldStatic as unknown as string;
+
+type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
+
+function patchGrimCollisionResponses(profile: ENGINE.CollisionProfile): void {
+  const responses = (profile as unknown as { responses: MutableProfileResponses }).responses;
+  for (const entry of responses) {
+    entry.response = entry.channel === GRIM_STATIC_CHANNEL
+      ? ENGINE.CollisionResponse.Block
+      : ENGINE.CollisionResponse.Ignore;
+  }
+}
 
 function ensureGrimCollisionProfile(): void {
   const cfg = ENGINE.CollisionConfig.getInstance();
-  if (cfg.getProfile(GRIM_COLLISION_PROFILE)) {
+  const existing = cfg.getProfile(GRIM_COLLISION_PROFILE);
+  if (existing) {
+    patchGrimCollisionResponses(existing);
     return;
   }
 
@@ -58,15 +74,9 @@ function ensureGrimCollisionProfile(): void {
     GRIM_COLLISION_PROFILE,
     ENGINE.CollisionMode.QueryAndPhysics,
     ENGINE.CollisionChannel.Pawn,
-    [
-      { channel: ENGINE.CollisionChannel.Visibility, response: ENGINE.CollisionResponse.Ignore },
-      { channel: ENGINE.CollisionChannel.Vehicle, response: ENGINE.CollisionResponse.Overlap },
-      { channel: ENGINE.CollisionChannel.Camera, response: ENGINE.CollisionResponse.Ignore },
-      { channel: ENGINE.CollisionChannel.Pawn, response: ENGINE.CollisionResponse.Ignore },
-      { channel: ENGINE.CollisionChannel.PhysicsBody, response: ENGINE.CollisionResponse.Ignore },
-      { channel: ENGINE.CollisionChannel.Destructible, response: ENGINE.CollisionResponse.Ignore },
-    ],
+    [],
   );
+  patchGrimCollisionResponses(profile);
 
   (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
 }
@@ -140,6 +150,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private _healthBarUI: HealthBarUI | null = null;
   private _fistAbilityHUD: FistAbilityHUDUI | null = null;
   private _grimGrinderHUD: GrimGrinderHUDUI | null = null;
+  private _grimGrinderSkillHUD: GrimGrinderSkillHUDUI | null = null;
+  private _soulThrowHUD: SoulThrowHUDUI | null = null;
 
   /** Hit number UI reference. */
   private _hitNumberUI: import('../ui/HitNumberUI.js').HitNumberUI | null = null;
@@ -214,6 +226,12 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private _vignetteActive    = false;
   private _lastKnownHealth   = -1;
   private _missionDeathReported = false;
+
+  // ── Passive health regen ──────────────────────────────────────────────────
+  private static readonly REGEN_DELAY_SEC = 5;
+  private static readonly REGEN_RATE_HP_SEC = 1;
+  private _regenTimerSec = 0;
+  private _regenAccumSec = 0;
   /** World position when the pawn first begins play (mission restart spawn). */
   private _missionSpawnPosition: THREE.Vector3 | null = null;
   private _missionSpawnYaw = 0;
@@ -221,6 +239,9 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   private readonly _onHealthChanged = (current: number, max: number): void => {
     if (this._lastKnownHealth >= 0 && current < this._lastKnownHealth) {
       this._showDamageVignette();
+      // Reset regen delay whenever Grim takes damage
+      this._regenTimerSec = 0;
+      this._regenAccumSec = 0;
     }
     this._lastKnownHealth = current;
     this._healthBarUI?.updateHealth(current, max);
@@ -318,6 +339,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     mc.characterControllerOptions = {
       ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
       offset: 0.04,
+      applyImpulsesToDynamicBodies: false,
       autoStepConfig: {
         maxHeight: 0.6,
         minWidth: 0,
@@ -610,6 +632,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       void this._initHealthBarUI(stats);
       void this._initFistAbilityHUD();
       void this._initGrimGrinderHUD();
+      void this._initGrimGrinderSkillHUD();
+      void this._initSoulThrowHUD();
       void this._initShopItemIconsHUD();
       // Initialize hit number UI
       void this._initHitNumberUI();
@@ -629,6 +653,14 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   private async _initGrimGrinderHUD(): Promise<void> {
     this._grimGrinderHUD = await GrimGrinderHUDUI.getInstance(this.getWorld());
+  }
+
+  private async _initGrimGrinderSkillHUD(): Promise<void> {
+    this._grimGrinderSkillHUD = await GrimGrinderSkillHUDUI.getInstance(this.getWorld());
+  }
+
+  private async _initSoulThrowHUD(): Promise<void> {
+    this._soulThrowHUD = await SoulThrowHUDUI.getInstance(this.getWorld());
   }
 
   private async _initShopItemIconsHUD(): Promise<void> {
@@ -725,9 +757,12 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._updateScreenShake(deltaTime);
     this._updateDamageVignette(deltaTime);
     this._updateCameraFOV(deltaTime);
+    this._tickPassiveRegen(deltaTime);
     // Update health bar animation
     this._healthBarUI?.tick(deltaTime);
     this._fistAbilityHUD?.tick();
+    this._soulThrowHUD?.tick();
+    this._grimGrinderSkillHUD?.tick();
     this._grimGrinderHUD?.tick();
     // Update hit number animations
     this._hitNumberUI?.tick();
@@ -1281,6 +1316,31 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     if (alpha <= 0) this._vignetteActive = false;
   }
 
+  private _tickPassiveRegen(deltaTime: number): void {
+    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    if (!stats) return;
+
+    const current = stats.getCurrentHealth();
+    const max = stats.getMaxHealth();
+    if (current <= 0 || current >= max) {
+      return;
+    }
+
+    this._regenTimerSec += deltaTime;
+    if (this._regenTimerSec < IsometricPlayerPawn.REGEN_DELAY_SEC) {
+      return;
+    }
+
+    this._regenAccumSec += deltaTime;
+    const hpToHeal = Math.floor(this._regenAccumSec * IsometricPlayerPawn.REGEN_RATE_HP_SEC);
+    if (hpToHeal <= 0) {
+      return;
+    }
+
+    this._regenAccumSec -= hpToHeal / IsometricPlayerPawn.REGEN_RATE_HP_SEC;
+    stats.heal(hpToHeal);
+  }
+
   protected override doEndPlay(): void {
     // Ensure slomo is restored if the pawn is destroyed mid-cinematic
     const world = this.getWorld();
@@ -1301,6 +1361,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._healthBarUI = null;
     this._fistAbilityHUD?.destroy();
     this._fistAbilityHUD = null;
+    this._soulThrowHUD?.destroy();
+    this._soulThrowHUD = null;
+    this._grimGrinderSkillHUD?.destroy();
+    this._grimGrinderSkillHUD = null;
     this._grimGrinderHUD?.destroy();
     this._grimGrinderHUD = null;
     // Clean up KO sign UI

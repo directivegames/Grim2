@@ -23,6 +23,20 @@ export type GroundTilePlacement = {
   rotation?: THREE.Euler;
 };
 
+export type SpawnBlockerPlacement = {
+  name: string;
+  position: THREE.Vector3;
+  scale?: THREE.Vector3;
+  rotation?: THREE.Euler;
+};
+
+export type SpawnPointPlacement = {
+  name: string;
+  position: THREE.Vector3;
+  scale?: THREE.Vector3;
+  rotation?: THREE.Euler;
+};
+
 /** Bedroom diorama — loaded first so the intro camera has something to frame. */
 export const BEDROOM_CHUNK: readonly GlbPlacement[] = [
   {
@@ -192,12 +206,6 @@ export const ENVIRONMENT_CHUNKS: readonly (readonly GlbPlacement[])[] = [
       rotation: new THREE.Euler(0, 1.5708, 0),
     },
     {
-      name: "Churchchanged",
-      modelUrl: "@project/assets/models/churchchanged.glb" as ENGINE.ModelPath,
-      position: new THREE.Vector3(-13.6248, -1.247, 11.1343),
-      rotation: new THREE.Euler(0, 1.5708, 0),
-    },
-    {
       name: "GLTFMeshActor_343",
       modelUrl: "@project/assets/models/Bin.glb" as ENGINE.ModelPath,
       position: new THREE.Vector3(8.4, -0.5723, -15.528),
@@ -205,6 +213,12 @@ export const ENVIRONMENT_CHUNKS: readonly (readonly GlbPlacement[])[] = [
       rotation: new THREE.Euler(0, 1.5184, 0),
       material: "@project/assets/models/material_0_005_material.material.json",
       castShadow: true,
+    },
+    {
+      name: "Churchchanged",
+      modelUrl: "@project/assets/models/churchchanged.glb" as ENGINE.ModelPath,
+      position: new THREE.Vector3(-14.6, -1.247, 11.1343),
+      rotation: new THREE.Euler(0, 1.5708, 0),
     },
     {
       name: "Mailbox",
@@ -2167,7 +2181,7 @@ export const GROUND_TILES: readonly GroundTilePlacement[] = [
   {
     name: "MobileGroundTile_59",
     material: "@project/assets/textures/Grass.material.json",
-    position: new THREE.Vector3(-13.8904, -1.0462, 20.2638),
+    position: new THREE.Vector3(-13.6, -1.0462, 20.4),
     scale: new THREE.Vector3(10, 0.2, 10),
     rotation: new THREE.Euler(0, -1.5708, 0),
   },
@@ -2949,5 +2963,86 @@ export const GROUND_TILES: readonly GroundTilePlacement[] = [
     position: new THREE.Vector3(-34, -1.1, 40.2),
     scale: new THREE.Vector3(10, 0.2, 10),
     rotation: new THREE.Euler(0, 1.5708, 0),
+  },
+];
+
+/** Invisible static collision volumes that keep Grim in-bounds. */
+export const SPAWN_BLOCKERS: readonly SpawnBlockerPlacement[] = [
+  {
+    name: "MobileSpawnBlocker_0",
+    position: new THREE.Vector3(46.7, -0.4, 79.9),
+    scale: new THREE.Vector3(3.4276, 1, 4.8564),
+  },
+  {
+    name: "MobileSpawnBlocker_1",
+    position: new THREE.Vector3(67.9, -0.4, 66.7),
+    scale: new THREE.Vector3(3.4276, 1, 6.2863),
+  },
+  {
+    name: "MobileSpawnBlocker_2",
+    position: new THREE.Vector3(71.3, -0.4, -35.9),
+    scale: new THREE.Vector3(3.4276, 1, 9.8496),
+  },
+  {
+    name: "MobileSpawnBlocker_3",
+    position: new THREE.Vector3(48.4, -0.4, -54.1),
+    scale: new THREE.Vector3(3.4276, 1, 9.8496),
+  },
+  {
+    name: "MobileSpawnBlocker_4",
+    position: new THREE.Vector3(-79, -0.4, -18),
+    scale: new THREE.Vector3(6.1843, 1, 9.8496),
+  },
+  {
+    name: "MobileSpawnBlocker_5",
+    position: new THREE.Vector3(-77, -0.4, 50.8),
+    scale: new THREE.Vector3(6.1843, 1, 9.8496),
+  },
+  {
+    name: "MobileSpawnBlocker_6",
+    position: new THREE.Vector3(-54.4, -0.4, 100.6),
+    scale: new THREE.Vector3(6.1843, 1, 9.8496),
+  },
+  {
+    name: "MobileSpawnBlocker_7",
+    position: new THREE.Vector3(1.6, -0.4, 96.6),
+    scale: new THREE.Vector3(8.6622, 1, 4.8564),
+  },
+];
+
+/** The single scene innocent prop (InnocentHandler binds to the actor named "innocent"). */
+export const INNOCENT_PROP: GlbPlacement | null = {
+    name: "innocent",
+    modelUrl: "@project/assets/models/Innocent.glb" as ENGINE.ModelPath,
+    position: new THREE.Vector3(101.6, -8.3, -11.7),
+    scale: new THREE.Vector3(15, 15, 15),
+    rotation: new THREE.Euler(0, 0.5236, 0),
+  };
+
+/** Innocent spawn markers — mission reveals innocents at these authored places. */
+export const INNOCENT_SPAWN_POINTS: readonly SpawnPointPlacement[] = [
+  {
+    name: "MobileInnocentSpawnPoint_0",
+    position: new THREE.Vector3(-43, 0, 0),
+  },
+  {
+    name: "MobileInnocentSpawnPoint_1",
+    position: new THREE.Vector3(-43, 0, 53.6),
+  },
+  {
+    name: "MobileInnocentSpawnPoint_2",
+    position: new THREE.Vector3(17.5, 0, 53.6),
+  },
+  {
+    name: "MobileInnocentSpawnPoint_3",
+    position: new THREE.Vector3(47.5, 0, 53.6),
+  },
+  {
+    name: "MobileInnocentSpawnPoint_4",
+    position: new THREE.Vector3(47.5, 0, 25.5),
+  },
+  {
+    name: "MobileInnocentSpawnPoint_5",
+    position: new THREE.Vector3(-39.4, 0, -13.3),
   },
 ];

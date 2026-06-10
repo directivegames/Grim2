@@ -10,7 +10,9 @@ This reference shows a safe pattern for creating a custom game-side TSL node mat
 - Use `type: 'boolean'` for toggle-style settings and `type: 'color'` for tint fields.
 - Always include a concise `description` so editor UI communicates intent clearly.
 
-## 1) Define the material asset class
+## 1) Define the material asset class and register specialization
+
+Keep the class and `ENGINE.registerSpecialization(...)` in the same module. Execute registration once via a module side effect at the bottom of the file.
 
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
@@ -24,8 +26,6 @@ import { MeshStandardNodeMaterial } from 'three/webgpu';
   nodeMaterialGroup: 'Game FX',
 })
 export class PulseStripeNodeMaterialAsset extends ENGINE.NodeMaterialAsset(MeshStandardNodeMaterial) {
-  readonly [ENGINE.ISerializableObjectTag] = true as const;
-
   @ENGINE.property({ type: 'color', description: 'Main stripe tint' })
   override color = new THREE.Color(0.1, 0.9, 1.0);
 
@@ -35,54 +35,57 @@ export class PulseStripeNodeMaterialAsset extends ENGINE.NodeMaterialAsset(MeshS
   @ENGINE.property({ type: 'number', min: 0.0, max: 10, step: 0.1, description: 'Animation speed' })
   speed = 1.25;
 
-  @ENGINE.property({ type: 'string', description: 'Optional stripe mask texture URL' })
-  maskTextureUrl = '';
+  @ENGINE.property({ type: 'texturePath', description: 'Optional stripe mask texture URL' })
+  maskTexturePath = '';
 
-  private _maskTexture: THREE.Texture | null = null;
-  private _maskTextureUrl = '';
-  private _skipNextPostLoadRebuild = false;
+  private _maskTexture: ENGINE.UrlTexture | null = null;
+  private _disposed = false;
 
-  constructor(opts?: { deferRebuild?: boolean }) {
+  constructor() {
     super();
-    if (!opts?.deferRebuild) {
-      this.rebuild();
-    }
+    this.rebuild();
   }
 
-  private _ensureMaskTexture(url: string): THREE.Texture | null {
-    const normalizedUrl = url.trim();
-    if (normalizedUrl === this._maskTextureUrl) return this._maskTexture;
+  private _syncMaskTexture(): THREE.Texture | null {
+    const url = this.coerceTexturePath(this.maskTexturePath);
+    this.maskTexturePath = url;
 
-    const previous = this._maskTexture;
-    if (!normalizedUrl) {
+    if (!url) {
+      this._maskTexture?.dispose();
       this._maskTexture = null;
-      this._maskTextureUrl = '';
-      previous?.dispose();
       return null;
     }
 
-    const next = new ENGINE.UrlTexture({
-      url: normalizedUrl,
-      wrapS: THREE.RepeatWrapping,
-      wrapT: THREE.RepeatWrapping,
-    });
-    next.colorSpace = THREE.NoColorSpace;
+    if (!this._maskTexture) {
+      this._maskTexture = new ENGINE.UrlTexture({
+        url,
+        wrapS: THREE.RepeatWrapping,
+        wrapT: THREE.RepeatWrapping,
+        colorSpace: THREE.NoColorSpace,
+      });
+    } else if (this._maskTexture.url !== url) {
+      this._maskTexture.url = url;
+    }
 
-    this._maskTexture = next;
-    this._maskTextureUrl = normalizedUrl;
-    previous?.dispose();
-    return next;
+    this._maskTexture.needsUpdate = true;
+    return this._maskTexture;
   }
 
   override rebuild(): void {
+    // Never resurrect GPU resources on a disposed material (deferred editor callbacks).
+    if (this._disposed) return;
     try {
-      const safeSpeed = Number.isFinite(this.speed) ? this.speed : 1.25;
-      const safeFrequency = Number.isFinite(this.stripeFrequency) ? this.stripeFrequency : 6.0;
-      const maskTex = this._ensureMaskTexture(this.maskTextureUrl);
+      this.applyCommonMaterialState();
+      const safeSpeed = this.clampFiniteNumber(this.speed, 0, 10, 1.25);
+      const safeFrequency = this.clampFiniteNumber(this.stripeFrequency, 0.1, 20, 6.0);
+      this.speed = safeSpeed;
+      this.stripeFrequency = safeFrequency;
 
-      const t = TSL.time.mul(safeSpeed);
-      const stripes = TSL.sin(TSL.positionLocal.y.mul(safeFrequency).add(t)).mul(0.5).add(0.5);
-      const base = TSL.vec3(this.color.r, this.color.g, this.color.b);
+      const maskTex = this._syncMaskTexture();
+      const stripes = TSL.sin(TSL.positionLocal.y.mul(safeFrequency).add(TSL.time.mul(safeSpeed)))
+        .mul(0.5)
+        .add(0.5);
+      const base = TSL.color(this.color);
       const mask = maskTex ? TSL.texture(maskTex, TSL.uv()).x : TSL.float(1);
       this.colorNode = base.mul(stripes.add(0.25)).mul(mask);
       this.needsUpdate = true;
@@ -94,53 +97,24 @@ export class PulseStripeNodeMaterialAsset extends ENGINE.NodeMaterialAsset(MeshS
     }
   }
 
-  public serialize(dumper: ENGINE.Dumper): void {
+  public serialize(dumper: ENGINE.IDumper): void {
     this.serializeAuthoredFields(dumper);
   }
 
-  public static staticDeserialize(data: unknown, loader: ENGINE.Loader): PulseStripeNodeMaterialAsset {
-    const instance = new PulseStripeNodeMaterialAsset({ deferRebuild: true });
+  public static staticDeserialize(data: unknown, loader: ENGINE.ILoader): PulseStripeNodeMaterialAsset {
+    const instance = new PulseStripeNodeMaterialAsset();
     PulseStripeNodeMaterialAsset.loadAuthoredFields(instance, loader);
     instance.rebuild();
-    instance._skipNextPostLoadRebuild = true;
     return instance;
   }
 
-  public override postLoad(): void {
-    if (this._skipNextPostLoadRebuild) {
-      this._skipNextPostLoadRebuild = false;
-      this.needsUpdate = true;
-      return;
-    }
-    // Defensive safety net when load path bypasses staticDeserialize.
-    this.rebuild();
-    this.needsUpdate = true;
-  }
-
   public override dispose(): void {
+    this._disposed = true;
     this._maskTexture?.dispose();
     this._maskTexture = null;
-    this._maskTextureUrl = '';
     super.dispose();
   }
 }
-```
-
-## 2) Register specialization in the same module
-
-Keep specialization registration in the same file as the material asset class, and execute it once via module side effect.
-
-```typescript
-import * as ENGINE from '@gnsx/genesys.js';
-
-import { PulseStripeNodeMaterialAsset } from './materials/PulseStripeNodeMaterialAsset';
-
-let isRegistered = false;
-
-export function registerPulseStripeNodeMaterialSpecialization(): void {
-  if (isRegistered) {
-    return;
-  }
 
 ENGINE.registerSpecialization({
   cls: PulseStripeNodeMaterialAsset,
@@ -148,21 +122,16 @@ ENGINE.registerSpecialization({
   staticDeserializeFn: (data, loader) => PulseStripeNodeMaterialAsset.staticDeserialize(data, loader),
   cdo: new PulseStripeNodeMaterialAsset(),
 });
-
-  isRegistered = true;
-}
-
-registerPulseStripeNodeMaterialSpecialization();
 ```
 
-## 3) Ensure module import executes
+## 2) Ensure module import executes
 
 - Import the asset module from your game startup path (`src/game.ts` or shared bootstrap).
 - Avoid maintaining a separate registration-only module for this material.
 - If that module is tree-shaken away, class decorators and specialization registration will not run.
-- `cdo: new YourAssetClass()` runs your constructor; keep constructor logic safe and side-effect free outside optional rebuild.
+- `cdo: new YourAssetClass()` runs your constructor; keep constructor logic safe and side-effect free outside `rebuild()`.
 
-## 4) Assign at runtime
+## 3) Assign at runtime
 
 Use it as a normal material:
 
@@ -179,11 +148,11 @@ const mesh = ENGINE.MeshComponent.create({ geometry: new THREE.SphereGeometry(1,
 
 ## Deserialize/Rebuild Order (Recommended)
 
-1. Construct instance (optionally with deferred rebuild).
-2. Load authored fields (`loadAuthoredFields`).
+1. Construct instance (`new YourAssetClass()` — constructor runs an initial `rebuild()` with defaults).
+2. Load authored fields (`loadAuthoredFields` inside `staticDeserialize`).
 3. Run exactly one rebuild from final authored values.
-4. Mark `needsUpdate = true`.
-5. Let `postLoad()` act as a safety net for non-specialized load paths.
+4. Mark `needsUpdate = true` inside `rebuild()`.
+5. Optionally implement `postLoad()` only when you need a safety net for non-specialized load paths.
 
 ## Naming and TSL Conventions
 

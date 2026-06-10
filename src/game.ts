@@ -34,6 +34,8 @@ import { PauseManagerActor } from './actors/PauseManagerActor.js';
 import { GrimIntroActor } from './actors/GrimIntroActor.js';
 import { ZombieHordeManager } from './actors/ZombieHordeManager.js';
 import { GrimGrinderControllerComponent } from './components/GrimGrinderControllerComponent.js';
+import { PostmanBossActor } from './actors/PostmanBossActor.js';
+import { BackgroundMusicActor } from './actors/BackgroundMusicActor.js';
 import { MenuMusicActor } from './actors/MenuMusicActor.js';
 import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
 import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
@@ -165,6 +167,13 @@ class MyGame extends ENGINE.BaseGameLoop {
       this._ensureMobileRuntimeSceneActors(world);
       MobileSceneChunkLoaderActor.ensureExists(world);
       MobileCombatActor.ensureExists(world);
+      // Pre-create BackgroundMusicActor so the MP3 preloads during the menu phase.
+      // ensurePlaying is NOT called here — we don't want music during menus.
+      // When a mission starts, ensurePlaying finds this existing actor (already loaded)
+      // and calls start(), which then works reliably.
+      if (!world.getActors().some(a => a instanceof BackgroundMusicActor)) {
+        world.addActor(BackgroundMusicActor.create({ name: 'BackgroundMusicActor' }));
+      }
     }
 
     const startMenu = StartMenuUI.attach(world, () => {
@@ -246,11 +255,62 @@ class MyGame extends ENGINE.BaseGameLoop {
       world.addActor(ZombieHordeManager.create({ name: 'MobileZombieHordeManager' }));
     }
 
+    // Weapon mesh actors — the mobile-empty scene has none placed in the editor.
+    // SpinningWeaponActor.doBeginPlay calls collectSceneWeapons which finds these by
+    // name; without them _meleeWeapon() returns null and the entire melee tick bails.
+    // Slot 0 = melee weapon; slots 1 & 2 = soul-throw blades.
+    const WEAPON_MODEL = '@project/assets/models/weapon.glb' as ENGINE.ModelPath;
+    for (const wName of ['weapon', 'weapon 02', 'weapon 03'] as const) {
+      if (!world.getActors().some(actor => actor.name === wName)) {
+        const root = ENGINE.GLTFMeshComponent.create({
+          modelUrl: WEAPON_MODEL,
+          rotation: new THREE.Euler(Math.PI / 2, 0, 0),
+          scale: new THREE.Vector3(0.35, 0.352, 0.229),
+          physicsOptions: { enabled: false },
+          castShadow: false,
+          receiveShadow: false,
+        });
+        world.addActor(ENGINE.Actor.create({ name: wName, rootComponent: root }));
+      }
+    }
+
+    // Fist mesh actors — FistOfAnnoyanceActor.doBeginPlay calls acquireSceneFist
+    // which looks these up by name. Without them the fist destroys itself immediately.
+    const FIST_MODEL = '@project/assets/models/fistofannoyance.glb' as ENGINE.ModelPath;
+    for (const fName of ['fistofannoyance', 'fistofannoyance 02', 'fistofannoyance 03'] as const) {
+      if (!world.getActors().some(actor => actor.name === fName)) {
+        const root = ENGINE.GLTFMeshComponent.create({
+          modelUrl: FIST_MODEL,
+          rotation: new THREE.Euler(Math.PI, 1.22173, Math.PI),
+          scale: new THREE.Vector3(0.65, 0.65, 0.65),
+          physicsOptions: { enabled: false },
+          castShadow: false,
+          receiveShadow: false,
+        });
+        world.addActor(ENGINE.Actor.create({ name: fName, rootComponent: root }));
+      }
+    }
+
+    // Pre-spawn the boss at his authored scene position (hidden) so that
+    // PostmanBossActor.activateForMission finds an existing instance rather than
+    // using the player-relative fallback spawn.
+    if (!world.getActors().some(actor => actor instanceof PostmanBossActor)) {
+      const boss = PostmanBossActor.create({
+        name: 'PostmanBossActor',
+        position: new THREE.Vector3(113.5, -7.1, -11.3),
+      });
+      world.addActor(boss);
+    }
+
     if (world.getActors(EnemySpawnPointActor).length > 0) {
       return;
     }
 
-    const placements = [
+    // Ring the markers around the real mission PlayerStart (matches
+    // mobile-empty.genesys-scene), not the world origin — otherwise the horde
+    // spawns ~50 units from where Grim actually starts.
+    const spawnAnchor = new THREE.Vector3(51.244, 0, -2.041);
+    const ringOffsets = [
       new THREE.Vector3(0, 0, -18),
       new THREE.Vector3(14, 0, -14),
       new THREE.Vector3(18, 0, 0),
@@ -260,6 +320,7 @@ class MyGame extends ENGINE.BaseGameLoop {
       new THREE.Vector3(-18, 0, 0),
       new THREE.Vector3(-14, 0, -14),
     ];
+    const placements = ringOffsets.map(offset => spawnAnchor.clone().add(offset));
 
     placements.forEach((position, index) => {
       world.addActor(EnemySpawnPointActor.create({

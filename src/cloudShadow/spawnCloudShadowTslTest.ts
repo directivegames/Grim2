@@ -54,12 +54,12 @@ function buildTestColorNode(
 
     case 3:
       // TEST 3 — basic TSL multiply on color.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       return (materialColor as any).mul(float(0.5));
 
     case 4:
       // TEST 4 — world-space accessor (should show a gradient, not flat red).
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       return (positionWorld.xz as any).mul(float(0.01));
 
     case 5:
@@ -97,7 +97,7 @@ function buildTestColorNode(
       const c2 = texture(cloudTexture, uv2).r;
       const mask = smoothstep(0.35, 0.75, c1.mul(float(0.7)).add(c2.mul(float(0.3))));
       const multiplier = float(1.0).sub(mask.mul(float(0.8)));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       return (color(new THREE.Color(1, 1, 1)) as any).mul(multiplier);
     }
 
@@ -132,7 +132,7 @@ export function spawnCloudShadowTslTest(
   mat.color = new THREE.Color(1, 1, 1);
 
   const colorNode = buildTestColorNode(stage, cloudTexture);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (mat as any).colorNode = colorNode;
 
   const size = options.size ?? 20;

@@ -401,6 +401,12 @@ class MissionRunnerImpl {
     if (!world || !missionState.isActive) return;
 
     if (!this._innocentHandler.hasProp) {
+      // Mobile streams the "innocent" prop in during background load, which can land
+      // just after mission start binds. Retry the bind once before giving up.
+      this._innocentHandler.bind(world);
+    }
+
+    if (!this._innocentHandler.hasProp) {
       missionState.onInnocentSpawnFailed();
       return;
     }

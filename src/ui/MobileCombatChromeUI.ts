@@ -37,9 +37,7 @@ export class MobileCombatChromeUI {
   private _root: HTMLDivElement | null = null;
   private _stopAlign: (() => void) | null = null;
   private _unbindMove: (() => void) | null = null;
-  private _unbindAim: (() => void) | null = null;
   private _fallbackMove: HTMLDivElement | null = null;
-  private _fallbackAim: HTMLDivElement | null = null;
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -118,7 +116,8 @@ export class MobileCombatChromeUI {
     const pauseBtn = document.createElement('button');
     pauseBtn.type = 'button';
     pauseBtn.className = 'grim-mobile-combat-btn grim-mobile-pause-btn';
-    pauseBtn.textContent = 'PAUSE';
+    pauseBtn.textContent = '⏸';
+    pauseBtn.setAttribute('aria-label', 'Pause');
     pauseBtn.addEventListener('click', withMenuSelectSound(this._world, () => {
       this._togglePause();
     }));
@@ -127,23 +126,15 @@ export class MobileCombatChromeUI {
     moveZone.className = 'grim-mobile-touch-fallback grim-mobile-touch-move';
     moveZone.setAttribute('aria-hidden', 'true');
 
-    const aimZone = document.createElement('div');
-    aimZone.className = 'grim-mobile-touch-fallback grim-mobile-touch-aim';
-    aimZone.setAttribute('aria-hidden', 'true');
-
-    root.append(pauseBtn, moveZone, aimZone);
+    root.append(pauseBtn, moveZone);
     host.appendChild(root);
 
     this._root = root;
     this._fallbackMove = moveZone;
-    this._fallbackAim = aimZone;
 
     const combat = MobileCombatActor.ensureExists(this._world);
     this._unbindMove = bindTouchStickZone(moveZone, (x, y, active) => {
       combat.setTouchMove(x, y, active);
-    });
-    this._unbindAim = bindTouchStickZone(aimZone, (x, y, active) => {
-      combat.setTouchAim(x, y, active);
     });
 
     this.refreshVisibility();
@@ -152,15 +143,14 @@ export class MobileCombatChromeUI {
 
   private _syncTouchFallback(): void {
     const host = this._gameContainer();
-    if (!host || !this._fallbackMove || !this._fallbackAim) {
+    if (!host || !this._fallbackMove) {
       return;
     }
 
     alignMobileJoystickZones(host);
     const zones = findEngineJoystickZones(host);
-    const showFallback = !zones.left || !zones.right;
-    this._fallbackMove.style.display = showFallback ? '' : 'none';
-    this._fallbackAim.style.display = showFallback ? '' : 'none';
+    // Only show fallback move zone when the engine left joystick is absent.
+    this._fallbackMove.style.display = !zones.left ? '' : 'none';
   }
 
   private _togglePause(): void {
@@ -182,13 +172,10 @@ export class MobileCombatChromeUI {
 
   private _destroyDom(): void {
     this._unbindMove?.();
-    this._unbindAim?.();
     this._unbindMove = null;
-    this._unbindAim = null;
     this._root?.remove();
     this._root = null;
     this._fallbackMove = null;
-    this._fallbackAim = null;
   }
 
   private _destroy(): void {

@@ -37,7 +37,7 @@ import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
 import type { RiskLevel } from '../data/risk-levels.js';
-import { isMobileDevice } from '../utils/mobile-device.js';
+import { isIosDevice, isMobileDevice } from '../utils/mobile-device.js';
 
 // Configuration
 const MAX_ACTIVE_ZOMBIES = 65;
@@ -46,6 +46,18 @@ const MOBILE_MAX_ACTIVE_ZOMBIES = 30;
 const MOBILE_RESUME_SPAWN_THRESHOLD = 22;
 const MOBILE_WAVE_SIZE = 8;
 const MOBILE_IDLE_POOL_LIMIT = 10;
+
+// iOS (real-device WebKit) survival budget. Real iPhones hit Safari's memory /
+// watchdog limit far sooner than Android, so iOS runs a tighter horde: fewer
+// concurrent skinned-mesh zombies, smaller waves, and a slower cadence to spread
+// spawn cost across more frames. These apply ONLY when isIosDevice() is true —
+// Android keeps the MOBILE_* values above, desktop keeps the unprefixed values.
+const IOS_MAX_ACTIVE_ZOMBIES = 14;
+const IOS_RESUME_SPAWN_THRESHOLD = 9;
+const IOS_WAVE_SIZE = 4;
+const IOS_WAVE_INTERVAL_SEC = 12;
+/** Slower aggressive-spawn floor on iOS (Android/desktop aggressive stays at 4s). */
+const IOS_AGGRESSIVE_WAVE_INTERVAL_SEC = 8;
 const KILLS_TO_ACTIVATE_HORDE = 10;
 const MAX_TOTAL_KILLS = 500;
 
@@ -98,6 +110,8 @@ export class ZombieHordeManager extends ENGINE.Actor {
   private _resumeSpawnThreshold = RESUME_SPAWN_THRESHOLD;
   private _waveIntervalSec = WAVE_INTERVAL_SEC;
   private _mobileMemoryMode = false;
+  /** iOS-only tighter budget. Strict subset of _mobileMemoryMode (never set on Android). */
+  private _iosMemoryMode = false;
 
   /** Placed-zombie references — cleared in doEndPlay to avoid dangling callbacks. */
   private _placedZombies: NewZombieActor[] = [];
@@ -136,9 +150,18 @@ export class ZombieHordeManager extends ENGINE.Actor {
     super.doBeginPlay();
     this._needsHookPlaced = true;
     this._mobileMemoryMode = isMobileDevice();
+    this._iosMemoryMode = isIosDevice();
     if (this._mobileMemoryMode) {
       this._maxActiveZombies = MOBILE_MAX_ACTIVE_ZOMBIES;
       this._resumeSpawnThreshold = MOBILE_RESUME_SPAWN_THRESHOLD;
+    }
+    // iOS-only: tighten further than Android. Applied after the mobile block so
+    // Android (iosMemoryMode === false) keeps the MOBILE_* values untouched.
+    if (this._iosMemoryMode) {
+      this._maxActiveZombies = IOS_MAX_ACTIVE_ZOMBIES;
+      this._resumeSpawnThreshold = IOS_RESUME_SPAWN_THRESHOLD;
+      this.waveInterval = IOS_WAVE_INTERVAL_SEC;
+      this._waveIntervalSec = IOS_WAVE_INTERVAL_SEC;
     }
 
     for (const type of this._hordeEnemyTypes) {
@@ -228,6 +251,14 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
     if (!isGameplayUnlocked()) {
       return;
+    }
+
+    // Mobile boots a minimal empty scene with no editor-placed zombies, so the
+    // normal "kill N placed zombies to activate" gate can never be met. With no
+    // placed zombies to gate on, self-activate so the wave system runs. Desktop
+    // always has placed zombies (_placedZombiesCount > 0) so this never fires there.
+    if (this._mobileMemoryMode && !this._hordeActive && this._placedZombiesCount === 0) {
+      this.activateHorde();
     }
 
     this._processPendingWaveSpawns(deltaTime);
@@ -794,16 +825,24 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._missionRiskLevel = riskLevel;
 
     if (options?.spawnCap !== undefined) {
-      this._maxActiveZombies = this._mobileMemoryMode
-        ? Math.min(options.spawnCap, MOBILE_MAX_ACTIVE_ZOMBIES)
-        : options.spawnCap;
-      this._resumeSpawnThreshold = Math.max(20, Math.floor(this._maxActiveZombies * 0.77));
+      if (this._iosMemoryMode) {
+        // iOS-only: cap at the iOS ceiling and use a resume floor below that
+        // ceiling (the Android/desktop Math.max(20, …) below would exceed it).
+        this._maxActiveZombies = Math.min(options.spawnCap, IOS_MAX_ACTIVE_ZOMBIES);
+        this._resumeSpawnThreshold = Math.max(6, Math.floor(this._maxActiveZombies * 0.7));
+      } else {
+        this._maxActiveZombies = this._mobileMemoryMode
+          ? Math.min(options.spawnCap, MOBILE_MAX_ACTIVE_ZOMBIES)
+          : options.spawnCap;
+        this._resumeSpawnThreshold = Math.max(20, Math.floor(this._maxActiveZombies * 0.77));
+      }
     } else {
       this._maxActiveZombies = this._getDefaultMaxActiveZombies();
       this._resumeSpawnThreshold = this._getDefaultResumeSpawnThreshold();
     }
 
-    const baseInterval = options?.aggressiveSpawn ? 4 : WAVE_INTERVAL_SEC;
+    const aggressiveInterval = this._iosMemoryMode ? IOS_AGGRESSIVE_WAVE_INTERVAL_SEC : 4;
+    const baseInterval = options?.aggressiveSpawn ? aggressiveInterval : this._getDefaultWaveInterval();
     const mult = options?.waveIntervalMult ?? 1;
     this.waveInterval = Math.max(2, baseInterval * mult);
     this._waveIntervalSec = this.waveInterval;
@@ -818,8 +857,8 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._missionRiskLevel = 1;
     this._maxActiveZombies = this._getDefaultMaxActiveZombies();
     this._resumeSpawnThreshold = this._getDefaultResumeSpawnThreshold();
-    this.waveInterval = WAVE_INTERVAL_SEC;
-    this._waveIntervalSec = WAVE_INTERVAL_SEC;
+    this.waveInterval = this._getDefaultWaveInterval();
+    this._waveIntervalSec = this._getDefaultWaveInterval();
     this._applyRiskToAllZombies();
   }
 
@@ -849,15 +888,23 @@ export class ZombieHordeManager extends ENGINE.Actor {
   }
 
   private _getWaveSize(): number {
+    if (this._iosMemoryMode) return IOS_WAVE_SIZE;
     return this._mobileMemoryMode ? MOBILE_WAVE_SIZE : WAVE_SIZE;
   }
 
   private _getDefaultMaxActiveZombies(): number {
+    if (this._iosMemoryMode) return IOS_MAX_ACTIVE_ZOMBIES;
     return this._mobileMemoryMode ? MOBILE_MAX_ACTIVE_ZOMBIES : MAX_ACTIVE_ZOMBIES;
   }
 
   private _getDefaultResumeSpawnThreshold(): number {
+    if (this._iosMemoryMode) return IOS_RESUME_SPAWN_THRESHOLD;
     return this._mobileMemoryMode ? MOBILE_RESUME_SPAWN_THRESHOLD : RESUME_SPAWN_THRESHOLD;
+  }
+
+  /** Default wave interval for this device class (iOS slower, Android/desktop unchanged). */
+  private _getDefaultWaveInterval(): number {
+    return this._iosMemoryMode ? IOS_WAVE_INTERVAL_SEC : WAVE_INTERVAL_SEC;
   }
 
   public getStats(): {
