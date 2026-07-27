@@ -13,7 +13,7 @@
       "stretchScale": 1.85,
       "intensity": 1.2,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/EmberStreakSharp.png",
+      "alphaMapPath": "@project/assets/textures/vfx/EmberStreakSharp.webp",
       "easeFunction": "easeOutQuad",
       "fadeAlpha": [
         0.01,

@@ -16,7 +16,7 @@ GameMode is the server-only class that owns the canonical rules of the match. It
 Called when a client requests to join, before they are admitted. Return `{ allowed: false, reason: string }` to reject; the client receives the reason.
 
 ```typescript
-override canPlayerJoin(_clientId: string, joinParams: JoinParams): PlayerJoinResult {
+override canPlayerJoin(_clientId: ClientId, joinParams: JoinParams): PlayerJoinResult {
   if (joinParams.password !== this.requiredPassword) {
     return { allowed: false, reason: 'Invalid password.' };
   }
@@ -29,7 +29,7 @@ override canPlayerJoin(_clientId: string, joinParams: JoinParams): PlayerJoinRes
 Called after a client is admitted. The default implementation spawns a PlayerController, adds it to the world, assigns ownership, and calls `handleNewPlayer` to spawn the pawn. Override to add custom logic after spawn — `super.onPlayerJoined` must be called to preserve the standard flow.
 
 ```typescript
-override async onPlayerJoined(clientId: string): Promise<PlayerController | null> {
+override async onPlayerJoined(clientId: ClientId): Promise<PlayerController | null> {
   const controller = await super.onPlayerJoined(clientId);
   if (controller) {
     this.assignTeam(controller);  // custom post-spawn logic; do not call handleNewPlayer again
@@ -43,7 +43,7 @@ override async onPlayerJoined(clientId: string): Promise<PlayerController | null
 Called when a player disconnects. Use it to clean up player-owned actors, notify other players, or start a respawn timer.
 
 ```typescript
-override onPlayerDisconnected(clientId: string, pawn: Pawn | null, reason: DisconnectReason): void {
+override onPlayerDisconnected(clientId: ClientId, pawn: Pawn | null, reason: DisconnectReason): void {
   super.onPlayerDisconnected(clientId, pawn, reason);
   this.broadcastPlayerLeft(clientId);
 }
@@ -77,23 +77,18 @@ Override the getter methods (`getPawnFactory`, `getPlayerControllerFactory`, `ge
 
 ## Registering GameMode
 
-Decorate the GameMode subclass with `@ENGINE.GameClass()`, then pass it as `defaultGameModeClass` inside `gameContextConfig` when constructing the game loop.
+Decorate the GameMode subclass with `@ENGINE.GameClass()`, then pass it as `defaultGameModeClass` when constructing the game loop.
 
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
 import { MyGameMode } from './myGameMode.js';
 
 class MyGame extends ENGINE.BaseGameLoop {
-  protected override createLoadingScreen(): ENGINE.ILoadingScreen | null {
-    return new ENGINE.DefaultLoadingScreen();
-  }
 }
 
 export function main(container: HTMLElement): ENGINE.IGameLoop {
   return new MyGame(container, {
-    gameContextConfig: {
-      defaultGameModeClass: MyGameMode,
-    },
+    defaultGameModeClass: MyGameMode,
   });
 }
 ```
@@ -135,7 +130,7 @@ override getGameSessionInfoFactory(): () => ENGINE.GameSessionInfo {
 The server spawns one `PlayerInfo` actor per connected player. `PlayerInfo` is replicated, so all clients can read every player's data — use it for scoreboards, player lists, team assignments, and lobby ready-up systems.
 
 Built-in replicated properties on `PlayerInfo`:
-- `clientId` — unique identifier for the player's connection.
+- `clientId` — `ClientId` (uint16) unique identifier for the player's connection.
 - `playerName` — display name.
 - `isReady` — ready state for lobby systems.
 - `team` — team assignment string (e.g., `'red'`, `'blue'`, `'spectator'`, or empty for FFA).

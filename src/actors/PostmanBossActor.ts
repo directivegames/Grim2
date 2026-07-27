@@ -48,7 +48,7 @@ import {
 export const POSTMAN_BOSS_MODEL_URL =
   '@project/assets/models/Thepostman2.glb' as ENGINE.ModelPath;
 const POSTMAN_BOSS_ANIM_URL =
-  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Postman.anim.json`;
+  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Postman.animconfig.json`;
 
 const CAPSULE_RADIUS = 0.55;
 const CAPSULE_HEIGHT = 2.1;
@@ -685,7 +685,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     if (!world) return;
 
     this.rootComponent.getWorldPosition(this._myPos);
-    const nav = world.getNavigationServer() as NavMeshQuery | null;
+    const nav = (world.gameLoop?.navigationServer ?? null) as NavMeshQuery | null;
     const snapped = new THREE.Vector3();
     if (nav && snapPositionToNavFloor(nav, this._myPos, snapped)) {
       snapped.y += POSTMAN_BOSS_CAPSULE_HALF_HEIGHT;
@@ -1002,7 +1002,7 @@ export class PostmanBossActor extends ENGINE.Actor {
       floorY = this._playerPos.y;
     }
 
-    const nav = this.getWorld()?.getNavigationServer() as NavMeshQuery | null;
+    const nav = (this.getWorld()?.gameLoop?.navigationServer ?? null) as NavMeshQuery | null;
     const snapped = new THREE.Vector3();
     if (nav && snapPositionToNavFloor(nav, out, snapped)) {
       floorY = snapped.y;

@@ -8,9 +8,12 @@
     },
     "map": {
       "$uuid": "628cede5-f851-43ea-8fe9-14ecc8328265",
-      "url": "@project/assets/textures/dead grass.png",
+      "url": "@project/assets/textures/dead grass.webp",
+      "colorSpace": "srgb",
       "$bc": "ENGINE.UrlTexture"
     },
+    "metalness": 0.02,
+    "roughness": 0.93,
     "$bc": "THREE.MeshStandardMaterial"
   }
 }

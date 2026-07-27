@@ -171,7 +171,7 @@ export function pickInnocentSpawnPosition(
   playerWorldPos: THREE.Vector3,
   out: THREE.Vector3,
 ): boolean {
-  const nav = world.getNavigationServer() as NavMeshQuery | null;
+  const nav = (world.gameLoop?.navigationServer ?? null) as NavMeshQuery | null;
   if (!nav?.isReady?.() || !nav.getClosestPointOnNavigationMesh) {
     return false;
   }

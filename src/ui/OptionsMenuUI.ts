@@ -5,7 +5,8 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { grimVault } from '../game/GrimVault.js';
 import { applyMusicVolumeToWorld } from '../utils/apply-music-volume.js';
-import { GAME_SETTINGS_DEFAULTS, gameSettings } from '../utils/game-settings.js';
+import { GAME_SETTINGS_DEFAULTS, gameSettings, type GraphicsQuality } from '../utils/game-settings.js';
+import { applyGraphicsQuality } from '../utils/apply-graphics-quality.js';
 import { getGameAudioManager } from '../utils/game-audio.js';
 import { playMenuSelectSound } from '../utils/menu-audio.js';
 import {
@@ -41,6 +42,7 @@ export class OptionsMenuUI {
   private _musicValueLabel: HTMLSpanElement | null = null;
   private _spinValueLabel: HTMLSpanElement | null = null;
   private _skipCutscenesValueLabel: HTMLSpanElement | null = null;
+  private _graphicsValueLabel: HTMLSpanElement | null = null;
 
   private constructor(world: ENGINE.World) {
     this._world = world;
@@ -322,6 +324,97 @@ export class OptionsMenuUI {
     return { row, valueLabel };
   }
 
+  private _graphicsLabel(quality: GraphicsQuality): string {
+    if (quality === 'low') return 'LOW';
+    if (quality === 'medium') return 'MEDIUM';
+    return 'HIGH';
+  }
+
+  private _createCycleRow(
+    labelText: string,
+    initialLabel: string,
+    onCycle: (direction: 1 | -1) => void,
+  ): { row: HTMLDivElement; valueLabel: HTMLSpanElement } {
+    const row = document.createElement('div');
+    row.style.cssText = `
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 16px);
+      margin-bottom: 8px;
+    `;
+
+    const label = document.createElement('span');
+    label.textContent = labelText;
+    label.style.cssText = `
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.58rem, 1.25vw, 0.72rem);
+      letter-spacing: 0.14em;
+      color: rgba(220, 228, 236, 0.92);
+    `;
+
+    const control = document.createElement('div');
+    control.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    `;
+
+    const arrowStyle = `
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Montserrat, system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: rgba(180, 190, 200, 0.85);
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid rgba(120, 140, 160, 0.35);
+      background: rgba(20, 24, 30, 0.85);
+    `;
+
+    const leftArrow = document.createElement('button');
+    leftArrow.type = 'button';
+    leftArrow.textContent = '◄';
+    leftArrow.style.cssText = arrowStyle;
+
+    const valueLabel = document.createElement('span');
+    valueLabel.textContent = initialLabel;
+    valueLabel.style.cssText = `
+      font-family: Montserrat, system-ui, sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.58rem, 1.2vw, 0.72rem);
+      letter-spacing: 0.16em;
+      color: rgba(220, 228, 236, 0.95);
+      min-width: 4.8em;
+      text-align: center;
+    `;
+
+    const rightArrow = document.createElement('button');
+    rightArrow.type = 'button';
+    rightArrow.textContent = '►';
+    rightArrow.style.cssText = arrowStyle;
+
+    leftArrow.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
+      onCycle(-1);
+    });
+    rightArrow.addEventListener('click', () => {
+      playMenuSelectSound(this._world);
+      onCycle(1);
+    });
+
+    control.appendChild(leftArrow);
+    control.appendChild(valueLabel);
+    control.appendChild(rightArrow);
+    row.appendChild(label);
+    row.appendChild(control);
+    return { row, valueLabel };
+  }
+
   private async _mount(): Promise<void> {
     if (this._root || this._mounting) {
       return;
@@ -482,6 +575,22 @@ export class OptionsMenuUI {
     this._musicValueLabel = musicRow.valueLabel;
     panel.appendChild(musicRow.row);
 
+    panel.appendChild(this._createSectionHeader('GRAPHICS'));
+
+    const graphicsRow = this._createCycleRow(
+      'QUALITY',
+      this._graphicsLabel(gameSettings.graphicsQuality),
+      direction => {
+        const next = gameSettings.cycleGraphicsQuality(direction);
+        if (this._graphicsValueLabel) {
+          this._graphicsValueLabel.textContent = this._graphicsLabel(next);
+        }
+        applyGraphicsQuality(this._world);
+      },
+    );
+    this._graphicsValueLabel = graphicsRow.valueLabel;
+    panel.appendChild(graphicsRow.row);
+
     panel.appendChild(this._createSectionHeader('GAMEPLAY'));
 
     const spinRow = this._createToggleRow('DISABLE 360 SPIN', gameSettings.disable360Spin, value => {
@@ -634,6 +743,7 @@ export class OptionsMenuUI {
     gameSettings.resetToDefaults();
     this._applySfxVolume();
     this._applyMusicVolume();
+    applyGraphicsQuality(this._world);
 
     if (this._sfxValueLabel) {
       this._sfxValueLabel.textContent = `${Math.round(GAME_SETTINGS_DEFAULTS.sfxVolume * 100)}%`;
@@ -648,6 +758,9 @@ export class OptionsMenuUI {
       this._skipCutscenesValueLabel.textContent = GAME_SETTINGS_DEFAULTS.skipAllCutscenes
         ? 'ON'
         : 'OFF';
+    }
+    if (this._graphicsValueLabel) {
+      this._graphicsValueLabel.textContent = this._graphicsLabel(GAME_SETTINGS_DEFAULTS.graphicsQuality);
     }
 
     const sliders = this._root?.querySelectorAll<HTMLInputElement>('input[type="range"]');

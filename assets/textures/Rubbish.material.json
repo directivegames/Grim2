@@ -1,12 +1,15 @@
 {
   "$root": {
     "$bc": "THREE.MeshStandardMaterial",
-    "flatShading": true,
+    "flatShading": false,
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "bc294ece-1fed-4321-b277-353c1a46fd15",
-      "url": "@project/assets/textures/Rubbish.png"
+      "colorSpace": "srgb",
+      "url": "@project/assets/textures/Rubbish.webp"
     },
+    "metalness": 0.05,
+    "roughness": 0.85,
     "name": "Rubbish",
     "transparent": true,
     "userData": {

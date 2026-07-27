@@ -37,7 +37,7 @@ const BIG_UNDEAD_NPC_PROFILE = 'BigUndeadNPC';
 export const BIG_UNDEAD_MODEL_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Bigundead/Meshy_AI_Oozebound_Office_Zomb_biped/Meshy_AI_Oozebound_Office_Zomb_biped_Character_output.glb` as ENGINE.ModelPath;
 const BIG_UNDEAD_ANIM_URL =
-  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Bigundead/Meshy_AI_Oozebound_Office_Zomb_biped/BigUndead.anim.json`;
+  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Bigundead/Meshy_AI_Oozebound_Office_Zomb_biped/BigUndead.animconfig.json`;
 
 const CAPSULE_RADIUS = 0.55;
 const CAPSULE_HEIGHT = 2.2;

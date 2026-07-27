@@ -20,6 +20,7 @@
 **/logs/**
 **/.turbo/**
 **/.cache/**
+**/.intermediate/*
 
 # GENESYS-SDK-END
 

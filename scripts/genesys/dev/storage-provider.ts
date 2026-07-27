@@ -13,6 +13,44 @@ export interface FileManifest {
 export class DevStorageProvider implements ENGINE.IStorageProvider {
   private manifestCache: FileManifest | null = null;
   private manifestPromise: Promise<FileManifest> | null = null;
+  private bakedAssetIndex: ENGINE.BakedAssetManifestIndex | null | undefined;
+  private bakedAssetIndexPromise: Promise<ENGINE.BakedAssetManifestIndex | null> | null = null;
+
+  private async getBakedAssetManifestIndex(): Promise<ENGINE.BakedAssetManifestIndex | null> {
+    if (this.bakedAssetIndex !== undefined) {
+      return this.bakedAssetIndex;
+    }
+
+    this.bakedAssetIndexPromise ??= this.loadBakedAssetManifestIndex();
+
+    this.bakedAssetIndex = await this.bakedAssetIndexPromise;
+    this.bakedAssetIndexPromise = null;
+    return this.bakedAssetIndex;
+  }
+
+  private async loadBakedAssetManifestIndex(): Promise<ENGINE.BakedAssetManifestIndex | null> {
+    const manifestUrl = `/${ENGINE.BUILT_PROJECT_FOLDER}/${ENGINE.BAKED_ASSETS_MANIFEST_REL_PATH}`;
+    try {
+      const response = await fetch(manifestUrl);
+      if (!response.ok) {
+        return null;
+      }
+      const manifest = ENGINE.parseBakedAssetsManifest(ENGINE.parseJson(await response.text()));
+      if (!manifest || Object.keys(manifest.mappings).length === 0) {
+        return null;
+      }
+      return ENGINE.BakedAssetManifestIndex.fromManifest(manifest);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Maps `@project/...` to a root-absolute Vite URL under `/.dist/`. */
+  private projectLogicalPathToDistUrl(logicalPath: string): string {
+    const relative = ENGINE.AssetPath.stripPrefix(logicalPath, ENGINE.PROJECT_PATH_PREFIX);
+    const suffix = relative.startsWith('/') ? relative : `/${relative}`;
+    return `/${ENGINE.BUILT_PROJECT_FOLDER}${suffix}`;
+  }
 
   private async loadManifest(): Promise<FileManifest> {
     if (this.manifestCache) {
@@ -55,7 +93,9 @@ export class DevStorageProvider implements ENGINE.IStorageProvider {
     let resolvedUrl: string;
 
     if (path.initialPath.startsWith(ENGINE.PROJECT_PATH_PREFIX)) {
-      resolvedUrl = path.initialPath.replace(ENGINE.PROJECT_PATH_PREFIX, ENGINE.BUILT_PROJECT_FOLDER);
+      const bakedIndex = await this.getBakedAssetManifestIndex();
+      const logicalPath = ENGINE.remapLogicalAssetPath(path.initialPath, bakedIndex);
+      resolvedUrl = this.projectLogicalPathToDistUrl(logicalPath);
     } else if (path.initialPath.startsWith(ENGINE.ENGINE_PATH_PREFIX)) {
       resolvedUrl = path.initialPath.replace(ENGINE.ENGINE_PATH_PREFIX, '/node_modules/@gnsx/genesys.js');
     } else if (path.initialPath.startsWith('/')) {

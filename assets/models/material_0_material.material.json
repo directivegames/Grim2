@@ -37,7 +37,7 @@
     "normalMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "63adc475-a654-45d1-b212-5b450c986c5e",
-      "url": "@project/assets/models/material_0_normalmap.webp",
+      "url": "@project/assets/models/material_0_normalmap.1k.webp",
       "wrapS": 1000,
       "wrapT": 1000
     },

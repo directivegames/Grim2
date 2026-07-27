@@ -435,7 +435,7 @@ class MissionRunnerImpl {
       if (marker) {
         this._usedInnocentMarkers.add(marker);
         applySpawnPointWorldPosition(
-          world.getNavigationServer(),
+          (world.gameLoop?.navigationServer ?? null),
           this._innocentSpawnPos,
           this._innocentSpawnPos,
         );

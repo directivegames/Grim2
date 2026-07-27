@@ -6,7 +6,7 @@
  *  - After 10 total kills, horde activates and first wave (10 zombies) spawns
  *  - Horde zombies spawn at EnemySpawnPointActor markers (closest pool to player) with smoke VFX
  *  - New wave on waveInterval after activation
- *  - Max 65 pooled zombies; pauses spawning until count drops to resume threshold
+ *  - Max 50 pooled zombies (desktop); pauses spawning until count drops to resume threshold
  *  - Far-off horde zombies relocate to a nearby orange spawn pad
  *  - Each death queues the SAME actor for reuse — no new actor allocations after
  *    the initial wave fill. This prevents zombie actor accumulation over long sessions.
@@ -40,7 +40,7 @@ import type { RiskLevel } from '../data/risk-levels.js';
 import { isIosDevice, isMobileDevice } from '../utils/mobile-device.js';
 
 // Configuration
-const MAX_ACTIVE_ZOMBIES = 65;
+const MAX_ACTIVE_ZOMBIES = 50;
 const RESUME_SPAWN_THRESHOLD = 50;
 const MOBILE_MAX_ACTIVE_ZOMBIES = 30;
 const MOBILE_RESUME_SPAWN_THRESHOLD = 22;
@@ -677,7 +677,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       return null;
     }
 
-    const nav = world.getNavigationServer();
+    const nav = world.gameLoop?.navigationServer ?? null;
     const triedMarkers = excludeMarkers ?? new Set<EnemySpawnPointActor>();
     const maxMarkerTries = Math.min(MAX_MARKER_SPAWN_TRIES, markerCount);
     const useSpread = reason === 'relocate';
@@ -894,7 +894,21 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   private _getDefaultMaxActiveZombies(): number {
     if (this._iosMemoryMode) return IOS_MAX_ACTIVE_ZOMBIES;
-    return this._mobileMemoryMode ? MOBILE_MAX_ACTIVE_ZOMBIES : MAX_ACTIVE_ZOMBIES;
+    if (this._mobileMemoryMode) return MOBILE_MAX_ACTIVE_ZOMBIES;
+    return MAX_ACTIVE_ZOMBIES;
+  }
+
+  /**
+   * Desktop graphics-quality hook — clamps the active spawn cap without
+   * overriding mobile/iOS memory modes.
+   */
+  public applyGraphicsHordeCap(desktopCap: number): void {
+    if (this._iosMemoryMode || this._mobileMemoryMode) {
+      return;
+    }
+    const next = Math.max(20, Math.min(MAX_ACTIVE_ZOMBIES, Math.floor(desktopCap)));
+    this._maxActiveZombies = next;
+    this._resumeSpawnThreshold = Math.max(12, Math.floor(next * 0.7));
   }
 
   private _getDefaultResumeSpawnThreshold(): number {

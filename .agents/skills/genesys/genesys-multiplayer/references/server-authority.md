@@ -11,6 +11,7 @@ ENGINE.NetRuntime.isServer()          // true on dedicated server and in standal
 ENGINE.NetRuntime.isClient()          // true only on a connected browser client
 ENGINE.NetRuntime.isDedicatedServer() // true only on a headless server process
 ENGINE.NetRuntime.isStandalone()      // true in single-player mode (no network)
+ENGINE.NetRuntime.isHeadless()        // true on a dedicated server (no rendering or UI)
 ENGINE.NetRuntime.getType()           // returns NetRuntimeType enum value
 ```
 

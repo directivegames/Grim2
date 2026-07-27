@@ -15,9 +15,9 @@ Reference: See Actor.ts in the engine source.
 Actors follow a strict lifecycle managed by the World:
 
 1. Creation — Actor.create(options) factory method instantiates and initializes.
-2. World Entry — world.addActor(actor) triggers beginPlay().
+2. World Entry — world.addActor(actor) triggers beginPlay(), which calls your doBeginPlay() override.
 3. Ticking — tickPrePhysics() -> [physics simulation] -> tickPostPhysics() every frame.
-4. World Exit — actor.destroy() or world.removeActor(actor) triggers endPlay() and cleanup.
+4. World Exit — actor.destroy() or world.removeActor(actor) triggers endPlay(), which calls your doEndPlay() override and cleanup.
 
 Reference: See lifecycle methods in Actor.ts.
 
@@ -59,20 +59,23 @@ Reference: See Actor.ts and Spawn.ts in the engine source.
 From Actor.create() or spawn():
 1. Constructor
 2. initialize(options)
-3. world.addActor() -> beginPlay()
+3. world.addActor() -> beginPlay() -> doBeginPlay()
 
 From serialized data (levels, prefabs):
 1. Constructor
 2. Deserialize properties
 3. postLoad()
-4. world.addActor() -> beginPlay()
+4. world.addActor() -> beginPlay() -> doBeginPlay()
 
 ### Choosing an Initialization Hook
 
 - Constructor — Setup identical for every instance (internal objects, default values).
 - Initialize — Setup using values passed from create() or spawn().
 - PostLoad — Setup reacting to values loaded from saved files or prefabs.
-- BeginPlay — Setup requiring the actor to be in the world (finding other actors, registering).
+- doBeginPlay — Setup requiring the actor to be in the world (finding other actors, registering).
+- doEndPlay — Teardown and cleanup when leaving the world.
+
+Do not override beginPlay()/endPlay() directly. The lint rule custom/no-override-methods enforces overriding doBeginPlay()/doEndPlay() instead. The same rule also blocks overriding Actor transform internals such as setWorldPosition/setWorldRotation/setWorldScale/setWorldQuaternion.
 
 ### Component Management
 

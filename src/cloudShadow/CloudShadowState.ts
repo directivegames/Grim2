@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { texture, uniform } from 'three/tsl';
 
 export const DEFAULT_CLOUD_SHADOW_MAP =
-  '@project/assets/textures/cloudtexture.png';
+  '@project/assets/textures/cloudtexture.webp';
 
 export type CloudShadowSettings = {
   /** Master toggle (still requires texture load for visible effect). */

@@ -42,7 +42,7 @@ const DEMONBOX_NPC_PROFILE = 'DemonboxNPC';
 export const DEMONBOX_MODEL_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Demonbox.glb` as ENGINE.ModelPath;
 const DEMONBOX_ANIM_URL =
-  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Demonbox.anim.json`;
+  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Demonbox.animconfig.json`;
 
 const CAPSULE_RADIUS = 0.35;
 const CAPSULE_HEIGHT = 1.75;

@@ -4,17 +4,18 @@
     "bumpMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "d68db716-c0f3-4037-aff2-9a386cf6ead7",
-      "url": "@project/assets/textures/newroadbump.png"
+      "url": "@project/assets/textures/newroadbump.webp"
     },
-    "flatShading": true,
+    "flatShading": false,
     "lightMapIntensity": 0.85,
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "d3c11168-15e0-4625-b5ae-18b82b61312d",
       "colorSpace": "srgb",
-      "url": "@project/assets/textures/newroad.png"
+      "url": "@project/assets/textures/newroad.webp"
     },
-    "metalness": 0.77,
+    "metalness": 0.05,
+    "roughness": 0.88,
     "name": "Road",
     "uuid": "4ee7e35d-0fb1-42a5-bf27-e347d2116947"
   },

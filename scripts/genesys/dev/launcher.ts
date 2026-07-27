@@ -29,11 +29,9 @@ export async function launchGame() {
 
     // Create the game runtime
     const gameRuntime = new ENGINE.GameRuntime({
-      defaultEngineModule: ENGINE,
       provider: storageProvider,
       container: container,
       gameId: 'dev-game',
-      buildProject: false,
       skipClearGameClasses: false
     });
 

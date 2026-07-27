@@ -4,16 +4,17 @@
     "bumpMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "54315ab8-35fb-43d3-904c-3b54e00928b1",
-      "url": "@project/assets/textures/newgrassbump.png"
+      "url": "@project/assets/textures/newgrassbump.webp"
     },
     "emissiveIntensity": 0,
     "map": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "6d89bf57-b683-4278-b81a-de930e983b24",
       "colorSpace": "srgb",
-      "url": "@project/assets/textures/newgrasstexture.png"
+      "url": "@project/assets/textures/newgrasstexture.webp"
     },
-    "metalness": 0.67,
+    "metalness": 0.02,
+    "roughness": 0.92,
     "name": "Grass",
     "uuid": "4e505642-bbc5-48ab-b121-eda13b7bc794"
   },

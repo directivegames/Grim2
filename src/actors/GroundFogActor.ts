@@ -13,7 +13,7 @@ import {
   loadSmokeTexture,
 } from '../components/vfx/BillboardSmokePuffs.js';
 
-const SMOKE_TEXTURE_PATH = '@project/assets/textures/vfx/Smoke.png';
+const SMOKE_TEXTURE_PATH = '@project/assets/textures/vfx/Smoke.webp';
 const SMOKE_TEXTURE_FALLBACK = '@project/assets/VFX/newfog.webp';
 
 const AREA_SIZE = 20;

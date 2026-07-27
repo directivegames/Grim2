@@ -976,7 +976,7 @@ export class ZombieActor extends ENGINE.Actor {
 
     this._steerGoal.multiplyScalar(STEER_LOOKAHEAD).add(this._steerMyPos);
 
-    const nav = w.getNavigationServer() as {
+    const nav = (w.gameLoop?.navigationServer ?? null) as {
       isReady?: () => boolean;
       isPointOnNavigationMesh?: (p: THREE.Vector3) => boolean;
       getClosestPointOnNavigationMesh?: (p: THREE.Vector3) => THREE.Vector3;

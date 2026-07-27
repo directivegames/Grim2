@@ -79,9 +79,45 @@ updateFootstepEffect(position: THREE.Vector3): void { ... }
 
 Use reliable for anything that changes game state. Use unreliable only for cosmetic or redundant data.
 
-## Argument Types
+## Argument Types and Net Metadata
 
-RPC arguments must be serialisable. Supported types include primitives (`number`, `boolean`, `string`), `THREE.Vector3`, `THREE.Quaternion`, and actor references. Avoid passing complex class instances or functions.
+RPC arguments use the same binary codec as replicated properties. Every parameter has inferred `NetPropertyMetadata` that controls its wire encoding. For `number` parameters the default inference is an unquantized `float32`, which is correct but wasteful for integers or bounded floats. Override individual parameter encodings using the `params` array in the decorator options:
+
+```typescript
+@ENGINE.ServerRPC({
+  reliable: true,
+  params: [
+    // param 0: direction — unit Vector3, 2 decimal places per component
+    { netType: 'vector3', quantization: { mode: 'scale', scale: 100 } },
+    // param 1: power — float in [0, 1], 8 bits is enough
+    { netType: 'float', quantization: { mode: 'range', min: 0, max: 1, bits: 8 } },
+    // param 2: projectileCount — non-negative integer
+    { netType: 'uint' },
+  ]
+})
+fire(direction: THREE.Vector3, power: number, projectileCount: number): void {
+  // Runs on server only.
+}
+```
+
+Each element in `params` corresponds to a method parameter by position. Pass `null` or omit an element to keep the auto-inferred encoding for that parameter. A partial object is merged with the inferred metadata; a full object overrides it entirely.
+
+**`netType` quick reference for RPC parameters:**
+
+| TypeScript type | Recommended `netType` |
+|---|---|
+| `number` (non-negative integer) | `'uint'` |
+| `number` (signed integer) | `'int'` |
+| `number` (float) | `'float'` + quantization |
+| `boolean` | `'bool'` (auto-inferred) |
+| `THREE.Vector3` | `'vector3'` (auto-inferred) + quantization |
+| `THREE.Euler` | `'euler'` (auto-inferred) + quantization |
+| `THREE.Quaternion` | `'quaternion'` (auto-inferred) |
+| Actor reference | `'actorRef'`; add `nullable: true` if it can be null |
+
+See [actor-replication](actor-replication.md) for the full quantization mode guide — the same modes apply to RPC parameters.
+
+Avoid passing complex class instances, closures, or functions as RPC arguments.
 
 ## Common Patterns
 

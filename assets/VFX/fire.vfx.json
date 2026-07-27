@@ -77,7 +77,7 @@
     "particles": [
       {
         "$bc": "ENGINE.VFXParticlesSettings",
-        "alphaMapPath": "@project/assets/textures/vfx/Flame.png",
+        "alphaMapPath": "@project/assets/textures/vfx/Flame.webp",
         "appearance": "circular",
         "blendingMode": "additive",
         "easeFunction": "easeOutSine",

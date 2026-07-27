@@ -1,0 +1,32 @@
+---
+description: Use Genesys MCP for live editor/scene changes; never probe MCP through shell
+alwaysApply: true
+---
+
+# Genesys MCP Router
+
+For scene-visible or editor-authored changes, use Genesys MCP before editing code or `*.genesys-scene` files. This includes actor transforms, hierarchy, materials, colours, meshes, lights, cameras, component properties, prefab overrides, active scene, and editor state.
+
+Before implementing, decide where the state belongs:
+
+- Scene/editor state: use MCP first.
+- Reusable runtime behaviour: use TypeScript/source code.
+- Both: add/register the capability in code, then use MCP to place or configure it.
+
+Do not patch a specific editor-authored actor in `BeginPlay`, `doBeginPlay`, constructors, or one-off runtime code just to persist a visual scene change.
+
+Before the first Genesys MCP tool call in a task, read `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md` and follow it.
+
+MCP availability rules:
+
+- Connected: Genesys MCP tools such as `query_editor`, `query_scene`, `action_actor`, `action_scene`, `action_build`, `batch_execute`, or `run_script` are directly available.
+- Probe-capable: `CallMcpTool` is available and Genesys MCP descriptors/server metadata exist.
+- Off: the user says MCP is disabled/not connected, or neither signal above is present.
+
+Descriptor/server presence means probe-capable, not ready. Before any mutation, run `query_editor(getState)` or the orchestrator skill's equivalent readiness probe. If the probe fails, report the blocking reason, continue with normal code/filesystem work where possible, and do not retry MCP in the same turn.
+
+Genesys must have **this** project open (matching bearer). Disk `.cursor/mcp.json` alone is not readiness. Transport errors such as `project_none` or `project_mismatch` mean open/switch the matching project in Genesys before retrying MCP.
+
+Never call the MCP HTTP endpoint, `curl`, `Invoke-WebRequest`, localhost URLs, or shell workarounds. Use only Genesys MCP tools directly or via `CallMcpTool` after checking schemas when required.
+
+When MCP is ready, query the editor for live scene state. Do not grep/read `*.genesys-scene` unless the user explicitly asks or MCP is genuinely unavailable.

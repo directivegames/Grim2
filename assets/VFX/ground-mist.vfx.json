@@ -12,7 +12,7 @@
       "renderMode": "billboard",
       "intensity": 0.75,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/SmokePuffSoft.png",
+      "alphaMapPath": "@project/assets/textures/vfx/SmokePuffSoft.webp",
       "easeFunction": "easeInOutSine",
       "fadeAlpha": [
         0.06,

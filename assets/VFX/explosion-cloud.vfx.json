@@ -12,7 +12,7 @@
       "renderMode": "billboard",
       "intensity": 1,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/CloudChunky.png",
+      "alphaMapPath": "@project/assets/textures/vfx/CloudChunky.webp",
       "easeFunction": "easeOutSine",
       "fadeAlpha": [
         0.15,

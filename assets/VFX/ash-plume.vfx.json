@@ -12,7 +12,7 @@
       "renderMode": "billboard",
       "intensity": 0.9,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/DustPuffSoft.png",
+      "alphaMapPath": "@project/assets/textures/vfx/DustPuffSoft.webp",
       "easeFunction": "easeOutQuad",
       "fadeAlpha": [
         0.15,

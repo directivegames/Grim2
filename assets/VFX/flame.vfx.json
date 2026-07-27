@@ -13,7 +13,7 @@
       "stretchScale": 1.1,
       "intensity": 1.4,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/Flame.png",
+      "alphaMapPath": "@project/assets/textures/vfx/Flame.webp",
       "easeFunction": "easeOutQuad",
       "fadeAlpha": [
         0,

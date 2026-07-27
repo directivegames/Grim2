@@ -20,6 +20,32 @@ export type BlobShadowOptions = SceneComponentOptions & {
   yOffset?: number;
 };
 
+let _sharedSoftShadowMap: THREE.CanvasTexture | null = null;
+
+function getSoftShadowMap(): THREE.CanvasTexture {
+  if (_sharedSoftShadowMap) {
+    return _sharedSoftShadowMap;
+  }
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const g = ctx.createRadialGradient(size * 0.5, size * 0.5, 0, size * 0.5, size * 0.5, size * 0.5);
+  g.addColorStop(0, 'rgba(0,0,0,0.85)');
+  g.addColorStop(0.45, 'rgba(0,0,0,0.45)');
+  g.addColorStop(0.78, 'rgba(0,0,0,0.12)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, size, size);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.NoColorSpace;
+  tex.needsUpdate = true;
+  _sharedSoftShadowMap = tex;
+  return tex;
+}
+
 @ENGINE.GameClass()
 export class BlobShadowComponent extends ENGINE.MeshComponent {
   public override initialize(options?: BlobShadowOptions): void {
@@ -31,6 +57,7 @@ export class BlobShadowComponent extends ENGINE.MeshComponent {
     const geometry = new THREE.CircleGeometry(radius, segments);
     const material = new THREE.MeshBasicMaterial({
       color: 0x000000,
+      map: getSoftShadowMap(),
       transparent: true,
       opacity,
       depthWrite: false,

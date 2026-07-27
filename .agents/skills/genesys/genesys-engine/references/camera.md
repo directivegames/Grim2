@@ -30,6 +30,18 @@ Use ViewTargetCameraComponent for temporary camera overrides:
 
 Reference: See ViewTargetCameraComponent.ts in engine source.
 
+### TopDownMovementComponent
+
+For strategy / overhead cameras on a plain `Pawn` (not `CharacterPawn`):
+
+- Attach `TopDownMovementComponent` and a child `THREE.Camera` with fixed pitch on the pawn root.
+- Pan moves the pawn on X/Z; zoom moves world Y (`rootY`) or camera local Z (`cameraLocalOffset`).
+- Enable `keyboardPanEnabled`, `mouseDragPanEnabled`, `edgeScrollEnabled`, `wheelZoomEnabled` independently.
+
+Mouse drag pan is routed through `Pawn.handleMouseMove` → `movementComponent` without pointer lock. Wheel zoom uses the same path as other movement components via `handleMouseWheel`.
+
+See [Top-Down Camera](../patterns/top-down-camera.md) for setup recipes and RTS presets.
+
 ## Active Camera Resolution
 
 World.getActiveCamera() resolves the camera in this order:

@@ -6,7 +6,7 @@ const POINT_LIFETIME = 0.22;
 const DISC_GEO       = new THREE.PlaneGeometry(0.44, 0.44); // Slightly larger for soft texture
 
 /** Path to soft glow texture for trail discs. */
-const GLOW_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.png';
+const GLOW_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.webp';
 
 /** Pre-allocated trail disc — reused from a pool to eliminate per-frame GC. */
 interface PooledDisc {

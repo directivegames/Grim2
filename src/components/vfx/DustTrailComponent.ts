@@ -18,7 +18,7 @@ const CHECK_INTERVAL = 0.08;
 const SPAWN_INTERVAL = 0.1;
 const MAX_PUFFS = 24;
 
-const DUST_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.png';
+const DUST_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.webp';
 
 const _spawnPos = new THREE.Vector3();
 

@@ -1,0 +1,130 @@
+{
+  "$root": {
+    "$bc": "ENGINE.AnimationConfigResource",
+    "clipOptions": {
+      "Shot_and_Fall_Backward": {
+        "clampWhenFinished": true,
+        "loop": "LoopOnce"
+      },
+      "air_squat": {
+        "loop": "LoopRepeat"
+      },
+      "magic_soell_cast": {
+        "loop": "LoopRepeat"
+      },
+      "run_fast_3_inplace": {
+        "loop": "LoopRepeat"
+      }
+    },
+    "externalAnimationSources": [
+      "@project/assets/models/Thepostman2.glb"
+    ],
+    "initialState": "idle",
+    "parameters": {
+      "state": "idle"
+    },
+    "states": {
+      "attack": {
+        "clip": "magic_soell_cast",
+        "transitions": [
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "death": {
+        "clip": "Shot_and_Fall_Backward",
+        "transitions": []
+      },
+      "idle": {
+        "clip": "air_squat",
+        "transitions": [
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "walk": {
+        "clip": "run_fast_3_inplace",
+        "transitions": [
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      }
+    }
+  },
+  "$version": 2
+}

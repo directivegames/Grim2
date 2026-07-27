@@ -29,7 +29,7 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "3478155a-b96d-4527-bc32-8030fc5e5d8a",
       "colorSpace": "srgb",
-      "url": "@project/assets/models/material_0_013_map.webp",
+      "url": "@project/assets/models/material_0_013_map.1k.webp",
       "wrapS": 1000,
       "wrapT": 1000
     },
@@ -45,7 +45,7 @@
     "normalMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "d9accf5d-46e3-4eee-9ba2-35e3e939ddfc",
-      "url": "@project/assets/models/material_0_013_normalmap.webp",
+      "url": "@project/assets/models/material_0_013_normalmap.1k.webp",
       "wrapS": 1000,
       "wrapT": 1000
     },

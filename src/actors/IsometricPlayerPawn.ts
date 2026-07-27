@@ -41,7 +41,7 @@ const ISO_PITCH = -Math.atan(1 / Math.sqrt(2));
 const ROTATE_SPEED = 20; // rad/s – visual mesh facing
 
 const GRIM2_MODEL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grim2/Grim2.glb` as ENGINE.ModelPath;
-const GRIM2_ANIM_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grim2/Animationgrim.anim.json`;
+const GRIM2_ANIM_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grim2/Animationgrim.animconfig.json`;
 const GRIM2_MATERIAL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/textures/Grim2texture.material.json` as ENGINE.MaterialPath;
 
 /** Editor-placed Grim2 prop to remove at runtime. */
@@ -729,12 +729,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   /** Jumping disabled for VS-style. */
-  public override handleJump(_strength: number = 1): void { /* intentionally empty */ }
+  public override jump(_strength: number = 1): void { /* intentionally empty */ }
 
   /** Fixed camera distance — no mouse-wheel zoom. */
-  public override handleMouseWheel(_e: WheelEvent): boolean {
-    return false;
-  }
+  public override zoomStep(_direction: number): void { /* intentionally empty */ }
 
   // ── Tick ─────────────────────────────────────────────────────────────────
 

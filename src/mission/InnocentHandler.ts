@@ -85,7 +85,7 @@ export class InnocentHandler {
     this._prop.setHiddenInGame(true);
 
     const floorPos = position.clone();
-    const nav = world.getNavigationServer() as NavMeshQuery | null;
+    const nav = (world.gameLoop?.navigationServer ?? null) as NavMeshQuery | null;
     if (nav?.isReady?.()) {
       snapPositionToNavFloor(nav, floorPos, floorPos);
     }

@@ -7,6 +7,7 @@ import { getProjectRoot } from './common.js';
 
 const PROJECT_PREFIX = '@project';
 const PACKS_FOLDER = 'packs';
+const PACK_MANIFEST_FILENAME = 'config.json';
 const ASSET_REF_REGEX = /@project\/[^"'\s<>`)\]}]+/g;
 const AUTO_GENERATED_BASENAMES = new Set(['auto-imports.ts', 'game-data.ts']);
 
@@ -51,7 +52,7 @@ function walk(dir: string, accept: (p: string) => boolean, out: string[] = []): 
 }
 
 function isPackFile(p: string): boolean {
-  return /\.(ts|tsx|prefab\.json|material\.json)$/.test(p);
+  return /\.(ts|tsx|json)$/.test(p);
 }
 
 function extractRefsFromText(text: string): string[] {
@@ -69,21 +70,58 @@ function extractRefsFromJsonValues(value: unknown, out: string[]): void {
 
 function refsInFile(absPath: string): string[] {
   const text = fs.readFileSync(absPath, 'utf-8');
-  if (absPath.endsWith('.prefab.json') || absPath.endsWith('.material.json')) {
+  if (absPath.endsWith('.json')) {
     try { const out: string[] = []; extractRefsFromJsonValues(parseJson(text), out); return out; }
     catch { return extractRefsFromText(text); }
   }
   return extractRefsFromText(text);
 }
 
-function classifyPackRef(ref: string, packName: string, projectRoot: string): Violation['kind'] | 'ok' {
+/** Returns the `id` field from a pack's config.json, or null when unavailable. */
+function readPackManifestId(packRoot: string): string | null {
+  const configPath = path.join(packRoot, PACK_MANIFEST_FILENAME);
+  if (!fs.existsSync(configPath)) return null;
+  try {
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8')) as Record<string, unknown>;
+    return typeof config['id'] === 'string' ? config['id'] : null;
+  } catch { return null; }
+}
+
+/** Returns the set of declared pack dependency ids from a pack's config.json. */
+function readDeclaredPackIds(packRoot: string): Set<string> {
+  const configPath = path.join(packRoot, PACK_MANIFEST_FILENAME);
+  if (!fs.existsSync(configPath)) return new Set();
+  try {
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8')) as Record<string, unknown>;
+    const packs = (config['dependencies'] as Record<string, unknown>)?.['packs'];
+    if (packs && typeof packs === 'object' && !Array.isArray(packs)) {
+      return new Set(Object.keys(packs));
+    }
+  } catch { /* ignore */ }
+  return new Set();
+}
+
+function classifyPackRef(
+  ref: string,
+  packName: string,
+  projectRoot: string,
+  declaredPackIds: Set<string>,
+): Violation['kind'] | 'ok' {
   const packPrefix = `${PROJECT_PREFIX}/${PACKS_FOLDER}/${packName}/`;
   if (ref.startsWith(packPrefix)) {
     const relFromProject = ref.slice(`${PROJECT_PREFIX}/`.length);
     if (!fs.existsSync(path.join(projectRoot, relFromProject))) return 'dangling';
     return 'ok';
   }
-  if (ref.startsWith(`${PROJECT_PREFIX}/${PACKS_FOLDER}/`)) return 'cross-pack';
+  if (ref.startsWith(`${PROJECT_PREFIX}/${PACKS_FOLDER}/`)) {
+    // Cross-pack ref — only a violation if the referenced pack is not a declared dependency.
+    // Resolve the folder name to the pack's manifest id (dependencies.packs keys are ids).
+    const referencedFolder = ref.slice(`${PROJECT_PREFIX}/${PACKS_FOLDER}/`.length).split('/')[0] ?? '';
+    const referencedPackRoot = path.join(projectRoot, PACKS_FOLDER, referencedFolder);
+    const referencedPackId = readPackManifestId(referencedPackRoot) ?? referencedFolder;
+    if (declaredPackIds.has(referencedPackId)) return 'ok';
+    return 'cross-pack';
+  }
   if (ref.startsWith(`${PROJECT_PREFIX}/`)) return 'external-project';
   return 'ok';
 }
@@ -91,12 +129,13 @@ function classifyPackRef(ref: string, packName: string, projectRoot: string): Vi
 function checkPack(packName: string, projectRoot: string): Violation[] {
   const packRoot = path.join(projectRoot, PACKS_FOLDER, packName);
   if (!fs.existsSync(packRoot)) throw new Error(`Pack folder not found: ${packRoot}`);
+  const declaredPackIds = readDeclaredPackIds(packRoot);
   const files = walk(packRoot, isPackFile);
   const violations: Violation[] = [];
   for (const file of files) {
     const rel = path.relative(projectRoot, file).replace(/\\/g, '/');
     for (const ref of refsInFile(file)) {
-      const kind = classifyPackRef(ref, packName, projectRoot);
+      const kind = classifyPackRef(ref, packName, projectRoot, declaredPackIds);
       if (kind !== 'ok') violations.push({ file: rel, ref, kind });
     }
   }

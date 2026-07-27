@@ -8,10 +8,13 @@
     },
     "map": {
       "$uuid": "3d6cf172-9fd2-406c-bb31-f3f9b20588bf",
-      "url": "@project/assets/textures/half and half.png",
+      "url": "@project/assets/textures/half and half.webp",
+      "colorSpace": "srgb",
       "$bc": "ENGINE.UrlTexture"
     },
-    "flatShading": true,
+    "flatShading": false,
+    "metalness": 0.02,
+    "roughness": 0.92,
     "$bc": "THREE.MeshStandardMaterial"
   }
 }

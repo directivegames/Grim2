@@ -14,14 +14,6 @@ const HIDDEN_Y = -1000;
 const CLIP_RUMBLING = 'rumbling';
 const CLIP_SPINNING = 'spinning';
 
-/** Loaded GLTFMeshComponent internals (clips live on the parsed gltf). */
-type GltfMeshInternals = {
-  model?: THREE.Object3D | null;
-  gltf?: { animations?: THREE.AnimationClip[] } | null;
-  onMeshLoaded: { add: (fn: (mesh: ENGINE.GLTFMeshComponent, model: THREE.Object3D) => void) => void };
-  waitForLoad: () => Promise<void>;
-  isModelLoaded: () => boolean;
-};
 
 @ENGINE.GameClass()
 export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
@@ -41,7 +33,7 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
     let attached = 0;
     for (const actor of world.getActors()) {
       const mesh = actor.getComponent(ENGINE.GLTFMeshComponent);
-      const url = mesh ? ((mesh as unknown as { modelUrl?: string }).modelUrl ?? '') : '';
+      const url = mesh ? (mesh.modelUrl ?? '') : '';
       if (!GrimGrinderControllerComponent._matchesGrimGrinder(actor.name, url)) {
         continue;
       }
@@ -203,7 +195,7 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
     if (!meshComp) {
       return null;
     }
-    return (meshComp as unknown as GltfMeshInternals).model ?? null;
+    return meshComp.getModel();
   }
 
   public override endPlay(): void {
@@ -243,11 +235,9 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
       return;
     }
 
-    const mesh = meshComp as unknown as GltfMeshInternals;
-
     const tryStart = (): boolean => {
-      const model = mesh.model;
-      const clips = mesh.gltf?.animations ?? [];
+      const model = meshComp.getModel();
+      const clips = meshComp.getAnimations();
       if (!model || clips.length === 0) {
         return false;
       }
@@ -278,11 +268,11 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
       return;
     }
 
-    mesh.onMeshLoaded.add(() => {
+    meshComp.onMeshLoaded.add(() => {
       tryStart();
     });
 
-    await mesh.waitForLoad().catch(() => undefined);
+    await meshComp.waitForLoad().catch(() => undefined);
     if (!tryStart()) {
       const deadline = performance.now() + 15_000;
       while (performance.now() < deadline) {

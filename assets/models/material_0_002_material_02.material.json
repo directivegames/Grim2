@@ -29,14 +29,14 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "70816fee-dd86-43cf-b86f-2f9e805b7f0a",
       "colorSpace": "srgb",
-      "url": "@project/assets/models/material_0_002_map_02.webp",
+      "url": "@project/assets/models/material_0_002_map_02.1k.webp",
       "wrapS": 1000,
       "wrapT": 1000
     },
     "metalnessMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "a78fc351-be49-4d7f-b2b5-4873bc4c6396",
-      "url": "@project/assets/models/material_0_002_roughnessmap_02.webp",
+      "url": "@project/assets/models/material_0_002_roughnessmap_02.1k.webp",
       "wrapS": 1000,
       "wrapT": 1000
     },
@@ -44,7 +44,7 @@
     "normalMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "da4851c0-cb41-4b73-a9e7-eba619da8e38",
-      "url": "@project/assets/models/material_0_002_normalmap_02.webp",
+      "url": "@project/assets/models/material_0_002_normalmap_02.1k.webp",
       "wrapS": 1000,
       "wrapT": 1000
     },
@@ -58,7 +58,7 @@
     "roughnessMap": {
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "55652d90-b8d3-463e-9513-88809ca33b70",
-      "url": "@project/assets/models/material_0_002_roughnessmap_02.webp",
+      "url": "@project/assets/models/material_0_002_roughnessmap_02.1k.webp",
       "wrapS": 1000,
       "wrapT": 1000
     },

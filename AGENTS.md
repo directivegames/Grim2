@@ -34,6 +34,10 @@
   // then use resolvedHtml as normal
   ```
 
+## Loading Textures (Runtime)
+- `@project/`/`@engine/`: `ENGINE.resourceManager.loadTexture(ENGINE.AssetPath.fromString('@project/.../foo.png'))` — keep the logical path (`.png`/`.jpg`) even with baking.
+- Never `TextureLoader` after resolve (baking → `.ktx2`). `TextureLoader` only for external URLs; `resolveAssetPathsInText` only for HTML.
+
 ## Prefabs
 - Prefabs are json files stored within /assets/prefabs, with the suffix .prefab.json.
 - Prefabs can be validated via `pnpm validate-prefabs`.
@@ -43,11 +47,21 @@
 
 ---
 
-# Scene Files
+# Scene And Editor State
 
-**IMPORTANT:** Do **NOT** read or open genesys scene files (`*.genesys-scene`) unless the user explicitly requests it.
+Do **not** read or open `*.genesys-scene` files unless the user explicitly asks or MCP is unavailable and filesystem fallback is appropriate. These files are large and the editor is the source of truth for scene state.
 
-These scene files can be very large and consume significant tokens. They contain serialized scene data that is typically **not relevant** to programming tasks. The scene editor handles these files — you should focus on code implementation rather than scene file contents.
+For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md`): run `query_editor(getState)`, inspect only what is needed, mutate with `action_actor`, `action_component`, `action_scene`, or `batch_execute`, then `action_scene(save)` when the scene changed.
+
+**Before writing code, decide where this state should live** (scene/editor vs runtime behaviour) and route accordingly.
+
+| State owner | Use |
+| --- | --- |
+| **Scene / editor** | MCP first — per-scene or per-instance actor transform, hierarchy, component enabled state, component properties (`material` on MeshComponent, colours, mesh/model refs, light/camera settings), prefab instance overrides, active scene |
+| **Runtime behaviour** | TypeScript — reusable gameplay logic, class defaults, constructors for new runtime objects, new actor/component classes, input, networking, UI logic, systems not already in the scene |
+| **Both** | Code first to build/register the capability, then MCP to place or configure it in the scene |
+
+Do **not** use `BeginPlay`, `doBeginPlay`, constructors, or one-off runtime hacks to patch a specific editor-authored actor just to persist a visual scene change. It is still correct to define reusable class defaults, construct runtime-created objects, and initialise behaviour in code when those values should apply to every instance or to objects spawned at runtime.
 
 ---
 
@@ -82,6 +96,8 @@ These scene files can be very large and consume significant tokens. They contain
 ## Testing Constraints
 - You may **only** use `pnpm build` to verify code compilation.
 - You **must** use `pnpm lint` to detect and auto-fix linting issues.
+- For every shell command (`pnpm`, `git`, TypeScript tools, etc.), set `workingDirectory` to this game project root — the folder that contains `package.json` and the `.genesys-project` file. Do not rely on the default shell cwd; it may be the Genesys desktop app process directory.
+- To register newly added game classes in the running editor, use MCP `action_build(action="buildProject")`; `pnpm build-project` talks to the SDK app file server and is not reliable from an agent shell.
 - Do **not** run `pnpm test`, `pnpm dev`, or `pnpm start` — these commands are **not supported**.
 - All testing is the responsibility of the user.  
   You are encouraged to:
@@ -104,6 +120,17 @@ Before implementing any user request, you **must** interpret the prompt, identif
 4. **Confirm scope** — Specify what systems, assets, or files you will change.
 
 This process **prevents incorrect implementations** when user wording is incomplete or ambiguous.
+
+## Implementation Plan Tags
+
+When planning mixed work, tag each step by state owner so scene edits are not mistaken for code tasks:
+
+- `[Code]` — TypeScript/source changes
+- `[MCP]` — scene, actor, prefab, component, material, transform, or other editor state changes
+- `[Asset]` — imported, moved, or generated asset files
+- `[Verify]` — build, lint, diagnostics, or editor re-query
+
+Example: `[MCP] Set MeshComponent material on Floor actor` → `[Verify] Re-query actor and confirm scene saved`.
 # GENESYS-SDK-END
 
 # Add your custom AI instructions below.

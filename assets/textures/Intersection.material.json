@@ -6,9 +6,10 @@
       "$bc": "ENGINE.UrlTexture",
       "$uuid": "519e717c-48f6-4482-a2e3-bf190a443e90",
       "colorSpace": "srgb",
-      "url": "@project/assets/textures/intersectionnew.png"
+      "url": "@project/assets/textures/intersectionnew.webp"
     },
-    "metalness": 0.71,
+    "metalness": 0.06,
+    "roughness": 0.86,
     "name": "Intersection",
     "uuid": "5e790333-d204-4f84-95d9-48ae3987c345"
   },

@@ -9,6 +9,7 @@ Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.j
 | Class | Summary | Use Cases | Options Type |
 |-------|---------|-----------|--------------|
 | `ENGINE.Button` | Interactive button with variant, size, disabled, and loading states. | confirm, cancel, submit, menu action, call to action, cta | `ButtonOptions` |
+| `ENGINE.Toggle` | Pill-shaped on/off switch with disabled state. | toggle, switch, on/off, enable, setting, option | `ToggleOptions` |
 
 ## data
 
@@ -21,6 +22,7 @@ Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.j
 | `ENGINE.Keystroke` | Keyboard key chip used in keybind hints and controls panels. | keybind hint, shortcut chip, controls panel, tutorial overlay | `KeystrokeOptions` |
 | `ENGINE.NumberDisplay` | Stats card with icon, label, animated value, and optional trend chip. | score, gold, coins, currency, counter, level, kills, stat card, stats display | `NumberDisplayOptions` |
 | `ENGINE.PlayerCard` | Composite card with player avatar, name + handle, and optional badge or score. | player roster, lobby entry, leaderboard row, party member, friend chip | `PlayerCardOptions` |
+| `ENGINE.StatCard` | Metric display card: icon · label · large value · trend indicator · subtitle. | stat, metric, score, wins, accuracy, kda, dashboard, post-match, leaderboard | `StatCardOptions` |
 
 ## feedback
 
@@ -42,6 +44,7 @@ Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.j
 | `ENGINE.Message` | Compact single-line chat/system message with optional avatar and bold sender name. | chat, message, system message, kill feed, notification line, hud text | `MessageOptions` |
 | `ENGINE.ProgressBar` | Themed progress indicator with header (label + percentage) above a rounded fill track. | health, mana, stamina, experience, xp, boss hp, progress, cooldown, loading | `ProgressBarOptions` |
 | `ENGINE.StatBar` | HUD progress bar for shield, mana, stamina, and energy with icon slot. | shield, mana, stamina, energy, hud bar, stat bar, health bar | `StatBarOptions` |
+| `ENGINE.WeaponCard` | Semi-transparent HUD card: icon slot · weapon name · current/max ammo. | weapon, ammo, magazine, gun, hud weapon, loadout, equipped weapon | `WeaponCardOptions` |
 
 ## input
 
@@ -55,6 +58,7 @@ Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.j
 |-------|---------|-----------|--------------|
 | `ENGINE.InventoryBar` | Horizontal hotbar showing equipped items with add / remove / find operations. | hotbar, inventory, quickslot, toolbar, equipment | `InventoryBarOptions` |
 | `ENGINE.InventoryGrid` | Full-screen grid inventory with drag-drop and configurable rows / columns. | inventory, backpack, storage, chest, loot grid | `InventoryGridOptions` |
+| `ENGINE.ItemCard` | Inventory item card: image area · name · rarity badge (composed) · quantity · price. | item, inventory, collectible, loot, shop, store, equipment, weapon card | `ItemCardOptions` |
 
 ## menu
 
@@ -89,6 +93,7 @@ Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.j
 | `ENGINE.Input` | `@engine/assets/ui/templates/input.html` | `@engine/assets/ui/styles/input.css` |
 | `ENGINE.InventoryBar` | `@engine/assets/ui/templates/inventory-bar.html` | `@engine/assets/ui/styles/inventory-bar.css` |
 | `ENGINE.InventoryGrid` | `@engine/assets/ui/templates/inventory-grid.html` | `@engine/assets/ui/styles/inventory-grid.css` |
+| `ENGINE.ItemCard` | `@engine/assets/ui/templates/item-card.html` | `@engine/assets/ui/styles/item-card.css` |
 | `ENGINE.Keystroke` | `@engine/assets/ui/templates/keystroke.html` | `@engine/assets/ui/styles/keystroke.css` |
 | `ENGINE.Message` | `@engine/assets/ui/templates/message.html` | `@engine/assets/ui/styles/message.css` |
 | `ENGINE.Minimap` | `@engine/assets/ui/templates/minimap.html` | `@engine/assets/ui/styles/minimap.css` |
@@ -99,4 +104,7 @@ Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.j
 | `ENGINE.ProgressBar` | `@engine/assets/ui/templates/progress-bar.html` | `@engine/assets/ui/styles/progress-bar.css` |
 | `ENGINE.ReloadIndicator` | `@engine/assets/ui/templates/reload-indicator.html` | `@engine/assets/ui/styles/reload-indicator.css` |
 | `ENGINE.StatBar` | `@engine/assets/ui/templates/stat-bar.html` | `@engine/assets/ui/styles/stat-bar.css` |
+| `ENGINE.StatCard` | `@engine/assets/ui/templates/stat-card.html` | `@engine/assets/ui/styles/stat-card.css` |
+| `ENGINE.Toggle` | `@engine/assets/ui/templates/toggle.html` | `@engine/assets/ui/styles/toggle.css` |
 | `ENGINE.Tooltip` | `@engine/assets/ui/templates/tooltip.html` | `@engine/assets/ui/styles/tooltip.css` |
+| `ENGINE.WeaponCard` | `@engine/assets/ui/templates/weapon-card.html` | `@engine/assets/ui/styles/weapon-card.css` |

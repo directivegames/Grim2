@@ -22,7 +22,7 @@ this.isOwnedByLocalClient()     // true only on the owning client
 this.isLocalAutonomousProxy()   // true on the owning client (AutonomousProxy role)
 
 // Check the owning client ID:
-this.netOwningClientId          // string clientId or null
+this.netOwningClientId          // ClientId (uint16); 0 means server-owned / no owner
 ```
 
 Use `isOwnedByLocalClient()` to decide whether to show a local HUD element or attach a local camera.

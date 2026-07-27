@@ -196,7 +196,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world || step <= 0) return false;
 
-    const physics = world.getPhysicsEngine();
+    const physics = this.getPhysicsEngine();
     if (!physics) return false;
 
     this._rayDir.copy(this._direction);

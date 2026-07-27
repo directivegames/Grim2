@@ -47,7 +47,7 @@ const NEW_ZOMBIE_NPC_PROFILE = 'NewZombieNPC';
 export const NEW_ZOMBIE_MODEL_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb` as ENGINE.ModelPath;
 const NEW_ZOMBIE_ANIM_URL =
-  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.anim.json`;
+  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json`;
 const NEW_ZOMBIE_MATERIAL_URL =
   `${ENGINE.PROJECT_PATH_PREFIX}/assets/textures/Zombie2.material.json` as ENGINE.MaterialPath;
 
@@ -1390,7 +1390,7 @@ export class NewZombieActor extends ENGINE.Actor {
     });
     this._steerGoal.copy(this._steerScratch.goal);
 
-    const nav = w.getNavigationServer() as {
+    const nav = (w.gameLoop?.navigationServer ?? null) as {
       isReady?: () => boolean;
       isPointOnNavigationMesh?: (p: THREE.Vector3) => boolean;
       getClosestPointOnNavigationMesh?: (p: THREE.Vector3) => THREE.Vector3;

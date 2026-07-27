@@ -1,0 +1,127 @@
+{
+  "$root": {
+    "$bc": "ENGINE.AnimationConfigResource",
+    "clipOptions": {
+      "Arm_Circle_Shuffle": {
+        "loop": "LoopRepeat"
+      },
+      "Clapping_Run": {
+        "loop": "LoopRepeat"
+      },
+      "dying_backwards": {
+        "clampWhenFinished": true,
+        "loop": "LoopOnce"
+      },
+      "run_fast_3_inplace": {
+        "loop": "LoopRepeat"
+      }
+    },
+    "initialState": "idle",
+    "parameters": {
+      "state": "idle"
+    },
+    "states": {
+      "death": {
+        "clip": "dying_backwards",
+        "transitions": []
+      },
+      "idle": {
+        "clip": "Arm_Circle_Shuffle",
+        "transitions": [
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "run"
+              }
+            },
+            "to": "run"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "windup"
+              }
+            },
+            "to": "windup"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "run": {
+        "clip": "run_fast_3_inplace",
+        "transitions": [
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "windup"
+              }
+            },
+            "to": "windup"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "windup": {
+        "clip": "Clapping_Run",
+        "transitions": [
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "run"
+              }
+            },
+            "to": "run"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      }
+    }
+  },
+  "$version": 2
+}

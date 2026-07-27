@@ -16,6 +16,7 @@ import { SpinningWeaponActor } from './actors/SpinningWeaponActor.js';
 import { WarmupActor } from './actors/WarmupActor.js';
 import { GameAudioManager } from './actors/GameAudioManager.js';
 import { ScenicFogActor } from './actors/ScenicFogActor.js';
+import { FilmGrainActor } from './post/FilmGrainActor.js';
 import { CloudShadowActor } from './cloudShadow/CloudShadowActor.js';
 import { DEFAULT_CLOUD_SHADOW_MAP } from './cloudShadow/CloudShadowState.js';
 import { gameSettings } from './utils/game-settings.js';
@@ -40,6 +41,7 @@ import { MenuMusicActor } from './actors/MenuMusicActor.js';
 import { PoliceLightFlasherComponent } from './components/PoliceLightFlasherComponent.js';
 import { FireLightFlickerComponent } from './components/FireLightFlickerComponent.js';
 import { shouldDisableWebGpuTslEffects } from './utils/browser-compat.js';
+import { applyGraphicsQuality, getGraphicsQualityProfile } from './utils/apply-graphics-quality.js';
 
 /** Spring-arm length (world units). */
 const ISO_CAMERA_DISTANCE = 20;
@@ -64,8 +66,9 @@ class MyGameMode extends ENGINE.GameMode {
       pawnFactory: async () =>
         IsometricPlayerPawn.create({ cameraDistance: ISO_CAMERA_DISTANCE }),
       // Disable pointer lock – isometric movement uses WASD, not mouse look.
+      // Engine 13+: WASD/gamepad mapping lives on DefaultPlayerController, not PlayerController.
       playerControllerFactory: async () =>
-        ENGINE.PlayerController.create({ noPointerLock: true }),
+        ENGINE.DefaultPlayerController.create({ noPointerLock: true }),
     });
   }
 }
@@ -153,11 +156,16 @@ class MyGame extends ENGINE.BaseGameLoop {
       this._spawnScenicFogCards(world);
       this._spawnCloudShadows(world);
     }
+    if (!isMobileDevice()) {
+      this._spawnFilmGrain(world);
+    }
     this._attachPoliceLightFlashers(world);
     this._attachFireLightFlickers(world);
     PauseManagerActor.ensureExists(world);
     DebugCheatsActor.ensureExists(world);
     this._attachGrimGrinderController(world);
+
+    applyGraphicsQuality(world, this.renderer ? { renderer: this.renderer } : undefined);
 
     hideGameplayPresentation(world);
 
@@ -338,6 +346,20 @@ class MyGame extends ENGINE.BaseGameLoop {
     }));
   }
 
+  /** Cheap CSS film-grain overlay — cinematic without a GPU post stack. */
+  private _spawnFilmGrain(world: ENGINE.World): void {
+    if (world.getActors().some(a => a instanceof FilmGrainActor)) {
+      return;
+    }
+    const profile = getGraphicsQualityProfile();
+    world.addActor(FilmGrainActor.create({
+      name: 'FilmGrain',
+      enabled: profile.filmGrain,
+      opacity: profile.filmGrainOpacity || 0.09,
+      animated: true,
+    }));
+  }
+
   /** Large flowmap fog cards at existing ground-mist cluster positions. */
   private _spawnScenicFogCards(world: ENGINE.World): void {
     const placements: Array<{ position: THREE.Vector3; scale: number }> = [
@@ -391,13 +413,10 @@ export function main(container: HTMLElement, options?: Partial<ENGINE.BaseGameLo
     // Disable the Three.js GPU-timestamp inspector – it forces a CPU/GPU sync
     // barrier every frame and caps the renderer at ~30fps even on fast hardware.
     debugUIMode: 'none',
-    gameContextConfig: {
-      ...options?.gameContextConfig,
-      initialWorldPath: isMobileDevice()
-        ? MOBILE_STARTUP_SCENE_PATH
-        : options?.gameContextConfig?.initialWorldPath,
-      defaultGameModeClass: MyGameMode,
-    },
+    initialWorldPath: isMobileDevice()
+      ? MOBILE_STARTUP_SCENE_PATH
+      : options?.initialWorldPath,
+    defaultGameModeClass: MyGameMode,
   };
   const game = new MyGame(container, mergedOptions);
   return game;

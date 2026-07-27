@@ -42,5 +42,5 @@ Read the reference that matches your current task:
 
 - When in doubt about where code runs, add a temporary `console.log(NetRuntime.getType())` to verify.
 - Replicated property updates flow from server to clients only. A client writing to a replicated property has no network effect.
-- `@ServerRPC` methods are no-ops when called on the server — the server simply executes them directly. Wrap in `if (NetRuntime.isClient())` only if the call is client-only by intent.
+- `@ServerRPC` methods execute directly when called with authority on the server. Wrap the call site in `if (NetRuntime.isClient())` if the server shouldn't trigger the method.
 - Consult the engine source under `.engine/` for exact method signatures before writing RPC or replication code.

@@ -1,0 +1,28 @@
+{
+  "$root": {
+    "$bc": "ENGINE.AnimationConfigResource",
+    "clipOptions": {
+      "rumbling": {
+        "loop": "LoopRepeat"
+      },
+      "spinning": {
+        "loop": "LoopRepeat"
+      }
+    },
+    "initialState": "rumbling",
+    "parameters": {
+      "state": "rumbling"
+    },
+    "states": {
+      "rumbling": {
+        "clip": "rumbling",
+        "transitions": []
+      },
+      "spinning": {
+        "clip": "spinning",
+        "transitions": []
+      }
+    }
+  },
+  "$version": 2
+}

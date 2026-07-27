@@ -50,10 +50,7 @@ export function main(
 ): ENGINE.IGameLoop {
   const mergedOptions: Partial<ENGINE.BaseGameLoopOptions> = {
     ...options,
-    gameContextConfig: {
-      ...options?.gameContextConfig,
-      defaultGameModeClass: MyGameMode,
-    },
+    defaultGameModeClass: MyGameMode,
   };
   return new MyGame(container, mergedOptions);
 }

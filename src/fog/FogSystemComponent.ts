@@ -21,12 +21,12 @@ import type { ComponentDescriptionOptions } from '@gnsx/genesys.js';
 import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
 const DEFAULT_CARD_MODEL_URL = '@project/assets/models/SM_FogCard_01.glb';
-const DEFAULT_BASE_COLOR_MAP_URL = '@project/assets/textures/Fog/T_smoothCloudsNoise_02_D.PNG';
-const DEFAULT_OPACITY_MAP_URL = '@project/assets/textures/Fog/T_mountainFog_06_mask.PNG';
-const DEFAULT_NORMAL_MAP_URL = '@project/assets/textures/Fog/T_mountainFog_06_N.PNG';
-const DEFAULT_FLOW_MAP_URL = '@project/assets/textures/System/Flowmaps/T_Flowmap_01_Directional.PNG';
-const DEFAULT_BORDER_MASK_MAP_URL = '@project/assets/textures/System/T_borderMask.PNG';
-const DEFAULT_WIND_NOISE_MAP_URL = '@project/assets/textures/Fog/T_smoothCloudsNoise_01_D.PNG';
+const DEFAULT_BASE_COLOR_MAP_URL = '@project/assets/textures/Fog/T_smoothCloudsNoise_02_D.webp';
+const DEFAULT_OPACITY_MAP_URL = '@project/assets/textures/Fog/T_mountainFog_06_mask.webp';
+const DEFAULT_NORMAL_MAP_URL = '@project/assets/textures/Fog/T_mountainFog_06_N.webp';
+const DEFAULT_FLOW_MAP_URL = '@project/assets/textures/System/Flowmaps/T_Flowmap_01_Directional.webp';
+const DEFAULT_BORDER_MASK_MAP_URL = '@project/assets/textures/System/T_borderMask.webp';
+const DEFAULT_WIND_NOISE_MAP_URL = '@project/assets/textures/Fog/T_smoothCloudsNoise_01_D.webp';
 const FOG_DEBUG_GLOBAL = '__GRIM_DEBUG_FOG';
 
 const _geometryBox = new THREE.Box3();

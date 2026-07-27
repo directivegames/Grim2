@@ -1,0 +1,199 @@
+{
+  "$root": {
+    "$bc": "ENGINE.AnimationConfigResource",
+    "clipOptions": {
+      "Gunshot_Reaction": {
+        "loop": "LoopRepeat"
+      },
+      "Limping_Walk_3_inplace": {
+        "loop": "LoopRepeat"
+      },
+      "NewZombie_Hit": {
+        "loop": "LoopRepeat"
+      },
+      "run_fast_10_inplace": {
+        "clampWhenFinished": true,
+        "loop": "LoopOnce"
+      },
+      "run_fast_6_inplace": {
+        "loop": "LoopRepeat"
+      }
+    },
+    "initialState": "idle",
+    "parameters": {
+      "state": "idle"
+    },
+    "states": {
+      "attack": {
+        "clip": "run_fast_6_inplace",
+        "transitions": [
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "hit"
+              }
+            },
+            "to": "hit"
+          },
+          {
+            "blendDuration": 0.03,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "death": {
+        "clip": "run_fast_10_inplace",
+        "transitions": [
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          }
+        ]
+      },
+      "hit": {
+        "clip": "NewZombie_Hit",
+        "transitions": [
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          }
+        ]
+      },
+      "idle": {
+        "clip": "Gunshot_Reaction",
+        "transitions": [
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          },
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "hit"
+              }
+            },
+            "to": "hit"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "walk": {
+        "clip": "Limping_Walk_3_inplace",
+        "transitions": [
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          },
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "hit"
+              }
+            },
+            "to": "hit"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      }
+    }
+  },
+  "$version": 2
+}

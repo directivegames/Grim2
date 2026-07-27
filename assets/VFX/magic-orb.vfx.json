@@ -12,7 +12,7 @@
       "renderMode": "billboard",
       "intensity": 1,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/GlowSharp.png",
+      "alphaMapPath": "@project/assets/textures/vfx/GlowSharp.webp",
       "easeFunction": "easeOutSine",
       "fadeAlpha": [
         0.04,

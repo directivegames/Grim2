@@ -22,8 +22,8 @@
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
-    "@gnsx/genesys.js": "11.2.6",
-    "three": "npm:@gnsx/three@0.184.17"
+    "@gnsx/genesys.js": "13.3.7-staging",
+    "three": "npm:@gnsx/three@0.185.14"
   },
   "pnpm": {
     "onlyBuiltDependencies": []
@@ -35,12 +35,12 @@
     "@modelcontextprotocol/sdk": "1.22.0",
     "@types/adm-zip": "0.5.8",
     "@types/jsdom": "21.1.7",
-    "@types/node": "25.9.1",
-    "@types/three": "npm:@gnsx/three-types@0.184.8",
+    "@types/node": "25.9.3",
+    "@types/three": "npm:@gnsx/three-types@0.185.5",
     "@types/ws": "8.18.1",
-    "@typescript-eslint/eslint-plugin": "8.59.2",
-    "@typescript-eslint/parser": "8.59.2",
-    "@typescript-eslint/utils": "8.59.2",
+    "@typescript-eslint/eslint-plugin": "8.61.0",
+    "@typescript-eslint/parser": "8.61.0",
+    "@typescript-eslint/utils": "8.61.0",
     "adm-zip": "0.5.17",
     "ajv": "8.20.0",
     "canvas": "3.1.0",
@@ -51,12 +51,12 @@
     "nanoid": "5.1.11",
     "sharp": "^0.34.5",
     "ts-morph": "26.0.0",
-    "tsx": "4.21.0",
+    "tsx": "4.22.4",
     "turbo": "2.9.14",
     "typescript": "5.9.3",
     "vite": "8.0.12",
     "vite-plugin-mkcert": "2.0.0",
-    "vite-plugin-node-polyfills": "0.26.0",
+    "vite-plugin-node-polyfills": "0.28.0",
     "ws": "8.18.2",
     "zod": "3.25.76",
     "zod-to-json-schema": "3.25.2",

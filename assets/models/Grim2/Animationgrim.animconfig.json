@@ -1,0 +1,234 @@
+{
+  "$root": {
+    "$bc": "ENGINE.AnimationConfigResource",
+    "clipOptions": {
+      "float": {
+        "loop": "LoopRepeat"
+      },
+      "floatBackwards": {
+        "loop": "LoopRepeat"
+      },
+      "floatForwards": {
+        "loop": "LoopRepeat"
+      },
+      "floatLeft": {
+        "loop": "LoopRepeat"
+      },
+      "floatRight": {
+        "loop": "LoopRepeat"
+      }
+    },
+    "initialState": "float",
+    "parameters": {
+      "state": "float"
+    },
+    "states": {
+      "float": {
+        "clip": "float",
+        "transitions": [
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "floatForwards"
+              }
+            },
+            "to": "floatForwards"
+          },
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "floatBackwards"
+              }
+            },
+            "to": "floatBackwards"
+          },
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "floatLeft"
+              }
+            },
+            "to": "floatLeft"
+          },
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "floatRight"
+              }
+            },
+            "to": "floatRight"
+          }
+        ]
+      },
+      "floatBackwards": {
+        "clip": "floatBackwards",
+        "transitions": [
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "float"
+              }
+            },
+            "to": "float"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatForwards"
+              }
+            },
+            "to": "floatForwards"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatLeft"
+              }
+            },
+            "to": "floatLeft"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatRight"
+              }
+            },
+            "to": "floatRight"
+          }
+        ]
+      },
+      "floatForwards": {
+        "clip": "floatForwards",
+        "transitions": [
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "float"
+              }
+            },
+            "to": "float"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatBackwards"
+              }
+            },
+            "to": "floatBackwards"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatLeft"
+              }
+            },
+            "to": "floatLeft"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatRight"
+              }
+            },
+            "to": "floatRight"
+          }
+        ]
+      },
+      "floatLeft": {
+        "clip": "floatLeft",
+        "transitions": [
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "float"
+              }
+            },
+            "to": "float"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatForwards"
+              }
+            },
+            "to": "floatForwards"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatBackwards"
+              }
+            },
+            "to": "floatBackwards"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatRight"
+              }
+            },
+            "to": "floatRight"
+          }
+        ]
+      },
+      "floatRight": {
+        "clip": "floatRight",
+        "transitions": [
+          {
+            "blendDuration": 0.2,
+            "condition": {
+              "state": {
+                "equalTo": "float"
+              }
+            },
+            "to": "float"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatForwards"
+              }
+            },
+            "to": "floatForwards"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatBackwards"
+              }
+            },
+            "to": "floatBackwards"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "floatLeft"
+              }
+            },
+            "to": "floatLeft"
+          }
+        ]
+      }
+    }
+  },
+  "$version": 2
+}

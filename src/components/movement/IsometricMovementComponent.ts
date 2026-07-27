@@ -229,7 +229,7 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
     }
 
     const { isGrounded } = physics.computeCharacterMovement(
-      this, root, delta.toArray(), !!this.teleportPosition,
+      this, root, delta.toArray(), !!this.teleportPosition, dt,
     );
     this.teleportPosition = null;
 

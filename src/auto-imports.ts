@@ -153,6 +153,7 @@ import './ui/TutSoulUI.ts';
 import './ui/uiTypography.ts';
 import './ui/upgrade-shop-format.ts';
 import './ui/UpgradeShopUI.ts';
+import './utils/apply-graphics-quality.ts';
 import './utils/apply-music-volume.ts';
 import './utils/award-soul.ts';
 import './utils/begin-mission-from-map.ts';

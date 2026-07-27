@@ -1,0 +1,189 @@
+{
+  "$root": {
+    "$bc": "ENGINE.AnimationConfigResource",
+    "clipOptions": {
+      "BigUndead_Death": {
+        "clampWhenFinished": true,
+        "loop": "LoopOnce"
+      },
+      "Charged_Spell_Cast": {
+        "loop": "LoopRepeat"
+      },
+      "Running": {
+        "loop": "LoopRepeat"
+      },
+      "dying_backwards": {
+        "loop": "LoopRepeat"
+      }
+    },
+    "externalAnimationSources": [
+      "@project/assets/models/Bigundead/Meshy_AI_Oozebound_Office_Zomb_biped/Meshy_AI_Oozebound_Office_Zomb_biped_Meshy_AI_Meshy_Merged_Animations.glb"
+    ],
+    "initialState": "idle",
+    "parameters": {
+      "state": "idle"
+    },
+    "states": {
+      "attack": {
+        "clip": "dying_backwards",
+        "transitions": [
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "hit"
+              }
+            },
+            "to": "hit"
+          },
+          {
+            "blendDuration": 0.03,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "death": {
+        "clip": "BigUndead_Death",
+        "transitions": []
+      },
+      "hit": {
+        "clip": "Charged_Spell_Cast",
+        "transitions": [
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.15,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          }
+        ]
+      },
+      "idle": {
+        "clip": "dying_backwards",
+        "transitions": [
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "walk"
+              }
+            },
+            "to": "walk"
+          },
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          },
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "hit"
+              }
+            },
+            "to": "hit"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      },
+      "walk": {
+        "clip": "Running",
+        "transitions": [
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "idle"
+              }
+            },
+            "to": "idle"
+          },
+          {
+            "blendDuration": 0.1,
+            "condition": {
+              "state": {
+                "equalTo": "attack"
+              }
+            },
+            "to": "attack"
+          },
+          {
+            "blendDuration": 0.08,
+            "condition": {
+              "state": {
+                "equalTo": "hit"
+              }
+            },
+            "to": "hit"
+          },
+          {
+            "blendDuration": 0.05,
+            "condition": {
+              "state": {
+                "equalTo": "death"
+              }
+            },
+            "to": "death"
+          }
+        ]
+      }
+    }
+  },
+  "$version": 2
+}

@@ -13,7 +13,7 @@
       "stretchScale": 1.85,
       "intensity": 1.1,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/MagicWisp.png",
+      "alphaMapPath": "@project/assets/textures/vfx/MagicWisp.webp",
       "easeFunction": "easeLinear",
       "fadeAlpha": [
         0.03,

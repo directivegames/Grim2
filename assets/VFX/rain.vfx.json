@@ -13,7 +13,7 @@
       "stretchScale": 1.85,
       "intensity": 0.75,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/Streak.png",
+      "alphaMapPath": "@project/assets/textures/vfx/Streak.webp",
       "easeFunction": "easeLinear",
       "fadeAlpha": [
         0.01,

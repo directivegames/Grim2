@@ -12,7 +12,7 @@
       "renderMode": "billboard",
       "intensity": 1.4,
       "appearance": "circular",
-      "alphaMapPath": "@project/assets/textures/vfx/BurstFlash.png",
+      "alphaMapPath": "@project/assets/textures/vfx/BurstFlash.webp",
       "easeFunction": "easeOutCubic",
       "fadeAlpha": [
         0.01,
