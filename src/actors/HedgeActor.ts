@@ -15,12 +15,12 @@ const HEDGE_MODEL_URL =
 @ENGINE.GameClass()
 export class HedgeActor extends ENGINE.Actor {
   @ENGINE.property({ type: 'number', min: 0.1, max: 5, step: 0.1, category: 'Hedge' })
-  public scale: number = 1.0;
+  public hedgeScale: number = 1.0;
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.GLTFMeshComponent.create({
       modelUrl: HEDGE_MODEL_URL,
-      scale: new THREE.Vector3(this.scale, this.scale, this.scale),
+      scale: new THREE.Vector3(this.hedgeScale, this.hedgeScale, this.hedgeScale),
       physicsOptions: { enabled: false }, // No collision - walk through
       castShadow: true,
       receiveShadow: true,

@@ -21,11 +21,14 @@ export class DialogueTriggerActor extends ENGINE.Actor {
 
   private _played = false;
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     if (this.playOnBeginPlay && !this._played) {
       void this.triggerDialogue();
     }
+    return true;
   }
 
   /** Play this actor's dialogue script once. */

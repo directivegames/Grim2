@@ -260,8 +260,10 @@ export class BigUndeadActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     const visual = this.getComponent(ENGINE.GLTFMeshComponent);
     if (visual) {
@@ -292,6 +294,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     this.wanderRoot.initialize(this.blackboard);
 
     zombieSpatialManager.registerZombie(this);
+    return true;
   }
 
   /** Horde spawn / relocate — immediately chase instead of waiting for aggro radius. */
@@ -608,7 +611,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     }
   }
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -858,14 +861,17 @@ export class BigUndeadActor extends ENGINE.Actor {
     this._flashRemainingSec = 0.15;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
     zombieSpatialManager.unregisterZombie(this);
     this.wanderRoot?.destroy();
     this.wanderRoot = null;
     this.blackboard?.clear();
     this.blackboard = null;
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

@@ -93,14 +93,14 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
     this._smokeVfx?.startEmitting(true);
 
     this.rootComponent.position.copy(position).add(new THREE.Vector3(0, 0.1, 0));
-    this.setHidden(false);
+    this.setHidden(false, true);
   }
 
   private _returnToPool(): void {
     activeCount = Math.max(0, activeCount - 1);
     this._isActive = false;
     this._smokeVfx?.stopEmitting();
-    this.setHidden(true);
+    this.setHidden(true, true);
     _pool.push(this);
   }
 
@@ -138,7 +138,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
       const actor = ZombieRiseVFXActor.create({ position: new THREE.Vector3(0, -1000, 0) });
       world.addActor(actor);
       actor._isActive = false;
-      actor.setHidden(true);
+      actor.setHidden(true, true);
       _pool.push(actor);
       created.push(actor);
     }

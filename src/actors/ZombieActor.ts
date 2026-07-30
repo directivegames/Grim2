@@ -396,8 +396,10 @@ export class ZombieActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     // PERFORMANCE: Random tick offset to distribute updates across frames
     this._tickOffset = Math.floor(Math.random() * 100);
@@ -453,6 +455,7 @@ export class ZombieActor extends ENGINE.Actor {
 
     // PERFORMANCE: Register with spatial grid for efficient separation queries
     zombieSpatialManager.registerZombie(this);
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -761,7 +764,7 @@ export class ZombieActor extends ENGINE.Actor {
 
   // ─── Death ─────────────────────────────────────────────────────────────────
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -1269,7 +1272,10 @@ export class ZombieActor extends ENGINE.Actor {
 
   // ─── Cleanup ───────────────────────────────────────────────────────────────
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
 
     // PERFORMANCE: Unregister from spatial grid
@@ -1282,7 +1288,7 @@ export class ZombieActor extends ENGINE.Actor {
     }
     this.blackboard?.clear();
     this.blackboard = null;
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

@@ -209,18 +209,20 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this.rootComponent.add(this._explosionVfx);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return true;
 
     this._sceneFistActor = acquireSceneFist(world);
 
     if (!this._sceneFistActor) {
       console.warn('[FistOfAnnoyanceActor] No free scene fist available (all in use or none placed).');
       this.destroy();
-      return;
+      return true;
     }
 
     this._groundY = this.rootComponent.position.y;
@@ -234,6 +236,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     void loadSmokeTexture(ROCK_DEBRIS_TEXTURE_PATH).then((rock) => {
       this._rockDebrisTexture = rock;
     });
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -587,10 +590,13 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._shockwaves.length = 0;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     releaseSceneFist(this._sceneFistActor);
     this._sceneFistActor = null;
     this._cleanupVFX();
-    super.doEndPlay();
+    return true;
   }
 }

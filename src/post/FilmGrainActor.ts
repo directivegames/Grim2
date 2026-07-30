@@ -12,7 +12,7 @@ export class FilmGrainActor extends ENGINE.Actor {
   public override initialize(options?: FilmGrainActorOptions): void {
     super.initialize(options);
     const component = FilmGrainComponent.create(options);
-    this.setRootComponent(component, true);
+    this.add(component);
   }
 
   public getFilmGrainComponent(): FilmGrainComponent | null {

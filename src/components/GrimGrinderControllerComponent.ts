@@ -198,13 +198,17 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
     return meshComp.getModel();
   }
 
-  public override endPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._mixer?.stopAllAction();
     this._mixer = null;
     this._prevWallTimeMs = 0;
     this._lockedGroundY = null;
     this._modelBaselinePos = null;
     super.endPlay();
+    return true;
   }
 
   /** Remove scene ASM components that 404 on grimgrinder.anim.json (editor leftovers). */

@@ -54,16 +54,22 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     MobileSceneChunkLoaderActor._instance = this;
+    return true;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (MobileSceneChunkLoaderActor._instance === this) {
       MobileSceneChunkLoaderActor._instance = null;
     }
-    super.doEndPlay();
+    return true;
   }
 
   public static ensureExists(world: ENGINE.World): MobileSceneChunkLoaderActor | null {

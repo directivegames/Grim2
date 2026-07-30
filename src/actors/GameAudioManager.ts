@@ -58,8 +58,10 @@ export class GameAudioManager extends ENGINE.Actor {
     super.initialize(options);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     this._lazyLoadSounds = isMobileDevice();
 
     if (!this._lazyLoadSounds) {
@@ -70,6 +72,7 @@ export class GameAudioManager extends ENGINE.Actor {
     }
 
     this.applySfxVolume(gameSettings.sfxVolume);
+    return true;
   }
 
   /**

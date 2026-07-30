@@ -129,13 +129,16 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
     return actor;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (GrimGrinderModeActor._instance === this) {
       GrimGrinderModeActor._instance = null;
     }
     this._restoreSlomo();
     void this._endModeImmediate(false);
-    super.doEndPlay();
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {

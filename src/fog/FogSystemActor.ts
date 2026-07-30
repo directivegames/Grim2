@@ -16,7 +16,7 @@ export class FogSystemActor extends ENGINE.Actor {
   public override initialize(options?: FogSystemActorOptions): void {
     super.initialize(options);
     const component = FogSystemComponent.create(options);
-    this.setRootComponent(component, true);
+    this.add(component);
   }
 
   public getFogComponent(): FogSystemComponent | null {

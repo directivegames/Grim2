@@ -301,13 +301,15 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     this._orbitAngle = 0;
 
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return true;
 
     this._sceneWeaponActors = collectSceneWeapons(world);
 
@@ -357,11 +359,15 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Blood splatter pool is already warmed in its beginPlay
     // Summon VFX warmup: burst some particles off-screen to compile shaders
     this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 6);
+    return true;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getWorld()?.inputManager.removeInputHandler(this._inputHandler);
-    super.doEndPlay();
+    return true;
   }
 
   private _meleeWeapon(): ENGINE.Actor | null {

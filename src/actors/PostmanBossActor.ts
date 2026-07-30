@@ -255,8 +255,10 @@ export class PostmanBossActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats] });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     stats?.onHealthChanged.add(this._onHealthChanged);
@@ -287,6 +289,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     }
 
     this._enterDormant();
+    return true;
   }
 
   /** Return boss to editor placement and dormant state between missions. */
@@ -320,13 +323,16 @@ export class PostmanBossActor extends ENGINE.Actor {
     this.setHiddenInGame(true);
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     stats?.onHealthChanged.remove(this._onHealthChanged);
     if (this._bossActive) {
       zombieSpatialManager.unregisterZombie(this);
     }
-    super.doEndPlay();
+    return true;
   }
 
   /** Find scene boss or spawn fallback, then start the fight. */
@@ -1171,7 +1177,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     this._isFlashing = false;
   }
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     void hitInfo;
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;

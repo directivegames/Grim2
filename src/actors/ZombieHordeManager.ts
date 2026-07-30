@@ -146,8 +146,10 @@ export class ZombieHordeManager extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     this._needsHookPlaced = true;
     this._mobileMemoryMode = isMobileDevice();
     this._iosMemoryMode = isIosDevice();
@@ -169,7 +171,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     }
 
     if (this._mobileMemoryMode) {
-      return;
+      return true;
     }
 
     // Warm GLB caches so first reveals are not blocked on async load.
@@ -185,6 +187,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
         void ENGINE.resourceManager.loadModel(ENGINE.AssetPath.fromString(type.modelUrl));
       }
     }
+    return true;
   }
 
   private hookPlacedZombies(): void {
@@ -1004,7 +1007,10 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._needsHookPlaced = true;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._pendingWaveSpawns.length = 0;
 
     // Disconnect placed-zombie callbacks
@@ -1032,8 +1038,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       }
       active.clear();
     }
-
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

@@ -77,9 +77,13 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
   private _retrySeconds = 0;
   private _grainAttached = false;
 
-  public override beginPlay(): void {
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     super.beginPlay();
     this._syncGrain();
+    return true;
   }
 
   public override onEditorAddToWorld(): void {
@@ -118,12 +122,16 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
     }
   }
 
-  public override endPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     const world = this.getWorld();
     if (world) {
       FilmGrainUI.detach(world);
     }
     super.endPlay();
+    return true;
   }
 
   private _settings() {

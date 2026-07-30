@@ -173,7 +173,10 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     }
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (this._flash) {
       this._flash.material.dispose();
       this._flash.removeFromParent();
@@ -185,7 +188,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
       this._shockwave = null;
     }
     this._letters.length = 0;
-    super.doEndPlay();
+    return true;
   }
 
   // ─── Pool helpers ──────────────────────────────────────────────────────────
@@ -241,13 +244,13 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     }
 
     this.rootComponent.position.copy(position);
-    this.setHidden(false);
+    this.setHidden(false, true);
   }
 
   private _returnToPool(): void {
     _activeCount = Math.max(0, _activeCount - 1);
     this._isActive = false;
-    this.setHidden(true);
+    this.setHidden(true, true);
     _pool.push(this);
   }
 
@@ -282,7 +285,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
       const actor = DemonboxMailExplosionVFXActor.create({ position: new THREE.Vector3(0, -1000, 0) });
       world.addActor(actor);
       actor._isActive = false;
-      actor.setHidden(true);
+      actor.setHidden(true, true);
       _pool.push(actor);
       created.push(actor);
     }

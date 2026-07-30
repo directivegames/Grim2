@@ -85,7 +85,15 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
   private _poolIndex = 0;
   private _spritesheet: THREE.Texture | null = null;
 
-  public override async beginPlay(): Promise<void> {
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
+    void this._beginPlayAsync();
+    return true;
+  }
+
+  private async _beginPlayAsync(): Promise<void> {
     super.beginPlay();
 
     const world = this.getWorld();
@@ -277,7 +285,10 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
 
   // ── Cleanup ─────────────────────────────────────────────────────────────────
 
-  public override endPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     for (const mesh of this._meshPool) {
       mesh.visible = false;
       mesh.material.map?.dispose();
@@ -293,5 +304,6 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
     }
 
     super.endPlay();
+    return true;
   }
 }

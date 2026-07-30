@@ -55,15 +55,18 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const visual = this._visual;
-    if (!visual || visual.isModelLoaded()) return;
+    if (!visual || visual.isModelLoaded()) return true;
 
     void visual.waitForLoad().catch(() => {
       console.warn('VomitballProjectileActor: failed to load Vomitball.glb');
       this._retire();
     });
+    return true;
   }
 
   /** Hide and destroy only after GLTF load callbacks have settled. */

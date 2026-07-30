@@ -63,16 +63,24 @@ export class WeaponSlashComponent extends ENGINE.SceneComponent {
 
   // ── Lifecycle ───────────────────────────────────────────────────────────────
 
-  public override beginPlay(): void {
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     super.beginPlay();
     this._buildMeshes();
+    return true;
   }
 
-  public override endPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._destroyMeshes();
     this._poolCount = 0;
     this._poolHead  = 0;
     super.endPlay();
+    return true;
   }
 
   // ── Public API ──────────────────────────────────────────────────────────────

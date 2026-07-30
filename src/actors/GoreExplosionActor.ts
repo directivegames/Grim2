@@ -67,14 +67,17 @@ export class GoreExplosionActor extends ENGINE.Actor {
     this._createShockwave(root);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return true;
 
     const origin = this.rootComponent.position;
     this._spawnBloodDrops(world, origin);
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -132,7 +135,10 @@ export class GoreExplosionActor extends ENGINE.Actor {
     }
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     for (const piece of this.chunkPieces) {
       piece.mesh.material.dispose();
       piece.mesh.removeFromParent();
@@ -155,7 +161,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
       drop.mesh.removeFromParent();
     }
     this.bloodDrops.length = 0;
-    super.doEndPlay();
+    return true;
   }
 
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): GoreExplosionActor | null {

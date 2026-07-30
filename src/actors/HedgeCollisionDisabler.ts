@@ -18,8 +18,10 @@ export class HedgeCollisionDisabler extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     // Delay slightly to ensure all scene actors are initialized
     globalThis.setTimeout(() => {
@@ -27,6 +29,7 @@ export class HedgeCollisionDisabler extends ENGINE.Actor {
       // Self-destruct after work is done — zero ongoing cost
       this.destroy();
     }, 100);
+    return true;
   }
 
   private disableHedgeCollisions(): void {

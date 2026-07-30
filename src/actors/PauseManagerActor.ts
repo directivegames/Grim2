@@ -61,22 +61,28 @@ export class PauseManagerActor extends ENGINE.Actor {
     setInputManager: () => { /* no-op */ },
   };
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const world = this.getWorld();
     if (world) {
       ensureGameplayInputFlushOnBlur(world);
       world.inputManager.addInputHandler(this._inputHandler);
     }
+    return true;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getWorld()?.inputManager.removeInputHandler(this._inputHandler);
     const world = this.getWorld();
     if (world) {
       PauseMenuUI.close(world);
     }
-    super.doEndPlay();
+    return true;
   }
 
   public static ensureExists(world: ENGINE.World): PauseManagerActor {

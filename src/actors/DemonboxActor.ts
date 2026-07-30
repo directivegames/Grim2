@@ -275,8 +275,10 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── doBeginPlay ──────────────────────────────────────────────────────────
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     const visual = this.getComponent(ENGINE.GLTFMeshComponent);
     if (visual) {
@@ -301,6 +303,7 @@ export class DemonboxActor extends ENGINE.Actor {
     }
 
     zombieSpatialManager.registerZombie(this);
+    return true;
   }
 
   // ── tick ─────────────────────────────────────────────────────────────────
@@ -619,7 +622,7 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── handleDeath (killed by player before explosion) ───────────────────────
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -762,11 +765,14 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── Cleanup ───────────────────────────────────────────────────────────────
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._setRedFlash(false);
     this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
     zombieSpatialManager.unregisterZombie(this);
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

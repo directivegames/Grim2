@@ -25,7 +25,10 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     super();
   }
 
-  protected override doBeginPlay(): void {
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'backgroundMusic';
     soundResource.audioPath = '@project/assets/sounds/NeonChapel.mp3';
@@ -41,6 +44,7 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     });
 
     this.addComponent(this.soundComponent);
+    return true;
   }
 
   /** Start playback (safe to call repeatedly). */
@@ -148,9 +152,13 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     return this._isMuted;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (this.soundComponent) {
       this.soundComponent.stopAll();
     }
+    return true;
   }
 }

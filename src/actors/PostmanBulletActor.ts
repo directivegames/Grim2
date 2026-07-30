@@ -59,19 +59,21 @@ export class PostmanBulletActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     if (!this._runtimeSpawned) {
       PostmanBulletActor._captureEditorTemplateScale(this);
       this.setHiddenInGame(true);
-      return;
+      return true;
     }
 
     this._ensureVisible();
 
     const visual = this._visual;
-    if (!visual || visual.isModelLoaded()) return;
+    if (!visual || visual.isModelLoaded()) return true;
 
     void visual.waitForLoad().then(() => {
       if (this._teardownScheduled || !this.getWorld()) return;
@@ -81,6 +83,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
       console.warn('PostmanBulletActor: failed to load demonletter.glb');
       this._retire();
     });
+    return true;
   }
 
   /** Copy root world scale from the scene-placed PostmanBulletActor (editor: 2,2,2). */

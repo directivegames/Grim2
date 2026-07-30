@@ -112,17 +112,23 @@ export class SpawnBlockerActor extends ENGINE.Actor {
     super.tickPrePhysics(deltaTime);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     this._syncVisualMaterial();
     if (!this._isEditorWorld()) {
       registerSpawnBlocker(this);
     }
+    return true;
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     unregisterSpawnBlocker(this);
-    super.doEndPlay();
+    return true;
   }
 
   /** Point-in-OBB test (respects actor position, rotation, and scale). */

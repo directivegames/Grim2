@@ -108,12 +108,16 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
     this._light.color = this._scratchColor;
   }
 
-  public override endPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (this._light) {
       this._light.intensity = this._baseIntensity;
       this._light.color = this._baseColor;
     }
     super.endPlay();
+    return true;
   }
 
   private _bindLight(): void {

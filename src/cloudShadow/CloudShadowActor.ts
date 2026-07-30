@@ -15,7 +15,7 @@ export class CloudShadowActor extends ENGINE.Actor {
   public override initialize(options?: CloudShadowActorOptions): void {
     super.initialize(options);
     const component = CloudShadowComponent.create(options);
-    this.setRootComponent(component, true);
+    this.add(component);
   }
 
   public getCloudShadowComponent(): CloudShadowComponent | null {

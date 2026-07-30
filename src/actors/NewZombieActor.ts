@@ -418,8 +418,10 @@ export class NewZombieActor extends ENGINE.Actor {
     this._npcComponent = npc as unknown as typeof this._npcComponent;
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     // Ensure shadows are disabled (overrides scene file castShadow=true for placed zombies)
     const visual = this.getComponent(ENGINE.GLTFMeshComponent);
@@ -489,6 +491,7 @@ export class NewZombieActor extends ENGINE.Actor {
     this.behaviorRoot?.initialize(this.blackboard);
 
     zombieSpatialManager.registerZombie(this);
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -837,7 +840,7 @@ export class NewZombieActor extends ENGINE.Actor {
 
   // ─── Death ─────────────────────────────────────────────────────────────────
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -1692,7 +1695,10 @@ export class NewZombieActor extends ENGINE.Actor {
 
   // ─── Cleanup ───────────────────────────────────────────────────────────────
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
 
     zombieSpatialManager.unregisterZombie(this);
@@ -1704,7 +1710,7 @@ export class NewZombieActor extends ENGINE.Actor {
     }
     this.blackboard?.clear();
     this.blackboard = null;
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

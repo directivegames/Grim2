@@ -107,9 +107,13 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
     this._setIntensities(this._redBase * redEnv, this._blueBase * blueEnv);
   }
 
-  public override endPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._setIntensities(0, 0);
     super.endPlay();
+    return true;
   }
 
   private _bindLights(): void {

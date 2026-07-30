@@ -260,7 +260,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
    * Engine Actor.handleDeath() destroys the actor. Grim stays in the scene at 0 HP;
    * mission fail is driven by _onHealthChanged → missionState.onGrimDied().
    */
-  public override handleDeath(_hitInfo?: ENGINE.DamageHitInfo): void {
+  public handleDeath(_hitInfo?: ENGINE.DamageHitInfo): void {
     /* no-op */
   }
 
@@ -613,8 +613,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     hookPlayerDamageMitigation(stats);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
 
     this._captureMissionSpawnFromPlayerStart();
     if (!this._missionSpawnPosition) {
@@ -640,6 +642,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       // Initialize KO sign UI
       void this._initKOSignUI();
     }
+    return true;
   }
 
   private async _initHealthBarUI(stats: ENGINE.CharacterStatsComponent): Promise<void> {
@@ -1339,7 +1342,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     stats.heal(hpToHeal);
   }
 
-  protected override doEndPlay(): void {
+  public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     // Ensure slomo is restored if the pawn is destroyed mid-cinematic
     const world = this.getWorld();
     if (world) {
@@ -1368,6 +1374,6 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     // Clean up KO sign UI
     this._koSignUI?.destroy();
     this._koSignUI = null;
-    super.doEndPlay();
+    return true;
   }
 }
