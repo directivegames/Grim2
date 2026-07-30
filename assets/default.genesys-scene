@@ -8521,6 +8521,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 55430,
                     "physicsOptions": {
                       "enabled": false
@@ -8546,10 +8547,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 14455,
                     "uuid": "72984bbb-16c9-4e21-8489-1d48b659f0ba"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 48962,
                 "position": {
                   "$bc": "v3",
@@ -8593,6 +8596,7 @@
                   "transparent": true,
                   "uuid": "a7327e68-5096-48d2-bff6-578ab1abc8d0"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 61751,
                 "physicsOptions": {
                   "enabled": false
@@ -8620,6 +8624,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 24293,
                 "speed": 3.5,
                 "uuid": "bcf92349-bbe6-42e6-8e16-a68554da2482"
@@ -8641,6 +8646,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 8987,
                 "uuid": "1fe01309-153d-4310-a4fe-b9d922dc62eb"
               },
@@ -8708,6 +8714,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 13118,
                     "physicsOptions": {
                       "enabled": false
@@ -8733,10 +8740,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 24289,
                     "uuid": "64721340-4569-467d-8883-d161ee6cfbac"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 35576,
                 "position": {
                   "$bc": "v3",
@@ -8780,6 +8789,7 @@
                   "transparent": true,
                   "uuid": "70fddd40-7bef-4889-9981-4f4cd83a663d"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 29208,
                 "physicsOptions": {
                   "enabled": false
@@ -8807,6 +8817,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 31582,
                 "speed": 3.5,
                 "uuid": "45c8ad98-0aff-4f92-aee0-29136d103138"
@@ -8828,6 +8839,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 16006,
                 "uuid": "512a496c-ae7e-42cb-91d0-48863e93985d"
               },
@@ -8895,6 +8907,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 17739,
                     "physicsOptions": {
                       "enabled": false
@@ -9087,6 +9100,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 15467,
                     "physicsOptions": {
                       "enabled": false
@@ -9112,10 +9126,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 23324,
                     "uuid": "97f57b40-454a-4746-9712-d799b9bef95b"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 56627,
                 "position": {
                   "$bc": "v3",
@@ -9159,6 +9175,7 @@
                   "transparent": true,
                   "uuid": "9b91370d-e49e-4a9e-8048-798e1f393b40"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 13182,
                 "physicsOptions": {
                   "enabled": false
@@ -9186,6 +9203,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 16249,
                 "speed": 3.5,
                 "uuid": "7b287f26-5209-4323-adac-e5f566e7a446"
@@ -9207,6 +9225,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 38909,
                 "uuid": "389ad62c-49c4-4818-8506-1defd156256d"
               },
@@ -9274,6 +9293,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 47605,
                     "physicsOptions": {
                       "enabled": false
@@ -9466,6 +9486,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 31583,
                     "physicsOptions": {
                       "enabled": false
@@ -9491,10 +9512,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 10243,
                     "uuid": "0991f5fe-572a-42e5-865a-ef036179586d"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 47816,
                 "position": {
                   "$bc": "v3",
@@ -9538,6 +9561,7 @@
                   "transparent": true,
                   "uuid": "06197bd5-72c2-407f-90c8-638036009ddc"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 1669,
                 "physicsOptions": {
                   "enabled": false
@@ -9565,6 +9589,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 36257,
                 "speed": 3.5,
                 "uuid": "f861a4e7-82d6-43b2-9409-c6bc2d523805"
@@ -9586,6 +9611,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 13846,
                 "uuid": "db93d75a-2ab9-4a2b-9a4a-54e394961106"
               },
@@ -9653,6 +9679,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 32985,
                     "physicsOptions": {
                       "enabled": false
@@ -9678,10 +9705,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 56080,
                     "uuid": "a1feef07-9942-4c6e-a14e-f2d7199b26dc"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 6218,
                 "position": {
                   "$bc": "v3",
@@ -9725,6 +9754,7 @@
                   "transparent": true,
                   "uuid": "c5e8fbc8-bc5a-4b8c-9fd1-d312f4f139ae"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 15543,
                 "physicsOptions": {
                   "enabled": false
@@ -9752,6 +9782,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 22975,
                 "speed": 3.5,
                 "uuid": "c65f243c-205c-4200-bf52-8f84bdc18ca6"
@@ -9773,6 +9804,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 21662,
                 "uuid": "f125d6ea-f8ff-4348-81bf-d9acf94063e7"
               },
@@ -9840,6 +9872,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 17871,
                     "physicsOptions": {
                       "enabled": false
@@ -10032,6 +10065,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 9158,
                     "physicsOptions": {
                       "enabled": false
@@ -10057,10 +10091,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 35907,
                     "uuid": "a170ff0c-a909-4da3-baac-bf4ea5f7b476"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 9595,
                 "position": {
                   "$bc": "v3",
@@ -10104,6 +10140,7 @@
                   "transparent": true,
                   "uuid": "07db3e01-a34a-4a0d-817e-00ad63fe84e5"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 47754,
                 "physicsOptions": {
                   "enabled": false
@@ -10131,6 +10168,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 32660,
                 "speed": 3.5,
                 "uuid": "2bd9bce4-b07f-4c27-b317-b01cd263710f"
@@ -10152,6 +10190,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 27155,
                 "uuid": "caaf330f-7e64-4ebe-adc6-d65542bfab32"
               },
@@ -10219,6 +10258,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 30450,
                     "physicsOptions": {
                       "enabled": false
@@ -10244,10 +10284,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 52975,
                     "uuid": "26dc40ed-930e-45e3-8d5f-04cf0f90ad51"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 64678,
                 "position": {
                   "$bc": "v3",
@@ -10291,6 +10333,7 @@
                   "transparent": true,
                   "uuid": "b68f00b6-8ee7-4115-ae20-e016656eeecd"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 65438,
                 "physicsOptions": {
                   "enabled": false
@@ -10318,6 +10361,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 44772,
                 "speed": 3.5,
                 "uuid": "37bf223d-8929-40e3-8eeb-251dc67a4521"
@@ -10339,6 +10383,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 12337,
                 "uuid": "3110c42c-3c6e-4d25-bd54-acd9a97e1c1b"
               },
@@ -10406,6 +10451,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 56303,
                     "physicsOptions": {
                       "enabled": false
@@ -10431,10 +10477,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 46043,
                     "uuid": "8756a8f5-e657-4a87-9aa5-70d4832f3a0e"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 23196,
                 "position": {
                   "$bc": "v3",
@@ -10478,6 +10526,7 @@
                   "transparent": true,
                   "uuid": "2a0c24c4-e2ba-4124-8d89-a4ef8514e307"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 22816,
                 "physicsOptions": {
                   "enabled": false
@@ -10505,6 +10554,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 33037,
                 "speed": 3.5,
                 "uuid": "fcbdfee1-f9c8-4972-a636-ee076198cc63"
@@ -10526,6 +10576,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 43991,
                 "uuid": "62d6292a-ad88-4621-ba8b-12d33b705b52"
               },
@@ -10593,6 +10644,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 40404,
                     "physicsOptions": {
                       "enabled": false
@@ -10618,10 +10670,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 25166,
                     "uuid": "513b3798-6f61-40dc-b4a1-85316e40da96"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 57556,
                 "position": {
                   "$bc": "v3",
@@ -10665,6 +10719,7 @@
                   "transparent": true,
                   "uuid": "01b62af8-b4df-4956-a373-0a300339ba57"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 44881,
                 "physicsOptions": {
                   "enabled": false
@@ -10692,6 +10747,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 11258,
                 "speed": 3.5,
                 "uuid": "e2a2e4b8-8723-4c6b-9f57-fb02b0c8c3f4"
@@ -10713,6 +10769,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 42791,
                 "uuid": "57c9cf3d-248d-49b9-8f9f-d2638012c3e9"
               },
@@ -10780,6 +10837,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 47014,
                     "physicsOptions": {
                       "enabled": false
@@ -10805,10 +10863,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 59131,
                     "uuid": "dce6de83-f785-4974-8ce4-cc989d400973"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 20860,
                 "position": {
                   "$bc": "v3",
@@ -10852,6 +10912,7 @@
                   "transparent": true,
                   "uuid": "51bf1da1-4e45-41c1-ac5e-204a45b86f6d"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 19596,
                 "physicsOptions": {
                   "enabled": false
@@ -10879,6 +10940,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 46077,
                 "speed": 3.5,
                 "uuid": "0057dca9-cd02-46be-add3-46cee3ace581"
@@ -10900,6 +10962,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 28489,
                 "uuid": "3b48c199-816b-435b-a112-da20210daafe"
               },
@@ -10967,6 +11030,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 58595,
                     "physicsOptions": {
                       "enabled": false
@@ -10992,10 +11056,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 9480,
                     "uuid": "01398d8f-4029-471b-a002-067cdaab2b6a"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 1633,
                 "position": {
                   "$bc": "v3",
@@ -11039,6 +11105,7 @@
                   "transparent": true,
                   "uuid": "e9bfcfbd-9b32-4232-8a47-72db22a5ec17"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 25081,
                 "physicsOptions": {
                   "enabled": false
@@ -11066,6 +11133,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 4103,
                 "speed": 3.5,
                 "uuid": "3bcff5d6-2098-48ca-984f-1be90de06129"
@@ -11087,6 +11155,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 37020,
                 "uuid": "7ed1a883-5fdc-4b29-9c8a-e9f75d50f79e"
               },
@@ -11154,6 +11223,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 27376,
                     "physicsOptions": {
                       "enabled": false
@@ -11346,6 +11416,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 62485,
                     "physicsOptions": {
                       "enabled": false
@@ -11538,6 +11609,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 14335,
                     "physicsOptions": {
                       "enabled": false
@@ -14723,6 +14795,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 9552,
                     "physicsOptions": {
                       "enabled": false
@@ -14748,10 +14821,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 58208,
                     "uuid": "d75ce67a-c881-4e6b-8b6f-853e19390242"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 35849,
                 "position": {
                   "$bc": "v3",
@@ -14795,6 +14870,7 @@
                   "transparent": true,
                   "uuid": "48a9b60e-2c60-4308-a72c-c7d5ab0fd9b3"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 48550,
                 "physicsOptions": {
                   "enabled": false
@@ -14822,6 +14898,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 40025,
                 "speed": 3.5,
                 "uuid": "4f93b3cc-b6eb-4b4c-9ef7-144f842c555e"
@@ -14843,6 +14920,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 61017,
                 "uuid": "646ec15c-91e2-4285-b3da-04afc71f47e7"
               },
@@ -14910,6 +14988,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 64117,
                     "physicsOptions": {
                       "enabled": false
@@ -14935,10 +15014,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 58327,
                     "uuid": "4f27d921-15bb-40f0-bd88-5b6ed1117274"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 8542,
                 "position": {
                   "$bc": "v3",
@@ -14982,6 +15063,7 @@
                   "transparent": true,
                   "uuid": "7e18d7be-00a2-4ad2-91fe-112c48f111fd"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 26476,
                 "physicsOptions": {
                   "enabled": false
@@ -15009,6 +15091,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 2258,
                 "speed": 3.5,
                 "uuid": "d5f01a20-7532-4a4d-aa8e-2b81b05fd05a"
@@ -15030,6 +15113,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 48282,
                 "uuid": "e66336cc-e780-4cfd-813c-1cf001a11c72"
               },
@@ -15097,6 +15181,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 6012,
                     "physicsOptions": {
                       "enabled": false
@@ -15122,10 +15207,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 39967,
                     "uuid": "d9390e33-4318-49b8-bd86-200672687708"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 904,
                 "position": {
                   "$bc": "v3",
@@ -15169,6 +15256,7 @@
                   "transparent": true,
                   "uuid": "25bf7c12-8c0e-4db2-b21b-cb8528af9a2d"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 5971,
                 "physicsOptions": {
                   "enabled": false
@@ -15196,6 +15284,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 26942,
                 "speed": 3.5,
                 "uuid": "97eb7a7f-e4f9-4f32-98d5-6c9fbccc95cd"
@@ -15217,6 +15306,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 32305,
                 "uuid": "2e16d87a-b0d5-4fe1-bdd6-698e90b1b4c5"
               },
@@ -15284,6 +15374,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 42160,
                     "physicsOptions": {
                       "enabled": false
@@ -15476,6 +15567,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 19008,
                     "physicsOptions": {
                       "enabled": false
@@ -15501,10 +15593,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 4244,
                     "uuid": "b8bc507c-5bc1-4a10-bb23-b176c7458b5a"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 4768,
                 "position": {
                   "$bc": "v3",
@@ -15548,6 +15642,7 @@
                   "transparent": true,
                   "uuid": "e35cf95f-0a29-4677-81f9-ecb6e304c02c"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 55516,
                 "physicsOptions": {
                   "enabled": false
@@ -15575,6 +15670,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 53063,
                 "speed": 3.5,
                 "uuid": "c118b7cd-87d2-4930-8ad4-765d44f3f2d2"
@@ -15596,6 +15692,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 30413,
                 "uuid": "26aab540-e589-457c-9d3a-5acf9583a4dd"
               },
@@ -15663,6 +15760,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 25287,
                     "physicsOptions": {
                       "enabled": false
@@ -15688,10 +15786,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 61551,
                     "uuid": "69abb8b9-fb4c-4f2d-91ac-3947eb9f070f"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 54921,
                 "position": {
                   "$bc": "v3",
@@ -15735,6 +15835,7 @@
                   "transparent": true,
                   "uuid": "f4a5a01f-0b47-43f6-9e3b-c8eaca82bb59"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 37005,
                 "physicsOptions": {
                   "enabled": false
@@ -15762,6 +15863,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 460,
                 "speed": 3.5,
                 "uuid": "7fecca7e-d4ff-4043-a0b8-1a14bec41430"
@@ -15783,6 +15885,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 21896,
                 "uuid": "b07e1e34-14f6-46e6-b1ed-4f07b43fb242"
               },
@@ -15850,6 +15953,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 3316,
                     "physicsOptions": {
                       "enabled": false
@@ -15875,10 +15979,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 57360,
                     "uuid": "48cbc2f6-4bc9-4e48-8d6b-4a79bd4cfe8e"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 5563,
                 "position": {
                   "$bc": "v3",
@@ -15922,6 +16028,7 @@
                   "transparent": true,
                   "uuid": "bda29a3b-50ec-4b64-9052-d6b60ecdfdda"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 21407,
                 "physicsOptions": {
                   "enabled": false
@@ -15949,6 +16056,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 59976,
                 "speed": 3.5,
                 "uuid": "ae76eb1f-a3b8-4d61-8782-fedd0c386b81"
@@ -15970,6 +16078,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 63624,
                 "uuid": "117f551e-477a-4340-82ff-b0a2f82b685d"
               },
@@ -16037,6 +16146,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 54086,
                     "physicsOptions": {
                       "enabled": false
@@ -16062,10 +16172,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 43118,
                     "uuid": "b8533e13-466e-46f8-ad00-45609d5a1adb"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 33424,
                 "position": {
                   "$bc": "v3",
@@ -16109,6 +16221,7 @@
                   "transparent": true,
                   "uuid": "f0b56267-9d9a-43d1-9c0f-215c0d881783"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 8481,
                 "physicsOptions": {
                   "enabled": false
@@ -16136,6 +16249,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 18432,
                 "speed": 3.5,
                 "uuid": "e3b219b3-241e-4abc-b8ad-92071e3b5bba"
@@ -16157,6 +16271,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 13864,
                 "uuid": "f6d32ab8-448f-49cc-82e7-db0addb69855"
               },
@@ -16224,6 +16339,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 55837,
                     "physicsOptions": {
                       "enabled": false
@@ -16249,10 +16365,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 5701,
                     "uuid": "2b8d66a5-5f46-4b3c-8ad0-b73013459a66"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 30466,
                 "position": {
                   "$bc": "v3",
@@ -16296,6 +16414,7 @@
                   "transparent": true,
                   "uuid": "f9413321-03b2-422f-8ddd-2845c01053a7"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 37757,
                 "physicsOptions": {
                   "enabled": false
@@ -16323,6 +16442,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 544,
                 "speed": 3.5,
                 "uuid": "c97bffc6-397d-4283-854b-6132c1f291e9"
@@ -16344,6 +16464,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 33636,
                 "uuid": "7ded4ef6-b427-40e1-9fdf-973ba84c367e"
               },
@@ -16411,6 +16532,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 35694,
                     "physicsOptions": {
                       "enabled": false
@@ -16436,10 +16558,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 8995,
                     "uuid": "4779d38c-71c1-46ab-b959-473b09031f05"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 19952,
                 "position": {
                   "$bc": "v3",
@@ -16483,6 +16607,7 @@
                   "transparent": true,
                   "uuid": "dbb98e5b-62e2-45d2-82e8-955acc10f5b0"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 59288,
                 "physicsOptions": {
                   "enabled": false
@@ -16510,6 +16635,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 50747,
                 "speed": 3.5,
                 "uuid": "b25beb1f-53a8-4961-9fc9-ebf137893d14"
@@ -16531,6 +16657,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 63560,
                 "uuid": "606b3cba-7010-4bd9-8acb-ebc8ff7b90ef"
               },
@@ -16984,6 +17111,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 10358,
                     "physicsOptions": {
                       "enabled": false
@@ -17009,10 +17137,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 17080,
                     "uuid": "595d619b-2862-48cb-82cf-06e66cd400d3"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 41264,
                 "position": {
                   "$bc": "v3",
@@ -17056,6 +17186,7 @@
                   "transparent": true,
                   "uuid": "d23c69ac-4694-41e9-bede-93fdfef46b93"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 706,
                 "physicsOptions": {
                   "enabled": false
@@ -17083,6 +17214,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 60858,
                 "speed": 3.5,
                 "uuid": "81379def-c800-4634-b964-adbf269126f7"
@@ -17104,6 +17236,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 30561,
                 "uuid": "0ffd8cbf-b261-4a6f-b8e1-97d3fdc2b2e7"
               },
@@ -17171,6 +17304,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 57280,
                     "physicsOptions": {
                       "enabled": false
@@ -17196,10 +17330,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 14929,
                     "uuid": "e5be6c07-2e46-4013-a5b6-4abe8c9bc671"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 62575,
                 "position": {
                   "$bc": "v3",
@@ -17243,6 +17379,7 @@
                   "transparent": true,
                   "uuid": "2acfaf0a-38ad-4d17-968c-c9715abec748"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 51630,
                 "physicsOptions": {
                   "enabled": false
@@ -17270,6 +17407,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 24393,
                 "speed": 3.5,
                 "uuid": "b640a529-81f8-481c-a817-a5264a26a373"
@@ -17291,6 +17429,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 54346,
                 "uuid": "1b2ffd9e-d992-4c98-8c77-d041da25ebd7"
               },
@@ -17875,6 +18014,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 60099,
                     "physicsOptions": {
                       "enabled": false
@@ -18067,6 +18207,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 4337,
                     "physicsOptions": {
                       "enabled": false
@@ -18259,6 +18400,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 27639,
                     "physicsOptions": {
                       "enabled": false
@@ -18451,6 +18593,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 53101,
                     "physicsOptions": {
                       "enabled": false
@@ -18476,10 +18619,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 48959,
                     "uuid": "9d9e1227-a73c-4123-a097-f148409cd486"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 11560,
                 "position": {
                   "$bc": "v3",
@@ -18523,6 +18668,7 @@
                   "transparent": true,
                   "uuid": "7a75d44f-2a27-4a02-ac4b-16da43ff6f79"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 23724,
                 "physicsOptions": {
                   "enabled": false
@@ -18550,6 +18696,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 9139,
                 "speed": 3.5,
                 "uuid": "fe04a784-3a60-4a3f-b47c-68d5d7af40a2"
@@ -18571,6 +18718,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 41016,
                 "uuid": "2ab30462-b7b5-4e9b-9c4d-4f087907b49f"
               },
@@ -18638,6 +18786,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 23633,
                     "physicsOptions": {
                       "enabled": false
@@ -18663,10 +18812,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 32292,
                     "uuid": "ae9bb6cf-02a9-4c53-9340-faad9a951c29"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 12656,
                 "position": {
                   "$bc": "v3",
@@ -18710,6 +18861,7 @@
                   "transparent": true,
                   "uuid": "4071cac6-2016-4c58-8a82-6b9cf039467c"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 41377,
                 "physicsOptions": {
                   "enabled": false
@@ -18737,6 +18889,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 32845,
                 "speed": 3.5,
                 "uuid": "57118949-0264-45b0-8800-54df08bc8d69"
@@ -18758,6 +18911,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 41648,
                 "uuid": "29b8e29f-2808-4160-bc58-0a3f4452ab3b"
               },
@@ -18825,6 +18979,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 46680,
                     "physicsOptions": {
                       "enabled": false
@@ -19017,6 +19172,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 50175,
                     "physicsOptions": {
                       "enabled": false
@@ -19042,10 +19198,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 24734,
                     "uuid": "f915da0b-191c-4d40-9406-5a82d1c9e358"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 3293,
                 "position": {
                   "$bc": "v3",
@@ -19089,6 +19247,7 @@
                   "transparent": true,
                   "uuid": "445853a4-44bf-4bb0-93e9-c88143e2a7af"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 59606,
                 "physicsOptions": {
                   "enabled": false
@@ -19116,6 +19275,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 54795,
                 "speed": 3.5,
                 "uuid": "a1e7b006-ed1f-4acb-b10f-6c0159647403"
@@ -19137,6 +19297,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 12514,
                 "uuid": "9c6bc434-63c1-4a27-8eba-83fa400706b6"
               },
@@ -19204,6 +19365,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 60446,
                     "physicsOptions": {
                       "enabled": false
@@ -19229,10 +19391,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 15776,
                     "uuid": "c0e1af37-1412-4420-8f6e-c6008298dca1"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 19296,
                 "position": {
                   "$bc": "v3",
@@ -19276,6 +19440,7 @@
                   "transparent": true,
                   "uuid": "c306cee9-2270-4653-86d8-9c853fed8892"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 61076,
                 "physicsOptions": {
                   "enabled": false
@@ -19303,6 +19468,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 64139,
                 "speed": 3.5,
                 "uuid": "f3f24a2d-ca83-4a09-9447-d005e6292f01"
@@ -19324,6 +19490,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 30727,
                 "uuid": "ae4079a3-c567-4085-a8d1-86f6b502670b"
               },
@@ -19391,6 +19558,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 64874,
                     "physicsOptions": {
                       "enabled": false
@@ -19416,10 +19584,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 55185,
                     "uuid": "c196c3d6-258b-46b0-bfac-fb585ce1079e"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 41336,
                 "position": {
                   "$bc": "v3",
@@ -19463,6 +19633,7 @@
                   "transparent": true,
                   "uuid": "e8da54bd-6a87-4f66-a099-e007f2191f92"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 9453,
                 "physicsOptions": {
                   "enabled": false
@@ -19490,6 +19661,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 28679,
                 "speed": 3.5,
                 "uuid": "ecd5a3c9-a4d2-430f-a505-fb78ccbb5995"
@@ -19511,6 +19683,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 25561,
                 "uuid": "97a29269-f705-43d9-932e-61772015a12f"
               },
@@ -19578,6 +19751,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 59423,
                     "physicsOptions": {
                       "enabled": false
@@ -19603,10 +19777,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 57280,
                     "uuid": "0d0e69e0-6bca-43f0-992c-e7421690f7c6"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 8512,
                 "position": {
                   "$bc": "v3",
@@ -19650,6 +19826,7 @@
                   "transparent": true,
                   "uuid": "8525e5e9-473b-4b6f-b82b-f6d1d6801cd7"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 29745,
                 "physicsOptions": {
                   "enabled": false
@@ -19677,6 +19854,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 33181,
                 "speed": 3.5,
                 "uuid": "a542fe00-5f73-456e-9241-74e76f1cddb0"
@@ -19698,6 +19876,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 10277,
                 "uuid": "ae631e32-e509-43f2-b211-8f669a6243c6"
               },
@@ -19765,6 +19944,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 15807,
                     "physicsOptions": {
                       "enabled": false
@@ -19790,10 +19970,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 41571,
                     "uuid": "b9684dda-c544-4bbb-ae14-7f77ab123956"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 13607,
                 "position": {
                   "$bc": "v3",
@@ -19837,6 +20019,7 @@
                   "transparent": true,
                   "uuid": "2b7d8658-098c-4cb8-aebd-07f8794e1302"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 52887,
                 "physicsOptions": {
                   "enabled": false
@@ -19864,6 +20047,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 11763,
                 "speed": 3.5,
                 "uuid": "661d1f4b-50e6-4235-bf83-8fcaae55857c"
@@ -19885,6 +20069,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 20148,
                 "uuid": "fc5726b1-0cba-4a2a-9c6a-f586b8deb9fa"
               },
@@ -19952,6 +20137,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 15370,
                     "physicsOptions": {
                       "enabled": false
@@ -19977,10 +20163,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 49588,
                     "uuid": "120733b4-b8df-46c9-8cc1-48dfa073eb05"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 28509,
                 "position": {
                   "$bc": "v3",
@@ -20024,6 +20212,7 @@
                   "transparent": true,
                   "uuid": "2babc082-e5e2-48f0-9ec0-a4609f8e62a0"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 18723,
                 "physicsOptions": {
                   "enabled": false
@@ -20051,6 +20240,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 14666,
                 "speed": 3.5,
                 "uuid": "040f3e76-2184-44d6-b2df-cb05fb25452d"
@@ -20072,6 +20262,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 1751,
                 "uuid": "cf3e5e8e-b579-40aa-8a13-d1a154f363c8"
               },
@@ -20139,6 +20330,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 3187,
                     "physicsOptions": {
                       "enabled": false
@@ -20164,10 +20356,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 6645,
                     "uuid": "aecca356-1cfd-45a3-b81f-99f8cb6d8f7a"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 14926,
                 "position": {
                   "$bc": "v3",
@@ -20211,6 +20405,7 @@
                   "transparent": true,
                   "uuid": "3ecb53fa-21e8-4fff-a200-46b4555c0361"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 37611,
                 "physicsOptions": {
                   "enabled": false
@@ -20238,6 +20433,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 16024,
                 "speed": 3.5,
                 "uuid": "d510a880-e6f3-4f32-83c6-dfefd38983d3"
@@ -20259,6 +20455,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 6932,
                 "uuid": "550ca50e-0430-4d55-ac1e-7e5d13f0a9fa"
               },
@@ -20326,6 +20523,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 14077,
                     "physicsOptions": {
                       "enabled": false
@@ -20351,10 +20549,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 12462,
                     "uuid": "f5110be2-e41e-4411-8c0a-c7cc41e8829c"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 53000,
                 "position": {
                   "$bc": "v3",
@@ -20398,6 +20598,7 @@
                   "transparent": true,
                   "uuid": "a7616365-6fc2-4c30-ba6c-5c20f4d24643"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 37278,
                 "physicsOptions": {
                   "enabled": false
@@ -20425,6 +20626,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 63212,
                 "speed": 3.5,
                 "uuid": "cdc91187-f779-4402-8862-6b7a5656bb5d"
@@ -20446,6 +20648,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 10429,
                 "uuid": "5afc0134-4535-4ffa-9f6c-f398ddaf39ad"
               },
@@ -20706,6 +20909,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 3768,
                     "physicsOptions": {
                       "enabled": false
@@ -20731,10 +20935,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 43003,
                     "uuid": "8ca7412b-fc63-4c31-ad57-9bbfb51cde2f"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 21507,
                 "position": {
                   "$bc": "v3",
@@ -20778,6 +20984,7 @@
                   "transparent": true,
                   "uuid": "1cea3b36-e140-4ebd-ad02-c16db681ae19"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 55636,
                 "physicsOptions": {
                   "enabled": false
@@ -20805,6 +21012,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 18733,
                 "speed": 3.5,
                 "uuid": "d62e88dd-24f5-4a91-bef3-08f2024a825b"
@@ -20826,6 +21034,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 33779,
                 "uuid": "115cbc21-c105-48a5-8e02-bbec69d3bd97"
               },
@@ -20893,6 +21102,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 23782,
                     "physicsOptions": {
                       "enabled": false
@@ -20918,10 +21128,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 19875,
                     "uuid": "d66d0729-8396-4486-af94-dcd54b780f5d"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 24840,
                 "position": {
                   "$bc": "v3",
@@ -20965,6 +21177,7 @@
                   "transparent": true,
                   "uuid": "7843b60a-10a1-4292-8fe9-57fff010b2f5"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 43139,
                 "physicsOptions": {
                   "enabled": false
@@ -20992,6 +21205,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 27070,
                 "speed": 3.5,
                 "uuid": "78b784f1-fe97-4ff9-923c-32b069e0af02"
@@ -21013,6 +21227,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 7401,
                 "uuid": "f93f7c4f-20d6-489b-a2a5-3639c9ebf8b0"
               },
@@ -21080,6 +21295,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 30052,
                     "physicsOptions": {
                       "enabled": false
@@ -21105,10 +21321,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 39234,
                     "uuid": "64db295e-7c4a-4fc5-9dd0-12d8bc560a71"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 30272,
                 "position": {
                   "$bc": "v3",
@@ -21152,6 +21370,7 @@
                   "transparent": true,
                   "uuid": "ef54af03-3a76-42b5-96d2-84f524c6fe0a"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 44827,
                 "physicsOptions": {
                   "enabled": false
@@ -21179,6 +21398,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 13881,
                 "speed": 3.5,
                 "uuid": "7c4d6a56-17b8-4721-95ca-8ce43410b9ed"
@@ -21200,6 +21420,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 64739,
                 "uuid": "355c0322-bb9f-4f9a-a9b6-4e77f61713d9"
               },
@@ -21267,6 +21488,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 1894,
                     "physicsOptions": {
                       "enabled": false
@@ -21292,10 +21514,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 29844,
                     "uuid": "ca665e99-9d38-462d-8793-4d789a59717d"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 56533,
                 "position": {
                   "$bc": "v3",
@@ -21339,6 +21563,7 @@
                   "transparent": true,
                   "uuid": "6300f469-af69-4d3c-8c81-304c89c22472"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 628,
                 "physicsOptions": {
                   "enabled": false
@@ -21366,6 +21591,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 54542,
                 "speed": 3.5,
                 "uuid": "2f4af547-252d-41e4-8ce7-8622f3ea8fbb"
@@ -21387,6 +21613,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 3758,
                 "uuid": "5bb5c8ea-347e-4f41-b611-7efc159a31ba"
               },
@@ -21454,6 +21681,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 3080,
                     "physicsOptions": {
                       "enabled": false
@@ -21479,10 +21707,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 41404,
                     "uuid": "10a3ae4d-5209-4abd-9568-af495660251d"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 25126,
                 "position": {
                   "$bc": "v3",
@@ -21526,6 +21756,7 @@
                   "transparent": true,
                   "uuid": "8bc9879c-b4c7-4bc2-a215-0b74bf0ae251"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 47013,
                 "physicsOptions": {
                   "enabled": false
@@ -21553,6 +21784,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 61652,
                 "speed": 3.5,
                 "uuid": "bc154a89-79cd-4bb8-ace3-6605357796ad"
@@ -21574,6 +21806,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 38133,
                 "uuid": "db783316-00dd-4fe8-9a2a-0fe4e3d3034a"
               },
@@ -21641,6 +21874,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 64050,
                     "physicsOptions": {
                       "enabled": false
@@ -21666,10 +21900,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 21131,
                     "uuid": "9735b672-c041-4f3c-acdb-e5c49f6bdeb7"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 42943,
                 "position": {
                   "$bc": "v3",
@@ -21713,6 +21949,7 @@
                   "transparent": true,
                   "uuid": "17e67868-e378-4cb5-b2f7-bfe7bdecc612"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 20800,
                 "physicsOptions": {
                   "enabled": false
@@ -21740,6 +21977,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 60920,
                 "speed": 3.5,
                 "uuid": "59d0e212-683a-4454-bc7c-d3d9a938bfe8"
@@ -21761,6 +21999,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 48556,
                 "uuid": "06114683-5a17-4c03-a7ea-1134756ba6eb"
               },
@@ -21828,6 +22067,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 35995,
                     "physicsOptions": {
                       "enabled": false
@@ -21853,10 +22093,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 57416,
                     "uuid": "d4f38572-419d-4978-a040-f977aa689499"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 10318,
                 "position": {
                   "$bc": "v3",
@@ -21900,6 +22142,7 @@
                   "transparent": true,
                   "uuid": "82ef5952-ae81-4a02-a6a5-e4dc5c2491ed"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 44419,
                 "physicsOptions": {
                   "enabled": false
@@ -21927,6 +22170,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 23892,
                 "speed": 3.5,
                 "uuid": "37110c5f-1efb-4dd8-abce-f912213d68c9"
@@ -21948,6 +22192,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 63638,
                 "uuid": "cbd06cdc-24af-44c1-bb83-a546a3215537"
               },
@@ -22015,6 +22260,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 31723,
                     "physicsOptions": {
                       "enabled": false
@@ -22040,10 +22286,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 51956,
                     "uuid": "773a8052-1fca-47f4-a318-ec8fd8428c2f"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 6360,
                 "position": {
                   "$bc": "v3",
@@ -22087,6 +22335,7 @@
                   "transparent": true,
                   "uuid": "aa6d85e8-3b52-4b20-b68a-979de9e80a12"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 23600,
                 "physicsOptions": {
                   "enabled": false
@@ -22114,6 +22363,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 63173,
                 "speed": 3.5,
                 "uuid": "3a2f45be-ba83-4db9-bab4-353f55d11f5b"
@@ -22135,6 +22385,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 36577,
                 "uuid": "b639c3f7-2dea-4575-9756-b869f10988ed"
               },
@@ -22202,6 +22453,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 64481,
                     "physicsOptions": {
                       "enabled": false
@@ -22227,10 +22479,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 48459,
                     "uuid": "43bdce86-03ba-458e-b5d4-172b869d68c0"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 25133,
                 "position": {
                   "$bc": "v3",
@@ -22274,6 +22528,7 @@
                   "transparent": true,
                   "uuid": "6cb9f24f-76cb-40a0-a196-ad1e64c4b94d"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 28110,
                 "physicsOptions": {
                   "enabled": false
@@ -22301,6 +22556,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 28943,
                 "speed": 3.5,
                 "uuid": "a11811c4-21aa-4370-9056-7cc6aa03dfeb"
@@ -22322,6 +22578,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 40727,
                 "uuid": "46610789-d25f-4f83-abf7-b71c60482129"
               },
@@ -22389,6 +22646,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 43295,
                     "physicsOptions": {
                       "enabled": false
@@ -22581,6 +22839,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 5329,
                     "physicsOptions": {
                       "enabled": false
@@ -22606,10 +22865,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 29547,
                     "uuid": "aae78f42-eac8-48a8-a7f4-2c31333cb0b2"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 4370,
                 "position": {
                   "$bc": "v3",
@@ -22653,6 +22914,7 @@
                   "transparent": true,
                   "uuid": "8ee95870-8c7a-4d6b-b864-fc7657f9f37e"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 20804,
                 "physicsOptions": {
                   "enabled": false
@@ -22680,6 +22942,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 36619,
                 "speed": 3.5,
                 "uuid": "401e31c8-6856-42d0-a07e-70780e06fcb2"
@@ -22701,6 +22964,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 2389,
                 "uuid": "90b43c72-73c4-4769-8f2c-23bfd8b21be7"
               },
@@ -22768,6 +23032,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 29481,
                     "physicsOptions": {
                       "enabled": false
@@ -22793,10 +23058,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 11235,
                     "uuid": "a6593feb-194b-48ec-89d8-7c015bb70673"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 12514,
                 "position": {
                   "$bc": "v3",
@@ -22840,6 +23107,7 @@
                   "transparent": true,
                   "uuid": "da178a0d-bf36-42df-ad74-a438c0bdec79"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 45810,
                 "physicsOptions": {
                   "enabled": false
@@ -22867,6 +23135,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 20157,
                 "speed": 3.5,
                 "uuid": "6815fa85-9aef-498a-b354-eb1d8904ae4e"
@@ -22888,6 +23157,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 47403,
                 "uuid": "c954aecd-7210-4eb9-a0d9-7fe8acefce48"
               },
@@ -22955,6 +23225,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 3120,
                     "physicsOptions": {
                       "enabled": false
@@ -22980,10 +23251,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 19230,
                     "uuid": "377bdbc3-f6da-4671-be88-492db3010da7"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 29993,
                 "position": {
                   "$bc": "v3",
@@ -23027,6 +23300,7 @@
                   "transparent": true,
                   "uuid": "6d212622-cf3e-4972-997f-c7cdea1739ed"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 32260,
                 "physicsOptions": {
                   "enabled": false
@@ -23054,6 +23328,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 10288,
                 "speed": 3.5,
                 "uuid": "9b43666d-84ba-4407-b2c8-2d519ba73d9b"
@@ -23075,6 +23350,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 35481,
                 "uuid": "be92f8a8-72cd-4cc7-92c8-ff06e024f9f0"
               },
@@ -23142,6 +23418,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 62815,
                     "physicsOptions": {
                       "enabled": false
@@ -23167,10 +23444,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 14653,
                     "uuid": "fc8a829a-77e6-4cd0-9df4-1a0849109f02"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 51090,
                 "position": {
                   "$bc": "v3",
@@ -23214,6 +23493,7 @@
                   "transparent": true,
                   "uuid": "12847ed7-3897-490b-8258-cfd32d4c02da"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 10346,
                 "physicsOptions": {
                   "enabled": false
@@ -23241,6 +23521,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 1133,
                 "speed": 3.5,
                 "uuid": "7dad093d-7605-481c-9b58-3bc991c63bf6"
@@ -23262,6 +23543,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 43406,
                 "uuid": "b83a0ad0-96bf-41ae-b3e1-68d8d66b6d7e"
               },
@@ -23329,6 +23611,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 48285,
                     "physicsOptions": {
                       "enabled": false
@@ -23354,10 +23637,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 61359,
                     "uuid": "2f57699a-8fb6-4573-a909-ce2d12c5ab91"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 33003,
                 "position": {
                   "$bc": "v3",
@@ -23401,6 +23686,7 @@
                   "transparent": true,
                   "uuid": "d61b2d18-5df7-4eea-900e-ecc8ab6b9ca4"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 22885,
                 "physicsOptions": {
                   "enabled": false
@@ -23428,6 +23714,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 8667,
                 "speed": 3.5,
                 "uuid": "7546afef-9698-4584-a630-1209144091a0"
@@ -23449,6 +23736,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 14445,
                 "uuid": "0df66390-bb66-4271-8378-42c3bc71c02b"
               },
@@ -23516,6 +23804,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 52238,
                     "physicsOptions": {
                       "enabled": false
@@ -23541,10 +23830,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 20607,
                     "uuid": "03c66ff6-3305-4858-b3e7-d8fd59b124d3"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 5704,
                 "position": {
                   "$bc": "v3",
@@ -23588,6 +23879,7 @@
                   "transparent": true,
                   "uuid": "c06ed02c-aca3-4985-8c3b-227e4030be16"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 37291,
                 "physicsOptions": {
                   "enabled": false
@@ -23615,6 +23907,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 1061,
                 "speed": 3.5,
                 "uuid": "b477eb03-27f1-4d7e-a8df-29ee03dac271"
@@ -23636,6 +23929,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 55318,
                 "uuid": "aced206d-08ad-4493-bb03-9028cdb77c7b"
               },
@@ -23703,6 +23997,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 45367,
                     "physicsOptions": {
                       "enabled": false
@@ -23728,10 +24023,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 29843,
                     "uuid": "594430e2-0c9a-4eb9-99dc-ce03e2e7ee58"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 28284,
                 "position": {
                   "$bc": "v3",
@@ -23775,6 +24072,7 @@
                   "transparent": true,
                   "uuid": "fa36e840-9aeb-47f5-b862-c4881c9c2321"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 21276,
                 "physicsOptions": {
                   "enabled": false
@@ -23802,6 +24100,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 22594,
                 "speed": 3.5,
                 "uuid": "8f8c2291-bd33-47b8-9654-70b2d394481f"
@@ -23823,6 +24122,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 54455,
                 "uuid": "f4fb2033-b254-405c-aaae-c97bc361a73d"
               },
@@ -23890,6 +24190,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 19541,
                     "physicsOptions": {
                       "enabled": false
@@ -23915,10 +24216,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 16391,
                     "uuid": "ac2e518c-fd8b-426c-97ef-d28b4668e011"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 8787,
                 "position": {
                   "$bc": "v3",
@@ -23962,6 +24265,7 @@
                   "transparent": true,
                   "uuid": "ec9d6f5e-c624-4e8e-b521-712a1bc7c9f1"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 49128,
                 "physicsOptions": {
                   "enabled": false
@@ -23989,6 +24293,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 49551,
                 "speed": 3.5,
                 "uuid": "ca267195-0d81-491a-9365-566e60a15bc3"
@@ -24010,6 +24315,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 10859,
                 "uuid": "14d938c4-43f2-4e66-b50f-887d53f33471"
               },
@@ -24077,6 +24383,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 17223,
                     "physicsOptions": {
                       "enabled": false
@@ -24269,6 +24576,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 63291,
                     "physicsOptions": {
                       "enabled": false
@@ -24294,10 +24602,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 13683,
                     "uuid": "0a3c4711-b249-4172-8f5e-7c39b7d3eb6a"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 47239,
                 "position": {
                   "$bc": "v3",
@@ -24341,6 +24651,7 @@
                   "transparent": true,
                   "uuid": "fa12310e-f3f8-495a-842b-efec42ee30b5"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 21281,
                 "physicsOptions": {
                   "enabled": false
@@ -24368,6 +24679,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 22688,
                 "speed": 3.5,
                 "uuid": "ba3bdbe5-9bb0-4c53-961b-d91a5aebdf15"
@@ -24389,6 +24701,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 1332,
                 "uuid": "414de39b-78c3-45c2-a49a-159c1d41f44a"
               },
@@ -24456,6 +24769,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 22384,
                     "physicsOptions": {
                       "enabled": false
@@ -24648,6 +24962,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 30325,
                     "physicsOptions": {
                       "enabled": false
@@ -24673,10 +24988,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 34162,
                     "uuid": "15030146-40a1-4bcb-8991-6e09a4beb6e7"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 54075,
                 "position": {
                   "$bc": "v3",
@@ -24720,6 +25037,7 @@
                   "transparent": true,
                   "uuid": "43d51f48-1a26-48d6-b674-48e65ef8cbc3"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 62236,
                 "physicsOptions": {
                   "enabled": false
@@ -24747,6 +25065,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 33760,
                 "speed": 3.5,
                 "uuid": "d5172588-ab2a-40b2-bd48-288e65feb19c"
@@ -24768,6 +25087,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 61108,
                 "uuid": "0dd587c7-0d78-4615-bb45-326c9a12a327"
               },
@@ -24835,6 +25155,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 5576,
                     "physicsOptions": {
                       "enabled": false
@@ -24860,10 +25181,12 @@
                   {
                     "$bc": "ENGINE.AnimationStateMachineNode",
                     "configUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Zombienewanimations.animconfig.json",
+                    "name": "AnimationStateMachineNode",
                     "nodeId": 36657,
                     "uuid": "2d169a76-9c80-4e3e-85f9-4d8b6b93aa9a"
                   }
                 ],
+                "name": "SceneNode",
                 "nodeId": 29429,
                 "position": {
                   "$bc": "v3",
@@ -24907,6 +25230,7 @@
                   "transparent": true,
                   "uuid": "ffe9adce-4bef-4056-930b-aa11d65a3a4f"
                 },
+                "name": "BlobShadowComponent",
                 "nodeId": 24841,
                 "physicsOptions": {
                   "enabled": false
@@ -24934,6 +25258,7 @@
                 "attackCooldown": 0.65,
                 "attackRange": 1.05,
                 "healthRegen": 0,
+                "name": "CharacterStatsNode",
                 "nodeId": 38517,
                 "speed": 3.5,
                 "uuid": "6e9f9ad1-2d1c-487a-8aef-4243a9e779fe"
@@ -24955,6 +25280,7 @@
                 "maxSpeed": 3.5,
                 "midAirAccelerationLambda": 100,
                 "midAirDecelerationLambda": 10,
+                "name": "NpcMovementNode",
                 "nodeId": 21880,
                 "uuid": "d7e60c4f-b70d-4bf4-a1cc-6ed6856b96a4"
               },
@@ -48319,6 +48645,30 @@
                 "name": "FogCard",
                 "renderOrder": 10,
                 "uuid": "e105f5dc-1fbf-408b-bffa-371f27d50b04"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "22ac3e8d-85c9-4fae-baf6-eff323c3ad79"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "9358dd6c-015b-4581-b2cc-32ca04d824c4"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "beaf9414-cff7-4245-9295-e0d18092d503"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "192d87b0-6dc2-440b-a6bc-59ebd44aba06"
               }
             ],
             "emissiveIntensity": 0.49,
@@ -61374,6 +61724,30 @@
                 "name": "FogCard",
                 "renderOrder": 10,
                 "uuid": "2b242cde-ed51-4ebb-a4f8-7a47d7455c83"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "6787d042-3b76-49a9-a6e8-bea208379518"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "4d5a0c28-da96-4416-8f35-100b81c59dd1"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "4ae0db19-61ab-4cb3-9f72-57e4f426829f"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "fdf1c09b-da55-4f15-a9da-8e504acd580e"
               }
             ],
             "emissiveIntensity": 0.49,
@@ -66845,6 +67219,30 @@
                 "name": "FogCard",
                 "renderOrder": 10,
                 "uuid": "01578da4-c821-4668-ab88-8242ee80d575"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "b00f27c1-7031-4d2e-8c4e-3b98de08efa1"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "9e680f46-509c-4d28-8000-9031319da650"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "3596624c-93ec-435b-b420-7f2b34e41f1d"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "45a0fd4b-26c8-4669-9bf7-7f38c2aab43c"
               }
             ],
             "emissiveIntensity": 0.49,
@@ -69194,6 +69592,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 6875,
                     "physicsOptions": {
                       "enabled": false
@@ -69386,6 +69785,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 54956,
                     "physicsOptions": {
                       "enabled": false
@@ -69578,6 +69978,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 64575,
                     "physicsOptions": {
                       "enabled": false
@@ -69770,6 +70171,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 48692,
                     "physicsOptions": {
                       "enabled": false
@@ -69962,6 +70364,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 26495,
                     "physicsOptions": {
                       "enabled": false
@@ -70154,6 +70557,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 21939,
                     "physicsOptions": {
                       "enabled": false
@@ -70346,6 +70750,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 29051,
                     "physicsOptions": {
                       "enabled": false
@@ -70538,6 +70943,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 58515,
                     "physicsOptions": {
                       "enabled": false
@@ -70730,6 +71136,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 26841,
                     "physicsOptions": {
                       "enabled": false
@@ -70922,6 +71329,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 19808,
                     "physicsOptions": {
                       "enabled": false
@@ -71114,6 +71522,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 43121,
                     "physicsOptions": {
                       "enabled": false
@@ -71306,6 +71715,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 52370,
                     "physicsOptions": {
                       "enabled": false
@@ -71498,6 +71908,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 13422,
                     "physicsOptions": {
                       "enabled": false
@@ -71690,6 +72101,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 55074,
                     "physicsOptions": {
                       "enabled": false
@@ -71882,6 +72294,7 @@
                     "$bc": "ENGINE.ModelMeshNode",
                     "modelMaterial": "@project/assets/textures/Zombie2.material.json",
                     "modelUrl": "@project/assets/models/new zombie/Meshy_AI_Stylized_undead_subur_biped/Newzombie2.glb",
+                    "name": "ModelMeshNode",
                     "nodeId": 39919,
                     "physicsOptions": {
                       "enabled": false
@@ -77731,6 +78144,30 @@
                 "name": "FogCard",
                 "renderOrder": 10,
                 "uuid": "d1a27078-df06-4fa2-9bcf-29853093c872"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "4c49eadd-a012-4928-a823-45930f9849fb"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "62de6ff5-0725-4e82-8a83-ee5e4b140d57"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "276372f2-0a68-4381-ba5a-42037d08f376"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "b8964f6b-c4ec-4150-98d7-c789e763c2db"
               }
             ],
             "emissiveIntensity": 0.49,
@@ -83208,6 +83645,30 @@
                 "name": "FogCard",
                 "renderOrder": 10,
                 "uuid": "dbaf3935-c101-4cdb-9008-be78fe2601be"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "24ea64fd-8b10-4899-8c0c-4d6fb7beb4af"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "4ea23faf-d40e-434b-840f-2c15ff95e474"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "2fe39efb-c793-4930-b6a7-f5bcaf2b3029"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "086ec133-2c5d-4d91-b2b8-9e595661d3d6"
               }
             ],
             "emissiveIntensity": 0.49,
@@ -89034,6 +89495,30 @@
                 "name": "FogCard",
                 "renderOrder": 10,
                 "uuid": "8ea41b66-6265-45e6-8ac4-5e495113b8d0"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "7fb96d01-59ca-4c63-b0ce-d521b16e34d1"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "9c65fccb-b9cc-40d8-b9e0-0fce8498e378"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "451c4747-89af-4219-b127-c37e3b6ba0a1"
+              },
+              {
+                "$bc": "THREE.Mesh",
+                "name": "FogCard",
+                "renderOrder": 10,
+                "uuid": "b11d8d36-90f5-49ff-9d57-caedd9454d37"
               }
             ],
             "emissiveIntensity": 0.49,

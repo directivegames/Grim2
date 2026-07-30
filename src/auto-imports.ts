@@ -45,6 +45,7 @@ import './actors/zombie-steering.js';
 import './apply-actor-movement-predictor-engine-patch.js';
 import './apply-cloud-shadow-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
+import './apply-url-texture-placeholder-engine-patch.js';
 import './cloudShadow/CloudShadowActor.js';
 import './cloudShadow/CloudShadowComponent.js';
 import './cloudShadow/CloudShadowOverlayMaterial.js';

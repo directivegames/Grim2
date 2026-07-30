@@ -6,6 +6,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import * as THREE from 'three';
 
 // Must run before any actor ticks — harness bundle may omit patched `NpcMovementComponent` from `node_modules`.
+import './apply-url-texture-placeholder-engine-patch.js';
 import './apply-actor-movement-predictor-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
 import './apply-cloud-shadow-engine-patch.js';
