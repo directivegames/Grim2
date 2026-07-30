@@ -16,6 +16,7 @@
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
+import { normalizeLegacyActorHierarchy } from '../utils/legacy-actor-hierarchy.js';
 
 import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
@@ -276,6 +277,7 @@ export class DemonboxActor extends ENGINE.Actor {
   // ── doBeginPlay ──────────────────────────────────────────────────────────
 
   public override beginPlay(): boolean {
+    normalizeLegacyActorHierarchy(this);
     if (!super.beginPlay()) {
       return false;
     }

@@ -165,6 +165,7 @@ import './utils/game-audio.js';
 import './utils/game-pause.js';
 import './utils/game-settings.js';
 import './utils/item-drop.js';
+import './utils/legacy-actor-hierarchy.js';
 import './utils/menu-audio.js';
 import './utils/mission-enemy-drops.js';
 import './utils/mission-reset-log.js';

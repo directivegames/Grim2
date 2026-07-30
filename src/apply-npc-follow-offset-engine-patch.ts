@@ -62,6 +62,20 @@ function applyPatch(): void {
     return;
   }
 
+  // Old scene data may retain a nested EntityRoot flag. The engine's inherited
+  // getActor() then stops at that node even though an Actor is still above it.
+  const inheritedGetActor = proto.getActor as ((this: any) => ENGINE.Actor | null) | undefined;
+  proto.getActor = function (this: any): ENGINE.Actor | null {
+    const resolvedActor = inheritedGetActor?.call(this);
+    if (resolvedActor) return resolvedActor;
+    let current = this.parent as THREE.Object3D | null;
+    while (current) {
+      if (current instanceof ENGINE.Actor) return current;
+      current = current.parent;
+    }
+    return null;
+  };
+
   proto.setFollowTargetWorldOffset = function (this: any, v: THREE.Vector3): void {
     offsetVec(this).copy(v);
   };
@@ -90,6 +104,16 @@ function applyPatch(): void {
     if (!actor) offsetVec(this).set(0, 0, 0);
     return origSetTargetActor.call(this, actor, ...rest);
   };
+
+  // Pre-unified actor scenes can retain a movement node after its former root
+  // has been detached. The engine tick assumes an owner and dereferences it.
+  const originalTickPrePhysics = proto.tickPrePhysics as ((this: any, deltaTime: number) => void) | undefined;
+  if (originalTickPrePhysics) {
+    proto.tickPrePhysics = function (this: any, deltaTime: number): void {
+      if (!this.getActor?.()) return;
+      originalTickPrePhysics.call(this, deltaTime);
+    };
+  }
 
   proto[PATCHED] = true;
 }
