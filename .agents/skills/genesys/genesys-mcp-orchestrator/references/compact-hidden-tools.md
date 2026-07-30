@@ -18,7 +18,7 @@ These tools are **not** first-class MCP tools in compact mode (the default). The
 
 **Action Asset** · kind: `action`
 
-Perform project asset actions through the live editor when possible. Requires `action`. Operations: createFolder, createMaterial, move, rename, delete (destructive), import, installAssetPack (scaffolds an empty in-project pack under packs/<name>/; does not install catalog packs). Bridged mutations require an open ready editor and rewrite references for move/rename.
+Asset actions via the live editor when possible. Requires `action`. Ops: createFolder, createMaterial, move, rename, delete (destructive), import, installAssetPack (empty packs/<name>/ scaffold only — not catalog packs). Bridged mutations need a ready editor; move/rename rewrite references.
 
 **Operations:** `createFolder` *(undoable)*, `createMaterial` *(undoable)*, `delete` *(destructive, undoable)*, `import`, `installAssetPack`, `move`, `rename`
 
