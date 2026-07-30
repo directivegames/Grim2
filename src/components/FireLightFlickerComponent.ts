@@ -116,7 +116,6 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
       this._light.intensity = this._baseIntensity;
       this._light.color = this._baseColor;
     }
-    super.endPlay();
     return true;
   }
 

@@ -65,7 +65,6 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneComponent {
   }
 
   private async _beginPlayAsync(): Promise<void> {
-    super.beginPlay();
     await this._loadTexture();
     this._buildMesh();
   }
@@ -132,7 +131,6 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneComponent {
       this._texture.dispose();
       this._texture = null;
     }
-    super.endPlay();
     return true;
   }
 

@@ -67,7 +67,6 @@ export class WeaponSlashComponent extends ENGINE.SceneComponent {
     if (!super.beginPlay()) {
       return false;
     }
-    super.beginPlay();
     this._buildMeshes();
     return true;
   }
@@ -79,7 +78,6 @@ export class WeaponSlashComponent extends ENGINE.SceneComponent {
     this._destroyMeshes();
     this._poolCount = 0;
     this._poolHead  = 0;
-    super.endPlay();
     return true;
   }
 

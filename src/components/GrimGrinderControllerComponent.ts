@@ -207,7 +207,6 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
     this._prevWallTimeMs = 0;
     this._lockedGroundY = null;
     this._modelBaselinePos = null;
-    super.endPlay();
     return true;
   }
 

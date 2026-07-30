@@ -240,7 +240,6 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
     if (!super.beginPlay()) {
       return false;
     }
-    super.beginPlay();
     void this.reload();
     return true;
   }
@@ -270,7 +269,6 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
       return false;
     }
     this._clearOverlay();
-    super.endPlay();
     return true;
   }
 

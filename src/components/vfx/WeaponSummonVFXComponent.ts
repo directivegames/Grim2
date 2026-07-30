@@ -101,7 +101,6 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
     if (!super.beginPlay()) {
       return false;
     }
-    super.beginPlay();
     const world = this.getWorld();
     if (world) {
       _ensurePoolInScene(world.scene);
@@ -209,7 +208,6 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
       _free.push(spark);
     }
     this._activeSparks.length = 0;
-    super.endPlay();
     return true;
   }
 }

@@ -81,7 +81,6 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
     if (!super.beginPlay()) {
       return false;
     }
-    super.beginPlay();
     this._syncGrain();
     return true;
   }
@@ -130,7 +129,6 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
     if (world) {
       FilmGrainUI.detach(world);
     }
-    super.endPlay();
     return true;
   }
 

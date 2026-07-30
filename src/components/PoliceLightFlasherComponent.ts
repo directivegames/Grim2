@@ -112,7 +112,6 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
       return false;
     }
     this._setIntensities(0, 0);
-    super.endPlay();
     return true;
   }
 

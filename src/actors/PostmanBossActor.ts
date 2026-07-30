@@ -1026,7 +1026,7 @@ export class PostmanBossActor extends ENGINE.Actor {
   }
 
   public override setHiddenInGame(hidden: boolean): void {
-    this.rootComponent.setHiddenInGame(hidden);
+    super.setHiddenInGame(hidden);
     this.rootComponent.visible = !hidden;
     this.rootComponent.traverse(obj => {
       obj.visible = !hidden;

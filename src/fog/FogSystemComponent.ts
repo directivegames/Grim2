@@ -194,7 +194,6 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     if (!super.beginPlay()) {
       return false;
     }
-    super.beginPlay();
     if (!this._mesh) {
       this._log('beginPlay -> reload because no mesh exists yet');
       void this.reload();
@@ -240,7 +239,6 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     }
     this._stopBillboardLoop();
     this._clearMesh();
-    super.endPlay();
     return true;
   }
 

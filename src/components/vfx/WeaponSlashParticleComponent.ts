@@ -79,7 +79,6 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
     if (!super.beginPlay()) {
       return false;
     }
-    super.beginPlay();
     this._ensurePool();
     const world = this.getWorld();
     if (!world) return true;
@@ -105,7 +104,6 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
       p.active = false;
     }
     this._free.length = 0;
-    super.endPlay();
     return true;
   }
 

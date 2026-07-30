@@ -40,7 +40,6 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
   }
 
   private async _beginPlayAsync(): Promise<void> {
-    super.beginPlay();
     // Pre-build pool immediately so first boomerang throw doesn't hitch
     const world = this.getWorld();
     if (world) {
@@ -122,8 +121,6 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
       this._glowTexture.dispose();
       this._glowTexture = null;
     }
-
-    super.endPlay();
     return true;
   }
 

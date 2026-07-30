@@ -39,7 +39,6 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
   }
 
   private async _beginPlayAsync(): Promise<void> {
-    super.beginPlay();
     this._dustTexture = await loadSmokeTexture(DUST_TEXTURE_PATH);
     const world = this.getWorld();
     if (world && this._dustTexture) {
@@ -107,7 +106,6 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
     }
     disposeBillboardSmokePuffs(this._puffs);
     this._dustTexture = null;
-    super.endPlay();
     return true;
   }
 }

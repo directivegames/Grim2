@@ -94,8 +94,6 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
   }
 
   private async _beginPlayAsync(): Promise<void> {
-    super.beginPlay();
-
     const world = this.getWorld();
     if (!world) {
       return;
@@ -302,8 +300,6 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
       this._spritesheet.dispose();
       this._spritesheet = null;
     }
-
-    super.endPlay();
     return true;
   }
 }

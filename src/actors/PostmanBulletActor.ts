@@ -108,7 +108,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
   }
 
   public override setHiddenInGame(hidden: boolean): void {
-    this.rootComponent.setHiddenInGame(hidden);
+    super.setHiddenInGame(hidden);
     this.rootComponent.visible = !hidden;
   }
 
