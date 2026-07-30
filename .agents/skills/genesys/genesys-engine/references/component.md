@@ -34,22 +34,22 @@ const mesh = MeshComponent.create({
   castShadow: true
 });
 
-actor.addComponent(mesh);
+actor.add(mesh);
 ```
 
-### Component Queries
+### Node Queries
 
-Find components within an Actor's hierarchy:
+Find nodes within an Actor's hierarchy:
 
 ```typescript
-// Get first component of type
-const mesh = actor.getComponent(MeshComponent);
+// Get first node of type
+const mesh = actor.getNode(MeshNode);
 
-// Get all components of type
-const meshes = actor.getComponents(MeshComponent);
+// Get all nodes of type
+const meshes = actor.getNodes(MeshNode);
 
-// Get from specific component
-const childMesh = rootComponent.getComponent(MeshComponent);
+// Get from specific node
+const childMesh = rootNode.getNode(MeshNode);
 ```
 
 ### Parent-Child Relationships

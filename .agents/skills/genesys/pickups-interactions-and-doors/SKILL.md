@@ -9,7 +9,7 @@ Engine support for player–world interaction lives in `.engine/components/gamep
 
 ## What's available
 
-**Player (`GameplayPawn.ts` / `DefaultCharacterPawn.ts`)** — these pawn classes auto-receive an `InteractionComponent` in `doBeginPlay` and expose `interact()` / `endInteract()` for a `PlayerController` to call (base `Pawn`/`MovementPawn`/`CharacterPawn` do not). HUD prompts via `getCurrentPrompt()`.
+**Player (`GameplayPawn.ts` / `DefaultCharacterPawn.ts`)** — these pawn classes auto-receive an `InteractionComponent` in `beginPlay` and expose `interact()` / `endInteract()` for a `PlayerController` to call (base `Pawn`/`MovementPawn`/`CharacterPawn` do not). HUD prompts via `getCurrentPrompt()`.
 
 **Interactable contract (`IInteractable.ts`)** — interface for press-to-interact objects: `canInteract`, `beginInteract`, `getInteractionPrompt`, `getInteractionPriority`, optional `endInteract`. Anything can implement it; built-ins use the proximity base below.
 

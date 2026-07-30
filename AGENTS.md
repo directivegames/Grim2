@@ -39,9 +39,9 @@
 - Never `TextureLoader` after resolve (baking → `.ktx2`). `TextureLoader` only for external URLs; `resolveAssetPathsInText` only for HTML.
 
 ## Prefabs
-- Prefabs are json files stored within /assets/prefabs, with the suffix .prefab.json.
-- Prefabs can be validated via `pnpm validate-prefabs`.
-- When referencing classes in prefab, use the appropriate prefix.
+- Prefabs are json files stored under `/assets` (commonly `/assets/prefabs`), with the suffix `.prefab.json`.
+- Prefer Prefabs for reusable scene-component templates.
+- When referencing classes in prefab/serialized data, use the appropriate prefix.
   Engine classes **must** be referenced as `ENGINE.{class name}`, example: `ENGINE.Actor`, `ENGINE.SceneComponent`.
   Custom game classes **must** be referenced as `GAME.{class name}`, example: `GAME.MyCustomActor`, `GAME.MyCustomComponent`.
 
@@ -61,7 +61,7 @@ For scene-visible or editor-authored changes, use Genesys MCP first when Connect
 | **Runtime behaviour** | TypeScript — reusable gameplay logic, class defaults, constructors for new runtime objects, new actor/component classes, input, networking, UI logic, systems not already in the scene |
 | **Both** | Code first to build/register the capability, then MCP to place or configure it in the scene |
 
-Do **not** use `BeginPlay`, `doBeginPlay`, constructors, or one-off runtime hacks to patch a specific editor-authored actor just to persist a visual scene change. It is still correct to define reusable class defaults, construct runtime-created objects, and initialise behaviour in code when those values should apply to every instance or to objects spawned at runtime.
+Do **not** use `beginPlay`, constructors, or one-off runtime hacks to patch a specific editor-authored actor just to persist a visual scene change. It is still correct to define reusable class defaults, construct runtime-created objects, and initialise behaviour in code when those values should apply to every instance or to objects spawned at runtime.
 
 ---
 

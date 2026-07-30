@@ -31,12 +31,12 @@ Flags that ensure objects maintain fixed world positions regardless of parent mo
 
 The updateWorldMatrix() and updateMatrixWorld() methods respect these flags.
 
-## Component Discovery
+## Node Discovery
 
-Methods for finding components within the scene graph hierarchy:
+Methods for finding nodes within the scene graph hierarchy:
 
-- getComponent(Type) — Find first object of specified type in this subtree (depth-first).
-- getComponents(Type) — Find all objects of specified type in this subtree.
+- getNode(Type) — Find first object of specified type in this subtree (depth-first).
+- getNodes(Type) — Find all objects of specified type in this subtree.
 
 ## Lifecycle Hooks
 

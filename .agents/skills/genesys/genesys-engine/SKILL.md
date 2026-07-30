@@ -26,7 +26,7 @@ Follow these steps when working with Genesys:
 - Create actor and component instances using the .create(options) factory method. Do not call the constructor directly.
 - Decorate every custom Actor, Component, and serializable class with @ENGINE.GameClass(). Never use @EngineClass — it is engine-internal.
 - Mark serializable fields with @ENGINE.property() (lowercase). The decorator requires the enclosing class to be @ENGINE.GameClass().
-- For Playable lifecycle hooks, override doBeginPlay()/doEndPlay() — never beginPlay()/endPlay() (lint rule custom/no-override-methods).
+- For Playable lifecycle hooks, override beginPlay()/endPlay(), call super, and only run custom logic when the returned boolean is true.
 - In tick handlers (such as tickPrePhysics), null-guard cached component refs before using them.
 - Prefer extending ENGINE.CharacterPawn for first/third-person player pawns; override its setup hooks (createRootComponent, createMovementComponent, getInitialCameraPositions, setupCamera, setupAnimationComponent, setupVisualComponent) instead of replacing the whole class.
 - Use explicit typing. Avoid as any.

@@ -130,7 +130,6 @@ Run all three in order. Fix every reported issue before moving on.
 
 ```bash
 pnpm compile                                       # TypeScript type-check (includes pack sources)
-pnpm validate-prefabs                              # JSON schema check for all prefabs
 pnpm check-pack-isolation --pack <name>            # external-ref / stale-ref scan
 ```
 

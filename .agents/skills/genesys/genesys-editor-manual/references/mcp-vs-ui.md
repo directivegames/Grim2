@@ -13,8 +13,7 @@ Prefer MCP when Status is Available and MCP is ready; otherwise give the Manual 
 | Actor copy / paste | — | UI only | Outliner **Copy** / **Paste** (`Ctrl/Cmd+C`/`V`) — recreate via MCP actor create if needed |
 | Scene open / save / set active | `action_scene` | Available | Menu **Save Scene** (`Ctrl/Cmd+S`); Asset Browser open scene |
 | Scene create / duplicate | `action_scene.create` / `duplicate` | Available | Menu **New Scene**; Asset Browser New Asset → Scene |
-| Prefab create / instantiate / apply / unpack | `action_prefab` | Available | Outliner/Asset **Save as Prefab** / instantiate flows; Inspector Apply / Unlink |
-| Prefab open / close / save / resync | `action_prefab.open` / `close` / `save` / `resync` | Available | **Edit Prefab**; banner/Inspector close; Resync |
+| Prefab create / open / place | `action_asset` / Prefab open via Asset Browser | Available | Asset Browser **New → Prefab**; double-click `.prefab.json`; drag to place |
 | Undo / redo | `action_editor.undo` / `redo` | Available | `Ctrl/Cmd+Z` / `Ctrl/Cmd+Y` |
 | Editor hide / lock | `setEditorVisible` / `setEditorLocked` | Available | Outliner eye / lock; **H** / **L** (editor-only) |
 | Drop to surface | — | UI only | Hotkey **End** |
@@ -23,7 +22,6 @@ Prefer MCP when Status is Available and MCP is ready; otherwise give the Manual 
 | Local empty asset pack | `action_asset(installAssetPack)` | Available | Tools → **New Asset Pack…** |
 | Browse / export packs | — | UI only | Tools → Browse / Export Asset Pack |
 | Build / register classes | `action_build(buildProject)` | Available | Menu **Build Project** (`Ctrl/Cmd+B`) |
-| Validate prefabs | `action_build(validatePrefabs)` | Available | MCP or `pnpm validate-prefabs` |
 | Lightmap | `action_build(buildLightmap)` | Available | Title bar **Build Lightmap** |
 | Play / exit | `enterPlayMode` / `exitPlayMode` | Available | Play ▾ / F5 / F6; Exit (`Ctrl/Cmd+P`) |
 | Play window/mobile/multiplayer prefs | — | UI only | Play ▾ options; Network menu |
@@ -35,6 +33,8 @@ Prefer MCP when Status is Available and MCP is ready; otherwise give the Manual 
 | Project open/create/close | — | UI only | App picker / `genesys-sdk new` |
 | Diagnostics | `query_diagnostics` | Available | Title bar Errors; console |
 
-**Compact-hidden** (still callable via `run_script` / `batch_execute` / `search_tools`): `action_component`, `action_prefab`, `action_asset`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`.
+**Compact-hidden** (still callable via `run_script` / `batch_execute` / `search_tools`): `action_component`, `action_asset`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`.
+
+<!-- PREFAB_TODO: Prefab editor/MCP UX removed; engine migrates legacy `.prefab.json` in memory on load. -->
 
 **Editor-only hide/lock:** never describe as runtime `bHidden` / gameplay visibility.

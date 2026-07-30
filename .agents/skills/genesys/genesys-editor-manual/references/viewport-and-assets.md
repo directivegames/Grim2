@@ -39,12 +39,12 @@ Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview p
 
 | Feature | Path |
 | --- | --- |
-| New Asset | Prefab (Actor) / Material / Resource… / Scene / Folder |
+| New Asset | Prefab / Material / Resource… / Scene / Folder |
 | Filter / Search / Thumb size | Toolbar / More options |
 | Navigate | Back / Forward / Breadcrumbs |
 | Empty-area context | New Asset/Resource/Folder · Delete Folder · Import Files… · Show in Finder/Explorer · Refresh · Refresh thumbnails |
-| Open | Double-click (scene/material/resource/…) |
-| Prefab | Edit Prefab |
+| Open | Double-click (scene/prefab/material/resource/…) |
+| Prefab | Open Prefab (`.prefab.json`) |
 | Model | Open In Model Viewer · Extract Material… · Create Animation Config · Create Skeleton Profile |
 | Scene | Set as Game/Server Default Scene · Refresh Thumbnail |
 | Common | Find References · Show in Finder/Explorer · Open in Code Editor · Rename (F2) · Duplicate · Delete · Import Copy to Project… (engine assets) · Add to Chat |

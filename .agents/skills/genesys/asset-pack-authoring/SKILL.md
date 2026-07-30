@@ -58,7 +58,7 @@ description: 'Move an existing class, prefab, or set of assets into a self-conta
 
    ```bash
    pnpm compile
-   pnpm validate-prefabs
+   # Prefab JSON is validated when the engine loads it (in-memory migration on outdated $version)
    pnpm check-pack-isolation --pack <name>
    ```
 
