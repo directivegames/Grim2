@@ -688,6 +688,7 @@
     "actors": {
       "2": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": true,
           "selectable": true
@@ -737,6 +738,7 @@
       },
       "3": {
         "$bc": "ENGINE.PlayerStart",
+        "$initOptions": {},
         "name": "Player Start",
         "rootComponent": {
           "$bc": "ENGINE.SceneComponent",
@@ -762,6 +764,7 @@
       },
       "4": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_23",
         "rootComponent": {
           "$bc": "ENGINE.PointLightComponent",
@@ -789,6 +792,7 @@
       },
       "5": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_412",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -820,6 +824,7 @@
       },
       "6": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "GLTFMeshActor_343",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -857,6 +862,7 @@
       },
       "7": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_418",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -887,6 +893,7 @@
       },
       "8": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "GLTFMeshActor_344",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -924,6 +931,7 @@
       },
       "9": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -965,6 +973,7 @@
       },
       "10": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_416",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -995,6 +1004,7 @@
       },
       "11": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_421",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -1025,6 +1035,7 @@
       },
       "12": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_422",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -1055,6 +1066,7 @@
       },
       "13": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_423",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -1085,6 +1097,7 @@
       },
       "14": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "GLTFMeshActor_345",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -1121,6 +1134,7 @@
       },
       "15": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "GLTFMeshActor_346",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -1157,6 +1171,7 @@
       },
       "16": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "GLTFMeshActor_347",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -1193,6 +1208,7 @@
       },
       "17": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_425",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -1223,6 +1239,7 @@
       },
       "18": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_537",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -1261,6 +1278,7 @@
       },
       "19": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Lampost_03",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4053,6 +4071,7 @@
       },
       "20": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_433",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4083,6 +4102,7 @@
       },
       "21": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_413",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4113,6 +4133,7 @@
       },
       "22": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4142,6 +4163,7 @@
       },
       "23": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block_02",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4171,6 +4193,7 @@
       },
       "24": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block_03",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4200,6 +4223,7 @@
       },
       "25": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_427",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4230,6 +4254,7 @@
       },
       "26": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_428",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4260,6 +4285,7 @@
       },
       "27": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block_04",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4289,6 +4315,7 @@
       },
       "28": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block_05",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4318,6 +4345,7 @@
       },
       "29": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block_06",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4347,6 +4375,7 @@
       },
       "30": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_430",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4377,6 +4406,7 @@
       },
       "31": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_431",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4407,6 +4437,7 @@
       },
       "32": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_585",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4437,6 +4468,7 @@
       },
       "33": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_434",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4467,6 +4499,7 @@
       },
       "34": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_438",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4497,6 +4530,7 @@
       },
       "35": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_458",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4535,6 +4569,7 @@
       },
       "36": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor_464",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4565,6 +4600,7 @@
       },
       "37": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Sign post",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4600,6 +4636,7 @@
       },
       "38": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 468",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4638,6 +4675,7 @@
       },
       "39": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Mailbox",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4673,6 +4711,7 @@
       },
       "40": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Mailbox 02",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4708,6 +4747,7 @@
       },
       "41": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "shopping cart",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4735,6 +4775,7 @@
       },
       "42": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "broken sign",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4771,6 +4812,7 @@
       },
       "43": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 488",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4809,6 +4851,7 @@
       },
       "44": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 489",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4847,6 +4890,7 @@
       },
       "45": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 490",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4885,6 +4929,7 @@
       },
       "46": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 491",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4923,6 +4968,7 @@
       },
       "47": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 492",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -4961,6 +5007,7 @@
       },
       "48": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "tombs",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -4991,6 +5038,7 @@
       },
       "49": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "tombs_04",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -5021,6 +5069,7 @@
       },
       "50": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "tombs 03",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -5048,6 +5097,7 @@
       },
       "51": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "weapon",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -5144,6 +5194,7 @@
       },
       "54": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 07",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -5174,6 +5225,7 @@
       },
       "55": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 07",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -5203,6 +5255,7 @@
       },
       "56": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 494",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -8654,6 +8707,7 @@
       },
       "74": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 432",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -8739,6 +8793,7 @@
       },
       "76": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 10",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -8768,6 +8823,7 @@
       },
       "77": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 11",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -8797,6 +8853,7 @@
       },
       "78": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 12",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -8826,6 +8883,7 @@
       },
       "79": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 13",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -8855,6 +8913,7 @@
       },
       "80": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "lamp for chrcu 06",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -8994,6 +9053,7 @@
       },
       "83": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 470",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9032,6 +9092,7 @@
       },
       "84": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 472",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9198,6 +9259,7 @@
       },
       "89": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 459",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9236,6 +9298,7 @@
       },
       "90": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 460",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9274,6 +9337,7 @@
       },
       "91": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 459",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9312,6 +9376,7 @@
       },
       "92": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 461",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9350,6 +9415,7 @@
       },
       "93": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 459",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9388,6 +9454,7 @@
       },
       "94": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 462",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9426,6 +9493,7 @@
       },
       "95": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 474",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9502,6 +9570,7 @@
       },
       "97": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 417",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9532,6 +9601,7 @@
       },
       "98": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 418",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9562,6 +9632,7 @@
       },
       "99": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 420",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9592,6 +9663,7 @@
       },
       "100": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 421",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9622,6 +9694,7 @@
       },
       "101": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 422",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9700,6 +9773,7 @@
       },
       "103": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 495",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9730,6 +9804,7 @@
       },
       "104": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 496",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9768,6 +9843,7 @@
       },
       "105": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 424",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9806,6 +9882,7 @@
       },
       "106": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 425",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -9844,6 +9921,7 @@
       },
       "107": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 426",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -10584,6 +10662,7 @@
       },
       "123": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "lamp for chrcu 07",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -10628,6 +10707,7 @@
       },
       "124": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "lamp for chrcu 08",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -10672,6 +10752,7 @@
       },
       "125": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "lamp for chrcu 09",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -10716,6 +10797,7 @@
       },
       "126": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 424",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -10754,6 +10836,7 @@
       },
       "127": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 427",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -10792,6 +10875,7 @@
       },
       "128": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 428",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -10870,6 +10954,7 @@
       },
       "130": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 414",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -10908,6 +10993,7 @@
       },
       "131": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 415",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14208,6 +14294,7 @@
       },
       "148": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 477",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14246,6 +14333,7 @@
       },
       "149": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 476",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14284,6 +14372,7 @@
       },
       "150": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 471",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14322,6 +14411,7 @@
       },
       "151": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 475",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14352,6 +14442,7 @@
       },
       "152": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 482",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14382,6 +14473,7 @@
       },
       "153": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 483",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14412,6 +14504,7 @@
       },
       "154": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 484",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14442,6 +14535,7 @@
       },
       "155": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 485",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14480,6 +14574,7 @@
       },
       "156": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 486",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14510,6 +14605,7 @@
       },
       "157": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 478",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -14548,6 +14644,7 @@
       },
       "158": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 469",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -22233,6 +22330,7 @@
       },
       "199": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Lampost 05",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -25567,6 +25665,7 @@
       },
       "203": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 498",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -25605,6 +25704,7 @@
       },
       "204": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 414",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -25635,6 +25735,7 @@
       },
       "205": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 479",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -25673,6 +25774,7 @@
       },
       "206": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 499",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -27212,6 +27314,7 @@
       },
       "247": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27253,6 +27356,7 @@
       },
       "248": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27294,6 +27398,7 @@
       },
       "249": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27335,6 +27440,7 @@
       },
       "250": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27376,6 +27482,7 @@
       },
       "251": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27409,6 +27516,7 @@
       },
       "252": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27450,6 +27558,7 @@
       },
       "253": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27491,6 +27600,7 @@
       },
       "254": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27532,6 +27642,7 @@
       },
       "255": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27573,6 +27684,7 @@
       },
       "256": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27614,6 +27726,7 @@
       },
       "257": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27655,6 +27768,7 @@
       },
       "258": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27696,6 +27810,7 @@
       },
       "259": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27737,6 +27852,7 @@
       },
       "260": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27902,6 +28018,7 @@
       },
       "264": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27943,6 +28060,7 @@
       },
       "265": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -27984,6 +28102,7 @@
       },
       "266": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28025,6 +28144,7 @@
       },
       "267": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28066,6 +28186,7 @@
       },
       "268": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28107,6 +28228,7 @@
       },
       "269": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28148,6 +28270,7 @@
       },
       "270": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28189,6 +28312,7 @@
       },
       "271": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28262,6 +28386,7 @@
       },
       "273": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28295,6 +28420,7 @@
       },
       "274": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28328,6 +28454,7 @@
       },
       "275": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -28361,6 +28488,7 @@
       },
       "276": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -29353,6 +29481,7 @@
       },
       "301": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -29394,6 +29523,7 @@
       },
       "302": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -29476,6 +29606,7 @@
       },
       "304": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -29517,6 +29648,7 @@
       },
       "305": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -30498,6 +30630,7 @@
       },
       "329": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Lampost 04",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -33290,6 +33423,7 @@
       },
       "330": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Lampost 07",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -36082,6 +36216,7 @@
       },
       "331": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Lampost 06",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -38874,6 +39009,7 @@
       },
       "332": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 426",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -38904,6 +39040,7 @@
       },
       "333": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -38945,6 +39082,7 @@
       },
       "334": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -39016,6 +39154,7 @@
       },
       "336": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -39057,6 +39196,7 @@
       },
       "337": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -39098,6 +39238,7 @@
       },
       "338": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -39139,6 +39280,7 @@
       },
       "339": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 500",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -39177,6 +39319,7 @@
       },
       "340": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "lamp for chrcu 11",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -44576,6 +44719,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "81d70399-ca40-439b-a9c9-fc3e68f01d3e"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "5dcf1390-c733-480a-8629-50cbf703165d"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -44641,6 +44790,7 @@
       },
       "343": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -44674,6 +44824,7 @@
       },
       "344": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 480",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -44712,6 +44863,7 @@
       },
       "345": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -44786,6 +44938,7 @@
       },
       "347": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -44827,6 +44980,7 @@
       },
       "348": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -44868,6 +45022,7 @@
       },
       "349": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 481",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -44906,6 +45061,7 @@
       },
       "350": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 487",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -44944,6 +45100,7 @@
       },
       "351": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 493",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -45187,6 +45344,7 @@
       },
       "357": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -45228,6 +45386,7 @@
       },
       "358": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -45269,6 +45428,7 @@
       },
       "359": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -45342,6 +45502,7 @@
       },
       "361": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -45383,6 +45544,7 @@
       },
       "362": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 473",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -45421,6 +45583,7 @@
       },
       "363": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 497",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -45459,6 +45622,7 @@
       },
       "364": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 501",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -45497,6 +45661,7 @@
       },
       "365": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -45570,6 +45735,7 @@
       },
       "367": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 502",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -45608,6 +45774,7 @@
       },
       "368": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 503",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -45646,6 +45813,7 @@
       },
       "369": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 504",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46057,6 +46225,7 @@
       },
       "378": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 14",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -46086,6 +46255,7 @@
       },
       "379": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 15",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -46519,6 +46689,7 @@
       },
       "390": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 505",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46557,6 +46728,7 @@
       },
       "391": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 506",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46595,6 +46767,7 @@
       },
       "392": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 507",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46633,6 +46806,7 @@
       },
       "393": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 508",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46741,6 +46915,7 @@
       },
       "396": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 509",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46779,6 +46954,7 @@
       },
       "397": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -46902,6 +47078,7 @@
       },
       "400": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 510",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46940,6 +47117,7 @@
       },
       "401": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 511",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -46978,6 +47156,7 @@
       },
       "402": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 512",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -47016,6 +47195,7 @@
       },
       "403": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 513",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -47054,6 +47234,7 @@
       },
       "404": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 514",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -47092,6 +47273,7 @@
       },
       "405": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 515",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -47130,6 +47312,7 @@
       },
       "406": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 429",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -47168,6 +47351,7 @@
       },
       "407": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 430",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -47206,6 +47390,7 @@
       },
       "408": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47247,6 +47432,7 @@
       },
       "409": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47288,6 +47474,7 @@
       },
       "410": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47329,6 +47516,7 @@
       },
       "411": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47370,6 +47558,7 @@
       },
       "412": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47411,6 +47600,7 @@
       },
       "413": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47492,6 +47682,7 @@
       },
       "415": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47525,6 +47716,7 @@
       },
       "416": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47566,6 +47758,7 @@
       },
       "417": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47599,6 +47792,7 @@
       },
       "418": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47640,6 +47834,7 @@
       },
       "419": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47681,6 +47876,7 @@
       },
       "420": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47714,6 +47910,7 @@
       },
       "421": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -47747,6 +47944,7 @@
       },
       "422": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 431",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48385,6 +48583,7 @@
       },
       "434": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 516",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48423,6 +48622,7 @@
       },
       "435": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 517",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48461,6 +48661,7 @@
       },
       "436": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 518",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48499,6 +48700,7 @@
       },
       "437": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 519",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48537,6 +48739,7 @@
       },
       "438": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 520",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48575,6 +48778,7 @@
       },
       "439": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 521",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48613,6 +48817,7 @@
       },
       "440": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 522",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48651,6 +48856,7 @@
       },
       "441": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 523",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48689,6 +48895,7 @@
       },
       "442": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 524",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48727,6 +48934,7 @@
       },
       "443": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -48800,6 +49008,7 @@
       },
       "445": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -48833,6 +49042,7 @@
       },
       "446": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 573",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48871,6 +49081,7 @@
       },
       "447": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 574",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -48909,6 +49120,7 @@
       },
       "448": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -48982,6 +49194,7 @@
       },
       "450": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "editorData": {
           "hidden": false
         },
@@ -49015,6 +49228,7 @@
       },
       "451": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 588",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -49053,6 +49267,7 @@
       },
       "452": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 589",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -49131,6 +49346,7 @@
       },
       "454": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 590",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -49169,6 +49385,7 @@
       },
       "455": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 591",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -49207,6 +49424,7 @@
       },
       "456": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 592",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -49245,6 +49463,7 @@
       },
       "457": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 593",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -50151,6 +50370,7 @@
       },
       "479": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "tombs 04",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -50180,6 +50400,7 @@
       },
       "480": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "tombs 05",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -50209,6 +50430,7 @@
       },
       "481": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "tombs 06",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -56683,6 +56905,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "c3c573a9-0942-4f0d-9913-aa86bb4a087d"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c7782bdc-ac15-470e-a4cf-eca55ed7866d"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -62092,6 +62320,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "368d115b-528e-4ffa-a5be-e0faacfc64ca"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "c09f5662-2da4-47e4-821c-c862b19d3977"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -62172,6 +62406,7 @@
       },
       "512": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 16",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -62201,6 +62436,7 @@
       },
       "513": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "Police block 17",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -62262,7 +62498,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "e05a3936-0fc3-48b5-a58d-37efb6189591"
+            "uuid": "ab9c8c13-a745-4115-add4-997fed8a9e96"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -62325,7 +62561,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "dbdc7c61-09cb-4d18-b96f-0e88a42941fa"
+            "uuid": "4cb91069-c129-4fe7-b596-941878932b4e"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -62388,7 +62624,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "0c730d0d-afa9-485c-9a16-37d1cf78cd5c"
+            "uuid": "b2b0056a-a791-4d2f-8a4e-c8a529623dd4"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -62451,7 +62687,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "717da7c2-6250-4773-aee7-bc152cbd5433"
+            "uuid": "409ceff2-1ac9-494d-a830-f3bba9866683"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -62514,7 +62750,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "428bf892-9162-41b3-b629-3bfe287c1102"
+            "uuid": "b3e8861e-d755-4e47-b3b8-8352f1031c7f"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -62577,7 +62813,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "511237fd-135e-4ad8-b155-1c02b44d431c"
+            "uuid": "37e3cd69-6392-4049-b36c-fd5427afa341"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -62640,7 +62876,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "582425cf-7c5d-4f9c-827a-ee28fa6f6841"
+            "uuid": "ac075b9f-ccfb-48a2-9c22-cd377e5a1faf"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -62701,7 +62937,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "dbf41ef8-df99-49b9-b053-d04ecc969885"
+            "uuid": "a8fe77ea-145e-4efa-a31b-93b5f8f569bf"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -62755,7 +62991,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "dee2396e-67f9-4c5f-aa96-037f9af9e663"
+            "uuid": "f55c82d6-d937-4713-a8de-f5b9b2bc00b2"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -62809,7 +63045,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "56aa99ff-b7c2-49d0-892c-e8e459c3a1b0"
+            "uuid": "c69e344b-f582-47a1-b9f8-a6b0b15c4d94"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -62863,7 +63099,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "f8a8bf08-2f05-4aa9-86e8-4825364e7423"
+            "uuid": "d5ecf99e-c354-43f3-8ba9-c5c11a37de67"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -62917,7 +63153,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8682bc01-dd82-46c7-8764-5103e5b3e2e6"
+            "uuid": "c2ead6ef-f660-4fda-bb1a-3854ebfc9bf6"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -62971,7 +63207,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "598276ff-751f-4a23-b3e6-aeefd77bb890"
+            "uuid": "83c97a28-9212-4aab-8ad4-dfc16f387750"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63025,7 +63261,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "7b67f566-6a2b-45e2-9554-60bc35cfa433"
+            "uuid": "bb1bfe67-c910-45cf-9af4-97491e3e32ff"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63079,7 +63315,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "5f0e6b94-f120-4eeb-9290-630744c08294"
+            "uuid": "3a475646-ee51-4656-9dd6-17a128b9d841"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63133,7 +63369,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "d836de53-2a0b-45c4-b63e-3be21c4d4083"
+            "uuid": "f9feb6ad-63be-42f7-86c2-99bc44f83f13"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63187,7 +63423,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "b7bb1360-1024-4e8f-8728-9c3a42a7a3b3"
+            "uuid": "d67787fa-a18f-46b9-8f6e-73ca7021e2a0"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63241,7 +63477,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "f5081dad-0468-415b-be38-ad34fcf74dd5"
+            "uuid": "58288b2e-1320-4149-8c60-ea4b29a60a01"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63295,7 +63531,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "18473921-5544-404b-be77-c2b679069ac5"
+            "uuid": "531dda8a-1b16-4d63-a1e0-b173a0154f0a"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63349,7 +63585,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "d19975ce-277d-474f-b5f9-ad98fca7f974"
+            "uuid": "f5dd57c7-f299-418d-8d75-c4ac4c6f0c09"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63403,7 +63639,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "088084d7-7a59-4563-81f4-3387dfe57361"
+            "uuid": "0d3cf646-aad8-4a13-b6f0-dec5d03c750f"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63457,7 +63693,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "9522e237-9383-48c6-b408-97d584731c59"
+            "uuid": "34acfeed-dc0d-4b66-9ab3-f9a034a69492"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63511,7 +63747,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "63d4de18-0552-4d7d-9a70-6836698602b8"
+            "uuid": "6701fe46-b790-420f-9e29-d3f45ad2279f"
           },
           "name": "MeshComponent",
           "navigationGeometryRole": "exclude",
@@ -63564,7 +63800,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "ceab36e4-627e-495f-adef-935303b9b919"
+            "uuid": "4d6de85b-149d-4857-92fa-352610a13a39"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63616,7 +63852,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "8d7ee61c-6582-4482-91ac-ec0ae0624237"
+            "uuid": "b29b6608-0ee8-4c46-af22-0b5824a4c619"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63668,7 +63904,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "4fbfb814-0279-474c-9a8b-909a4f9aa9ce"
+            "uuid": "b9b75c8a-3260-4a71-abac-a30371dee369"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63720,7 +63956,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "549a7ac1-c0e4-45dd-9bd8-f130408db372"
+            "uuid": "e97b85bc-cd2d-4f91-a93f-c9bd09a25cc5"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63772,7 +64008,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "309230d0-0256-43fc-9d71-4c1b1b856a18"
+            "uuid": "10415efe-3e0a-482e-a469-e7a8d42535dd"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63824,7 +64060,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "50597d30-ccbb-45aa-b806-2521db6792d4"
+            "uuid": "3f5ac6ea-1fbb-4f00-9594-e0f77fc79d86"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63876,7 +64112,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "c11755d0-95db-44ec-84b7-6541caee6009"
+            "uuid": "93df5d84-85c0-4d3e-b503-8f838f23a40b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63928,7 +64164,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "eb6f1e44-27ea-48e3-a649-ad79552ce3a1"
+            "uuid": "5441e7a5-dfd4-4d52-b935-d7e41c2b92e2"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -63980,7 +64216,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "1c94f8d4-8637-4bde-b764-a6fe8f60f05f"
+            "uuid": "5a3bfd1e-b205-40ed-af79-07faeea02526"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -64032,7 +64268,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "08c5fe84-7c7d-41dc-b606-3edc61dc6240"
+            "uuid": "c00d8184-b366-43d7-8587-3432e4cb27a1"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -64084,7 +64320,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "6d688d48-3c53-46d7-811d-d7b9ce299550"
+            "uuid": "b29df52f-8a5d-473c-b7c0-30b33da9df3b"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -64136,7 +64372,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "219e8755-6353-451b-967e-0f76c551e8ac"
+            "uuid": "c5301864-c799-47c9-b8d4-d07f9ae8fad2"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -64188,7 +64424,7 @@
             "opacity": 0.28,
             "side": 2,
             "transparent": true,
-            "uuid": "0fc68552-2771-4b3f-a491-f6e4921eab41"
+            "uuid": "93b8ecee-93a6-42ce-a4b8-0c18a81d440f"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -64303,6 +64539,7 @@
       },
       "552": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "weapon 02",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -64338,6 +64575,7 @@
       },
       "553": {
         "$bc": "ENGINE.ModelMeshActor",
+        "$initOptions": {},
         "name": "weapon 03",
         "rootComponent": {
           "$bc": "ENGINE.ModelMeshComponent",
@@ -73100,6 +73338,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "b0e97e65-38fd-47ec-bafe-ca5f07310618"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "ef499d9d-7bf2-4f50-8177-ad9b8de0298d"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -78515,6 +78759,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "647991bf-f6ce-425d-bfa6-a14f09dd0f76"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "92465325-1c33-4134-a151-32b54f999168"
             }
           ],
           "emissiveIntensity": 0.49,
@@ -78802,7 +79052,7 @@
             "opacity": 0.22,
             "side": 2,
             "transparent": true,
-            "uuid": "6b446891-efc0-48a6-ba5c-135bddb6224d"
+            "uuid": "3320ee34-48d7-4dc9-84e3-815e5c585531"
           },
           "name": "MeshComponent",
           "physicsOptions": {
@@ -78874,6 +79124,7 @@
       },
       "579": {
         "$bc": "ENGINE.Actor",
+        "$initOptions": {},
         "name": "Actor 433",
         "rootComponent": {
           "$bc": "ENGINE.MeshComponent",
@@ -84273,6 +84524,12 @@
               "name": "FogCard",
               "renderOrder": 10,
               "uuid": "ac77a395-6fde-4b5b-91e3-a898a1695e76"
+            },
+            {
+              "$bc": "THREE.Mesh",
+              "name": "FogCard",
+              "renderOrder": 10,
+              "uuid": "a8131d09-9a60-4354-9296-b65e78279d7c"
             }
           ],
           "emissiveIntensity": 0.49,

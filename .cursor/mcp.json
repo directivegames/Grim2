@@ -15,5 +15,6 @@
         "./scripts/genesys/doc-server.ts"
       ]
     }
-  }
+  },
+  "mcpServers": {}
 }
