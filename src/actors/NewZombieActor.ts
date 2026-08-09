@@ -1270,9 +1270,10 @@ export class NewZombieActor extends ENGINE.Actor {
 
   public override setHiddenInGame(hidden: boolean): void {
     this._pooledHidden = hidden;
-    this.rootComponent.setHiddenInGame(hidden);
-    this.rootComponent.visible = !hidden;
-    this.rootComponent.traverse(obj => {
+    // rootComponent === this; calling rootComponent.setHiddenInGame recurses forever.
+    super.setHiddenInGame(hidden);
+    this.visible = !hidden;
+    this.traverse(obj => {
       obj.visible = !hidden;
       if (hidden) {
         obj.layers.disableAll();
