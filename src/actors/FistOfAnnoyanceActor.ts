@@ -178,7 +178,7 @@ function _ensureFistVfxPools(world: ENGINE.World, debrisTexture: THREE.Texture |
 @ENGINE.GameClass()
 export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
-  private _sceneFistActor: ENGINE.Actor | null = null;
+  private _sceneFistActor: ENGINE.SceneNode | null = null;
   private _explosionVfx: ENGINE.VFXComponent | null = null;
   private _phase: FistPhase = 'rising';
   private _phaseElapsed = 0;
@@ -326,7 +326,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
   private _setFistPosition(y: number): void {
     if (!this._sceneFistActor) return;
-    this._sceneFistActor.rootComponent.position.set(
+    this._sceneFistActor.position.set(
       this.rootComponent.position.x,
       y,
       this.rootComponent.position.z,
@@ -337,7 +337,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world || !this._sceneFistActor) return;
 
-    this._sceneFistActor.rootComponent.getWorldPosition(this._fistPosScratch);
+    this._sceneFistActor.getWorldPosition(this._fistPosScratch);
 
     const nearby = zombieSpatialManager.getNearbyZombies(this._fistPosScratch, FIST_HIT_RADIUS);
 

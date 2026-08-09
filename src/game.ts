@@ -263,39 +263,41 @@ class MyGame extends ENGINE.BaseGameLoop {
       world.addActor(ZombieHordeManager.create({ name: 'MobileZombieHordeManager' }));
     }
 
-    // Weapon mesh actors — the mobile-empty scene has none placed in the editor.
-    // SpinningWeaponActor.doBeginPlay calls collectSceneWeapons which finds these by
-    // name; without them _meleeWeapon() returns null and the entire melee tick bails.
+    // Weapon mesh roots — the mobile-empty scene has none placed in the editor.
+    // SpinningWeaponActor.beginPlay calls collectSceneWeapons which finds these by
+    // name via getRootNodes; without them _meleeWeapon() returns null and melee tick bails.
     // Slot 0 = melee weapon; slots 1 & 2 = soul-throw blades.
     const WEAPON_MODEL = '@project/assets/models/weapon.glb' as ENGINE.ModelPath;
     for (const wName of ['weapon', 'weapon 02', 'weapon 03'] as const) {
-      if (!world.getActors().some(actor => actor.name === wName)) {
-        const root = ENGINE.GLTFMeshComponent.create({
+      if (!world.getRootNodes().some(node => node.name === wName)) {
+        world.add(ENGINE.ModelMeshNode.create({
+          name: wName,
+          isRoot: true,
           modelUrl: WEAPON_MODEL,
           rotation: new THREE.Euler(Math.PI / 2, 0, 0),
           scale: new THREE.Vector3(0.35, 0.352, 0.229),
           physicsOptions: { enabled: false },
           castShadow: false,
           receiveShadow: false,
-        });
-        world.addActor(ENGINE.Actor.create({ name: wName, rootComponent: root }));
+        }));
       }
     }
 
-    // Fist mesh actors — FistOfAnnoyanceActor.doBeginPlay calls acquireSceneFist
+    // Fist mesh roots — FistOfAnnoyanceActor.beginPlay calls acquireSceneFist
     // which looks these up by name. Without them the fist destroys itself immediately.
     const FIST_MODEL = '@project/assets/models/fistofannoyance.glb' as ENGINE.ModelPath;
     for (const fName of ['fistofannoyance', 'fistofannoyance 02', 'fistofannoyance 03'] as const) {
-      if (!world.getActors().some(actor => actor.name === fName)) {
-        const root = ENGINE.GLTFMeshComponent.create({
+      if (!world.getRootNodes().some(node => node.name === fName)) {
+        world.add(ENGINE.ModelMeshNode.create({
+          name: fName,
+          isRoot: true,
           modelUrl: FIST_MODEL,
           rotation: new THREE.Euler(Math.PI, 1.22173, Math.PI),
           scale: new THREE.Vector3(0.65, 0.65, 0.65),
           physicsOptions: { enabled: false },
           castShadow: false,
           receiveShadow: false,
-        });
-        world.addActor(ENGINE.Actor.create({ name: fName, rootComponent: root }));
+        }));
       }
     }
 
