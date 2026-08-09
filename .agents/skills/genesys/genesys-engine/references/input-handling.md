@@ -57,7 +57,7 @@ methods for a controller to call:
    `DefaultCharacterPawn` intentionally don't share a common ancestor for that code.
 4. During tickPrePhysics, values are sent to the Pawn via its action methods (`moveForward`,
    `moveRight`, `lookUp`, `lookRight`, `zoom`, `jump`, `stopJump`).
-5. `MovementPawn` (and subclasses) forward these calls to `movementComponent`.
+5. `MovementPawn` (and subclasses) forward these calls to `movementNode` (deprecated `movementComponent` accessor still exists).
 
 `DefaultCharacterPawn` is the one exception: it re-exposes `onKeyDown`/`onKeyUp`/`onMouseDown`/
 `onMouseUp`/`onGamepadButtonDown`/`onGamepadButtonUp`/`onGamepadAxisChange` delegates, which
@@ -72,7 +72,7 @@ a different control scheme entirely (e.g. bespoke vehicle or RTS input layout), 
 game-specific keys — override the relevant `handleKeyDown`/etc. method, narrow `this.pawn` with
 `instanceof YourPawnClass`, and call a public action method on the pawn.
 
-Movement components may also handle mouse directly: `BasePawnMovementComponent` provides default no-op `handleMouseDown`, `handleMouseUp`, and `handleMouseMove`. `DefaultPlayerController` forwards raw mouse events straight to `this.pawn.movementComponent` (when the pawn is a `MovementPawn`) before falling back to its own delegate events — used by `TopDownMovementComponent` for middle-mouse drag pan without pointer lock.
+Movement nodes may also handle mouse directly: `BasePawnMovementNode` provides default no-op `handleMouseDown`, `handleMouseUp`, and `handleMouseMove`. `DefaultPlayerController` forwards raw mouse events straight to `this.pawn.movementNode` (when the pawn is a `MovementPawn`) before falling back to its own delegate events — used by `TopDownMovementNode` for middle-mouse drag pan without pointer lock.
 
 ## Best Practices
 

@@ -1,42 +1,42 @@
 # Game Loop
 
-## Core Components
+## Core pieces
 
 BaseGameLoop — Main entry point that initializes the engine and drives the frame update cycle.
-- Creates Renderer, GameContext, and NetWorld.
+- Creates Renderer, World (via `startWorldLifecycle`), and NetWorld.
 - Manages requestAnimationFrame callbacks.
 - Orchestrates world lifecycle (load, tick, render).
 
 Reference: See GameLoop.ts in engine source.
 
-GameContext — Manages persistent game state throughout the application's lifetime.
-- Persists across world/level transitions.
-- Coordinates world and GameMode lifecycle.
-- Handles scene loading from file paths.
+World lifecycle (formerly GameContext) — Owned by BaseGameLoop:
+- `startWorldLifecycle()` creates the World and initializes physics/navigation on the game loop.
+- Persists across world/level transitions via GameLoop state.
+- Coordinates world and GameMode lifecycle and scene loading.
 
-Reference: See GameContext.ts in engine source.
+There is no separate `GameContext` class.
 
-## Initialization Flow
+## Initialization flow
 
-1. GameLoop.start()
-2. GameContext.startGameContext()
-3. World creation and physics initialization
-4. Resource loading
-5. world.beginPlay()
-6. Animation loop registration
+1. `GameLoop.start()`
+2. Create renderer (non-headless)
+3. `startWorldLifecycle()` — world creation and physics/nav setup on the game loop
+4. `enterPlayMode` / `world.beginPlay()`
+5. Register animation loop (`requestAnimationFrame` / XR loop)
+6. `waitForResources` then `postStart()`
 
-## Tick Update Cycle
+## Tick update cycle
 
 1. World.tick(deltaTime)
    a. Timer system tick
    b. Tween manager update
-   c. Actor.prePhysicsTick()
-   d. Physics engine tick
-   e. Actor.postPhysicsTick()
+   c. SceneNode pre-physics tick
+   d. Physics engine tick (`gameLoop.physicsEngine`)
+   e. SceneNode post-physics tick
    f. NetWorld tick (replication)
 2. Render world
 
-## Physics Tick Order
+## Physics tick order
 
 1. PrePhysics — Input handling, AI decisions, animation preparation.
 2. Physics Step — Physics simulation runs (Rapier).

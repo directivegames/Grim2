@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | World / Local | **X** | Transform space |
 | Select | **Q** / Esc | |
-| Move / Rotate / Scale | **W** / **E** / **R** | Gizmos; MCP `action_actor.setTransform` |
+| Move / Rotate / Scale | **W** / **E** / **R** | Gizmos; MCP: editable transform paths via `action_node.setProperties` when exposed by `getEditableProperties` |
 
 ## View menu (viewport)
 
@@ -20,13 +20,11 @@ Snap button → translate/rotate/scale snap toggles + values · **Reset to defau
 
 Toggle Place Actors · Empty Actor · Cube/Sphere/Cone/Cylinder · Point/Spot/Rect Area/Ambient/Directional/Hemisphere lights
 
+(UI label “Place Actors” / “Empty Actor” may persist; spawned types are `*Node` classes such as `MeshNode`, `PointLightNode`.)
+
 ## Viewport context menu (stationary right-click)
 
-On a selection (when AI Assistant is enabled): **Add to Current Chat** · **Add to New Chat** (Space) · then:
-
-**Duplicate** (`Ctrl/Cmd+D`) · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Remove** (Del)
-
-Actor **Copy** / **Paste** remain on the Outliner context menu (`Ctrl/Cmd+C`/`V`).
+Add to Chat · **Duplicate** (`Ctrl/Cmd+D`) · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Remove** (Del)
 
 ## Camera / placement
 
@@ -34,8 +32,8 @@ Actor **Copy** / **Paste** remain on the Outliner context menu (`Ctrl/Cmd+C`/`V`
 | --- | --- |
 | Fly camera | Right-drag; WASD while flying (speed in status bar) |
 | Drop to Surface | **End** |
-| Focus / frame | **F** (also Outliner/Viewport/Component **Focus**) |
-| Place from assets | Drag Asset Browser → viewport (models/prefabs/VFX; orthographic placement supported). Loading drops show a **Placing…** toast; failures toast an error |
+| Focus / frame | **F** (Outliner/Viewport **Focus**; MCP `action_editor.frameSelection`) |
+| Place from assets | Drag Asset Browser → viewport. Loading drops show a **Placing…** indicator |
 
 Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview pin/close
 
@@ -43,13 +41,12 @@ Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview p
 
 | Feature | Path |
 | --- | --- |
-| New Asset | Prefab (Actor) / Material / Resource… / Scene / Folder |
+| New Asset | Prefab / Material / Resource… / Scene / Folder |
 | Filter / Search / Thumb size | Toolbar / More options |
 | Navigate | Back / Forward / Breadcrumbs |
-| Read-only directories | `@project`, `@engine`, `src`, and other protected folders: **New Asset** disabled; empty-space / folder menus limited to refresh; file import and moves into them blocked |
-| Empty-area context (writable) | New Asset/Resource/Folder · Delete Folder · Import Files… · Show in Finder/Explorer · Refresh · Refresh thumbnails |
-| Open | Double-click (scene/material/resource/…) |
-| Prefab | Edit Prefab |
+| Empty-area context | New Asset/Resource/Folder · Delete Folder · Import Files… · Show in Finder/Explorer · Refresh · Refresh thumbnails |
+| Open | Double-click (scene/prefab/material/resource/…) |
+| Prefab | Open Prefab (`.prefab.json`) |
 | Model | Open In Model Viewer · Extract Material… · Create Animation Config · Create Skeleton Profile |
 | Scene | Set as Game/Server Default Scene · Refresh Thumbnail |
 | Common | Find References · Show in Finder/Explorer · Open in Code Editor · Rename (F2) · Duplicate · Delete · Import Copy to Project… (engine assets) · Add to Current/New Chat |
@@ -66,8 +63,8 @@ Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview p
 | Model Viewer | Model context |
 | Foundry / Scenario | Title bar Foundry |
 | Find Asset References | Find References |
-| Save As Prefab | Outliner |
-| Merge Meshes to Model | Outliner / Component tree — writes Model GLB under `@project/assets/models` |
+| Save Branch as Prefab | Outliner |
+| Merge Meshes to Model | Outliner — writes Model GLB under `@project/assets/models`; optional **Merge Into Single Mesh** |
 | Project Settings | Menu; status-bar renderer click |
 | Play Mode Settings | Play ▾ |
 | Build Lightmap | Title bar |
@@ -77,4 +74,4 @@ Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview p
 
 ## Status bar (glance)
 
-Renderer (→ Project Settings) · Camera mode · FOV · Fly speed · Wireframe/Skybox/Grid · Selection / Prefab Asset Mode · New Agent Chat (Space) · Background tasks · **Notifications** bell (toast history: All / Errors / Warnings / Info)
+Renderer (→ Project Settings) · Camera mode · FOV · Fly speed · Wireframe/Skybox/Grid · Selection / Prefab Asset Mode · New Agent Chat (Space) · Background tasks · **Notifications** bell (toast history)

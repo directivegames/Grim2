@@ -7,7 +7,7 @@
 | `Ctrl/Cmd+Z` | Undo |
 | `Ctrl/Cmd+Y` | Redo |
 | `Ctrl/Cmd+D` | Duplicate selection |
-| `Ctrl/Cmd+C` / `V` | Copy / Paste (Outliner focused — actors) |
+| `Ctrl/Cmd+C` / `V` | Copy / Paste (Node Outliner focused — nodes) |
 | `Ctrl/Cmd+P` | Exit Play Mode (while playing) |
 | `Ctrl/Cmd+E` | Show in Explorer |
 | `Ctrl/Cmd+R` | Reload |

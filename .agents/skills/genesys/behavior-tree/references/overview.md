@@ -2,11 +2,11 @@
 
 ## How the system fits together
 
-`BehaviorTreeComponent` sits on an NPC actor and runs a behavior tree each `updateInterval` seconds. Before each run it calls `blackboard.updateGameState()` so nodes can read fresh owner and player data.
+`BehaviorTreeNode` sits on an NPC placeable and runs a behavior tree each `tickInterval` seconds (prefer `tickInterval`; `updateInterval` is a deprecated alias only). Before each run it calls `blackboard.updateGameState()` so nodes can read fresh owner and player data.
 
 The tree is a hierarchy of **nodes**. **Composite** nodes (`Sequence`, `Selector`) have children and delegate execution. **Leaf** nodes are **actions** — they perform gameplay (pathfinding, combat, waiting). **Conditions** gate whether a node may run; they attach to a node via `conditions: [...]` and are checked before that node's logic.
 
-When the root returns `Success` or `Failure`, the component resets the tree and will run it again on the next tick. Design long-running NPC behavior as a root `Selector` whose branches cover fight, flee, patrol, idle, etc.
+When the root returns `Success` or `Failure`, the node resets the tree and will run it again on the next tick. Design long-running NPC behavior as a root `Selector` whose branches cover fight, flee, patrol, idle, etc.
 
 ## Node semantics
 
@@ -19,15 +19,15 @@ Every node execution yields `Success`, `Failure`, or `Running` (see `BehaviorNod
 
 ## Blackboard
 
-The blackboard is a per-component key/value store. Actions write outputs (e.g. next waypoint); conditions and sibling actions read them. The component owner is available via `blackboard.getOwner()`. Auto-updated keys (player position, distance, etc.) are populated in `Blackboard.updateGameState()` — read that file for the current list.
+The blackboard is a per-node key/value store. Actions write outputs (e.g. next waypoint); conditions and sibling actions read them. The owner is available via `blackboard.getOwner()`. Auto-updated keys (player position, distance, etc.) are populated in `Blackboard.updateGameState()` — read that file for the current list.
 
 ## Authoring
 
-- **Programmatic** — build `SequenceNode` / `SelectorNode` trees in code, pass as `rootNode` on the component.
+- **Programmatic** — build `SequenceNode` / `SelectorNode` trees in code, pass as `rootNode` on the node.
 - **JSON** — asset referenced by `behaviorTreePath`; types and options map to entries in `BehaviorTreeLoader` registries.
 - **Custom nodes** — built-ins are a starting point; extend `BehaviorAction` or `ConditionEvaluator` for game-specific behavior, then register types with `BehaviorTreeLoader` if you use JSON. See `BehaviorAction.ts`, `ConditionEvaluator.ts`, and `BehaviorTreeLoader.ts`.
 
-NPC pawns need movement and combat components that match the actions you use (e.g. `NpcMovementComponent` for ground pathing, `AerialMovementComponent` for flying). Component requirements are enforced in each action's source file.
+NPC pawns need movement and combat nodes that match the actions you use (e.g. `NpcMovementNode` for ground pathing, `AerialMovementNode` for flying). Node requirements are enforced in each action's source file.
 
 ## Where to find more in engine source
 
@@ -36,7 +36,7 @@ Paths below are relative to `.engine/npc/behavior-tree/` (game projects) or `pac
 | Topic | File or folder |
 | --- | --- |
 | Exported API | `index.ts` |
-| Component lifecycle, tick, JSON load, debug | `BehaviorTreeComponent.ts` |
+| Node lifecycle, tick, JSON load, debug | `BehaviorTreeNode.ts` |
 | Node base, status enum, condition gating | `BehaviorNode.ts` |
 | Sequence / Selector | `nodes/composite/SequenceNode.ts`, `SelectorNode.ts` |
 | Action base class | `behaviors/BehaviorAction.ts` |

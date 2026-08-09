@@ -95,4 +95,4 @@ Joystick zones expose `data-genesys-virtual-joystick-zone="left"` or `"right"` f
 - [input-handling](../references/input-handling.md) — InputManager API and event routing
 - [pawn-player-controller](../references/pawn-player-controller.md) — DefaultPlayerController virtual joystick handling
 
-Source: `.engine/systems/InputManager.ts`, `.engine/actors/DefaultPlayerController.ts`
+Source: `.engine/systems/InputManager.ts`, `.engine/entities/DefaultPlayerController.ts`

@@ -7,9 +7,7 @@ These tools are **not** first-class MCP tools in compact mode (the default). The
 | Tool | Kind | Operations |
 | --- | --- | --- |
 | `action_asset` | `action` | `createFolder`, `createMaterial`, `delete`, `import`, `installAssetPack`, `mergeMeshes`, `move`, `rename` |
-| `action_component` | `action` | `add`, `duplicate`, `remove`, `resetToDefaults`, `setEnabled`, `setProperties` |
 | `action_navmesh` | `action` | `clear`, `export`, `generate`, `import`, `setSettings`, `toggleDebug` |
-| `action_prefab` | `action` | `apply`, `close`, `createFromActor`, `instantiate`, `open`, `resync`, `save`, `unpack` |
 | `query_asset` | `query` | `find`, `getDetails`, `getAssetPackInfo`, `getReferences` |
 | `query_diagnostics` | `query` | `getBuildErrors`, `getConsole` |
 | `query_navmesh` | `query` | `getInfo`, `getSettings` |
@@ -34,26 +32,6 @@ genesys.actionAsset({ action: 'createFolder', ... })
 { tool: "action_asset", args: { action: "createFolder", ... } }
 ```
 
-### `action_component`
-
-**Action Component** · kind: `action`
-
-Perform component actions. Requires `action` and `actorId`. Operations: add, setProperties, setEnabled, remove (destructive), duplicate, resetToDefaults (resets editable Inspector properties to defaults).
-
-**Operations:** `add` *(undoable)*, `duplicate` *(undoable)*, `remove` *(destructive, undoable)*, `resetToDefaults` *(undoable)*, `setEnabled` *(undoable)*, `setProperties` *(undoable)*
-
-**Dispatch via `run_script`:**
-
-```js
-genesys.actionComponent({ action: 'add', ... })
-```
-
-**Dispatch via `batch_execute`:**
-
-```text
-{ tool: "action_component", args: { action: "add", ... } }
-```
-
 ### `action_navmesh`
 
 **Action NavMesh** · kind: `action`
@@ -72,26 +50,6 @@ genesys.actionNavmesh({ action: 'clear', ... })
 
 ```text
 { tool: "action_navmesh", args: { action: "clear", ... } }
-```
-
-### `action_prefab`
-
-**Action Prefab** · kind: `action`
-
-Create prefab assets from scene actors, instantiate prefabs, apply/unpack instances, or manage prefab isolation. Requires `action`. Operations: createFromActor, instantiate, apply, unpack, open, close, save, resync.
-
-**Operations:** `apply`, `close`, `createFromActor`, `instantiate` *(undoable)*, `open`, `resync`, `save`, `unpack`
-
-**Dispatch via `run_script`:**
-
-```js
-genesys.actionPrefab({ action: 'apply', ... })
-```
-
-**Dispatch via `batch_execute`:**
-
-```text
-{ tool: "action_prefab", args: { action: "apply", ... } }
 ```
 
 ### `query_asset`

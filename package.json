@@ -22,8 +22,8 @@
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
-    "@gnsx/genesys.js": "13.5.2-dev",
-    "three": "npm:@gnsx/three@0.185.14"
+    "@gnsx/genesys.js": "link:D:\\work\\Genesys\\genesys-monorepo\\packages\\engine",
+    "three": "npm:@gnsx/three@0.185.15"
   },
   "pnpm": {
     "onlyBuiltDependencies": []
@@ -36,7 +36,7 @@
     "@types/adm-zip": "0.5.8",
     "@types/jsdom": "21.1.7",
     "@types/node": "25.9.3",
-    "@types/three": "npm:@gnsx/three-types@0.185.5",
+    "@types/three": "npm:@gnsx/three-types@0.185.6",
     "@types/ws": "8.18.1",
     "@typescript-eslint/eslint-plugin": "8.66.0",
     "@typescript-eslint/parser": "8.66.0",

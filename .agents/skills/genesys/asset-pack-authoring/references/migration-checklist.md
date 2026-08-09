@@ -14,12 +14,14 @@
 If the pack does not exist:
 
 ```bash
-pnpm exec genesys-sdk new-asset-pack --name <name> --id <id> \
-  --description "<one-line summary>" --version 0.1.0 \
+pnpm exec genesys-sdk new-asset-pack --name <name> \
+  --description "<one-line summary>" --pack-version 1.0.0 \
   --min-engine-version 0.0.1
 ```
 
-(Editor users may use the New Asset Pack dialog instead — same result.)
+Pack `id` is derived from `--name`. `assets/` and `src/` are created by
+default; pass `--no-assets` / `--no-src` only when you intentionally skip
+them. (Editor users may use the New Asset Pack dialog instead — same result.)
 
 Confirm the resulting layout:
 
@@ -27,11 +29,11 @@ Confirm the resulting layout:
 packs/<name>/
 ├── config.json
 ├── LICENSE
-├── assets/   (created if --include-assets)
-└── src/      (created if --include-src)
+├── assets/   (default; omit with --no-assets)
+└── src/      (default; omit with --no-src)
 ```
 
-If `assets/` or `src/` was not created, `mkdir` them now — they are required
+If `assets/` or `src/` was skipped, `mkdir` them now — they are required
 for the migration.
 
 ## Step 2 — Build the dependency closure
@@ -96,8 +98,8 @@ For each moved class:
 - Search `<project>/src/**/*.{ts,tsx}` for relative imports of the old file
   path (e.g. `./foo`, `../foo`, `./classes/foo`).
 - Skip `src/auto-imports.ts` and `src/game-data.ts` — both are regenerated
-  by the build pipeline. If `pnpm compile` reports stale imports in either
-  after the move, run `pnpm build` (or
+  by the build pipeline. If `pnpm build` reports stale imports in either
+  after the move, rerun `pnpm build` (or
   `pnpm run generate-property-metadata`) instead of editing by hand.
 - Rewrite remaining callers to `@packs/<name>/<rel-no-ext>`.
 - Do not touch imports inside the moved code itself.
@@ -126,11 +128,10 @@ the build pipeline on ship. Do not author or update it by hand.
 
 ## Step 8 — Verify
 
-Run all three in order. Fix every reported issue before moving on.
+Run both in order. Fix every reported issue before moving on.
 
 ```bash
-pnpm compile                                       # TypeScript type-check (includes pack sources)
-pnpm validate-prefabs                              # JSON schema check for all prefabs
+pnpm build                                         # TypeScript build (includes pack sources; game projects have no compile script)
 pnpm check-pack-isolation --pack <name>            # external-ref / stale-ref scan
 ```
 

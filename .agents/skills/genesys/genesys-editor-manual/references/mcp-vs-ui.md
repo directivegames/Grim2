@@ -2,33 +2,37 @@
 
 Prefer MCP when Status is Available and MCP is ready; otherwise give the Manual UI path. Do not invent tools for **UI only** rows.
 
+**MCP (v14 node era):** use `query_node` / `action_node`. MCP schemas name node UUIDs `componentId` / `componentIds` / `parentComponentId` — that is the live param shape.
+
+`action_node` operations are only: **`add`**, **`delete`**, **`setProperties`**, **`select`**. Transforms, reparent, duplicate, editor hide/lock, and reset-to-defaults are **UI** (or editable properties via `setProperties` when exposed) — do not invent `action_node` ops beyond that list.
+
 | Task | MCP | Status | Manual UI |
 | --- | --- | --- | --- |
-| Inspect scene / actors | `query_scene`, `query_actor`, `query_editor` | Available | Outliner; Inspector |
-| Actor CRUD / transform / reparent | `action_actor` | Available | Outliner context; viewport gizmo |
-| Select / Focus / frame | `action_actor.select` / `focus`; `action_editor.frameSelection` | Available | Click; **Focus** (F); Outliner Shift+F scrolls to selection |
-| Component add / set / enable | `action_component` (compact-hidden) | Available | Inspector **+** Add Component; property rows |
-| Component remove / duplicate / reset | `action_component.remove` / `duplicate` / `resetToDefaults` | Available | Component context **Remove** / **Duplicate**; property row reset |
-| Property copy / paste | — | UI only | Property label **Copy Value** (Shift+RMB) / **Paste Value** (Shift+LMB) |
-| Actor copy / paste | — | UI only | Outliner **Copy** / **Paste** (`Ctrl/Cmd+C`/`V`) — recreate via MCP actor create if needed |
+| Inspect scene / nodes | `query_node`, `query_editor` | Available | Outliner (node tree); Inspector |
+| Add node | `action_node.add` (`className`, optional `parentComponentId`) | Available | Outliner **+** Add Component / Prefab (`NodeAddPicker`) |
+| Delete node | `action_node.delete` (`componentIds` / `componentId`) | Available | Outliner **Remove** (Del) |
+| Select node | `action_node.select` | Available | Click in viewport / Outliner |
+| Property set | `action_node.setProperties` (`componentId`, `properties`) | Available | Inspector property rows |
+| Frame selection | `action_editor.frameSelection` | Available | **Focus** (F); Outliner RMB **Focus** |
+| Transform / reparent / duplicate | — | UI only (or `setProperties` for editable transform paths) | Gizmo (**W**/ **E**/ **R**); DnD reparent; **Duplicate** (`Ctrl/Cmd+D`) |
+| Property reset / copy / paste | — | UI only | Row reset; label **Copy Value** / **Paste Value** |
+| Node copy / paste | — | UI only | Outliner **Copy** / **Paste** — recreate via MCP `action_node.add` if needed |
 | Scene open / save / set active | `action_scene` | Available | Menu **Save Scene** (`Ctrl/Cmd+S`); Asset Browser open scene |
 | Scene create / duplicate | `action_scene.create` / `duplicate` | Available | Menu **New Scene**; Asset Browser New Asset → Scene |
-| Prefab create / instantiate / apply / unpack | `action_prefab` | Available | Outliner/Asset **Save as Prefab** / instantiate flows; Inspector Apply / Unlink |
-| Prefab open / close / save / resync | `action_prefab.open` / `close` / `save` / `resync` | Available | **Edit Prefab**; banner/Inspector close; Resync |
+| Prefab create / open / place | — (`action_asset` has no prefab ops) | Unavailable / UI only | Asset Browser **New → Prefab**; double-click `.prefab.json`; drag to place |
 | Undo / redo | `action_editor.undo` / `redo` | Available | `Ctrl/Cmd+Z` / `Ctrl/Cmd+Y` |
-| Editor hide / lock | `setEditorVisible` / `setEditorLocked` | Available | Outliner eye / lock; **H** / **L** (editor-only) |
+| Editor hide / lock | — | UI only | Outliner eye / lock; **H** / **L** (editor-only) |
 | Drop to surface | — | UI only | Hotkey **End** |
 | Asset find refs | `query_asset.getReferences` | Available | Asset context **Find References** |
 | Assets folder/material/move/rename/delete/import | `action_asset` / `query_asset` | Available | Asset Browser |
-| Merge meshes → Model GLB | `action_asset.mergeMeshes` (`mergeGeometry` optional) | Available | Outliner / Component tree **Merge Meshes to Model…** (optional **Merge Into Single Mesh**) |
+| Merge meshes → Model GLB | `action_asset.mergeMeshes` (`mergeGeometry` optional) | Available | Outliner **Merge Meshes to Model…** (optional **Merge Into Single Mesh**) |
 | Local empty asset pack | `action_asset(installAssetPack)` | Available | Tools → **New Asset Pack…** |
 | Browse / export packs | — | UI only | Tools → Browse / Export Asset Pack |
 | Build / register classes | `action_build(buildProject)` | Available | Menu **Build Project** (`Ctrl/Cmd+B`) |
-| Validate prefabs | `action_build(validatePrefabs)` | Available | MCP or `pnpm validate-prefabs` |
 | Lightmap | `action_build(buildLightmap)` | Available | Title bar **Build Lightmap** |
-| Play / exit | `action_editor.enterPlayMode` / `exitPlayMode` | Available | Play ▾ / F5 / F6; Exit (`Ctrl/Cmd+P`) |
+| Play / exit | `enterPlayMode` / `exitPlayMode` | Available | Play ▾ / F5 / F6; Exit (`Ctrl/Cmd+P`) |
 | Play window/mobile/multiplayer prefs | — | UI only | Play ▾ options; Network menu |
-| Screenshot | `action_editor.captureScreenshot` | Available | Assistant/viewport affordances |
+| Screenshot | `captureScreenshot` | Available | Assistant/viewport affordances |
 | NavMesh | `query_navmesh` / `action_navmesh` | Available | Tools → **Generate NavMesh** |
 | Viewport overlays / transform mode / snap | — | UI only | Viewport View / Snap / QWER |
 | Animation / VFX / Skeleton editors | — | UI only | Asset Browser create + dialogs |
@@ -40,8 +44,12 @@ Prefer MCP when Status is Available and MCP is ready; otherwise give the Manual 
 | Play Local Project | — | UI only | Dashboard *(dev SDK)* |
 | Diagnostics | `query_diagnostics` | Available | Title bar Errors; console |
 
-**Compact-hidden** (still callable via `run_script` / `batch_execute` / `search_tools`): `action_component`, `action_prefab`, `action_asset`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`.
+**Compact-hidden** (still callable via `run_script` / `batch_execute` / `search_tools`): `action_asset`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`.
+
+**installAssetPack:** scaffolds an empty `packs/<name>/` only — not catalog / cloud packs (use Browse Asset Packs).
+
+<!-- PREFAB_TODO: Prefab editor/MCP UX removed; engine migrates legacy `.prefab.json` in memory on load. -->
 
 **Editor-only hide/lock:** never describe as runtime `bHidden` / gameplay visibility.
 
-**installAssetPack:** scaffolds an empty `packs/<name>/` only — not catalog / cloud packs (use Browse Asset Packs).
+**UI vs MCP naming:** the Node Outliner may still show legacy labels (e.g. “Actor”) in a few places; MCP and engine types use `*Node` (`MeshNode`, `InteractionNode`, …). Prefab instance actions (**Edit Prefab**, **Apply**, **Resync**, **Unlink**) live in the **Inspector** `PrefabActions` toolbar, not the outliner RMB menu.

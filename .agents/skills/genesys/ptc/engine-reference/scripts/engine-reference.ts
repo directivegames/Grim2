@@ -5,10 +5,10 @@
  * source files from the .engine/src directory.
  *
  * Usage:
- *   pnpm exec tsx .cursor/skills/engine-reference/scripts/engine-reference.ts <ClassName> [ClassName2 ...]
+ *   pnpm exec tsx .agents/skills/genesys/ptc/engine-reference/scripts/engine-reference.ts <ClassName> [ClassName2 ...]
  *
  * Example:
- *   pnpm exec tsx .cursor/skills/engine-reference/scripts/engine-reference.ts PointLightComponent CharacterMovementComponent
+ *   pnpm exec tsx .agents/skills/genesys/ptc/engine-reference/scripts/engine-reference.ts PointLightNode CharacterMovementNode
  */
 
 import * as fs from 'fs';
@@ -24,7 +24,7 @@ function buildClassMap(engineDataSource: string): Map<string, string> {
     let match: RegExpExecArray | null;
     while ((match = importRegex.exec(engineDataSource)) !== null) {
         const names = match[1].split(',').map(n => n.trim()).filter(Boolean);
-        // Convert './components/lights/PointLightComponent.js' -> 'components/lights/PointLightComponent.ts'
+        // Convert './nodes/lights/PointLightNode.js' -> 'nodes/lights/PointLightNode.ts'
         let relativePath = match[2].replace(/^\.\//, '').replace(/\.js$/, '.ts');
         // Skip test/game example imports (not part of engine public API)
         if (relativePath.startsWith('../')) continue;

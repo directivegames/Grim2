@@ -127,7 +127,7 @@ export async function generateManifest(): Promise<void> {
 
   // Scan engine files
   console.log('Scanning engine files...');
-  const engineAssetsRoot = path.join(projectRoot, 'node_modules', 'genesys.js', 'assets');
+  const engineAssetsRoot = path.join(projectRoot, 'node_modules', '@gnsx', 'genesys.js', 'assets');
   if (fs.existsSync(engineAssetsRoot)) {
     const engineFiles = scanDirectory(engineAssetsRoot, 'assets');
     manifest.engineFiles = groupFilesByDirectory(engineFiles);

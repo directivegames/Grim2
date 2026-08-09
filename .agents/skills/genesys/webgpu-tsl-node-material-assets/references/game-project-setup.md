@@ -136,9 +136,9 @@ ENGINE.registerSpecialization({
 ```text
 action_build(action="buildProject")
 → query_editor(operation="getNodeMaterialClasses", filter="PulseStripe")
-→ run_script(mode="apply", groupUndo=true, approval={ operations: ["action_asset.createMaterial", "action_component.setProperties", "action_scene.save"] }, code=...)
+→ run_script(mode="apply", groupUndo=true, approval={ operations: ["action_asset.createMaterial", "action_node.setProperties", "action_scene.save"] }, code=...)
   → genesys.actionAsset({ action: "createMaterial", materialClassName: "GAME.PulseStripeNodeMaterialAsset", name: "M_PulseStripe", parentPath: "assets/materials" })
-  → genesys.actionComponent({ action: "setProperties", actorId: …, properties: { material: "@project/assets/materials/M_PulseStripe.material.json" } })
+  → genesys.actionNode({ action: "setProperties", componentId: …, properties: { material: "@project/assets/materials/M_PulseStripe.material.json" } })
   → genesys.actionScene({ action: "save" })
 ```
 
@@ -154,17 +154,17 @@ Runtime:
 
 ```typescript
 const material = new PulseStripeNodeMaterialAsset();
-const mesh = ENGINE.MeshComponent.create({ geometry: new THREE.SphereGeometry(1, 32, 32), material });
+const mesh = ENGINE.MeshNode.create({ geometry: new THREE.SphereGeometry(1, 32, 32), material });
 ```
 
 Scene/editor (MCP):
 
 ```text
-action_component(action="setProperties", actorId=…, properties={ material: "@project/assets/materials/M_PulseStripe.material.json" })
+action_node(action="setProperties", componentId=…, properties={ material: "@project/assets/materials/M_PulseStripe.material.json" })
 → action_scene(action="save")
 ```
 
-On `MeshComponent`, the editable property path is `material` (type `materialPath`), not a top-level `materialPath` key in `setProperties`.
+On `MeshNode`, the editable property path is `material` (type `materialPath`), not a top-level `materialPath` key in `setProperties`.
 
 ## What breaks if specialization is missing
 

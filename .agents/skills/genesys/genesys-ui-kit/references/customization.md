@@ -127,8 +127,8 @@ remove manual margins from children.
 
 Order of escalation when the user wants a non-default look:
 
-1. **Presets first.** Ten widgets ship `static readonly presets` that map
-   to Game UI Kit variant names. Spread a preset and add your own options:
+1. **Presets first.** Eleven widgets ship `static readonly presets` that map
+   to Game UI Kit variant names (including `ItemCard`). Spread a preset and add your own options:
    ```ts
    new ENGINE.Button(ui, { ...ENGINE.Button.presets.primaryLarge, label: 'Go' });
    new ENGINE.Badge(ui,  { ...ENGINE.Badge.presets.blueLarge,     label: 'New' });

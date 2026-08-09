@@ -6,7 +6,7 @@ description: Build custom WebGPU TSL NodeMaterialAsset classes in a Genesys game
 # WebGPU TSL Node Material Assets
 
 Use this skill when a game project needs custom WebGPU TSL material shaders that:
-- can be assigned to mesh components at runtime,
+- can be assigned to `MeshNode` at runtime,
 - appear in the editor's New Material flow,
 - expose authored fields in the property editor, and
 - round-trip safely through scene/material serialization.
@@ -71,10 +71,10 @@ Do not hand-write `.material.json`. Do not batch `action_build` with scene/asset
 **Step 2 — create asset + assign (one apply script):**
 
 ```text
-run_script(mode="apply", groupUndo=true, approval={ operations: ["action_asset.createMaterial", "action_component.setProperties", "action_scene.save"] }, code=...)
+run_script(mode="apply", groupUndo=true, approval={ operations: ["action_asset.createMaterial", "action_node.setProperties", "action_scene.save"] }, code=...)
   → genesys.queryEditor({ operation: "getState" })
   → genesys.actionAsset({ action: "createMaterial", materialClassName: "GAME.YourMaterialClass", name: "M_YourMaterial", parentPath: "assets/materials" })
-  → genesys.actionComponent({ action: "setProperties", actorId: …, properties: { material: "@project/assets/materials/M_YourMaterial.material.json" } })
+  → genesys.actionNode({ action: "setProperties", componentId: …, properties: { material: "@project/assets/materials/M_YourMaterial.material.json" } })
   → genesys.actionScene({ action: "save" })
   → return { materialAssetPath: "@project/assets/materials/M_YourMaterial.material.json", saved: true }
 → query_asset(operation="find", assetType="material", query="M_YourMaterial")
@@ -83,9 +83,9 @@ run_script(mode="apply", groupUndo=true, approval={ operations: ["action_asset.c
 **Efficiency rules:**
 - Call `action_build` as a **direct compact MCP tool** first; do not combine it with `createMaterial` / `setProperties` / `save` in the same `run_script`.
 - If build must run inside `run_script`, include `action_build.buildProject` in `approval.operations`.
-- `createMaterial` is a hidden compact `action_asset` operation — dispatch via `genesys.actionAsset(...)` inside `run_script`; skip `describe_tool` preamble.
-- Use `query_editor(getNodeMaterialClasses)` to verify node material registration — **not** `getRegisteredClasses` (that lists actor/component classes only).
-- On `MeshComponent`, the editable property is `material`, not `materialPath`.
+- `createMaterial` is a hidden compact `action_asset` operation — dispatch via `genesys.actionAsset(...)` inside `run_script`.
+- Use `query_editor(getNodeMaterialClasses)` to verify node material registration — **not** `getRegisteredClasses` (that lists `ENGINE.*` / `GAME.*` placeable types, not node-material asset classes).
+- Assign the material on a `MeshNode` via the editable `material` property (not `materialPath`).
 - Do not append `select` / `frameSelection` unless the user asks.
 - Do not grep or hand-edit `*.genesys-scene` when MCP reports `editorReady: true`.
 
@@ -103,7 +103,7 @@ run_script(mode="apply", groupUndo=true, approval={ operations: ["action_asset.c
 2. Asset Browser → **New** → **Material**.
 3. Pick the material's `nodeMaterialDisplayName` under its `nodeMaterialGroup`.
 4. Enter a name, choose `assets/materials/`, click **Create Material**.
-5. Assign `@project/assets/materials/<Name>.material.json` on the target mesh **material** property.
+5. Assign `@project/assets/materials/<Name>.material.json` on the target `MeshNode` **material** property.
 6. Save the scene; reopen and confirm authored fields round-trip.
 
 ## Reference

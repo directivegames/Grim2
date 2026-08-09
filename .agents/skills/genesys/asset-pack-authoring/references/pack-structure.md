@@ -38,7 +38,7 @@
 }
 ```
 
-Field rules (full schema is in `@gnsx/genesys-sdk` `asset-pack-types.ts`):
+Field rules (full schema is in `@gnsx/genesys.sdk` `asset-pack-types.ts`):
 - `id` — `^[a-z][a-z0-9-]{2,47}$`. Stable across renames. Never on disk.
 - `name` — display name and the on-disk folder segment.
 - `version` — semver.

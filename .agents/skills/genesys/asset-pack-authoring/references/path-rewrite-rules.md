@@ -57,14 +57,14 @@ every match. Common keys that hold asset paths:
 ```jsonc
 // Before
 {
-  "$bc": "ENGINE.MeshComponent",
+  "$bc": "ENGINE.MeshNode",
   "geometry": { "$bc": "THREE.PlaneGeometry", "_": [1, 1] },
   "material": "@project/assets/materials/Bar.material.json"
 }
 
 // After (Bar.material.json moved into the pack)
 {
-  "$bc": "ENGINE.MeshComponent",
+  "$bc": "ENGINE.MeshNode",
   "geometry": { "$bc": "THREE.PlaneGeometry", "_": [1, 1] },
   "material": "@project/packs/my-pack/assets/materials/Bar.material.json"
 }
@@ -73,8 +73,8 @@ every match. Common keys that hold asset paths:
 `$bc` class refs are unchanged by the move:
 
 ```jsonc
-{ "$bc": "GAME.MyActor" }   // stays "GAME.MyActor" even though MyActor moved
-{ "$bc": "ENGINE.Actor" }   // engine refs never change
+{ "$bc": "GAME.MyPickupRoot" }   // stays "GAME.MyPickupRoot" even though the class moved
+{ "$bc": "ENGINE.SceneNode" }    // engine refs never change
 ```
 
 ## Rule 4 — Material JSON string values

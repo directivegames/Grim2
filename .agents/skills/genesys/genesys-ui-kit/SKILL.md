@@ -58,7 +58,7 @@ const button = new ENGINE.Button(world.uiManager, {
   label: 'Start',
   variant: 'primary',
   size: 'large',
-  onClick: () => world.start(),
+  onClick: () => { /* handle click */ },
 });
 
 await button.initialize();
@@ -76,10 +76,11 @@ Every widget:
 
 ## Presets — named variants
 
-Ten widgets expose a `static readonly presets` object containing named option
-combinations from the Game UI Kit. Spread a preset into the constructor (or
-into `show()` for Achievement) to apply a named style combination without
-looking up individual option values. Your own options always win over the spread.
+Eleven widgets expose a `static readonly presets` object containing named option
+combinations from the Game UI Kit (including `ItemCard`). Spread a preset into
+the constructor (or into `show()` for Achievement) to apply a named style
+combination without looking up individual option values. Your own options
+always win over the spread.
 
 ```ts
 import * as ENGINE from '@gnsx/genesys.js';

@@ -1,18 +1,17 @@
 # Player Control and Autonomous Proxy
 
-All actors in the game are server-authoritative — the server spawns them, controls their state, and replicates updates to clients. PlayerController and the Pawn it possesses are no exception: they are still replicated actors owned and managed by the server. What makes them special is the `AutonomousProxy` role granted to the controlling client.
+All net entities in the game are server-authoritative — the server spawns them, controls their state, and replicates updates to clients. `PlayerController` (a `SceneNode`/`Controller` subclass) and the `Pawn` it possesses (a `PrimitiveNode` subclass) are no exception: they are still replicated nodes owned and managed by the server. What makes them special is the `AutonomousProxy` role granted to the controlling client.
 
 ## AutonomousProxy: How It Works
 
-When a player joins, the server:
+When a player joins, `GameMode` on the server:
 
-1. Spawns a PlayerController and marks it with `replicated = true`, `onlyRelevantToOwner = true`, and `netOwningClientId = clientId`.
-2. Calls `setAutonomousProxy(true)` on the PlayerController so the owning client has `netLocalRole = AutonomousProxy` for it.
-3. Spawns a Pawn and applies the same setup.
+1. Spawns a `PlayerController` and adds it to the world (`PlayerController.initialize()` already calls `this.replicated = true` and `ENGINE.ensureReplicationGroup(this)`, and marks its group `setAutonomousProxy(true)`), then sets `controller.netOwningClientId = clientId`.
+2. Spawns a `Pawn` (via `restartPlayer` → `spawnPlayerPawnWithTransform`), sets `pawn.netOwningClientId = clientId`, adds it to the world, then calls `controller.possess(pawn)` — possession flags the pawn's group `AutonomousProxy` too when the controller is a `PlayerController`.
 
 `AutonomousProxy` means the controlling client is allowed to perform movement and other actions locally without waiting for a server round-trip. The client applies input immediately for responsiveness, sends those actions to the server via `@ServerRPC`, and the server validates and replicates the authoritative result back. If the server's result differs from what the client predicted, the client corrects itself.
 
-All other actors have `netLocalRole = SimulatedProxy` on a given client. The client displays them based on replicated state but cannot act on them.
+All other nodes have `netLocalRole = SimulatedProxy` on a given client. The client displays them based on replicated state but cannot act on them.
 
 ## Checking the Controlling Client
 
@@ -21,32 +20,34 @@ All other actors have `netLocalRole = SimulatedProxy` on a given client. The cli
 this.isOwnedByLocalClient()     // true only on the owning client
 this.isLocalAutonomousProxy()   // true on the owning client (AutonomousProxy role)
 
-// Check the owning client ID:
+// Check the owning client ID (delegates to the node's ReplicationGroup):
 this.netOwningClientId          // ClientId (uint16); 0 means server-owned / no owner
 ```
 
 Use `isOwnedByLocalClient()` to decide whether to show a local HUD element or attach a local camera.
 
-## onlyRelevantToOwner
+## Scoping a per-player-only node
 
-PlayerController is automatically flagged as `onlyRelevantToOwner = true`. The server only replicates it to the owning client; other clients never receive it. Apply this to any actor that is private to a single player (e.g., a player's inventory actor).
+There is no generic "owner-only visibility" flag on `SceneNode`/`PrimitiveNode` roots (that is an `Actor`-only compatibility property — see the footnote below). To spawn a node that only materializes for one client (a player's private inventory, hand UI, etc.), spawn it through a `MultiplayerSpawner`:
 
 ```typescript
-override beginPlay(): void {
-  super.beginPlay();
-  if (!this.hasAuthority()) return;
+override beginPlay(): boolean {
+  if (!super.beginPlay()) return false;
+  if (!this.hasAuthority()) return true;
 
-  // replicated = true is set in InventoryActor's constructor.
-  const inventory = InventoryActor.create({ world: this.getWorld()! });
-  inventory.netOwningClientId = ownerClientId;
-  inventory.onlyRelevantToOwner = true;
-  this.getWorld()!.addActor(inventory);
+  // spawner is a MultiplayerSpawner already in the world (see node-replication.md).
+  spawner.spawnOwnerOnly(ownerClientId);
+  return true;
 }
 ```
 
+`spawnOwnerOnly` journals the spawn for a single-client audience and stamps `netOwningClientId` on every `ReplicationGroup` in the spawned tree — other clients never receive it. For individual **properties** on an already-shared node, use `net: { replicateTo: 'owner' }` instead (see [node-replication](node-replication.md)).
+
+> **Deprecated `Actor` compatibility:** `Actor.onlyRelevantToOwner = true` is a compatibility flag on the deprecated `Actor` shell that restricts replication of that one actor to its owning client. It has no `SceneNode`/`PrimitiveNode` equivalent. Prefer `MultiplayerSpawner.spawnOwnerOnly` or per-property `replicateTo: 'owner'` in new code.
+
 ## Input Flow for the Controlled Pawn
 
-The client runs the PlayerController's `IInputHandler` methods locally (keyboard, mouse, gamepad events). For movement, `CharacterMovementComponent` applies the input on the client immediately as a prediction, then sends it to the server. The server validates and replicates the authoritative position back; the client corrects if needed.
+The client runs the `PlayerController`'s `IInputHandler` methods locally (keyboard, mouse, gamepad events). For movement, `CharacterMovementNode` applies the input on the client immediately as a prediction, then sends it to the server. The server validates and replicates the authoritative position back; the client corrects if needed.
 
 For non-movement actions (firing, interacting, using an ability), send a `@ServerRPC` to the server, which validates and acts.
 
@@ -69,9 +70,9 @@ Do not modify game state (health, ammo, scores) directly from client input handl
 
 ## Client-Side Prediction (CharacterPawn)
 
-`CharacterPawn` and `CharacterMovementComponent` include client-side prediction and server reconciliation automatically. The engine applies input locally on the client immediately for smooth feel, then corrects the position if the server disagrees. This is handled internally; no extra code is required when using these classes.
+`CharacterPawn` and `CharacterMovementNode` include client-side prediction and server reconciliation automatically. The engine applies input locally on the client immediately for smooth feel, then corrects the position if the server disagrees. This is handled internally; no extra code is required when using these classes.
 
-For custom actors that need prediction, implement the prediction logic manually and use `@ServerRPC` to send input sequences with a tick counter. Consult `InputBuffer.ts` and `MovementPrediction.ts` in engine source for the pattern used by `CharacterPawn`.
+For custom nodes that need prediction, implement the prediction logic manually and use `@ServerRPC` to send input sequences with a tick counter. Consult `InputBuffer.ts` and `MovementPrediction.ts` in engine source for the pattern used by `CharacterPawn`.
 
 ## Accessing the Local Player
 
@@ -82,8 +83,8 @@ const controller = await world.netWorld.waitForLocalPlayerController();
 const pawn = controller?.getPawn();
 ```
 
-In standalone (single-player) mode, `world.getPlayerController(0)` returns the single local controller synchronously.
+In standalone (single-player) mode, `world.getPlayerControllerAt(0)` returns the single local controller synchronously.
 
-On the server, access all connected controllers with `world.getActors(ENGINE.PlayerController)`.
+On the server, access all connected controllers with `world.getNodes(ENGINE.PlayerController)`.
 
-Reference: See PlayerController.ts and Actor.ts in engine source.
+Reference: See `PlayerController.ts`, `Pawn.ts`, and `Controller.ts` in engine source.

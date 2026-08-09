@@ -1,6 +1,6 @@
 # RPCs (Remote Procedure Calls)
 
-RPCs let code on one machine call a method that executes on a different machine. Import them from `@gnsx/genesys.js`. They may only be used on methods of actors or components that are replicated (`this.replicated = true`).
+RPCs let code on one machine call a method that executes on a different machine. Import them from `@gnsx/genesys.js`. They may only be used on methods of nodes that are inside a `ReplicationGroup` (`this.replicated = true` plus `ENGINE.ensureReplicationGroup(this)` — see [node-replication](node-replication.md)).
 
 ## Decorator Types
 
@@ -26,7 +26,7 @@ Calling `fire()` on a client sends the call to the server. The server validates 
 
 Server calls → owning client executes.
 
-Use when the server needs to send information or trigger a UI event on the specific client that owns this actor: show a damage indicator, play a personal sound effect, display a custom notification.
+Use when the server needs to send information or trigger a UI event on the specific client that owns this node: show a damage indicator, play a personal sound effect, display a custom notification.
 
 ```typescript
 @ENGINE.ClientRPC()
@@ -36,7 +36,7 @@ showDamageIndicator(amount: number): void {
 }
 ```
 
-The actor must have `netOwningClientId` set. If it is not set, the RPC is not delivered.
+The node must have `netOwningClientId` set. If it is not set, the RPC is not delivered.
 
 ### @ENGINE.MulticastRPC
 
@@ -113,9 +113,9 @@ Each element in `params` corresponds to a method parameter by position. Pass `nu
 | `THREE.Vector3` | `'vector3'` (auto-inferred) + quantization |
 | `THREE.Euler` | `'euler'` (auto-inferred) + quantization |
 | `THREE.Quaternion` | `'quaternion'` (auto-inferred) |
-| Actor reference | `'actorRef'`; add `nullable: true` if it can be null |
+| Node / `SceneNode` reference | `'nodeRef'`; add `nullable: true` if it can be null |
 
-See [actor-replication](actor-replication.md) for the full quantization mode guide — the same modes apply to RPC parameters.
+See [node-replication](node-replication.md) for the full quantization mode guide — the same modes apply to RPC parameters.
 
 Avoid passing complex class instances, closures, or functions as RPC arguments.
 
@@ -150,11 +150,11 @@ onMatchCountdownStarted(secondsRemaining: number): void {
 ### Server broadcasts event to all
 
 ```typescript
-// In a replicated actor, called on server:
+// In a replicated node, called on server:
 @ENGINE.MulticastRPC()
-onActorDestroyed(): void {
+onNodeDestroyed(): void {
   // Play destruction effect on every client.
 }
 ```
 
-Reference: See ActorNetworking.ts in engine source.
+Reference: See Networking.ts in engine multiplayer source.
