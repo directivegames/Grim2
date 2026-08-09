@@ -20,6 +20,6 @@ export class FilmGrainActor extends ENGINE.Actor {
   }
 
   public override getEditorClassIcon(): string | null {
-    return 'Icon_VFX';
+    return 'Icon_Vfx';
   }
 }

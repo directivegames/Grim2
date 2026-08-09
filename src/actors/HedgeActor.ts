@@ -1,5 +1,5 @@
 /**
- * HedgeActor - Visual-only hedge decoration.
+ * HedgeActor - Visual-only hedge/fence decoration.
  *
  * Physics disabled so both player and zombies can walk through freely.
  * Purely aesthetic — provides environmental detail without blocking movement.
@@ -9,8 +9,9 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
 
+/** hedges were removed from art; wooden fence is the current stand-in decoration */
 const HEDGE_MODEL_URL =
-  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/hedgeredon.glb` as ENGINE.ModelPath;
+  `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/woodenfence.glb` as ENGINE.ModelPath;
 
 @ENGINE.GameClass()
 export class HedgeActor extends ENGINE.Actor {

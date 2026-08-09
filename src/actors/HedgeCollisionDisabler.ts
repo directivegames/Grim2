@@ -1,15 +1,16 @@
 /**
- * HedgeCollisionDisabler — One-time scan to disable collision on all hedges.
+ * HedgeCollisionDisabler — One-time scan to disable collision on walk-through decorations.
  *
- * At game start, finds all GLTFMeshActor instances using hedgeredon.glb
- * and disables their physics. Runs once then removes itself.
+ * At game start, finds GLTF mesh actors whose model filename matches the old hedge
+ * asset (removed from art) and disables their physics. Runs once then removes itself.
  * Zero ongoing performance cost.
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
 import type { ActorOptions } from '@gnsx/genesys.js';
 
-const HEDGE_MODEL_URL = '@project/assets/models/hedgeredon.glb';
+/** Filename only — avoid embedding a missing @project asset path in the bundle. */
+const HEDGE_MODEL_FILENAME = 'hedgeredon.glb';
 
 @ENGINE.GameClass()
 export class HedgeCollisionDisabler extends ENGINE.Actor {
@@ -45,7 +46,7 @@ export class HedgeCollisionDisabler extends ENGINE.Actor {
         };
       };
 
-      if (gltfActor.modelUrl === HEDGE_MODEL_URL) {
+      if (gltfActor.modelUrl?.endsWith(HEDGE_MODEL_FILENAME)) {
         // Disable physics on the root component
         if (gltfActor.rootComponent) {
           // Try to disable via physics options

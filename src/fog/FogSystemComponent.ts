@@ -326,7 +326,7 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
   }
 
   public override getEditorClassIcon(): string | null {
-    return 'Icon_VFX';
+    return 'Icon_Fog';
   }
 
   private _currentSettings(): FogCardSettings {
