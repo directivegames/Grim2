@@ -52,7 +52,7 @@ export class WarmupActor extends ENGINE.Actor {
   private _bloodSplatter: ENGINE.SceneComponent | null = null;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
+    const root = ENGINE.SceneComponent.create({ name: 'Root' });
     super.initialize({ ...options, rootComponent: root });
   }
 

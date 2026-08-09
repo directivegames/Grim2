@@ -151,7 +151,7 @@ export function registerMetadata(): void {
     });
 
   registerGeneratedPropertyMetadata(HedgeActor, {
-      "scale": {
+      "modelScale": {
         "type": "number",
         "min": 0.1,
         "max": 5,

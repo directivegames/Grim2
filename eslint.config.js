@@ -18,10 +18,7 @@ import sdkConfig from './.genesys/sdk/eslint.config.js';
  */
 export default [
   ...sdkConfig,
-  // Add your custom overrides below:
-  // {
-  //   rules: {
-  //     // your custom rules
-  //   }
-  // }
+  {
+    ignores: ['tools/**'],
+  },
 ];

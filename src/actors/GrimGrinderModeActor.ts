@@ -46,7 +46,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   private readonly _hitNormal = new THREE.Vector3(1, 0, 0);
 
   public override initialize(options?: ActorOptions): void {
-    super.initialize({ ...options, rootComponent: ENGINE.SceneComponent.create() });
+    super.initialize({ ...options, rootComponent: ENGINE.SceneComponent.create({ name: 'Root' }) });
   }
 
   public static isActive(): boolean {
@@ -129,13 +129,16 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
     return actor;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (GrimGrinderModeActor._instance === this) {
       GrimGrinderModeActor._instance = null;
     }
     this._restoreSlomo();
     void this._endModeImmediate(false);
-    super.doEndPlay();
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -155,7 +158,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
       return;
     }
 
-    this._pawn.rootComponent.getWorldPosition(this._playerPos);
+    this._pawn.getWorldPosition(this._playerPos);
     this._car.syncTo(this._playerPos, this._pawn.getGrimGrinderCarYaw());
     this._processContacts(world);
   }
@@ -176,7 +179,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
       pawn.consumeGrimGrinderSouls();
       pawn.restoreFullHealth();
 
-      pawn.rootComponent.getWorldPosition(this._playerPos);
+      pawn.getWorldPosition(this._playerPos);
       car.teleportTo(this._playerPos, pawn.getGrimGrinderCarYaw());
       pawn.setGrimGrinderVisualHidden(true);
 
@@ -298,7 +301,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   }
 
   private _processContacts(world: ENGINE.World): void {
-    this._pawn!.rootComponent.getWorldPosition(this._playerPos);
+    this._pawn!.getWorldPosition(this._playerPos);
 
     const nearby = zombieSpatialManager.getNearbyZombies(this._playerPos, GRIM_GRINDER_CONTACT_RADIUS + 2);
     const contactSq = GRIM_GRINDER_CONTACT_RADIUS * GRIM_GRINDER_CONTACT_RADIUS;

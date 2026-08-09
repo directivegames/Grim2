@@ -114,10 +114,13 @@ export class DeadGraveActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    this._aliveSec = 0;
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._aliveSec = 0;
     this._beginSettling();
+  
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {

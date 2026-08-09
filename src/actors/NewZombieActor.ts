@@ -38,6 +38,7 @@ import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getCachedPlayerPawn, getCachedWorldFrame } from '../utils/world-tick-cache.js';
 import { trackDeathSmokeActor } from '../utils/runtime-vfx-cleanup.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
+import { RootDeathCharacterStats } from '../components/RootDeathCharacterStats.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -345,6 +346,7 @@ export class NewZombieActor extends ENGINE.Actor {
     ensureNewZombieNpcCollisionProfile();
 
     const root = ENGINE.MeshComponent.create({
+      name: 'CapsuleRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
       physicsOptions: {
@@ -356,11 +358,13 @@ export class NewZombieActor extends ENGINE.Actor {
 
     // Ragdoll pivot sits at body center; visual hangs below it so rotation is around center
     const pivot = ENGINE.SceneComponent.create({
+      name: 'Pivot',
       position: new THREE.Vector3(0, CAPSULE_HEIGHT * 0.5, 0),
     });
     this._ragdollPivot = pivot;
 
     const visual = ENGINE.GLTFMeshComponent.create({
+      name: 'Visual',
       modelUrl: NEW_ZOMBIE_MODEL_URL,
       material: NEW_ZOMBIE_MATERIAL_URL,
       position: new THREE.Vector3(0, -CAPSULE_HEIGHT * 0.5, 0),
@@ -370,10 +374,11 @@ export class NewZombieActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: NEW_ZOMBIE_ANIM_URL });
+    const anim = ENGINE.AnimationStateMachineComponent.create({ name: 'Animation', configUrl: NEW_ZOMBIE_ANIM_URL });
     this.animationComponent = anim;
 
-    const stats = ENGINE.CharacterStatsComponent.create({
+    const stats = RootDeathCharacterStats.create({
+      name: 'Stats',
       maxHealth: this.maxHealth,
       healthRegen: 0,
       attackCooldown: this.attackCooldown,
@@ -383,6 +388,7 @@ export class NewZombieActor extends ENGINE.Actor {
     });
 
     const npc = ENGINE.NpcMovementComponent.create({
+      name: 'NpcMovement',
       pathFollowingAccuracy: NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY,
       actorFollowingDistance: NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE,
       stopDistance: NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE,
@@ -406,7 +412,7 @@ export class NewZombieActor extends ENGINE.Actor {
     (npc as unknown as { pathFollowingAccuracy: number }).pathFollowingAccuracy = NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY;
     (npc as unknown as { actorFollowingDistance: number }).actorFollowingDistance = NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE;
 
-    this._blobShadow = BlobShadowComponent.create({ radius: 0.45, opacity: 0.3 });
+    this._blobShadow = BlobShadowComponent.create({ name: 'BlobShadow', radius: 0.45, opacity: 0.3 });
 
     // Hierarchy: root (capsule) -> pivot (body center) -> visual + anim; shadow on root at feet
     pivot.add(visual);
@@ -418,10 +424,10 @@ export class NewZombieActor extends ENGINE.Actor {
     this._npcComponent = npc as unknown as typeof this._npcComponent;
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    // Ensure shadows are disabled (overrides scene file castShadow=true for placed zombies)
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }// Ensure shadows are disabled (overrides scene file castShadow=true for placed zombies)
     const visual = this.getComponent(ENGINE.GLTFMeshComponent);
     if (visual) {
       visual.castShadow = false;
@@ -470,7 +476,7 @@ export class NewZombieActor extends ENGINE.Actor {
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
       this.rootComponent.getWorldPosition(this._lodMyPos);
-      player.rootComponent.getWorldPosition(this._lodPlayerPos);
+      player.getWorldPosition(this._lodPlayerPos);
       this._distanceToPlayer = this._lodMyPos.distanceTo(this._lodPlayerPos);
       this._updateLODLevel();
     }
@@ -489,6 +495,8 @@ export class NewZombieActor extends ENGINE.Actor {
     this.behaviorRoot?.initialize(this.blackboard);
 
     zombieSpatialManager.registerZombie(this);
+  
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -520,7 +528,7 @@ export class NewZombieActor extends ENGINE.Actor {
     const player = world ? getCachedPlayerPawn(world) : null;
     if (player) {
       this.rootComponent.getWorldPosition(this._lodMyPos);
-      player.rootComponent.getWorldPosition(this._lodPlayerPos);
+      player.getWorldPosition(this._lodPlayerPos);
       this._distanceToPlayer = this._lodMyPos.distanceToSquared(this._lodPlayerPos);
       this._distanceToPlayerLinear = Math.sqrt(this._distanceToPlayer);
       this._updateLODLevel();
@@ -837,7 +845,7 @@ export class NewZombieActor extends ENGINE.Actor {
 
   // ─── Death ─────────────────────────────────────────────────────────────────
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -982,7 +990,7 @@ export class NewZombieActor extends ENGINE.Actor {
       this.blackboard.setValue('HasAggro', false);
       const player = this.getWorld()?.getFirstPlayerPawn();
       if (player) {
-        const dist = this.rootComponent.position.distanceTo(player.rootComponent.position);
+        const dist = this.rootComponent.position.distanceTo(player.position);
         this.blackboard.setValue('DistanceToPlayer', dist);
       }
     }
@@ -1167,7 +1175,7 @@ export class NewZombieActor extends ENGINE.Actor {
       this.blackboard.setValue('HasAggro', true);
       const player = this.getWorld()?.getFirstPlayerPawn();
       if (player) {
-        const dist = this.rootComponent.position.distanceTo(player.rootComponent.position);
+        const dist = this.rootComponent.position.distanceTo(player.position);
         this.blackboard.setValue('DistanceToPlayer', dist);
       } else {
         this.blackboard.setValue('DistanceToPlayer', 15);
@@ -1334,7 +1342,7 @@ export class NewZombieActor extends ENGINE.Actor {
     npc.useNavigationServer = false;
 
     this.rootComponent.getWorldPosition(this._steerMyPos);
-    player.rootComponent.getWorldPosition(this._steerToPlayer);
+    player.getWorldPosition(this._steerToPlayer);
     this._steerToPlayer.sub(this._steerMyPos);
     this._steerToPlayer.y = 0;
     if (this._steerToPlayer.lengthSq() < 1e-8) {
@@ -1692,7 +1700,10 @@ export class NewZombieActor extends ENGINE.Actor {
 
   // ─── Cleanup ───────────────────────────────────────────────────────────────
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
 
     zombieSpatialManager.unregisterZombie(this);
@@ -1704,7 +1715,7 @@ export class NewZombieActor extends ENGINE.Actor {
     }
     this.blackboard?.clear();
     this.blackboard = null;
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

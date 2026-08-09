@@ -54,7 +54,7 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
     const player = world?.getFirstPlayerPawn();
     if (player) {
       this.getWorldPosition(this._myPos);
-      player.rootComponent.getWorldPosition(this._playerPos);
+      player.getWorldPosition(this._playerPos);
       if (this._myPos.distanceToSquared(this._playerPos) > UPDATE_DISTANCE_SQ) {
         if (this._lightActive) {
           this._light.intensity = 0;
@@ -108,12 +108,15 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
     this._light.color = this._scratchColor;
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (this._light) {
       this._light.intensity = this._baseIntensity;
       this._light.color = this._baseColor;
     }
-    super.endPlay();
+    return true;
   }
 
   private _bindLight(): void {

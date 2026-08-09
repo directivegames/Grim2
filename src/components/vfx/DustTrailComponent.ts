@@ -30,8 +30,15 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
   private _spawnTimer = 0;
   private _wasMoving = false;
 
-  public override async beginPlay(): Promise<void> {
-    super.beginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
+    void this._beginPlayAsync();
+    return true;
+  }
+
+  private async _beginPlayAsync(): Promise<void> {
     this._dustTexture = await loadSmokeTexture(DUST_TEXTURE_PATH);
     const world = this.getWorld();
     if (world && this._dustTexture) {
@@ -93,9 +100,12 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
     });
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     disposeBillboardSmokePuffs(this._puffs);
     this._dustTexture = null;
-    super.endPlay();
+    return true;
   }
 }

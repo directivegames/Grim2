@@ -59,7 +59,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
   private elapsed = 0;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
+    const root = ENGINE.SceneComponent.create({ name: 'Root' });
     super.initialize({ ...options, rootComponent: root });
 
     this._createChunks(root);
@@ -67,14 +67,17 @@ export class GoreExplosionActor extends ENGINE.Actor {
     this._createShockwave(root);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return false;
 
     const origin = this.rootComponent.position;
     this._spawnBloodDrops(world, origin);
+  
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -132,7 +135,10 @@ export class GoreExplosionActor extends ENGINE.Actor {
     }
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     for (const piece of this.chunkPieces) {
       piece.mesh.material.dispose();
       piece.mesh.removeFromParent();
@@ -155,7 +161,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
       drop.mesh.removeFromParent();
     }
     this.bloodDrops.length = 0;
-    super.doEndPlay();
+    return true;
   }
 
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): GoreExplosionActor | null {
@@ -219,6 +225,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
         opacity: 1,
       });
       const mesh = new THREE.Mesh(CHUNK_GEOMETRY, material);
+      mesh.name = 'GoreChunk';
       const size = randomBetween(0.05, 0.18);
       mesh.scale.set(
         randomBetween(size * 0.6, size * 1.7),
@@ -249,6 +256,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
       blending: THREE.AdditiveBlending,
     });
     this.flash = new THREE.Mesh(FLASH_GEOMETRY, material);
+    this.flash.name = 'Flash';
     this.flash.scale.setScalar(0.3);
     root.add(this.flash);
   }
@@ -262,6 +270,7 @@ export class GoreExplosionActor extends ENGINE.Actor {
       blending: THREE.AdditiveBlending,
     });
     this.shockwave = new THREE.Mesh(SHOCKWAVE_GEOMETRY, material);
+    this.shockwave.name = 'Shockwave';
     this.shockwave.rotation.x = Math.PI / 2;
     this.shockwave.position.y = 0.04;
     this.shockwave.scale.setScalar(0.2);

@@ -25,6 +25,7 @@ import { awardSoulFromEnemyKill } from '../utils/award-soul.js';
 import { tryRollMissionItemDropOnEnemyKill } from '../utils/mission-enemy-drops.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
+import { RootDeathCharacterStats } from '../components/RootDeathCharacterStats.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -324,6 +325,7 @@ export class ZombieActor extends ENGINE.Actor {
     ensureZombieNpcCollisionProfile();
 
     const root = ENGINE.MeshComponent.create({
+      name: 'CapsuleRoot',
       geometry: new THREE.CapsuleGeometry(CAPSULE_RADIUS, CAPSULE_HEIGHT - CAPSULE_RADIUS * 2),
       material: new THREE.MeshStandardMaterial({ visible: false }),
       physicsOptions: {
@@ -335,11 +337,13 @@ export class ZombieActor extends ENGINE.Actor {
 
     // Ragdoll pivot sits at body center; visual hangs below it so rotation is around center
     const pivot = ENGINE.SceneComponent.create({
+      name: 'Pivot',
       position: new THREE.Vector3(0, CAPSULE_HEIGHT * 0.5, 0),
     });
     this._ragdollPivot = pivot;
 
     const visual = ENGINE.GLTFMeshComponent.create({
+      name: 'Visual',
       modelUrl: ZOMBIE_MODEL_URL,
       position: new THREE.Vector3(0, -CAPSULE_HEIGHT * 0.5, 0),
       rotation: new THREE.Euler(0, Math.PI, 0),
@@ -348,10 +352,11 @@ export class ZombieActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: ZOMBIE_ANIM_URL });
+    const anim = ENGINE.AnimationStateMachineComponent.create({ name: 'Animation', configUrl: ZOMBIE_ANIM_URL });
     this.animationComponent = anim;
 
-    const stats = ENGINE.CharacterStatsComponent.create({
+    const stats = RootDeathCharacterStats.create({
+      name: 'Stats',
       maxHealth: this.maxHealth,
       healthRegen: 0,
       attackCooldown: this.attackCooldown,
@@ -361,6 +366,7 @@ export class ZombieActor extends ENGINE.Actor {
     });
 
     const npc = ENGINE.NpcMovementComponent.create({
+      name: 'NpcMovement',
       pathFollowingAccuracy: ZOMBIE_PATH_FOLLOWING_ACCURACY,
       actorFollowingDistance: ZOMBIE_FOLLOW_HOLD_DISTANCE,
       stopDistance: ZOMBIE_FOLLOW_HOLD_DISTANCE,
@@ -396,10 +402,10 @@ export class ZombieActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    // PERFORMANCE: Random tick offset to distribute updates across frames
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }// PERFORMANCE: Random tick offset to distribute updates across frames
     this._tickOffset = Math.floor(Math.random() * 100);
 
     this._jitteredSpeed = this.moveSpeed + (Math.random() - 0.5) * SPEED_JITTER_RANGE;
@@ -439,7 +445,7 @@ export class ZombieActor extends ENGINE.Actor {
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
       this.rootComponent.getWorldPosition(this._lodMyPos);
-      player.rootComponent.getWorldPosition(this._lodPlayerPos);
+      player.getWorldPosition(this._lodPlayerPos);
       this._distanceToPlayer = this._lodMyPos.distanceTo(this._lodPlayerPos);
       this._updateLODLevel();
     }
@@ -453,6 +459,8 @@ export class ZombieActor extends ENGINE.Actor {
 
     // PERFORMANCE: Register with spatial grid for efficient separation queries
     zombieSpatialManager.registerZombie(this);
+  
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -473,7 +481,7 @@ export class ZombieActor extends ENGINE.Actor {
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
       this.rootComponent.getWorldPosition(this._lodMyPos);
-      player.rootComponent.getWorldPosition(this._lodPlayerPos);
+      player.getWorldPosition(this._lodPlayerPos);
       this._distanceToPlayer = this._lodMyPos.distanceToSquared(this._lodPlayerPos);
       this._updateLODLevel();
     }
@@ -761,7 +769,7 @@ export class ZombieActor extends ENGINE.Actor {
 
   // ─── Death ─────────────────────────────────────────────────────────────────
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -916,7 +924,7 @@ export class ZombieActor extends ENGINE.Actor {
     npc.useNavigationServer = false;
 
     this.rootComponent.getWorldPosition(this._steerMyPos);
-    player.rootComponent.getWorldPosition(this._steerToPlayer);
+    player.getWorldPosition(this._steerToPlayer);
     this._steerToPlayer.sub(this._steerMyPos);
     this._steerToPlayer.y = 0;
     if (this._steerToPlayer.lengthSq() < 1e-8) {
@@ -1269,7 +1277,10 @@ export class ZombieActor extends ENGINE.Actor {
 
   // ─── Cleanup ───────────────────────────────────────────────────────────────
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
 
     // PERFORMANCE: Unregister from spatial grid
@@ -1282,7 +1293,7 @@ export class ZombieActor extends ENGINE.Actor {
     }
     this.blackboard?.clear();
     this.blackboard = null;
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

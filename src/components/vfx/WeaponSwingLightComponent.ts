@@ -76,9 +76,12 @@ export class WeaponSwingLightComponent extends ENGINE.SceneComponent {
     }
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._setIntensity(0);
-    super.endPlay();
+    return true;
   }
 
   private _setIntensity(value: number): void {

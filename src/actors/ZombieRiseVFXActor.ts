@@ -37,12 +37,13 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
   private _isActive = false;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
+    const root = ENGINE.SceneComponent.create({ name: 'Root' });
     super.initialize({ ...options, rootComponent: root });
     this._createGroundRipples(root);
 
     if (!isMobileDevice()) {
       const smokeVfx = ENGINE.VFXComponent.create({
+        name: 'SpawnSmokeVfx',
         vfxPath: SPAWN_SMOKE_VFX,
         autoStart: true,
       });
@@ -93,14 +94,14 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
     this._smokeVfx?.startEmitting(true);
 
     this.rootComponent.position.copy(position).add(new THREE.Vector3(0, 0.1, 0));
-    this.setHidden(false);
+    this.setHidden(false, true);
   }
 
   private _returnToPool(): void {
     activeCount = Math.max(0, activeCount - 1);
     this._isActive = false;
     this._smokeVfx?.stopEmitting();
-    this.setHidden(true);
+    this.setHidden(true, true);
     _pool.push(this);
   }
 
@@ -138,7 +139,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
       const actor = ZombieRiseVFXActor.create({ position: new THREE.Vector3(0, -1000, 0) });
       world.addActor(actor);
       actor._isActive = false;
-      actor.setHidden(true);
+      actor.setHidden(true, true);
       _pool.push(actor);
       created.push(actor);
     }
@@ -170,6 +171,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
       blending: THREE.AdditiveBlending,
     });
     this.groundRipple = new THREE.Mesh(GROUND_GEOMETRY, mat1);
+    this.groundRipple.name = 'GroundRipple';
     this.groundRipple.rotation.x = -Math.PI / 2;
     this.groundRipple.position.y = 0.02;
     this.groundRipple.scale.setScalar(0.2);
@@ -184,6 +186,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
       blending: THREE.AdditiveBlending,
     });
     this.groundRipple2 = new THREE.Mesh(GROUND_GEOMETRY, mat2);
+    this.groundRipple2.name = 'GroundRipple2';
     this.groundRipple2.rotation.x = -Math.PI / 2;
     this.groundRipple2.position.y = 0.01;
     this.groundRipple2.scale.setScalar(0.1);

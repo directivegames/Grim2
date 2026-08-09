@@ -15,12 +15,12 @@ export interface FogSystemActorOptions extends ENGINE.ActorOptions, FogSystemCom
 export class FogSystemActor extends ENGINE.Actor {
   public override initialize(options?: FogSystemActorOptions): void {
     super.initialize(options);
-    const component = FogSystemComponent.create(options);
-    this.setRootComponent(component, true);
+    const component = FogSystemComponent.create({ name: 'FogSystem', ...options });
+    this.add(component);
   }
 
   public getFogComponent(): FogSystemComponent | null {
-    return this.rootComponent instanceof FogSystemComponent ? this.rootComponent : null;
+    return this.getNode(FogSystemComponent);
   }
 
   public updateSettings(partial: Partial<FogCardSettings>): void {

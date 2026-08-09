@@ -26,16 +26,22 @@ export class EnemySpawnPointActor extends SpawnPointMarkerActor {
     return ENEMY_MARKER_COLORS;
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    if (!this.getWorld()?.isEditorWorld) {
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }if (!this.getWorld()?.isEditorWorld) {
       registerEnemySpawnPoint(this);
     }
+  
+    return true;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     unregisterEnemySpawnPoint(this);
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

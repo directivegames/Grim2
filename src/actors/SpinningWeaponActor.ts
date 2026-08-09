@@ -301,13 +301,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     this._orbitAngle = 0;
 
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return false;
 
     this._sceneWeaponActors = collectSceneWeapons(world);
 
@@ -357,11 +358,16 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     // Blood splatter pool is already warmed in its beginPlay
     // Summon VFX warmup: burst some particles off-screen to compile shaders
     this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 6);
+  
+    return true;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getWorld()?.inputManager.removeInputHandler(this._inputHandler);
-    super.doEndPlay();
+    return true;
   }
 
   private _meleeWeapon(): ENGINE.Actor | null {
@@ -592,7 +598,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       [-1.3, -1.0],
     ];
 
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
 
     for (let i = 0; i < targets.length; i++) {
       targets[i]!.rootComponent.getWorldPosition(this._fistTargetScratch);
@@ -617,7 +623,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _pickFistTargets(player: ENGINE.Pawn, maxCount: number): ENGINE.Actor[] {
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
 
     const nearby = zombieSpatialManager.getNearbyZombies(this._scratchPlayerPos, FIST_MAX_RANGE);
     const candidates: ENGINE.Actor[] = [];
@@ -662,7 +668,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const camera = world.getActiveCamera();
       if (camera) {
         const ndcMouse = world.inputManager.getMousePosition();
-        player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+        player.getWorldPosition(this._scratchPlayerPos);
         this._groundPlane.constant = -this._scratchPlayerPos.y;
         this._raycaster.setFromCamera(ndcMouse, camera);
         if (this._raycaster.ray.intersectPlane(this._groundPlane, this._mouseHitPoint)) {
@@ -717,7 +723,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._hasPrevWeaponPos = false;
 
     this._setWeaponVisible(true);
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
     this._swingLight?.beginSwing(this._comboIndex === AttackIndex.Three);
     this._slashComponent?.startTrail();
     this._slashParticles?.burstArc(
@@ -762,7 +768,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const weapon = this._meleeWeapon();
     if (!weapon) return;
 
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
     const weaponY = this._scratchPlayerPos.y + WEAPON_HEIGHT;
 
     weapon.rootComponent.position.set(
@@ -859,7 +865,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const camera = world.getActiveCamera();
       if (camera) {
         const ndcMouse = world.inputManager.getMousePosition();
-        player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+        player.getWorldPosition(this._scratchPlayerPos);
         this._groundPlane.constant = -this._scratchPlayerPos.y;
         this._raycaster.setFromCamera(ndcMouse, camera);
 
@@ -909,7 +915,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _spawnSoulBlade(player: ENGINE.Pawn, dir: THREE.Vector3, visualSlot: number): void {
-    player.rootComponent.getWorldPosition(this._soulBladeLaunchScratch);
+    player.getWorldPosition(this._soulBladeLaunchScratch);
     this._soulBladeLaunchScratch.y += BOOMERANG_HEIGHT;
     this._soulBladeLaunchScratch.addScaledVector(dir, BOOMERANG_LAUNCH_OFFSET);
     const launchPos = this._soulBladeLaunchScratch.clone();
@@ -961,7 +967,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         blade.phase = 'returning';
       }
     } else {
-      player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+      player.getWorldPosition(this._scratchPlayerPos);
       this._scratchPlayerPos.y += BOOMERANG_HEIGHT;
 
       this._scratchPos.copy(this._scratchPlayerPos).sub(blade.pos);
@@ -1184,7 +1190,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._hitCooldowns.set(zombie, currentTime);
 
     zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
 
     this._hitNormalScratch.copy(this._scratchZombiePos).sub(this._scratchPlayerPos).setY(0);
     if (this._hitNormalScratch.lengthSq() < 1e-8) {

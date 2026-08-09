@@ -75,17 +75,24 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
   private readonly _active: SlashParticle[] = [];
   private _poolBuilt = false;
 
-  public override beginPlay(): void {
-    super.beginPlay();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     this._ensurePool();
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return false;
     for (const p of this._pool) {
       world.scene.add(p.mesh);
     }
+  
+    return true;
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     for (const p of this._active) {
       p.mesh.visible = false;
       p.active = false;
@@ -98,7 +105,7 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
       p.active = false;
     }
     this._free.length = 0;
-    super.endPlay();
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {

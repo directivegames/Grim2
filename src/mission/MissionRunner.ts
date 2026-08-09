@@ -86,14 +86,14 @@ class MissionRunnerImpl {
     this._world = world;
     this._running = true;
 
-    const playerStart = world.getActors(ENGINE.PlayerStart)[0];
+    const playerStart = world.getNodes(ENGINE.PlayerStart)[0];
     if (playerStart) {
-      playerStart.rootComponent.getWorldPosition(this._playerPos);
+      playerStart.getWorldPosition(this._playerPos);
       setPlayerSpawnAnchor(this._playerPos);
     } else {
       const pawn = world.getFirstPlayerPawn();
       if (pawn) {
-        pawn.rootComponent.getWorldPosition(this._playerPos);
+        pawn.getWorldPosition(this._playerPos);
         setPlayerSpawnAnchor(this._playerPos);
       }
     }
@@ -428,7 +428,7 @@ class MissionRunnerImpl {
     const player = world.getFirstPlayerPawn();
     if (!player) return null;
 
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
 
     if (getInnocentSpawnPointCount() > 0) {
       const marker = pickInnocentSpawnPoint(this._usedInnocentMarkers, this._innocentSpawnPos);

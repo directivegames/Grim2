@@ -142,13 +142,12 @@ export class GrimIntroActor extends ENGINE.Actor {
 
 
 
-  protected override doBeginPlay(): void {
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }const world = this.getWorld();
 
-    super.doBeginPlay();
-
-    const world = this.getWorld();
-
-    if (!world) return;
+    if (!world) return false;
 
     // Grim's Room cutscene music (stops when intro finishes).
     CutsceneMusicActor.ensureExists(world);
@@ -159,11 +158,16 @@ export class GrimIntroActor extends ENGINE.Actor {
 
     void this._runIntroSequence(world);
 
+  
+    return true;
   }
 
 
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._removeSkipButton?.();
     this._removeSkipButton = null;
     const world = this.getWorld();
@@ -174,7 +178,7 @@ export class GrimIntroActor extends ENGINE.Actor {
     // Keep intro black cover in the DOM — MapUI cross-fades it out after mount.
     this._blackCover = null;
     this._deactivateCutsceneCamera();
-    super.doEndPlay();
+    return true;
   }
 
 

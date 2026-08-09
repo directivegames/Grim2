@@ -81,22 +81,29 @@ export class MobileCombatActor extends ENGINE.Actor {
     setInputManager: () => { /* no-op */ },
   };
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const world = this.getWorld();
     if (!world) {
-      return;
+      return false;
     }
     this._registerInputHandlerBeforePlayerController(world);
+  
+    return true;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     const world = this.getWorld();
     if (world) {
       world.inputManager.removeInputHandler(this._inputHandler);
     }
     resetMobileAim();
-    super.doEndPlay();
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {

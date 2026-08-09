@@ -56,8 +56,15 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneComponent {
   private _sweepSign = 1;
   private _finisherScale = 1;
 
-  public override async beginPlay(): Promise<void> {
-    super.beginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
+    void this._beginPlayAsync();
+    return true;
+  }
+
+  private async _beginPlayAsync(): Promise<void> {
     await this._loadTexture();
     this._buildMesh();
   }
@@ -109,7 +116,10 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneComponent {
     this._applyVisibility(false);
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (this._mesh) {
       this._mesh.visible = false;
       this._mesh.material.dispose();
@@ -121,7 +131,7 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneComponent {
       this._texture.dispose();
       this._texture = null;
     }
-    super.endPlay();
+    return true;
   }
 
   /**

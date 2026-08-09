@@ -58,9 +58,10 @@ export class GameAudioManager extends ENGINE.Actor {
     super.initialize(options);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    this._lazyLoadSounds = isMobileDevice();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._lazyLoadSounds = isMobileDevice();
 
     if (!this._lazyLoadSounds) {
       // Desktop keeps the eager pools so rapid combat SFX can overlap without first-use latency.
@@ -70,6 +71,8 @@ export class GameAudioManager extends ENGINE.Actor {
     }
 
     this.applySfxVolume(gameSettings.sfxVolume);
+  
+    return true;
   }
 
   /**

@@ -190,15 +190,18 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this._syncBillboardLoop();
   }
 
-  public override beginPlay(): void {
-    super.beginPlay();
-    if (!this._mesh) {
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }if (!this._mesh) {
       this._log('beginPlay -> reload because no mesh exists yet');
       void this.reload();
     } else {
       this._log('beginPlay -> mesh already exists');
     }
     this._syncBillboardLoop();
+  
+    return true;
   }
 
   public override onEditorAddToWorld(): void {
@@ -230,10 +233,13 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this._updateBillboardToCamera();
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._stopBillboardLoop();
     this._clearMesh();
-    super.endPlay();
+    return true;
   }
 
   public async reload(): Promise<void> {

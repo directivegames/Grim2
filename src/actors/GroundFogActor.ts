@@ -73,7 +73,7 @@ export class GroundFogActor extends ENGINE.Actor {
   private _smokeLayerBuilt = false;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
+    const root = ENGINE.SceneComponent.create({ name: 'Root' });
     super.initialize({ ...options, rootComponent: root });
     this._proceduralTexture = this._createProceduralTexture();
   }
@@ -269,9 +269,12 @@ export class GroundFogActor extends ENGINE.Actor {
     }
   }
 
-  public override doBeginPlay(): void {
-    super.doBeginPlay();
-    void this._beginFog();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }void this._beginFog();
+  
+    return true;
   }
 
   private async _beginFog(): Promise<void> {
@@ -339,7 +342,10 @@ export class GroundFogActor extends ENGINE.Actor {
     }
   }
 
-  public override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     for (const card of this._cards) {
       card.mesh.geometry.dispose();
       (card.mesh.material as THREE.Material).dispose();
@@ -350,7 +356,7 @@ export class GroundFogActor extends ENGINE.Actor {
     this._smokeTexture = null;
     this._proceduralTexture?.dispose();
     this._proceduralTexture = null;
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

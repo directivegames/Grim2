@@ -14,9 +14,10 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
   private _musicVolumeScale = gameSettings.musicVolume;
   private _stopped = false;
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    this._stopped = false;
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._stopped = false;
 
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'postmanBossMusic';
@@ -42,6 +43,8 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
       if (this._stopped || !this._sound) return;
       void this._sound.play('postmanBossMusic');
     });
+  
+    return true;
   }
 
   public stopNow(): void {
@@ -75,9 +78,12 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
     return actor;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._stopped = true;
     this._sound?.stopAll();
-    super.doEndPlay();
+    return true;
   }
 }

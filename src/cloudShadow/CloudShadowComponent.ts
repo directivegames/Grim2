@@ -236,9 +236,12 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
     if (options?.debugLogging !== undefined) this.debugLogging = options.debugLogging;
   }
 
-  public override beginPlay(): void {
-    super.beginPlay();
-    void this.reload();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }void this.reload();
+  
+    return true;
   }
 
   public override onEditorAddToWorld(): void {
@@ -261,9 +264,12 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
     this._syncOverlay();
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._clearOverlay();
-    super.endPlay();
+    return true;
   }
 
   /** Rebuild overlay mesh/material (e.g. after texture change). */

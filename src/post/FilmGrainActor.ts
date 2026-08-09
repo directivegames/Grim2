@@ -11,12 +11,12 @@ export type FilmGrainActorOptions = ENGINE.ActorOptions & FilmGrainComponentOpti
 export class FilmGrainActor extends ENGINE.Actor {
   public override initialize(options?: FilmGrainActorOptions): void {
     super.initialize(options);
-    const component = FilmGrainComponent.create(options);
-    this.setRootComponent(component, true);
+    const component = FilmGrainComponent.create({ name: 'FilmGrain', ...options });
+    this.add(component);
   }
 
   public getFilmGrainComponent(): FilmGrainComponent | null {
-    return this.rootComponent instanceof FilmGrainComponent ? this.rootComponent : null;
+    return this.getNode(FilmGrainComponent);
   }
 
   public override getEditorClassIcon(): string | null {

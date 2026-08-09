@@ -51,12 +51,12 @@ export function resetMissionWorld(
   }
 
   const pawn = world.getFirstPlayerPawn();
-  const playerStart = world.getActors(ENGINE.PlayerStart)[0];
+  const playerStart = world.getNodes(ENGINE.PlayerStart)[0];
   if (playerStart) {
-    playerStart.rootComponent.getWorldPosition(_scratch);
+    playerStart.getWorldPosition(_scratch);
     setPlayerSpawnAnchor(_scratch);
   } else if (pawn) {
-    pawn.rootComponent.getWorldPosition(_scratch);
+    pawn.getWorldPosition(_scratch);
     setPlayerSpawnAnchor(_scratch);
   } else {
     clearPlayerSpawnAnchor();
@@ -89,9 +89,9 @@ export function resetMissionWorld(
     placedSkipped,
     grimPos: pawn instanceof IsometricPlayerPawn
       ? {
-        x: pawn.rootComponent.position.x,
-        y: pawn.rootComponent.position.y,
-        z: pawn.rootComponent.position.z,
+        x: pawn.position.x,
+        y: pawn.position.y,
+        z: pawn.position.z,
       }
       : null,
   });

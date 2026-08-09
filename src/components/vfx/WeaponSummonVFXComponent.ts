@@ -97,12 +97,15 @@ function _acquireSpark(): Spark | null {
 export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
   private readonly _activeSparks: Spark[] = [];
 
-  public override beginPlay(): void {
-    super.beginPlay();
-    const world = this.getWorld();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }const world = this.getWorld();
     if (world) {
       _ensurePoolInScene(world.scene);
     }
+  
+    return true;
   }
 
   public burst(worldPos: THREE.Vector3, count: number): void {
@@ -192,7 +195,10 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
     }
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     for (const spark of this._activeSparks) {
       spark.mesh.visible = false;
       if (spark.glow) {
@@ -202,7 +208,7 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
       _free.push(spark);
     }
     this._activeSparks.length = 0;
-    super.endPlay();
+    return true;
   }
 }
 

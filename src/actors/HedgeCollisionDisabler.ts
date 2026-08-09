@@ -14,19 +14,21 @@ const HEDGE_MODEL_URL = '@project/assets/models/hedgeredon.glb';
 @ENGINE.GameClass()
 export class HedgeCollisionDisabler extends ENGINE.Actor {
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
+    const root = ENGINE.SceneComponent.create({ name: 'Root' });
     super.initialize({ ...options, rootComponent: root });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    // Delay slightly to ensure all scene actors are initialized
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }// Delay slightly to ensure all scene actors are initialized
     globalThis.setTimeout(() => {
       this.disableHedgeCollisions();
       // Self-destruct after work is done — zero ongoing cost
       this.destroy();
     }, 100);
+  
+    return true;
   }
 
   private disableHedgeCollisions(): void {

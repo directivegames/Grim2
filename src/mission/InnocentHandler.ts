@@ -115,7 +115,7 @@ export class InnocentHandler {
     const player = world?.getFirstPlayerPawn();
     if (!player) return;
 
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
     this._prop.rootComponent.getWorldPosition(this._scratchSelfPos);
     this._scratchSelfPos.y = this._scratchPlayerPos.y;
 

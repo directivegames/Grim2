@@ -35,6 +35,7 @@ import { getGameAudioManager } from '../utils/game-audio.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
+import { RootDeathCharacterStats } from '../components/RootDeathCharacterStats.js';
 import {
   snapPositionToNavFloor,
   type NavMeshQuery,
@@ -210,16 +211,19 @@ export class PostmanBossActor extends ENGINE.Actor {
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.MeshComponent.create({
+      name: 'CapsuleRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
       physicsOptions: { enabled: false },
     });
 
     const pivot = ENGINE.SceneComponent.create({
+      name: 'Pivot',
       position: new THREE.Vector3(0, CAPSULE_HEIGHT * 0.5, 0),
     });
 
     this._visualMesh = ENGINE.GLTFMeshComponent.create({
+      name: 'Visual',
       modelUrl: POSTMAN_BOSS_MODEL_URL,
       position: new THREE.Vector3(0, -CAPSULE_HEIGHT * 0.5, 0),
       rotation: new THREE.Euler(0, 0, 0),
@@ -228,10 +232,11 @@ export class PostmanBossActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: POSTMAN_BOSS_ANIM_URL });
+    const anim = ENGINE.AnimationStateMachineComponent.create({ name: 'Animation', configUrl: POSTMAN_BOSS_ANIM_URL });
     this.animationComponent = anim;
 
-    const stats = ENGINE.CharacterStatsComponent.create({
+    const stats = RootDeathCharacterStats.create({
+      name: 'Stats',
       maxHealth: POSTMAN_BOSS_BASE_HEALTH,
       healthRegen: 0,
       attackCooldown: 1,
@@ -246,6 +251,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     this._facingPivot = pivot;
 
     const shadow = BlobShadowComponent.create({
+      name: 'BlobShadow',
       radius: 0.7,
       opacity: 0.35,
       yOffset: BLOB_SHADOW_FEET_Y,
@@ -255,10 +261,10 @@ export class PostmanBossActor extends ENGINE.Actor {
     super.initialize({ ...options, rootComponent: root, sceneComponents: [stats] });
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     stats?.onHealthChanged.add(this._onHealthChanged);
 
     if (!this._visualMesh) {
@@ -287,6 +293,8 @@ export class PostmanBossActor extends ENGINE.Actor {
     }
 
     this._enterDormant();
+  
+    return true;
   }
 
   /** Return boss to editor placement and dormant state between missions. */
@@ -320,13 +328,16 @@ export class PostmanBossActor extends ENGINE.Actor {
     this.setHiddenInGame(true);
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     const stats = this.getComponent(ENGINE.CharacterStatsComponent);
     stats?.onHealthChanged.remove(this._onHealthChanged);
     if (this._bossActive) {
       zombieSpatialManager.unregisterZombie(this);
     }
-    super.doEndPlay();
+    return true;
   }
 
   /** Find scene boss or spawn fallback, then start the fight. */
@@ -347,7 +358,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     const player = world.getFirstPlayerPawn();
     const spawn = new THREE.Vector3(0, 0, -8);
     if (player) {
-      player.rootComponent.getWorldPosition(spawn);
+      player.getWorldPosition(spawn);
       spawn.z -= 8;
     }
     boss.rootComponent.position.copy(spawn);
@@ -669,7 +680,7 @@ export class PostmanBossActor extends ENGINE.Actor {
 
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
-      player.rootComponent.getWorldPosition(this._playerPos);
+      player.getWorldPosition(this._playerPos);
       const angle = Math.random() * Math.PI * 2;
       const radius = 5 + Math.random() * 4;
       this._moveGoal.set(
@@ -808,7 +819,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     }
     this._patternStep = wave;
 
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     this.rootComponent.getWorldPosition(this._myPos);
     this._flatDir.copy(this._playerPos).sub(this._myPos).setY(0);
     if (this._flatDir.lengthSq() < 1e-6) {
@@ -899,7 +910,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     if (!player) {
       return;
     }
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     this.rootComponent.getWorldPosition(this._myPos);
     this._flatDir.copy(this._playerPos).sub(this._myPos).setY(0);
     if (this._flatDir.lengthSq() < 1e-6) {
@@ -998,7 +1009,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     let floorY = out.y - POSTMAN_BOSS_CAPSULE_HALF_HEIGHT;
     const player = this.getWorld()?.getFirstPlayerPawn();
     if (player) {
-      player.rootComponent.getWorldPosition(this._playerPos);
+      player.getWorldPosition(this._playerPos);
       floorY = this._playerPos.y;
     }
 
@@ -1049,7 +1060,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     if (!player) {
       return;
     }
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     this.rootComponent.getWorldPosition(this._myPos);
     this._flatDir.copy(this._playerPos).sub(this._myPos).setY(0);
     if (this._flatDir.lengthSq() < 1e-8) {
@@ -1171,7 +1182,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     this._isFlashing = false;
   }
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     void hitInfo;
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;

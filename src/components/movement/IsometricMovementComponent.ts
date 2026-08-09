@@ -118,8 +118,8 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
   // ── Tick ─────────────────────────────────────────────────────────────────
 
   public override tickPostPhysics(deltaTime: number): void {
-    const owner = this.getActor()!;
-    const root  = owner.rootComponent;
+    const owner = this.getRoot()!;
+    const root  = owner;
 
     if (owner.isSimulatedProxy()) {
       this._trackNetTransform(owner, root);
@@ -245,7 +245,7 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
     }
   }
 
-  private _trackNetTransform(owner: ENGINE.Actor, root: ENGINE.SceneComponent): void {
+  private _trackNetTransform(owner: ENGINE.SceneNode, root: ENGINE.SceneComponent): void {
     const predictor = (owner as any).movementPredictor;
     if (predictor && !owner.isSimulatedProxy()) {
       predictor.addLocalTransform({

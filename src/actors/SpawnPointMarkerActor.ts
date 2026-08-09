@@ -15,7 +15,7 @@ export interface SpawnPointMarkerColors {
 
 export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
   @ENGINE.property({ type: 'boolean', category: 'Spawn Point' })
-  public enabled = true;
+  public override enabled = true;
 
   @ENGINE.property({ type: 'number', min: 0.15, max: 4, step: 0.05, category: 'Spawn Point' })
   public halfExtentX = 0.45;
@@ -43,6 +43,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
 
   public override initialize(options?: ActorOptions): void {
     const root = ENGINE.MeshComponent.create({
+      name: 'MarkerRoot',
       material: INVISIBLE_MATERIAL,
       physicsOptions: { enabled: false },
       castShadow: false,
@@ -159,6 +160,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
 
     const edges = new THREE.EdgesGeometry(boxGeom);
     this._edgeLines = new THREE.LineSegments(edges, this._edgeMaterial);
+    this._edgeLines.name = 'MarkerEdges';
     this._edgeLines.frustumCulled = false;
     threeMesh.add(this._edgeLines);
   }

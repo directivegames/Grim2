@@ -34,6 +34,7 @@ import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 import { DEMONBOX_BASE_BLAST_DAMAGE } from '../data/combat-balance.js';
 import { ENEMY_TYPE_DEMONBOX } from '../data/items.js';
 import { DemonboxMailExplosionVFXActor } from './DemonboxMailExplosionVFXActor.js';
+import { RootDeathCharacterStats } from '../components/RootDeathCharacterStats.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -208,6 +209,7 @@ export class DemonboxActor extends ENGINE.Actor {
     ensureDemonboxNpcCollisionProfile();
 
     const root = ENGINE.MeshComponent.create({
+      name: 'CapsuleRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
       physicsOptions: {
@@ -218,10 +220,12 @@ export class DemonboxActor extends ENGINE.Actor {
     });
 
     const pivot = ENGINE.SceneComponent.create({
+      name: 'Pivot',
       position: new THREE.Vector3(0, CAPSULE_HEIGHT * 0.5, 0),
     });
 
     const visual = ENGINE.GLTFMeshComponent.create({
+      name: 'Visual',
       modelUrl: DEMONBOX_MODEL_URL,
       position: new THREE.Vector3(0, -CAPSULE_HEIGHT * 0.5, 0),
       rotation: new THREE.Euler(0, Math.PI, 0),
@@ -230,10 +234,11 @@ export class DemonboxActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: DEMONBOX_ANIM_URL });
+    const anim = ENGINE.AnimationStateMachineComponent.create({ name: 'Animation', configUrl: DEMONBOX_ANIM_URL });
     this._animationComponent = anim;
 
-    const stats = ENGINE.CharacterStatsComponent.create({
+    const stats = RootDeathCharacterStats.create({
+      name: 'Stats',
       maxHealth: this.maxHealth,
       healthRegen: 0,
       attackCooldown: 1,
@@ -243,6 +248,7 @@ export class DemonboxActor extends ENGINE.Actor {
     });
 
     const npc = ENGINE.NpcMovementComponent.create({
+      name: 'NpcMovement',
       pathFollowingAccuracy: 0.25,
       actorFollowingDistance: this.blastStopRange,
       stopDistance: this.blastStopRange,
@@ -263,7 +269,7 @@ export class DemonboxActor extends ENGINE.Actor {
       },
     });
 
-    this._blobShadow = BlobShadowComponent.create({ radius: 0.45, opacity: 0.3 });
+    this._blobShadow = BlobShadowComponent.create({ name: 'BlobShadow', radius: 0.45, opacity: 0.3 });
 
     pivot.add(visual);
     pivot.add(anim);
@@ -275,10 +281,10 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── doBeginPlay ──────────────────────────────────────────────────────────
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }const visual = this.getComponent(ENGINE.GLTFMeshComponent);
     if (visual) {
       visual.castShadow = false;
       visual.receiveShadow = false;
@@ -301,6 +307,8 @@ export class DemonboxActor extends ENGINE.Actor {
     }
 
     zombieSpatialManager.registerZombie(this);
+  
+    return true;
   }
 
   // ── tick ─────────────────────────────────────────────────────────────────
@@ -392,7 +400,7 @@ export class DemonboxActor extends ENGINE.Actor {
     if (!world || !player) return;
 
     this.rootComponent.getWorldPosition(this._myPos);
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     const dist = this._myPos.distanceTo(this._playerPos);
 
     if (!this._hasAggro && dist <= this.aggroRadius) {
@@ -619,7 +627,7 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── handleDeath (killed by player before explosion) ───────────────────────
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -762,11 +770,14 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── Cleanup ───────────────────────────────────────────────────────────────
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._setRedFlash(false);
     this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
     zombieSpatialManager.unregisterZombie(this);
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

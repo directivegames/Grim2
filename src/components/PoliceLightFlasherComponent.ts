@@ -53,7 +53,7 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
     const player = world?.getFirstPlayerPawn();
     if (player) {
       this.getWorldPosition(this._myPos);
-      player.rootComponent.getWorldPosition(this._playerPos);
+      player.getWorldPosition(this._playerPos);
       if (this._myPos.distanceToSquared(this._playerPos) > UPDATE_DISTANCE_SQ) {
         if (this._lightsActive) {
           this._setIntensities(0, 0);
@@ -107,9 +107,12 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
     this._setIntensities(this._redBase * redEnv, this._blueBase * blueEnv);
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._setIntensities(0, 0);
-    super.endPlay();
+    return true;
   }
 
   private _bindLights(): void {

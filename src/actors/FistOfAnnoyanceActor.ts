@@ -199,28 +199,30 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private readonly _originScratch = new THREE.Vector3();
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
+    const root = ENGINE.SceneComponent.create({ name: 'Root' });
     super.initialize({ ...options, rootComponent: root });
 
     this._explosionVfx = ENGINE.VFXComponent.create({
+      name: 'ExplosionVfx',
       vfxPath: EXPLOSION_CLOUD_VFX,
       autoStart: false,
     });
     this.rootComponent.add(this._explosionVfx);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return false;
 
     this._sceneFistActor = acquireSceneFist(world);
 
     if (!this._sceneFistActor) {
       console.warn('[FistOfAnnoyanceActor] No free scene fist available (all in use or none placed).');
       this.destroy();
-      return;
+      return false;
     }
 
     this._groundY = this.rootComponent.position.y;
@@ -234,6 +236,8 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     void loadSmokeTexture(ROCK_DEBRIS_TEXTURE_PATH).then((rock) => {
       this._rockDebrisTexture = rock;
     });
+  
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -587,10 +591,13 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     this._shockwaves.length = 0;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     releaseSceneFist(this._sceneFistActor);
     this._sceneFistActor = null;
     this._cleanupVFX();
-    super.doEndPlay();
+    return true;
   }
 }

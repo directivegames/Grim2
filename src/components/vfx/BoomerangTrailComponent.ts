@@ -31,8 +31,15 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
     super.initialize(options);
   }
 
-  public override async beginPlay(): Promise<void> {
-    super.beginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
+    void this._beginPlayAsync();
+    return true;
+  }
+
+  private async _beginPlayAsync(): Promise<void> {
     // Pre-build pool immediately so first boomerang throw doesn't hitch
     const world = this.getWorld();
     if (world) {
@@ -97,7 +104,10 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
 
   // ── Cleanup ─────────────────────────────────────────────────────────────────
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     for (const p of this._pool) {
       p.mat.dispose();
       p.mesh.removeFromParent();
@@ -111,8 +121,7 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
       this._glowTexture.dispose();
       this._glowTexture = null;
     }
-
-    super.endPlay();
+    return true;
   }
 
   // ── Internal ────────────────────────────────────────────────────────────────
