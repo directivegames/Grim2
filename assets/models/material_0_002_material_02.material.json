@@ -63,13 +63,6 @@
       "wrapT": 1000
     },
     "side": 2,
-    "userData": {
-      "gltfExtensions": {
-        "GENESYS_material_overrides": {
-          "materialOverride": "@project/assets/models/material_0_002_material.material.json"
-        }
-      }
-    },
     "uuid": "5431c122-223d-4521-aa44-a607860ede23"
   },
   "$version": 2

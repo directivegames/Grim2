@@ -149,7 +149,7 @@ export class SpawnBlockerActor extends ENGINE.Actor {
   }
 
   public override getEditorClassIcon(): string | null {
-    return 'Icon_Box';
+    return 'Icon_Cube';
   }
 
   private _isEditorWorld(): boolean {

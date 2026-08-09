@@ -32,6 +32,6 @@ export class FogSystemActor extends ENGINE.Actor {
   }
 
   public override getEditorClassIcon(): string | null {
-    return 'Icon_VFX';
+    return 'Icon_Fog';
   }
 }

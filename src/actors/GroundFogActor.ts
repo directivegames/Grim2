@@ -360,6 +360,6 @@ export class GroundFogActor extends ENGINE.Actor {
   }
 
   public override getEditorClassIcon(): string | null {
-    return 'Icon_Particle';
+    return 'Icon_Fog';
   }
 }

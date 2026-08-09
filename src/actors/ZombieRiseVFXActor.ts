@@ -194,6 +194,6 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
   }
 
   public override getEditorClassIcon(): string | null {
-    return 'Icon_Particle';
+    return 'Icon_Vfx';
   }
 }

@@ -34,6 +34,6 @@ export class ScenicFogActor extends FogSystemActor {
   }
 
   public override getEditorClassIcon(): string | null {
-    return 'Icon_VFX';
+    return 'Icon_Fog';
   }
 }
