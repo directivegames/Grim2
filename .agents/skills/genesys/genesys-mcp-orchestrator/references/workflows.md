@@ -76,9 +76,30 @@ await genesys.actionScene({ action: 'save' });
 return { created, saved: true, counts: { actors: created } };
 ```
 
+## Assemble primitives then merge to Model GLB
+
+Use when you need a **static Model asset** (not a prefab) for runtime `placeGltfs` / `modelUrl` — e.g. a watchtower or car built from primitives:
+
+1. Create and reparent primitives with `action_actor` / `action_component`.
+2. `action_asset(mergeMeshes, actorIds=[rootId], destinationPath='@project/assets/models', fileName='watchtower_merged')` — keeps originals; writes a hierarchy-preserving multi-mesh `.glb` (folders/actors as nested nodes). Pass `mergeGeometry: true` to weld into a single mesh instead.
+3. Optionally place the baked model later: `action_actor(create, assetPath='@project/assets/models/watchtower_merged.glb')`.
+
+Prefer prefabs when the assembly must stay editable as a hierarchy. `mergeMeshes` is compact-hidden — call via `run_script` / `batch_execute` / `search_tools`.
+
+```js
+const merge = await genesys.actionAsset({
+  action: 'mergeMeshes',
+  actorIds: [rootActorId],
+  destinationPath: '@project/assets/models',
+  fileName: 'watchtower_merged',
+  // mergeGeometry: true, // optional: weld into one mesh
+});
+return { assetPath: merge.assetPath, meshCount: merge.meshCount, warnings: merge.warnings };
+```
+
 ## Engine demo models
 
-`query_asset` does **not** index `@engine/...`. Discover files only under `node_modules/@gnsx/genesys.js/assets/models/demo/...` (exact subtree — never recursive `node_modules` / `*tree*` searches), then bulk-place:
+`query_asset(find)` does **not** index `@engine/...` (use `getDetails` only to check a known `@engine/...` path). Discover files only under `node_modules/@gnsx/genesys.js/assets/models/demo/...` (exact subtree — never recursive `node_modules` / `*tree*` searches), then bulk-place:
 
 ```text
 query_editor(getState)
@@ -211,5 +232,5 @@ Full class pattern: [webgpu-tsl-node-material-assets/SKILL.md](../../webgpu-tsl-
 ## Inspect / assets / diagnostics
 
 - **Scene slice:** `run_script(readOnly)` — filter `getGraph` / `findActors` in-script; return a small summary only.
-- **Assets:** `query_asset(find)` → `getDetails` (project/packs only).
+- **Assets:** `query_asset(find)` → `getDetails` (project/packs; `@engine/...` via `getDetails` only).
 - **After TS edits:** `buildProject` → optional `getBusyState` after a long build → `query_diagnostics(getBuildErrors)` when authoritative. Unavailable diagnostics = unknown, not success.

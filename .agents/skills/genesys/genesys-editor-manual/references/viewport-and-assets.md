@@ -22,7 +22,11 @@ Toggle Place Actors · Empty Actor · Cube/Sphere/Cone/Cylinder · Point/Spot/Re
 
 ## Viewport context menu (stationary right-click)
 
-Add to Chat · **Duplicate** (`Ctrl/Cmd+D`) · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Remove** (Del)
+On a selection (when AI Assistant is enabled): **Add to Current Chat** · **Add to New Chat** (Space) · then:
+
+**Duplicate** (`Ctrl/Cmd+D`) · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Remove** (Del)
+
+Actor **Copy** / **Paste** remain on the Outliner context menu (`Ctrl/Cmd+C`/`V`).
 
 ## Camera / placement
 
@@ -31,7 +35,7 @@ Add to Chat · **Duplicate** (`Ctrl/Cmd+D`) · **Show/Hide** (H) · **Lock Selec
 | Fly camera | Right-drag; WASD while flying (speed in status bar) |
 | Drop to Surface | **End** |
 | Focus / frame | **F** (also Outliner/Viewport/Component **Focus**) |
-| Place from assets | Drag Asset Browser → viewport |
+| Place from assets | Drag Asset Browser → viewport (models/prefabs/VFX; orthographic placement supported). Loading drops show a **Placing…** toast; failures toast an error |
 
 Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview pin/close
 
@@ -42,12 +46,13 @@ Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview p
 | New Asset | Prefab (Actor) / Material / Resource… / Scene / Folder |
 | Filter / Search / Thumb size | Toolbar / More options |
 | Navigate | Back / Forward / Breadcrumbs |
-| Empty-area context | New Asset/Resource/Folder · Delete Folder · Import Files… · Show in Finder/Explorer · Refresh · Refresh thumbnails |
+| Read-only directories | `@project`, `@engine`, `src`, and other protected folders: **New Asset** disabled; empty-space / folder menus limited to refresh; file import and moves into them blocked |
+| Empty-area context (writable) | New Asset/Resource/Folder · Delete Folder · Import Files… · Show in Finder/Explorer · Refresh · Refresh thumbnails |
 | Open | Double-click (scene/material/resource/…) |
 | Prefab | Edit Prefab |
 | Model | Open In Model Viewer · Extract Material… · Create Animation Config · Create Skeleton Profile |
 | Scene | Set as Game/Server Default Scene · Refresh Thumbnail |
-| Common | Find References · Show in Finder/Explorer · Open in Code Editor · Rename (F2) · Duplicate · Delete · Import Copy to Project… (engine assets) · Add to Chat |
+| Common | Find References · Show in Finder/Explorer · Open in Code Editor · Rename (F2) · Duplicate · Delete · Import Copy to Project… (engine assets) · Add to Current/New Chat |
 
 ## Specialised dialogs (UI only unless mcp-vs-ui says otherwise)
 
@@ -62,12 +67,14 @@ Contextual: instanced paint/erase · CSG **Export Geometry** · camera preview p
 | Foundry / Scenario | Title bar Foundry |
 | Find Asset References | Find References |
 | Save As Prefab | Outliner |
+| Merge Meshes to Model | Outliner / Component tree — writes Model GLB under `@project/assets/models` |
 | Project Settings | Menu; status-bar renderer click |
 | Play Mode Settings | Play ▾ |
 | Build Lightmap | Title bar |
-| Pack browse/export/new | Tools |
+| Browse Asset Packs | Tools — install from Genesys cloud / local registries; footer **Manage Registries** (API base URL) |
+| New / Export Asset Pack | Tools |
 | Upload / About / Changelog / GPU Diagnostics / Perf Snapshot | Menu / Help / Tools |
 
 ## Status bar (glance)
 
-Renderer (→ Project Settings) · Camera mode · FOV · Fly speed · Wireframe/Skybox/Grid · Selection / Prefab Asset Mode · New Agent Chat (Space) · Background tasks · Notifications
+Renderer (→ Project Settings) · Camera mode · FOV · Fly speed · Wireframe/Skybox/Grid · Selection / Prefab Asset Mode · New Agent Chat (Space) · Background tasks · **Notifications** bell (toast history: All / Errors / Warnings / Info)

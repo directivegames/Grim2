@@ -1,6 +1,6 @@
 ---
 name: genesys-multiplayer
-description: Guidance for writing multiplayer game code in Genesys. Use when implementing networked features, RPCs, replicated actors or properties, server-authoritative logic, game mode lifecycle, player spawning in multiplayer, or when the user mentions multiplayer, networking, server, client, replication, RPC, latency, or authority.
+description: Guidance for writing multiplayer game code in Genesys. Use when implementing networked features, RPCs, replicated actors or properties, server-authoritative logic, game mode lifecycle, player spawning in multiplayer, or when the user mentions multiplayer, networking, server, client, replication, RPC, latency, or authority. Also use when rendering playerName, team, chat, scoreboards, lobbies, or other replicated strings in the HUD (safe UI / XSS).
 ---
 
 # Methodology
@@ -12,6 +12,7 @@ Follow these steps when working on multiplayer features:
 3. If the feature is part of match rules or player lifecycle, read [game-mode](references/game-mode.md).
 4. If the feature involves a player-controlled actor, read [player-ownership](references/player-ownership.md).
 5. Guard all authority-only logic with `this.hasAuthority()` or `NetRuntime.isServer()`.
+6. If the feature displays replicated or join strings in the UI (names, teams, chat, scoreboards), read [ui-security](references/ui-security.md) and follow **Safe UI for replicated strings** below.
 
 # Core Multiplayer Guidelines
 
@@ -28,6 +29,32 @@ Follow these steps when working on multiplayer features:
 - GameMode methods only execute on the server. Do not call them from client-side code.
 - All actors are server-authoritative, including PlayerController and its Pawn. The controlling client has the AutonomousProxy role for its own controller and pawn, which allows local movement prediction. The server validates those actions and replicates the authoritative result back; the client corrects if there is a discrepancy.
 
+# Safe UI for replicated strings (mandatory)
+
+Replicated strings and `joinParams` are **untrusted for HTML**. The engine does
+not sanitize them. Render as text; never as markup.
+
+| Do | Don't |
+|----|-------|
+| `playerName` / chat / team → `textContent`, `setLabel`, `setMessage`, `setTitle` | `` innerHTML = `<span>${playerName}</span>` `` |
+| Icons → `ENGINE.Icons.*` or static SVG you author | Pass network strings to `iconHtml`, `setHTML`, `imageHtml` |
+| Optional: validate display names in `GameMode` from `joinParams` | Rely on server name checks alone instead of safe rendering |
+
+```ts
+// ✅
+row.appendChild(document.createElement('span')).textContent = playerInfo.playerName;
+chat.setMessage({ name: playerName, body: messageText });
+
+// ❌
+el.innerHTML = `<span>${playerInfo.playerName}</span>`;
+uiElement.setHTML(`<b>${playerName}</b>`);
+```
+
+Details and `joinParams` validation: [ui-security](references/ui-security.md).
+Canonical player list: [player-list-safe](references/player-list-safe.md).
+General HUD rules: **Safe UI** in the `genesys-ui-kit` skill and
+[safe-ui](../genesys-ui-kit/references/safe-ui.md).
+
 # References
 
 Read the reference that matches your current task:
@@ -37,6 +64,8 @@ Read the reference that matches your current task:
 - [Actor Replication](references/actor-replication.md): Enabling replication on actors, replicating properties, transform sync, and relevance.
 - [GameMode](references/game-mode.md): Server-only match lifecycle, player join/leave hooks, and factory configuration.
 - [Player Control and Autonomous Proxy](references/player-ownership.md): How the controlling client runs local predictions for its PlayerController and Pawn, and how the server reconciles them.
+- [Multiplayer UI security](references/ui-security.md): Rendering replicated / join strings safely (XSS).
+- [Safe player list example](references/player-list-safe.md): Canonical lobby / scoreboard pattern (`textContent`).
 
 # Tips
 

@@ -4,6 +4,13 @@
 
 Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.js`. Construct with `new ENGINE.<Class>(world.uiManager, options)` then `await component.initialize()`.
 
+## Safe UI
+
+Dynamic strings (player names, chat, scores, RPC / join data) → text setters or `textContent`. APIs named `*Html`, `icon`, `imageHtml`, and `UIElement.setHTML()` accept **developer-authored markup only** (e.g. `ENGINE.Icons.*`). Never interpolate network or player strings into HTML.
+
+- Game projects: `.agents/skills/genesys/genesys-ui-kit/references/safe-ui.md`
+- Engine package: `docs/ui/safe-ui-patterns.md`
+
 ## control
 
 | Class | Summary | Use Cases | Options Type |

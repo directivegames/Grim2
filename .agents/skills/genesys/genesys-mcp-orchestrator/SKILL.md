@@ -5,6 +5,8 @@ description: Live Genesys editor MCP orchestration (availability gate, readiness
 
 # Genesys MCP Orchestrator
 
+**Naming:** Genesys in skills/docs/code = **Sandbox Studio** in the product UI (same app / MCP).
+
 Use this skill for live Genesys editor/project work through MCP. For editor UI how-tos (menus, hotkeys), or when MCP is Off, read [genesys-editor-manual](../genesys-editor-manual/SKILL.md). Task recipes live in [references/workflows.md](references/workflows.md) — open only when needed.
 
 ## Availability Gate
@@ -18,7 +20,7 @@ The default surface is **compact**. Missing descriptors for hidden tools (`actio
 | **Off** | User disabled MCP, or neither signal above | Do not use MCP |
 | **Forbidden** | Shell/`curl`/HTTP against `mcp.json` | Never |
 
-**Ready when:** Sandbox Studio / Genesys is running with Genesys MCP enabled, the matching environment channel is connected in the IDE (`sandbox-studio-genesys` / `-staging` / `-dev` — still called Genesys MCP in prose), a project is open, and `query_editor(getState)` reports `editorReady: true`.
+**Ready when:** Sandbox Studio is running with Genesys MCP enabled, the matching environment channel is connected in the IDE (server id from Configure / connection details), a project is open, and `query_editor(getState)` reports `editorReady: true`.
 
 Not readiness on their own: disk MCP config, `project_none`, `unauthorized`, or `editorReady: false`.
 
@@ -67,7 +69,7 @@ On failure: read `error.code` / `message`; if `recoverable`, fix and retry **onc
 - Routers require `operation` (queries) or `action` (actions).
 - `describe_tool` takes `name`, not `toolName`.
 - Nested wrapper args: put `mode` / `approval` / `groupUndo` / `code` inside tool `arguments`.
-- `query_asset` indexes project/pack assets only — not `@engine/...`.
+- `query_asset(find)` indexes project/pack assets only — not `@engine/...`. Use `getDetails` to existence-check an `@engine/...` path.
 
 ## Discovery
 

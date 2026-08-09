@@ -67,7 +67,7 @@ export class PulseStripeNodeMaterialAsset extends ENGINE.NodeMaterialAsset(MeshS
       this._maskTexture.url = url;
     }
 
-    this._maskTexture.needsUpdate = true;
+    // Leave needsUpdate unset here: the texture's `.image` is still the 1x1 placeholder, and forcing it now would lock the GPU texture at 1x1 forever. UrlTexture sets it once real data loads.
     return this._maskTexture;
   }
 

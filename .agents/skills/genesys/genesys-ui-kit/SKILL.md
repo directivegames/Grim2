@@ -1,6 +1,6 @@
 ---
 name: genesys-ui-kit
-description: Build screen-space UI in a Genesys project using the engine's BaseUIComponent widgets (Button, ProgressBar, Crosshair, Compass, Minimap, InventoryBar / Grid, AmmoCounter, WeaponCard, NumberDisplay, ControlsPanel, ReloadIndicator, StatCard, ItemCard, PlayerCard, Badge, Avatar, Card, Toggle, NavItem, ChatMessage, Achievement, and more). Use whenever the user asks for HUD elements, menus, buttons, bars, inventories, crosshairs, minimaps, controls help, counters, or any in-game UI — unless they explicitly request a custom look or a widget that has no engine match.
+description: Build screen-space UI in a Genesys project using the engine's BaseUIComponent widgets (Button, ProgressBar, Crosshair, Compass, Minimap, InventoryBar / Grid, AmmoCounter, WeaponCard, NumberDisplay, ControlsPanel, ReloadIndicator, StatCard, ItemCard, PlayerCard, Badge, Avatar, Card, Toggle, NavItem, ChatMessage, Achievement, and more). Use whenever the user asks for HUD elements, menus, buttons, bars, inventories, crosshairs, minimaps, controls help, counters, scoreboards, chat UI, player names in the HUD, or any in-game UI — unless they explicitly request a custom look or a widget that has no engine match. Also use when choosing between textContent / label setters vs iconHtml, setHTML, or innerHTML (safe UI / XSS).
 ---
 
 # Genesys UI Kit
@@ -137,6 +137,41 @@ ENGINE.UIPresets.ProgressBar.health    // { theme: 'health' }
 
 See `./references/customization.md` for the full list of per-widget options.
 
+## Safe UI (mandatory)
+
+Widgets escape text in mustache/`label` slots. APIs named `*Html`, `icon`,
+`imageHtml`, and `UIElement.setHTML()` **parse markup** — treat them as
+trusted developer content only.
+
+| Do | Don't |
+|----|-------|
+| Player names, chat, scores, RPC/join strings → `setLabel`, `setMessage`, `setTitle`, or `element.textContent` | Pass those strings into `iconHtml`, `setIconHtml`, `imageHtml`, `setHTML`, or `innerHTML` |
+| Static icons → `ENGINE.Icons.*` or SVG you author into `iconHtml` | Build HUD rows with `` innerHTML = `<span>${playerName}</span>` `` |
+| Author theming via `customStyles` / `customClasses` | Feed network or player strings into `customStyles` |
+
+```ts
+// ✅ Dynamic / networked text
+nav.setLabel(playerInfo.playerName);
+chat.setMessage({ name: playerName, body: messageText });
+row.appendChild(document.createElement('span')).textContent = playerInfo.playerName;
+
+// ✅ Trusted icon (developer-authored)
+statBar.setIconHtml(ENGINE.Icons.shield);
+
+// ❌ Untrusted HTML — XSS if the string is player- or network-controlled
+el.innerHTML = `<span>${playerName}</span>`;
+card.setImageHtml(userOrNetworkMarkup);
+```
+
+When falling back to custom DOM, build structure with `createElement` and assign
+dynamic strings to `textContent` or input `.value` — never interpolate them into
+HTML. Prefer widget text setters over raw DOM whenever a widget fits.
+
+**Read before shipping any HUD with dynamic or network text:**
+[safe-ui](references/safe-ui.md) (full patterns: templates, `customStyles`, Input, checklist).
+For replicated / join strings, also use the `genesys-multiplayer`
+[ui-security](../genesys-multiplayer/references/ui-security.md) reference.
+
 ## Constraints
 
 - Never append UI to `document.body` — the engine renders into
@@ -144,9 +179,10 @@ See `./references/customization.md` for the full list of per-widget options.
   must add custom DOM, use `world.gameContainer`.
 - Don't recreate widgets that already exist (e.g. a "health bar" is
   `ProgressBar` with `theme: 'health'`, not a new component).
+- Follow **Safe UI** above for every label, chat line, scoreboard, and icon slot.
 - Asset paths inside templates use `@engine/...` / `@project/...` prefixes
   and must be resolved with `ENGINE.resolveAssetPathsInText` when injected
-  into raw HTML.
+  into raw HTML (still only for trusted markup you author).
 - The catalog in `./references/catalog.md` is auto-generated from
   the engine source. Do not edit it by hand.
 
@@ -176,3 +212,4 @@ that have been superseded. The rules are simple:
 
 - ./references/catalog.md — generated widget index.
 - ./references/customization.md — styling and theming knobs.
+- ./references/safe-ui.md — Safe UI patterns (text vs trusted `*Html`, XSS).

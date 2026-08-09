@@ -91,7 +91,8 @@ Do **not** use `BeginPlay`, `doBeginPlay`, constructors, or one-off runtime hack
 
 ## UI
 - Any HTML UI you create **MUST NOT** be added to the document root directly. Add them to the game UI container, which can be accessed through `world.gameContainer`.
-- For in-game UI (HUD, menus, buttons, bars, inventories, crosshairs, minimaps, counters, etc.), **prefer the engine's `BaseUIComponent` widgets** (Game UI Kit) over hand-rolling HTML / CSS. See the `genesys-ui-kit` skill in `.agents/skills/genesys-ui-kit/` — its `references/catalog.md` lists every shipped widget. Fall back to raw HTML only when the user asks for a custom look or no widget matches.
+- For in-game UI (HUD, menus, buttons, bars, inventories, crosshairs, minimaps, counters, etc.), **prefer the engine's `BaseUIComponent` widgets** (Game UI Kit) over hand-rolling HTML / CSS. See the `genesys-ui-kit` skill in `.agents/skills/genesys/genesys-ui-kit/` — its `references/catalog.md` lists every shipped widget. Fall back to raw HTML only when the user asks for a custom look or no widget matches.
+- **Safe UI (XSS):** Dynamic strings (player names, chat, scores, RPC / `joinParams`) go through text setters (`setLabel`, `setMessage`, `setTitle`) or `element.textContent` — never `innerHTML`, `setHTML`, `iconHtml` / `setIconHtml`, or `imageHtml`. Those `*Html` APIs are for developer-authored markup only (e.g. `ENGINE.Icons.*`). Do not put network or player strings into `customStyles`. Follow the **Safe UI** section in the `genesys-ui-kit` skill and `.agents/skills/genesys/genesys-ui-kit/references/safe-ui.md`.
 
 ## Testing Constraints
 - You may **only** use `pnpm build` to verify code compilation.

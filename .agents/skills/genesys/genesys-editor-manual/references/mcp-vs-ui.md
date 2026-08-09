@@ -20,21 +20,28 @@ Prefer MCP when Status is Available and MCP is ready; otherwise give the Manual 
 | Drop to surface | — | UI only | Hotkey **End** |
 | Asset find refs | `query_asset.getReferences` | Available | Asset context **Find References** |
 | Assets folder/material/move/rename/delete/import | `action_asset` / `query_asset` | Available | Asset Browser |
+| Merge meshes → Model GLB | `action_asset.mergeMeshes` (`mergeGeometry` optional) | Available | Outliner / Component tree **Merge Meshes to Model…** (optional **Merge Into Single Mesh**) |
 | Local empty asset pack | `action_asset(installAssetPack)` | Available | Tools → **New Asset Pack…** |
 | Browse / export packs | — | UI only | Tools → Browse / Export Asset Pack |
 | Build / register classes | `action_build(buildProject)` | Available | Menu **Build Project** (`Ctrl/Cmd+B`) |
 | Validate prefabs | `action_build(validatePrefabs)` | Available | MCP or `pnpm validate-prefabs` |
 | Lightmap | `action_build(buildLightmap)` | Available | Title bar **Build Lightmap** |
-| Play / exit | `enterPlayMode` / `exitPlayMode` | Available | Play ▾ / F5 / F6; Exit (`Ctrl/Cmd+P`) |
+| Play / exit | `action_editor.enterPlayMode` / `exitPlayMode` | Available | Play ▾ / F5 / F6; Exit (`Ctrl/Cmd+P`) |
 | Play window/mobile/multiplayer prefs | — | UI only | Play ▾ options; Network menu |
-| Screenshot | `captureScreenshot` | Available | Assistant/viewport affordances |
+| Screenshot | `action_editor.captureScreenshot` | Available | Assistant/viewport affordances |
 | NavMesh | `query_navmesh` / `action_navmesh` | Available | Tools → **Generate NavMesh** |
 | Viewport overlays / transform mode / snap | — | UI only | Viewport View / Snap / QWER |
 | Animation / VFX / Skeleton editors | — | UI only | Asset Browser create + dialogs |
 | Foundry / Scenario | — | UI only | Title bar **Foundry** |
 | Project open/create/close | — | UI only | App picker / `genesys-sdk new` |
+| Getting Started / Environment Setup | — | UI only | [app-setup-and-recovery.md](app-setup-and-recovery.md) |
+| Configure / restart external MCP | — | UI only | Genesys AI Settings → MCP |
+| Project Recovery / Fix with AI entry | — | UI only | Recovery dialog on failed open |
+| Play Local Project | — | UI only | Dashboard *(dev SDK)* |
 | Diagnostics | `query_diagnostics` | Available | Title bar Errors; console |
 
 **Compact-hidden** (still callable via `run_script` / `batch_execute` / `search_tools`): `action_component`, `action_prefab`, `action_asset`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`.
 
 **Editor-only hide/lock:** never describe as runtime `bHidden` / gameplay visibility.
+
+**installAssetPack:** scaffolds an empty `packs/<name>/` only — not catalog / cloud packs (use Browse Asset Packs).

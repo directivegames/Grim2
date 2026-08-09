@@ -6,7 +6,7 @@ These tools are **not** first-class MCP tools in compact mode (the default). The
 
 | Tool | Kind | Operations |
 | --- | --- | --- |
-| `action_asset` | `action` | `createFolder`, `createMaterial`, `delete`, `import`, `installAssetPack`, `move`, `rename` |
+| `action_asset` | `action` | `createFolder`, `createMaterial`, `delete`, `import`, `installAssetPack`, `mergeMeshes`, `move`, `rename` |
 | `action_component` | `action` | `add`, `duplicate`, `remove`, `resetToDefaults`, `setEnabled`, `setProperties` |
 | `action_navmesh` | `action` | `clear`, `export`, `generate`, `import`, `setSettings`, `toggleDebug` |
 | `action_prefab` | `action` | `apply`, `close`, `createFromActor`, `instantiate`, `open`, `resync`, `save`, `unpack` |
@@ -18,9 +18,9 @@ These tools are **not** first-class MCP tools in compact mode (the default). The
 
 **Action Asset** · kind: `action`
 
-Asset actions via the live editor when possible. Requires `action`. Ops: createFolder, createMaterial, move, rename, delete (destructive), import, installAssetPack (empty packs/<name>/ scaffold only — not catalog packs). Bridged mutations need a ready editor; move/rename rewrite references.
+Asset actions via the live editor when possible. Requires `action`. Ops: createFolder, createMaterial, move, rename, delete (destructive), import, installAssetPack (empty packs/<name>/ scaffold only — not catalog packs), mergeMeshes (export selected/nested meshes to a Model GLB under @project/assets/models). Bridged mutations need a ready editor; move/rename rewrite references.
 
-**Operations:** `createFolder` *(undoable)*, `createMaterial` *(undoable)*, `delete` *(destructive, undoable)*, `import`, `installAssetPack`, `move`, `rename`
+**Operations:** `createFolder` *(undoable)*, `createMaterial` *(undoable)*, `delete` *(destructive, undoable)*, `import`, `installAssetPack`, `mergeMeshes`, `move`, `rename`
 
 **Dispatch via `run_script`:**
 
@@ -98,7 +98,7 @@ genesys.actionPrefab({ action: 'apply', ... })
 
 **Query Asset** · kind: `query`
 
-Preferred MCP tool for listing and inspecting project assets and asset-pack assets. Requires `operation`. It does not index engine @engine/... assets; discover those from known engine paths or filesystem/manifests. Operations: find, getDetails, getAssetPackInfo, getReferences (project-wide reverse references via the editor Find Asset References analyser). Use find with assetType scene for scene files; results use project-relative forward-slash paths.
+Preferred MCP tool for listing and inspecting project assets and asset-pack assets. Requires `operation`. `find` does not index engine `@engine/...` assets; use `getDetails` to resolve/existence-check an `@engine/...` path against the installed `@gnsx/genesys.js` package. Operations: find, getDetails, getAssetPackInfo, getReferences (project-wide reverse references via the editor Find Asset References analyser). Use find with assetType scene for scene files; project results use project-relative forward-slash paths.
 
 **Operations:** `find`, `getDetails`, `getAssetPackInfo`, `getReferences`
 

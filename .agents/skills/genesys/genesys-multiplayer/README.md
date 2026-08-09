@@ -24,5 +24,5 @@ Clients interact with match state through replicated properties on other actors 
 
 ## Contents
 
-- `SKILL.md` - Entry point, methodology, and coding guidelines.
-- `references/` - Deep dives into each multiplayer subsystem.
+- `SKILL.md` - Entry point, methodology, coding guidelines, and **Safe UI for replicated strings**.
+- `references/` - Deep dives into each multiplayer subsystem (includes `ui-security.md`, `player-list-safe.md`).

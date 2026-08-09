@@ -16,6 +16,7 @@ Do **not** read every reference up front. Open the smallest file that answers th
 | Question about… | Read |
 | --- | --- |
 | MCP vs UI / is there a tool? | [mcp-vs-ui.md](references/mcp-vs-ui.md) |
+| Getting Started, Environment Setup, AI/MCP settings, Project Recovery, Play Local | [app-setup-and-recovery.md](references/app-setup-and-recovery.md) |
 | Title-bar Menu, Tools, Play, Build, Upload, Help | [menus-and-play.md](references/menus-and-play.md) |
 | Outliner, Inspector, Focus, copy/paste properties, components, prefab chrome | [outliner-and-inspector.md](references/outliner-and-inspector.md) |
 | Viewport gizmos/view/snap, Asset Browser, specialised dialogs | [viewport-and-assets.md](references/viewport-and-assets.md) |
@@ -34,7 +35,8 @@ Do **not** read every reference up front. Open the smallest file that answers th
 
 - **Editor hide (eye / H)** and **editor lock (L)** are **viewport/outliner only** — not runtime visibility/selectability.
 - Class registration: MCP `action_build(action="buildProject")` or Menu → **Build Project** — no separate `compile` MCP action.
-- Animation / VFX / Skeleton / Foundry (Scenario) / project open-create / asset-pack browse-export are **UI only** unless listed in mcp-vs-ui.
+- Animation / VFX / Skeleton / Foundry (Scenario) / project open-create / catalog asset-pack browse-install / Getting Started / Environment Setup / Project Recovery are **UI only** unless listed in mcp-vs-ui.
+- Genesys MCP for external IDEs is configured **once per Sandbox Studio environment** (not per game project). See [app-setup-and-recovery.md](references/app-setup-and-recovery.md).
 
 ## Maintenance
 

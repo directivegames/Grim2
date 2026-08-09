@@ -17,11 +17,11 @@ Dock Left/Right via Outliner Options. Hidden during prefab isolation.
 
 ### Actor context menu
 
-Add to Current/New Chat · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Rename** (F2) · **Copy** (`Ctrl/Cmd+C`) · **Paste** (`Ctrl/Cmd+V`) · **Duplicate** (`Ctrl/Cmd+D`) · **Move to Folder** (Root / folders / Create New Folder) · **Prefab** → Edit Prefab / Apply to Prefab / Resync with Prefab / Show in Asset Browser / Unlink Prefab · **Save as Prefab...** · **Remove** (Del)
+Add to Current/New Chat · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Rename** (F2) · **Copy** (`Ctrl/Cmd+C`) · **Paste** (`Ctrl/Cmd+V`) · **Duplicate** (`Ctrl/Cmd+D`) · **Move to Folder** (Root / folders / Create New Folder) · **Merge Meshes to Model…** · **Prefab** → Edit Prefab / Apply to Prefab / Resync with Prefab / Show in Asset Browser / Unlink Prefab · **Save as Prefab...** · **Remove** (Del)
 
 ### Folder context menu
 
-**Show/Hide All** (H) · **Lock All** / **Unlock All** (L) · **Rename** (F2) · **Delete Folder (Delete content)** (Del) · **Delete Folder (Keep content)** (Shift+Del)
+**Show/Hide All** (H) · **Lock All** / **Unlock All** (L) · **Rename** (F2) · **Merge Meshes to Model…** · **Delete Folder (Delete content)** (Del) · **Delete Folder (Keep content)** (Shift+Del)
 
 ### Outliner-focused extras
 
@@ -35,14 +35,16 @@ Titles vary: Inspector · Inspector (Scene Settings) · Inspector (Prefab Asset)
 | --- | --- | --- |
 | Edit properties | Property rows | MCP `action_component.setProperties` |
 | Reset property | Row reset — **Reset to default value** | May show **(override)** on prefab instances |
-| Copy / Paste property value | Label context: **Copy Value** (Shift+RMB) · **Paste Value** (Shift+LMB) | In-memory clipboard — **UI only** |
+| Copy / Paste property value | Label context: **Copy Value** (Shift+RMB) · **Paste Value** (Shift+LMB) | In-memory clipboard — **UI only**; type-checked paste; undoable |
 | Expand All / Collapse All | Inspector Options | |
+| Asset Details | Collapsible section | Starts collapsed on shorter viewports |
 | Back to Previous Selection | Back button (Esc) | Leave asset/scene-settings focus |
 | Add Component | Component tree **+** / context **Add** | MCP `action_component.add` |
 | Component Focus | Context **Focus** (F) | |
 | Duplicate component | Context **Duplicate** (`Ctrl/Cmd+D`) | MCP `action_component.duplicate` |
 | Rename component | Context **Rename** (F2) | |
 | Make Root | Context **Make Root** | Promote to root component |
+| Merge Meshes to Model… | Context menu | MCP `action_asset.mergeMeshes` — exports nested meshes to `.glb`; originals kept |
 | Remove component | Context **Remove** (Del) | MCP `action_component.remove` |
 | Reparent components | Drag in component tree | |
 | VFX Editor | Property when VFX path set | Opens VFX dialog — UI only |
