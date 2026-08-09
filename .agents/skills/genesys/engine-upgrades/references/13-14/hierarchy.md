@@ -17,6 +17,33 @@ options, but new and rewritten call sites must drop them. Prefer
 Do not add `isRoot: true` to existing Actor subclasses: every Actor is already a
 semantic root.
 
+### Trap: `rootComponent` is `this` (infinite recursion)
+
+Because `actor.rootComponent === actor`, any override that forwards to the same
+method on `rootComponent` recurses forever (stack overflow / hung play start).
+A common pre-14 pattern was hiding pooled enemies/weapons:
+
+```ts
+// Broken in 14 — rootComponent.setHiddenInGame === this.setHiddenInGame
+public override setHiddenInGame(hidden: boolean): void {
+  this.rootComponent.setHiddenInGame(hidden);
+  this.rootComponent.visible = !hidden;
+  this.rootComponent.traverse(obj => { obj.visible = !hidden; /* ... */ });
+}
+
+// Fixed — call SceneNode via super, then mutate this / children
+public override setHiddenInGame(hidden: boolean): void {
+  super.setHiddenInGame(hidden);
+  this.visible = !hidden;
+  this.traverse(obj => { obj.visible = !hidden; /* ... */ });
+}
+```
+
+Search Actor subclasses for `rootComponent.setHiddenInGame`,
+`rootComponent.visible`, `rootComponent.traverse`, and any other
+`rootComponent.<sameOverride>` call. Prefer `super` / `this` / a named child —
+never treat `rootComponent` as a nested body when the getter returns `this`.
+
 ### Choose the replacement by child count
 
 | Old setup | Prefer |
@@ -177,9 +204,8 @@ Audit call sites that assumed these were Actors:
 
 - `instanceof ENGINE.Actor` (now false for all of the above);
 - parameters / collections typed as `Actor`;
-- deprecated `world.getActors*` queries (only return remaining `Actor`
-  instances — pawns, controllers, starts, projectiles, VR, and info objects
-  are excluded);
+- deprecated `world.getActors*` queries (now SceneNode discovery shims —
+  same results as `getNodes*` / tag helpers; still prefer the Node names);
 - `getActor()` (returns null when the root is not an `Actor` — use
   `getRoot()`);
 - Actor-only net helpers (`replicateTransform`, `netLocalRole`,
@@ -368,9 +394,10 @@ Choose queries deliberately:
 
 - `getRootNodes()` returns topology-based World roots;
 - `getNode()` / `getNodes()` traverse the full subtree;
-- `getNodesByTag()` includes matching descendants, not only top-level Actors;
-- deprecated Actor queries only return objects that are still `Actor`
-  instances — not Pawns, Controllers, PlayerStarts, Projectiles, or InfoActors.
+- `getNodesByTag()` includes matching descendants, not only top-level roots;
+- deprecated `getActors*` queries are SceneNode shims (`getActors` →
+  `getNodes`, `getActorsByTag` → `getNodesByTag`, …). Prefer the Node names;
+  do not keep Actor-only filters in game code when looking up placeables.
 
 World roots are determined by topology, not the `isRoot` flag, and include
 transient system roots. For authored/outliner roots use:
