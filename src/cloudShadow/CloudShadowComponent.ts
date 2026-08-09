@@ -303,6 +303,8 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
       mesh.name = OVERLAY_MESH_NAME;
       mesh.rotation.x = -Math.PI / 2;
       mesh.frustumCulled = false;
+      // Runtime overlay must not be persisted into the scene graph on save.
+      mesh.setTransient(true);
 
       this.add(mesh);
       this._overlayMesh = mesh;
@@ -354,6 +356,22 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
       this._overlayMesh = null;
       this._overlayMaterial = null;
     }
+
+    // Drop any overlay meshes restored from older saves (not tracked in `_overlayMesh`).
+    for (const child of [...this.children]) {
+      if (child.name !== OVERLAY_MESH_NAME) continue;
+      child.removeFromParent();
+      if (child instanceof THREE.Mesh) {
+        child.geometry?.dispose();
+        const material = child.material;
+        if (Array.isArray(material)) {
+          for (const entry of material) entry.dispose();
+        } else {
+          material?.dispose();
+        }
+      }
+    }
+
     this._loadStarted = false;
   }
 }

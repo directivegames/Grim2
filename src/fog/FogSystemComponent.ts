@@ -270,6 +270,8 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this._mesh.castShadow = false;
     this._mesh.receiveShadow = false;
     this._mesh.renderOrder = this.renderOrder;
+    // Runtime preview mesh must not be persisted into the scene graph on save.
+    this._mesh.setTransient(true);
     this.add(this._mesh);
     this._updateBillboardToCamera();
     this._log('reload complete: mesh/material attached', {
@@ -461,8 +463,24 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
       this._mesh.removeFromParent();
       this._mesh.geometry.dispose();
       this._mesh.material.dispose();
+      this._mesh = null;
     }
-    this._mesh = null;
+
+    // Drop any FogCard meshes restored from older saves (not tracked in `_mesh`).
+    for (const child of [...this.children]) {
+      if (child.name !== 'FogCard') continue;
+      child.removeFromParent();
+      if (child instanceof THREE.Mesh) {
+        child.geometry?.dispose();
+        const material = child.material;
+        if (Array.isArray(material)) {
+          for (const entry of material) entry.dispose();
+        } else {
+          material?.dispose();
+        }
+      }
+    }
+
     this._material = null;
     this._textures = null;
   }
