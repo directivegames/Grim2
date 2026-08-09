@@ -15,7 +15,7 @@ import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
 const OVERLAY_MESH_NAME = 'CloudShadowOverlayPlane';
 
-export type CloudShadowComponentOptions = ENGINE.SceneComponentOptions & {
+export type CloudShadowComponentOptions = ENGINE.SceneNodeOptions & {
   cloudMapUrl?: ENGINE.TexturePath;
   enabled?: boolean;
   cloudScale?: number;
@@ -38,7 +38,7 @@ export type CloudShadowComponentOptions = ENGINE.SceneComponentOptions & {
 };
 
 @ENGINE.GameClass()
-export class CloudShadowComponent extends ENGINE.SceneComponent {
+export class CloudShadowComponent extends ENGINE.SceneNode {
   @ENGINE.property({ type: 'boolean', category: 'Cloud Shadows', description: 'Enable cloud shadow overlay' })
   public override enabled: boolean = DEFAULT_CLOUD_SHADOW_SETTINGS.enabled;
 

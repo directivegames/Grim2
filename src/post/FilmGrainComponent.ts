@@ -10,7 +10,7 @@ import {
 
 import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
-export type FilmGrainComponentOptions = ENGINE.SceneComponentOptions & {
+export type FilmGrainComponentOptions = ENGINE.SceneNodeOptions & {
   enabled?: boolean;
   opacity?: number;
   baseFrequency?: number;
@@ -20,7 +20,7 @@ export type FilmGrainComponentOptions = ENGINE.SceneComponentOptions & {
 };
 
 @ENGINE.GameClass()
-export class FilmGrainComponent extends ENGINE.SceneComponent {
+export class FilmGrainComponent extends ENGINE.SceneNode {
   @ENGINE.property({ type: 'boolean', category: 'Film Grain', description: 'Enable film grain overlay' })
   public override enabled: boolean = DEFAULT_FILM_GRAIN_SETTINGS.enabled;
 

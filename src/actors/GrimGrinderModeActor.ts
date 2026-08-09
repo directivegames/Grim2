@@ -46,7 +46,8 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   private readonly _hitNormal = new THREE.Vector3(1, 0, 0);
 
   public override initialize(options?: ActorOptions): void {
-    super.initialize({ ...options, rootComponent: ENGINE.SceneComponent.create({ name: 'Root' }) });
+    super.initialize(options);
+    this.add(ENGINE.SceneNode.create({ name: 'Root' }));
   }
 
   public static isActive(): boolean {
@@ -124,7 +125,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
       return GrimGrinderModeActor._instance;
     }
     const actor = GrimGrinderModeActor.create({ name: 'GrimGrinderMode' });
-    world.addActor(actor);
+    world.add(actor);
     GrimGrinderModeActor._instance = actor;
     return actor;
   }
@@ -278,7 +279,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   }
 
   private _hookInvincibility(pawn: IsometricPlayerPawn): void {
-    const stats = pawn.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = pawn.getNode(ENGINE.CharacterStatsNode);
     if (!stats || this._originalTakeDamage) {
       return;
     }
@@ -292,7 +293,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   }
 
   private _unhookInvincibility(pawn: IsometricPlayerPawn): void {
-    const stats = pawn.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = pawn.getNode(ENGINE.CharacterStatsNode);
     if (!stats || !this._originalTakeDamage) {
       return;
     }
@@ -312,7 +313,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
         continue;
       }
 
-      enemy.rootComponent.getWorldPosition(this._enemyPos);
+      enemy.getWorldPosition(this._enemyPos);
       const dx = this._enemyPos.x - this._playerPos.x;
       const dz = this._enemyPos.z - this._playerPos.z;
       const distSq = dx * dx + dz * dz;
@@ -334,7 +335,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   }
 
   private _killEnemy(enemy: ENGINE.Actor): void {
-    const stats = enemy.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = enemy.getNode(ENGINE.CharacterStatsNode);
     if (!stats || stats.getCurrentHealth() <= 0) {
       return;
     }
@@ -346,7 +347,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   }
 
   private _damageBoss(boss: PostmanBossActor): void {
-    const stats = boss.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = boss.getNode(ENGINE.CharacterStatsNode);
     if (!stats || stats.getCurrentHealth() <= 0) {
       return;
     }

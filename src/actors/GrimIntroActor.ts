@@ -132,7 +132,7 @@ export class GrimIntroActor extends ENGINE.Actor {
 
   private _blackCover: HTMLElement | null = null;
 
-  private _cutsceneCamera: ENGINE.ViewTargetCameraComponent | null = null;
+  private _cutsceneCamera: ENGINE.ViewTargetCameraNode | null = null;
 
   private _skipRequested = false;
 
@@ -348,11 +348,11 @@ export class GrimIntroActor extends ENGINE.Actor {
 
   private _disableSceneViewTargetCameras(world: ENGINE.World): void {
 
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
 
       if (actor === this) continue;
 
-      for (const vtc of actor.getComponents(ENGINE.ViewTargetCameraComponent)) {
+      for (const vtc of actor.getNodes(ENGINE.ViewTargetCameraNode)) {
 
         vtc.setActive(false);
 
@@ -380,13 +380,13 @@ export class GrimIntroActor extends ENGINE.Actor {
 
 
 
-    this.rootComponent.position.copy(camPos);
+    this.position.copy(camPos);
 
-    this.rootComponent.rotation.set(ISO_PITCH, ISO_YAW, 0, 'YXZ');
+    this.rotation.set(ISO_PITCH, ISO_YAW, 0, 'YXZ');
 
 
 
-    const vtc = ENGINE.ViewTargetCameraComponent.create({
+    const vtc = ENGINE.ViewTargetCameraNode.create({
 
       fov: 40,
 
@@ -398,7 +398,7 @@ export class GrimIntroActor extends ENGINE.Actor {
 
 
 
-    this.rootComponent.add(vtc);
+    this.add(vtc);
 
     this._cutsceneCamera = vtc;
 
@@ -418,7 +418,7 @@ export class GrimIntroActor extends ENGINE.Actor {
 
 
 
-  private _matchesGrimStatic(actor: ENGINE.Actor, modelUrl: string): boolean {
+  private _matchesGrimStatic(actor: ENGINE.SceneNode, modelUrl: string): boolean {
 
     const nameLower = actor.name.toLowerCase();
 
@@ -438,13 +438,13 @@ export class GrimIntroActor extends ENGINE.Actor {
 
   private _findGrimWorldPosition(world: ENGINE.World): THREE.Vector3 | null {
 
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
 
       if (actor === this) continue;
 
 
 
-      const mesh = actor.getComponent(ENGINE.GLTFMeshComponent);
+      const mesh = actor.getNode(ENGINE.ModelMeshNode);
 
       const url = mesh
 
@@ -458,7 +458,7 @@ export class GrimIntroActor extends ENGINE.Actor {
 
       const pos = new THREE.Vector3();
 
-      actor.rootComponent.getWorldPosition(pos);
+      actor.getWorldPosition(pos);
 
       return pos;
 
@@ -504,7 +504,7 @@ export class GrimIntroActor extends ENGINE.Actor {
 
     this._disableSceneViewTargetCameras(world);
 
-    world.removeActors(this);
+    world.remove(this);
 
     ensureGrimIntroBlackCover(world);
 

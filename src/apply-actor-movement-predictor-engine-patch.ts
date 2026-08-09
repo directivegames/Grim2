@@ -1,8 +1,8 @@
 /**
- * Engine 10.13's `BasePawnMovementComponent.tickPrePhysics/tickPostPhysics` calls
+ * Engine 10.13's `BasePawnMovementNode.tickPrePhysics/tickPostPhysics` calls
  * `owner?.getMovementPredictor()` on the owning actor. That method only exists on
  * `Pawn`, so any `MovementComponent` attached to a plain `Actor` (e.g. zombies
- * with `NpcMovementComponent`) crashes with:
+ * with `NpcMovementNode`) crashes with:
  *
  *   TypeError: t?.getMovementPredictor is not a function
  *

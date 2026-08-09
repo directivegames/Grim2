@@ -7,9 +7,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { SceneComponentOptions } from '@gnsx/genesys.js';
+import type { SceneNodeOptions } from '@gnsx/genesys.js';
 
-export type BlobShadowOptions = SceneComponentOptions & {
+export type BlobShadowOptions = SceneNodeOptions & {
   /** Radius of the shadow disc (default 0.5). */
   radius?: number;
   /** Opacity 0-1 (default 0.35). */
@@ -47,7 +47,7 @@ function getSoftShadowMap(): THREE.CanvasTexture {
 }
 
 @ENGINE.GameClass()
-export class BlobShadowComponent extends ENGINE.MeshComponent {
+export class BlobShadowComponent extends ENGINE.MeshNode {
   public override initialize(options?: BlobShadowOptions): void {
     const radius   = options?.radius   ?? 0.5;
     const opacity  = options?.opacity  ?? 0.35;

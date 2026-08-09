@@ -73,8 +73,9 @@ export class GroundFogActor extends ENGINE.Actor {
   private _smokeLayerBuilt = false;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create({ name: 'Root' });
-    super.initialize({ ...options, rootComponent: root });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
+    super.initialize(options);
+    this.add(root);
     this._proceduralTexture = this._createProceduralTexture();
   }
 
@@ -172,7 +173,7 @@ export class GroundFogActor extends ENGINE.Actor {
   }
 
   private _spawnCard(
-    root: ENGINE.SceneComponent,
+    root: ENGINE.SceneNode,
     material: THREE.MeshBasicMaterial,
     sizeMin: number,
     sizeRange: number,
@@ -217,7 +218,7 @@ export class GroundFogActor extends ENGINE.Actor {
   }
 
   private _buildBasePool(): void {
-    const root = this.rootComponent;
+    const root = this;
     const baseY = this.groundVerticalOffset;
 
     for (let i = 0; i < BASE_CARD_COUNT; i++) {
@@ -238,7 +239,7 @@ export class GroundFogActor extends ENGINE.Actor {
   }
 
   private _buildSmokePool(): void {
-    const root = this.rootComponent;
+    const root = this;
     const baseY = this.groundVerticalOffset;
 
     for (let i = 0; i < SMOKE_CARD_COUNT; i++) {

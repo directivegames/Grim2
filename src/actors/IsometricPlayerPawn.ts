@@ -7,7 +7,7 @@
  *      └─ springArm
  *         └─ camera
  *   └─ visualMesh (Grim2.glb) ← rotation.y smooth facing; skeletal float animations
- *   └─ movementComponent (IsometricMovementComponent)
+ *   └─ movementNode (IsometricMovementComponent)
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -275,14 +275,14 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   // ── Component factory overrides ───────────────────────────────────────────
 
-  protected override setupAnimationNode(): ENGINE.AnimationStateMachineComponent | null {
-    const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: GRIM2_ANIM_URL });
+  protected override setupAnimationNode(): ENGINE.AnimationStateMachineNode | null {
+    const anim = ENGINE.AnimationStateMachineNode.create({ configUrl: GRIM2_ANIM_URL });
     this.add(anim);
     return anim;
   }
 
-  protected override setupVisualNode(): ENGINE.SceneComponent | null {
-    const meshComponent = ENGINE.GLTFMeshComponent.create({
+  protected override setupVisualNode(): ENGINE.SceneNode | null {
+    const meshComponent = ENGINE.ModelMeshNode.create({
       modelUrl: GRIM2_MODEL_URL,
       material: GRIM2_MATERIAL_URL,
       scale: new THREE.Vector3(1, 1, 1),
@@ -293,7 +293,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     });
 
     // Add the 2 point lights from the scene Grim2
-    const leftLight = ENGINE.PointLightComponent.create({
+    const leftLight = ENGINE.PointLightNode.create({
       color: new THREE.Color(0.964686, 0.964686, 0.061246),
       intensity: 5,
       position: new THREE.Vector3(-0.114043, 1.331329, 0.335526),
@@ -301,7 +301,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     leftLight.name = 'Point Light';
     meshComponent.add(leftLight);
 
-    const rightLight = ENGINE.PointLightComponent.create({
+    const rightLight = ENGINE.PointLightNode.create({
       color: new THREE.Color(0.964686, 0.964686, 0.061246),
       intensity: 5,
       position: new THREE.Vector3(0.060097, 1.331329, 0.335526),
@@ -327,7 +327,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   protected override createCollision(): ENGINE.SceneNode | null {
     const radius = ENGINE.CHARACTER_WIDTH / 2;
-    return ENGINE.MeshComponent.create({
+    return ENGINE.MeshNode.create({
       name: 'CollisionCapsule',
       geometry: new THREE.CapsuleGeometry(radius, ENGINE.CHARACTER_HEIGHT - radius * 2),
       material: new THREE.MeshStandardMaterial({ visible: false }),
@@ -339,13 +339,13 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     });
   }
 
-  protected override createMovementNode(): ENGINE.BasePawnMovementComponent {
+  protected override createMovementNode(): ENGINE.BasePawnMovementNode {
     const mc = IsometricMovementComponent.create();
     mc.accelerationLambda = 30;
     mc.decelerationLambda = 25;
     // Wider controller skin + higher auto-step to reduce snagging on floor edges / thin static geometry.
     mc.characterControllerOptions = {
-      ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
+      ...ENGINE.CharacterMovementNode.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
       offset: 0.04,
       applyImpulsesToDynamicBodies: false,
       autoStepConfig: {
@@ -365,10 +365,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   protected override setupCamera(): THREE.Camera {
     const camera = new THREE.PerspectiveCamera(50, 1, ENGINE.CAMERA_NEAR, ENGINE.CAMERA_FAR);
 
-    this.cameraPivot = ENGINE.SceneComponent.create();
+    this.cameraPivot = ENGINE.SceneNode.create();
     this.cameraPivot.rotation.set(ISO_PITCH, ISO_YAW, 0, 'YXZ');
 
-    this.springArm = ENGINE.SpringArmComponent.create({
+    this.springArm = ENGINE.SpringArmNode.create({
       armLength: this.cameraDistance,
       collisionEnabled: false,
     });
@@ -439,7 +439,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   public restoreFullHealth(): void {
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) {
       return;
     }
@@ -453,8 +453,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._healthBarUI?.updateHealth(max, max);
   }
 
-  private _findGrimVisualMesh(): ENGINE.GLTFMeshComponent | null {
-    for (const mesh of this.getComponents(ENGINE.GLTFMeshComponent)) {
+  private _findGrimVisualMesh(): ENGINE.ModelMeshNode | null {
+    for (const mesh of this.getNodes(ENGINE.ModelMeshNode)) {
       const url = (mesh as unknown as { modelUrl?: string }).modelUrl ?? '';
       if (url.includes('Grim2')) {
         return mesh;
@@ -468,7 +468,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       return;
     }
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) {
       return;
     }
@@ -498,7 +498,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._soulHealBuffer = 0;
     this.grimGrinderSoulProgress = 0;
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       // heal() is gated on isDead, so we must clear private state directly first,
       // then fire onHealthChanged so the health bar updates before applyGrimVaultStats
@@ -543,7 +543,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       return;
     }
 
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       mc.resetRuntimeMotion();
 
@@ -556,7 +556,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
         position: target,
         rotation: new THREE.Euler(0, this._missionSpawnYaw, 0),
       });
-      const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+      const stats = this.getNode(ENGINE.CharacterStatsNode);
       logMissionReset(`${phase}:spawn-teleport`, {
         playerStart: {
           x: this._missionSpawnPosition.x,
@@ -601,7 +601,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   /** Apply purchased Grim upgrades to runtime stats (call after vault changes or mission start). */
   public applyGrimVaultStats(): void {
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) {
       return;
     }
@@ -632,7 +632,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     }
 
     this.applyGrimVaultStats();
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       this._lastKnownHealth = stats.getCurrentHealth();
       stats.onHealthChanged.add(this._onHealthChanged);
@@ -652,7 +652,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     return true;
   }
 
-  private async _initHealthBarUI(stats: ENGINE.CharacterStatsComponent): Promise<void> {
+  private async _initHealthBarUI(stats: ENGINE.CharacterStatsNode): Promise<void> {
     this._healthBarUI = await HealthBarUI.getInstance(this.getWorld());
     this._healthBarUI.updateHealth(stats.getCurrentHealth(), stats.getMaxHealth());
   }
@@ -694,7 +694,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   /** Facing from current movement velocity; falls back to visual facing when still. */
   public getMovementYaw(): number {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const vel = mc.getWorldVelocity();
       if (vel.lengthSq() > 0.01) {
@@ -709,22 +709,22 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
    * Uses velocity when moving; otherwise the visual mesh euler.
    */
   public getDriveYaw(): number {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const vel = mc.getWorldVelocity();
       if (vel.lengthSq() > 0.01) {
         return Math.atan2(vel.x, vel.z);
       }
     }
-    if (this.visualComponent) {
-      return this.visualComponent.rotation.y;
+    if (this.visualNode) {
+      return this.visualNode.rotation.y;
     }
     return this._facingYaw;
   }
 
   /** Yaw for grimgrinder.glb — follows actual movement velocity (A/D differ correctly). */
   public getGrimGrinderCarYaw(): number {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const vel = mc.getWorldVelocity();
       if (vel.lengthSq() > 0.01) {
@@ -798,7 +798,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     const slomoZoomFactor = slomo < 0.5 ? (1.0 - slomo) * 0.3 : 0;
 
     // Zoom in slightly when health is low (death tension)
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     const healthPercent = stats ? stats.getCurrentHealth() / stats.getMaxHealth() : 1.0;
     const deathZoomFactor = healthPercent < 0.25 ? (0.25 - healthPercent) * 0.5 : 0;
 
@@ -813,7 +813,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     let target = IsometricPlayerPawn.BASE_FOV;
 
     // Speed boost: FOV increases when moving fast
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const speed = mc.getWorldVelocity().length();
       if (speed > 3) {
@@ -974,8 +974,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   // ── Visual facing ─────────────────────────────────────────────────────────
 
   private _updateVisualFacing(deltaTime: number): void {
-    if (!this.visualComponent) return;
-    const mc = this.movementComponent;
+    if (!this.visualNode) return;
+    const mc = this.movementNode;
     if (!(mc instanceof IsometricMovementComponent)) return;
 
     const vel = mc.getWorldVelocity();
@@ -987,7 +987,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     diff = ((diff + Math.PI) % (Math.PI * 2)) - Math.PI;
     this._facingYaw += Math.sign(diff) * Math.min(Math.abs(diff), ROTATE_SPEED * deltaTime);
 
-    this.visualComponent.rotation.y = this._facingYaw;
+    this.visualNode.rotation.y = this._facingYaw;
   }
 
   /**
@@ -1022,7 +1022,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     if (this._sceneGrim2PlaceholderRemoved) return;
     const world = this.getWorld();
     if (!world) return;
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor.uuid !== SCENE_PLACEHOLDER_GRIM2_ACTOR_UUID) continue;
 
       // Defer destroy until GLTF load callbacks finish (avoids "ensure failed").
@@ -1044,7 +1044,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   // ── Animation parameters ─────────────────────────────────────────────────
 
   protected override getAnimationParameters(): Record<string, unknown> {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (!(mc instanceof IsometricMovementComponent)) return { state: 'float' };
 
     const moving = mc.getWorldVelocity().length() > 0.1;
@@ -1325,7 +1325,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   private _tickPassiveRegen(deltaTime: number): void {
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) return;
 
     const current = stats.getCurrentHealth();
@@ -1363,7 +1363,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._streakOrbitYaw = 0;
     this._slomoOverlayEl?.remove();
     this._slomoOverlayEl = null;
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     stats?.onHealthChanged.remove(this._onHealthChanged);
     this._vignetteEl?.remove();
     this._vignetteEl = null;

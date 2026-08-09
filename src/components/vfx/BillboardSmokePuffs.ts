@@ -1,5 +1,5 @@
 /**
- * Textured billboard smoke/dust puffs — pure Three.js (no VFXComponent).
+ * Textured billboard smoke/dust puffs — pure Three.js (no VFXNode).
  * Shared by gore, zombie spawn, and fist impact effects.
  *
  * Meshes/materials are pooled per texture path — no per-puff alloc/dispose.
@@ -187,7 +187,7 @@ function getOrCreatePool(texturePath: string, texture: THREE.Texture | null): Te
 function ensurePoolInScene(world: ENGINE.World, pool: TexturePuffPool): void {
   if (pool.sceneAttached) return;
   for (const slot of pool.slots) {
-    world.scene.add(slot.mesh);
+    world.add(slot.mesh);
   }
   pool.sceneAttached = true;
 }

@@ -15,8 +15,9 @@ const HEDGE_MODEL_FILENAME = 'hedgeredon.glb';
 @ENGINE.GameClass()
 export class HedgeCollisionDisabler extends ENGINE.Actor {
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create({ name: 'Root' });
-    super.initialize({ ...options, rootComponent: root });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
+    super.initialize(options);
+    this.add(root);
   }
 
     public override beginPlay(): boolean {
@@ -38,28 +39,22 @@ export class HedgeCollisionDisabler extends ENGINE.Actor {
 
     let disabledCount = 0;
 
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       // Check if this is a GLTFMeshActor with the hedge model
       const gltfActor = actor as unknown as {
         modelUrl?: string;
-        rootComponent?: {
-          physicsOptions?: { enabled?: boolean };
-          setPhysicsOptions?: (options: { enabled: boolean }) => void;
-        };
+        physicsOptions?: { enabled?: boolean };
+        setPhysicsOptions?: (options: { enabled: boolean }) => void;
       };
 
       if (gltfActor.modelUrl?.endsWith(HEDGE_MODEL_FILENAME)) {
-        // Disable physics on the root component
-        if (gltfActor.rootComponent) {
-          // Try to disable via physics options
-          if (gltfActor.rootComponent.physicsOptions) {
-            gltfActor.rootComponent.physicsOptions.enabled = false;
-          }
+        // Disable physics on the placeable root
+        if (gltfActor.physicsOptions) {
+          gltfActor.physicsOptions.enabled = false;
+        }
 
-          // Also try via setPhysicsOptions if available
-          if (gltfActor.rootComponent.setPhysicsOptions) {
-            gltfActor.rootComponent.setPhysicsOptions({ enabled: false });
-          }
+        if (gltfActor.setPhysicsOptions) {
+          gltfActor.setPhysicsOptions({ enabled: false });
         }
 
         disabledCount++;

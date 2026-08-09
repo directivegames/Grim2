@@ -86,7 +86,7 @@ export class PauseManagerActor extends ENGINE.Actor {
   }
 
   public static ensureExists(world: ENGINE.World): PauseManagerActor {
-    const existing = world.getActors().find(
+    const existing = world.getRootNodes().find(
       (a): a is PauseManagerActor => a instanceof PauseManagerActor,
     );
     if (existing) {
@@ -94,7 +94,7 @@ export class PauseManagerActor extends ENGINE.Actor {
     }
 
     const manager = PauseManagerActor.create({ name: 'PauseManager' });
-    world.addActor(manager);
+    world.add(manager);
     return manager;
   }
 }

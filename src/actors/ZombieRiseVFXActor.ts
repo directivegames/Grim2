@@ -32,17 +32,18 @@ function easeOutCubic(value: number): number {
 export class ZombieRiseVFXActor extends ENGINE.Actor {
   private groundRipple: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
   private groundRipple2: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
-  private _smokeVfx: ENGINE.VFXComponent | null = null;
+  private _smokeVfx: ENGINE.VFXNode | null = null;
   private elapsed = 0;
   private _isActive = false;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create({ name: 'Root' });
-    super.initialize({ ...options, rootComponent: root });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
+    super.initialize(options);
+    this.add(root);
     this._createGroundRipples(root);
 
     if (!isMobileDevice()) {
-      const smokeVfx = ENGINE.VFXComponent.create({
+      const smokeVfx = ENGINE.VFXNode.create({
         name: 'SpawnSmokeVfx',
         vfxPath: SPAWN_SMOKE_VFX,
         autoStart: true,
@@ -93,7 +94,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
 
     this._smokeVfx?.startEmitting(true);
 
-    this.rootComponent.position.copy(position).add(new THREE.Vector3(0, 0.1, 0));
+    this.position.copy(position).add(new THREE.Vector3(0, 0.1, 0));
     this.setHidden(false, true);
   }
 
@@ -122,7 +123,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
     const actor = ZombieRiseVFXActor.create({
       position: position.clone().add(new THREE.Vector3(0, 0.1, 0)),
     });
-    world.addActor(actor);
+    world.add(actor);
     actor._isActive = true;
     return actor;
   }
@@ -137,7 +138,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
     const created: ZombieRiseVFXActor[] = [];
     for (let i = 0; i < count; i++) {
       const actor = ZombieRiseVFXActor.create({ position: new THREE.Vector3(0, -1000, 0) });
-      world.addActor(actor);
+      world.add(actor);
       actor._isActive = false;
       actor.setHidden(true, true);
       _pool.push(actor);
@@ -149,7 +150,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
   /** Destroy all instances (active and pooled) and clear the pool. Call on world unload. */
   public static destroyAllRuntime(world: ENGINE.World): void {
     const toDestroy: ZombieRiseVFXActor[] = [];
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof ZombieRiseVFXActor) {
         toDestroy.push(actor);
       }
@@ -161,7 +162,7 @@ export class ZombieRiseVFXActor extends ENGINE.Actor {
     _pool.length = 0;
   }
 
-  private _createGroundRipples(root: ENGINE.SceneComponent): void {
+  private _createGroundRipples(root: ENGINE.SceneNode): void {
     const mat1 = new THREE.MeshBasicMaterial({
       color: 0x5d3f7c,
       transparent: true,

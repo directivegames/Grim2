@@ -42,11 +42,11 @@ export function isoRightAxis(yaw: number): THREE.Vector3 {
 }
 
 @ENGINE.GameClass()
-export class IsometricMovementComponent extends ENGINE.CharacterMovementComponent {
+export class IsometricMovementComponent extends ENGINE.CharacterMovementNode {
 
   // ── Editor-visible properties ─────────────────────────────────────────────
   // maxSpeed / accelerationLambda / decelerationLambda / speedModifier are
-  // inherited from CharacterMovementComponent and remain fully editable.
+  // inherited from CharacterMovementNode and remain fully editable.
 
   // ── Hide inherited properties irrelevant to VS-style movement ────────────
   /** @internal */ @ENGINE.property({ hidden: true }) declare public lookRightSpeed: number;
@@ -141,7 +141,7 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
       this.rightVelocity = 0;
       this._worldVelocity.set(0, 0, 0);
 
-      if (this.hasCharacterController && root instanceof ENGINE.PrimitiveComponent) {
+      if (this.hasCharacterController && root instanceof ENGINE.PrimitiveNode) {
         this._deltaScratch.set(0, 0, 0);
         this._applyControllerMovement(root, this._deltaScratch, deltaTime);
       }
@@ -187,7 +187,7 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
       .addScaledVector(ISO_FORWARD_AXIS, this.forwardVelocity)
       .addScaledVector(ISO_RIGHT_AXIS, this.rightVelocity);
 
-    if (this.hasCharacterController && root instanceof ENGINE.PrimitiveComponent) {
+    if (this.hasCharacterController && root instanceof ENGINE.PrimitiveNode) {
       this._applyControllerMovement(root, this._deltaScratch, deltaTime);
     } else {
       this._deltaScratch.y = 0;
@@ -201,7 +201,7 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
   // ── Private helpers ───────────────────────────────────────────────────────
 
   private _applyControllerMovement(
-    root: ENGINE.PrimitiveComponent,
+    root: ENGINE.PrimitiveNode,
     delta: THREE.Vector3,
     dt: number,
   ): void {
@@ -245,7 +245,7 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementComponen
     }
   }
 
-  private _trackNetTransform(owner: ENGINE.SceneNode, root: ENGINE.SceneComponent): void {
+  private _trackNetTransform(owner: ENGINE.SceneNode, root: ENGINE.SceneNode): void {
     const predictor = (owner as any).movementPredictor;
     if (predictor && !owner.isSimulatedProxy()) {
       predictor.addLocalTransform({

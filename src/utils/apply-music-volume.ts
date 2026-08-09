@@ -10,7 +10,7 @@ import { PostmanBossMusicActor } from '../actors/PostmanBossMusicActor.js';
 export function applyMusicVolumeToWorld(world: ENGINE.World, scale: number): void {
   const clamped = Math.max(0, Math.min(1, scale));
 
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     if (actor instanceof BackgroundMusicActor) {
       actor.setMusicVolume(clamped);
     } else if (actor instanceof PostmanBossMusicActor) {

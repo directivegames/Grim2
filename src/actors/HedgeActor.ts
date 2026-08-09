@@ -20,7 +20,7 @@ export class HedgeActor extends ENGINE.Actor {
   public modelScale: number = 1.0;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.GLTFMeshComponent.create({
+    const root = ENGINE.ModelMeshNode.create({
       name: 'HedgeVisual',
       modelUrl: HEDGE_MODEL_URL,
       scale: new THREE.Vector3(this.modelScale, this.modelScale, this.modelScale),
@@ -29,7 +29,8 @@ export class HedgeActor extends ENGINE.Actor {
       receiveShadow: true,
     });
 
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
   public override getEditorClassIcon(): string | null {

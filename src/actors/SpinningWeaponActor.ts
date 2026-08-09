@@ -335,29 +335,29 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     // Create components in order - warmup happens AFTER all components exist
     this._slashComponent = WeaponSlashComponent.create();
-    this.rootComponent.add(this._slashComponent);
+    this.add(this._slashComponent);
 
     this._slashParticles = WeaponSlashParticleComponent.create();
-    this.rootComponent.add(this._slashParticles);
+    this.add(this._slashParticles);
 
     this._swingLight = WeaponSwingLightComponent.create();
-    this.rootComponent.add(this._swingLight);
+    this.add(this._swingLight);
 
     this._summonVFX = WeaponSummonVFXComponent.create();
-    this.rootComponent.add(this._summonVFX);
+    this.add(this._summonVFX);
 
     this._bloodSplatter = BloodSplatterComponent.create();
-    this.rootComponent.add(this._bloodSplatter);
+    this.add(this._bloodSplatter);
 
     this._boomerangTrail = BoomerangTrailComponent.create();
-    this.rootComponent.add(this._boomerangTrail);
+    this.add(this._boomerangTrail);
 
     this._extraBladeTrails = [
       BoomerangTrailComponent.create(),
       BoomerangTrailComponent.create(),
     ];
     for (const trail of this._extraBladeTrails) {
-      this.rootComponent.add(trail);
+      this.add(trail);
     }
 
     // Post-creation warmups (now components actually exist)
@@ -501,7 +501,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   public static triggerSoulThrow(world: ENGINE.World): void {
-    const actor = world.getActors().find(
+    const actor = world.getRootNodes().find(
       (a): a is SpinningWeaponActor => a instanceof SpinningWeaponActor,
     );
     actor?.triggerSoulThrow();
@@ -607,7 +607,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     player.getWorldPosition(this._scratchPlayerPos);
 
     for (let i = 0; i < targets.length; i++) {
-      targets[i]!.rootComponent.getWorldPosition(this._fistTargetScratch);
+      targets[i]!.getWorldPosition(this._fistTargetScratch);
       const off = offsets[i] ?? [0, 0];
       this._fistTargetScratch.x += off[0];
       this._fistTargetScratch.z += off[1];
@@ -641,7 +641,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     for (const zombie of nearby) {
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
-      zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+      zombie.getWorldPosition(this._scratchZombiePos);
       const dx = this._scratchZombiePos.x - this._scratchPlayerPos.x;
       const dz = this._scratchZombiePos.z - this._scratchPlayerPos.z;
       const distSq = dx * dx + dz * dz;
@@ -1042,7 +1042,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const lastHit = this._hitCooldowns.get(zombie);
       if (lastHit !== undefined && currentTime - lastHit < HIT_COOLDOWN) continue;
 
-      zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+      zombie.getWorldPosition(this._scratchZombiePos);
       const dx = this._scratchZombiePos.x - blade.pos.x;
       const dz = this._scratchZombiePos.z - blade.pos.z;
       if (dx * dx + dz * dz > BOOMERANG_HIT_RADIUS * BOOMERANG_HIT_RADIUS) continue;
@@ -1060,7 +1060,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         hitLocation: this._hitLocationScratch,
         hitNormal: this._hitNormalScratch,
       };
-      const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
+      const stats = zombie.getNode(ENGINE.CharacterStatsNode);
       if (stats) {
         stats.takeDamage(damage, hitInfo);
         missionState.onDamageDealt(damage);
@@ -1147,7 +1147,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
           continue;
         }
 
-        zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+        zombie.getWorldPosition(this._scratchZombiePos);
         const distSq = this._pointToSegmentDistSq(
           this._scratchZombiePos.x, this._scratchZombiePos.z,
           stepStartX, stepStartZ,
@@ -1195,7 +1195,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _hitZombie(zombie: ENGINE.Actor, currentTime: number, player: ENGINE.Pawn): void {
     this._hitCooldowns.set(zombie, currentTime);
 
-    zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+    zombie.getWorldPosition(this._scratchZombiePos);
     player.getWorldPosition(this._scratchPlayerPos);
 
     this._hitNormalScratch.copy(this._scratchZombiePos).sub(this._scratchPlayerPos).setY(0);
@@ -1211,7 +1211,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     };
 
     const damage = this._getWeaponDamage();
-    const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = zombie.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.takeDamage(damage, hitInfo);
       missionState.onDamageDealt(damage);
@@ -1287,7 +1287,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   public static findInWorld(world: ENGINE.World): SpinningWeaponActor | null {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof SpinningWeaponActor) {
         return actor;
       }

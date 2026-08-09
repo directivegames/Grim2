@@ -24,9 +24,9 @@ const UPDATE_DISTANCE_SQ = UPDATE_DISTANCE * UPDATE_DISTANCE;
 const UPDATE_INTERVAL = 0.1;
 
 @ENGINE.GameClass()
-export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
-  private _red: ENGINE.PointLightComponent | null = null;
-  private _blue: ENGINE.PointLightComponent | null = null;
+export class PoliceLightFlasherComponent extends ENGINE.SceneNode {
+  private _red: ENGINE.PointLightNode | null = null;
+  private _blue: ENGINE.PointLightNode | null = null;
   private _redBase = 0;
   private _blueBase = 0;
   private _elapsed = 0;
@@ -117,12 +117,12 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
 
   private _bindLights(): void {
     this._bound = true;
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) {
       return;
     }
 
-    const lights = actor.getComponents(ENGINE.PointLightComponent);
+    const lights = actor.getNodes(ENGINE.PointLightNode);
     if (lights.length < 2) {
       return;
     }
@@ -151,7 +151,7 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
     this._blue = null;
   }
 
-  private _readRgb(light: ENGINE.PointLightComponent): { r: number; g: number; b: number } {
+  private _readRgb(light: ENGINE.PointLightNode): { r: number; g: number; b: number } {
     const c = light.color as THREE.Color | number | { _: number[] };
     if (c instanceof THREE.Color) {
       return { r: c.r, g: c.g, b: c.b };

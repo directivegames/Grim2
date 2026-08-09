@@ -369,7 +369,7 @@ class MissionRunnerImpl {
         ? Math.min(risk.spawnCap, 100)
         : risk.spawnCap;
 
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof ZombieHordeManager) {
         actor.applyMissionRisk(
           healthMult,
@@ -388,7 +388,7 @@ class MissionRunnerImpl {
   }
 
   private _clearHordeRisk(world: ENGINE.World): void {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof ZombieHordeManager) {
         actor.clearMissionRisk();
         return;
@@ -457,7 +457,7 @@ class MissionRunnerImpl {
       return;
     }
 
-    const boss = this._activeBoss ?? w.getActors().find(a => a instanceof PostmanBossActor);
+    const boss = this._activeBoss ?? w.getRootNodes().find(a => a instanceof PostmanBossActor);
     if (boss instanceof PostmanBossActor) {
       boss.revealForCombat();
     }
@@ -493,7 +493,7 @@ class MissionRunnerImpl {
     const world = this._world;
     if (world) {
       PostmanBossMusicActor.stopAll(world);
-      const bg = world.getActors().find(a => a instanceof BackgroundMusicActor);
+      const bg = world.getRootNodes().find(a => a instanceof BackgroundMusicActor);
       if (bg instanceof BackgroundMusicActor) {
         bg.stop();
       }

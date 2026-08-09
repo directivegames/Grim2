@@ -16,7 +16,7 @@ const CLIP_SPINNING = 'spinning';
 
 
 @ENGINE.GameClass()
-export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
+export class GrimGrinderControllerComponent extends ENGINE.SceneNode {
   private _initialized = false;
   private _mixer: THREE.AnimationMixer | null = null;
   private _prevWallTimeMs = 0;
@@ -31,18 +31,18 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
 
   public static attachAllInWorld(world: ENGINE.World): void {
     let attached = 0;
-    for (const actor of world.getActors()) {
-      const mesh = actor.getComponent(ENGINE.GLTFMeshComponent);
+    for (const actor of world.getRootNodes()) {
+      const mesh = actor.getNode(ENGINE.ModelMeshNode);
       const url = mesh ? (mesh.modelUrl ?? '') : '';
       if (!GrimGrinderControllerComponent._matchesGrimGrinder(actor.name, url)) {
         continue;
       }
-      if (actor.getComponent(GrimGrinderControllerComponent)) {
+      if (actor.getNode(GrimGrinderControllerComponent)) {
         attached += 1;
         continue;
       }
       const ctrl = GrimGrinderControllerComponent.create({ name: 'GrimGrinderController' });
-      actor.rootComponent.add(ctrl);
+      actor.add(ctrl);
       attached += 1;
     }
     if (attached === 0) {
@@ -51,8 +51,8 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
   }
 
   public static findInWorld(world: ENGINE.World): GrimGrinderControllerComponent | null {
-    for (const actor of world.getActors()) {
-      const ctrl = actor.getComponent(GrimGrinderControllerComponent);
+    for (const actor of world.getRootNodes()) {
+      const ctrl = actor.getNode(GrimGrinderControllerComponent);
       if (ctrl) {
         return ctrl;
       }
@@ -70,68 +70,68 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
   }
 
   public park(): void {
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor || this._parked) return;
     if (!this._savedPosition) {
-      this._savedPosition = actor.rootComponent.position.clone();
+      this._savedPosition = actor.position.clone();
     }
-    actor.rootComponent.position.y = HIDDEN_Y;
+    actor.position.y = HIDDEN_Y;
     this._parked = true;
     this._lockedGroundY = null;
   }
 
   public unpark(): void {
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor || !this._parked) return;
     if (this._savedPosition) {
-      actor.rootComponent.position.copy(this._savedPosition);
+      actor.position.copy(this._savedPosition);
     }
     this._parked = false;
   }
 
   public teleportTo(worldPosition: THREE.Vector3, yawRadians = 0): void {
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) return;
     this.unpark();
     this._lockedGroundY = worldPosition.y;
     this._syncXZ.set(worldPosition.x, 0, worldPosition.z);
-    actor.rootComponent.position.set(worldPosition.x, this._lockedGroundY, worldPosition.z);
-    actor.rootComponent.rotation.set(0, yawRadians, 0, 'YXZ');
+    actor.position.set(worldPosition.x, this._lockedGroundY, worldPosition.z);
+    actor.rotation.set(0, yawRadians, 0, 'YXZ');
     this._lastYaw = yawRadians;
-    this._savedPosition = actor.rootComponent.position.clone();
+    this._savedPosition = actor.position.clone();
     this._captureModelBaseline();
     this._resetModelRootMotion();
   }
 
   public syncTo(worldPosition: THREE.Vector3, yawRadians = 0): void {
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) return;
     if (this._lockedGroundY === null) {
       this._lockedGroundY = worldPosition.y;
     }
     this._syncXZ.set(worldPosition.x, 0, worldPosition.z);
     this._lastYaw = yawRadians;
-    actor.rootComponent.position.set(this._syncXZ.x, this._lockedGroundY, this._syncXZ.z);
-    actor.rootComponent.rotation.set(0, yawRadians, 0, 'YXZ');
+    actor.position.set(this._syncXZ.x, this._lockedGroundY, this._syncXZ.z);
+    actor.rotation.set(0, yawRadians, 0, 'YXZ');
   }
 
   public returnHome(): void {
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) return;
     this._captureHomeIfNeeded();
     this._lockedGroundY = null;
-    if (this._homePosition) actor.rootComponent.position.copy(this._homePosition);
-    if (this._homeRotation) actor.rootComponent.rotation.copy(this._homeRotation);
+    if (this._homePosition) actor.position.copy(this._homePosition);
+    if (this._homeRotation) actor.rotation.copy(this._homeRotation);
     this._parked = false;
     this._resetModelRootMotion();
   }
 
   private _captureHomeIfNeeded(): void {
     if (this._homePosition) return;
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) return;
-    this._homePosition = actor.rootComponent.position.clone();
-    this._homeRotation = actor.rootComponent.rotation.clone();
+    this._homePosition = actor.position.clone();
+    this._homeRotation = actor.rotation.clone();
   }
 
   public override tickPrePhysics(_deltaTime: number): void {
@@ -157,12 +157,12 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
     if (this._parked || this._lockedGroundY === null) {
       return;
     }
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) {
       return;
     }
-    actor.rootComponent.position.set(this._syncXZ.x, this._lockedGroundY, this._syncXZ.z);
-    actor.rootComponent.rotation.set(0, this._lastYaw, 0, 'YXZ');
+    actor.position.set(this._syncXZ.x, this._lockedGroundY, this._syncXZ.z);
+    actor.rotation.set(0, this._lastYaw, 0, 'YXZ');
     this._resetModelRootMotion();
   }
 
@@ -187,15 +187,11 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
   }
 
   private _getGltfModel(): THREE.Object3D | null {
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) {
       return null;
     }
-    const meshComp = actor.getComponent(ENGINE.GLTFMeshComponent);
-    if (!meshComp) {
-      return null;
-    }
-    return meshComp.getModel();
+    return actor.getNode(ENGINE.ModelMeshNode);
   }
 
     public override endPlay(): boolean {
@@ -211,9 +207,9 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
   }
 
   /** Remove scene ASM components that 404 on grimgrinder.anim.json (editor leftovers). */
-  private _stripSceneAnimJsonMachines(actor: ENGINE.Actor): void {
-    const toRemove: ENGINE.AnimationStateMachineComponent[] = [];
-    for (const anim of actor.getComponents(ENGINE.AnimationStateMachineComponent)) {
+  private _stripSceneAnimJsonMachines(actor: ENGINE.SceneNode): void {
+    const toRemove: ENGINE.AnimationStateMachineNode[] = [];
+    for (const anim of actor.getNodes(ENGINE.AnimationStateMachineNode)) {
       const url = String((anim as unknown as { configUrl?: string }).configUrl ?? '').toLowerCase();
       if (url.includes('grimgrinder') && url.includes('.anim')) {
         toRemove.push(anim);
@@ -225,23 +221,22 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
   }
 
   private async _startAnimationsFromGlb(): Promise<void> {
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) {
       return;
     }
 
     this._stripSceneAnimJsonMachines(actor);
 
-    const meshComp = actor.getComponent(ENGINE.GLTFMeshComponent);
+    const meshComp = actor.getNode(ENGINE.ModelMeshNode);
     if (!meshComp) {
-      console.warn(`[GrimGrinder] "${actor.name}" has no GLTFMeshComponent.`);
+      console.warn(`[GrimGrinder] "${actor.name}" has no ModelMeshNode.`);
       return;
     }
 
     const tryStart = (): boolean => {
-      const model = meshComp.getModel();
       const clips = meshComp.getAnimations();
-      if (!model || clips.length === 0) {
+      if (!meshComp.isModelLoaded() || clips.length === 0) {
         return false;
       }
 
@@ -249,7 +244,7 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneComponent {
         return true;
       }
 
-      const mixer = new THREE.AnimationMixer(model);
+      const mixer = new THREE.AnimationMixer(meshComp);
       this._mixer = mixer;
       this._captureModelBaseline();
 

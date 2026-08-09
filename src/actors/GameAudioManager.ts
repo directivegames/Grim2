@@ -2,7 +2,7 @@
  * GameAudioManager — singleton audio controller for all game SFX.
  *
  * Pre-loads all sounds at startup for instant playback with zero latency.
- * Any actor can access: `world.getActors().find(a => a instanceof GameAudioManager)`
+ * Any actor can access: `world.getRootNodes().find(a => a instanceof GameAudioManager)`
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
@@ -26,7 +26,7 @@ const NORMAL_PLAYBACK_RATE_KEYS = new Set([
 
 @ENGINE.GameClass()
 export class GameAudioManager extends ENGINE.Actor {
-  private _soundPools = new Map<string, ENGINE.SoundComponent[]>();
+  private _soundPools = new Map<string, ENGINE.SoundNode[]>();
   private _poolCursors = new Map<string, number>();
   private _sfxVolumeScale = 1;
   private _lazyLoadSounds = false;
@@ -201,7 +201,7 @@ export class GameAudioManager extends ENGINE.Actor {
     }
   }
 
-  private getNextSound(key: string): ENGINE.SoundComponent | null {
+  private getNextSound(key: string): ENGINE.SoundNode | null {
     if (this._lazyLoadSounds) {
       this._ensureSoundPool(key);
     }
@@ -225,21 +225,21 @@ export class GameAudioManager extends ENGINE.Actor {
       return;
     }
 
-    const pool: ENGINE.SoundComponent[] = [];
+    const pool: ENGINE.SoundNode[] = [];
     for (let i = 0; i < config.poolSize; i++) {
       const soundResource = new ENGINE.SoundResource();
       soundResource.name = key;
       soundResource.audioPath = config.path;
       soundResource.volume = config.volume * this._sfxVolumeScale;
 
-      const soundComponent = ENGINE.SoundComponent.create({
+      const soundComponent = ENGINE.SoundNode.create({
         sounds: [soundResource],
         positional: false,
         loop: false,
       });
 
       pool.push(soundComponent);
-      this.addComponent(soundComponent);
+      this.add(soundComponent);
     }
     this._soundPools.set(key, pool);
     this._poolCursors.set(key, 0);
@@ -250,13 +250,13 @@ export class GameAudioManager extends ENGINE.Actor {
    * Call from your game's startup (e.g., GameMode or postStart).
    */
   public static ensureExists(world: ENGINE.World): GameAudioManager {
-    const existing = world.getActors().find(
+    const existing = world.getRootNodes().find(
       (a): a is GameAudioManager => a instanceof GameAudioManager
     );
     if (existing) return existing;
 
     const manager = GameAudioManager.create();
-    world.addActor(manager);
+    world.add(manager);
     return manager;
   }
 

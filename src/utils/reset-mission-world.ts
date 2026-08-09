@@ -42,7 +42,7 @@ export function resetMissionWorld(
   destroyTransientMissionActors(world);
   zombieSpatialManager.clear();
 
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     if (actor instanceof ZombieHordeManager) {
       actor.resetForMissionStart();
       actor.absorbParkedPooledZombies();
@@ -70,7 +70,7 @@ export function resetMissionWorld(
 
   let placedRestored = 0;
   let placedSkipped = 0;
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     if (actor instanceof PostmanBossActor) {
       actor.resetToScenePlacement();
     } else if (restorePlacedEnemies && actor instanceof NewZombieActor) {

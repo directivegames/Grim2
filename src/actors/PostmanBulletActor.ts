@@ -29,7 +29,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
   /** World scale copied from the first editor-placed demonletter (if any). */
   private static _editorWorldScale: THREE.Vector3 | null = null;
 
-  private _visual: ENGINE.GLTFMeshComponent | null = null;
+  private _visual: ENGINE.ModelMeshNode | null = null;
   /** True for projectiles created by `spawn()`; false for editor reference actors. */
   private _runtimeSpawned = false;
   private _direction = new THREE.Vector3();
@@ -43,10 +43,10 @@ export class PostmanBulletActor extends ENGINE.Actor {
   private readonly _playerPos = new THREE.Vector3();
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create({ name: 'Root' });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
     const scale = PostmanBulletActor._resolveScale();
 
-    this._visual = ENGINE.GLTFMeshComponent.create({
+    this._visual = ENGINE.ModelMeshNode.create({
       name: 'BulletVisual',
       modelUrl: POSTMAN_BULLET_MODEL_URL,
       scale: scale.clone(),
@@ -57,7 +57,8 @@ export class PostmanBulletActor extends ENGINE.Actor {
 
     root.add(this._visual);
 
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
     public override beginPlay(): boolean {
@@ -90,7 +91,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
   /** Copy root world scale from the scene-placed PostmanBulletActor (editor: 2,2,2). */
   private static _captureEditorTemplateScale(actor: PostmanBulletActor): void {
     const rootScale = new THREE.Vector3();
-    actor.rootComponent.getWorldScale(rootScale);
+    actor.getWorldScale(rootScale);
     if (rootScale.x > 0 && rootScale.y > 0 && rootScale.z > 0) {
       PostmanBulletActor._editorWorldScale = rootScale.clone();
     }
@@ -102,7 +103,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
 
   private _ensureVisible(): void {
     this.setHiddenInGame(false);
-    this.rootComponent.traverse(obj => {
+    this.traverse(obj => {
       obj.visible = true;
       obj.layers.enable(0);
     });
@@ -129,7 +130,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
   /** Remove active boss projectiles when a fight ends or is aborted. */
   public static destroyAllRuntime(world: ENGINE.World): void {
     const toDestroy: PostmanBulletActor[] = [];
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof PostmanBulletActor && actor._runtimeSpawned) {
         toDestroy.push(actor);
       }
@@ -169,15 +170,15 @@ export class PostmanBulletActor extends ENGINE.Actor {
       projectile._direction.normalize();
     }
 
-    projectile.rootComponent.rotation.set(
+    projectile.rotation.set(
       BULLET_PITCH_X,
       Math.atan2(projectile._direction.x, projectile._direction.z),
       0,
       'YXZ',
     );
 
-    projectile.rootComponent.position.copy(from);
-    world.addActor(projectile);
+    projectile.position.copy(from);
+    world.add(projectile);
     projectile._ensureVisible();
 
     return projectile;
@@ -202,8 +203,8 @@ export class PostmanBulletActor extends ENGINE.Actor {
     }
 
     const step = this._speed * deltaTime;
-    this.rootComponent.position.addScaledVector(this._direction, step);
-    this.rootComponent.updateWorldMatrix(true, false);
+    this.position.addScaledVector(this._direction, step);
+    this.updateWorldMatrix(true, false);
 
     super.tickPrePhysics(deltaTime);
   }
@@ -215,7 +216,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return false;
 
-    this.rootComponent.getWorldPosition(this._scratchPos);
+    this.getWorldPosition(this._scratchPos);
     player.getWorldPosition(this._playerPos);
     this._playerPos.y = this._scratchPos.y;
 
@@ -226,7 +227,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
       hitNormal: this._direction.clone().negate(),
     };
 
-    const stats = player.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = player.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.takeDamage(this._damage, hitInfo);
     }

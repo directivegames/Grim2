@@ -31,7 +31,7 @@ type StickyInputManager = {
 let _blurHookInstalled = false;
 
 function findPlayerController(world: ENGINE.World): ENGINE.PlayerController | null {
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     if (actor instanceof ENGINE.PlayerController) {
       return actor;
     }
@@ -73,7 +73,7 @@ function clearInputManagerStickyState(world: ENGINE.World): void {
 export function flushGameplayInput(world: ENGINE.World): void {
   SpinningWeaponActor.findInWorld(world)?.releaseCombatInput();
 
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     if (actor instanceof MobileCombatActor) {
       actor.resetCombatInput();
     }
@@ -83,7 +83,7 @@ export function flushGameplayInput(world: ENGINE.World): void {
 
   const pawn = world.getFirstPlayerPawn();
   if (pawn instanceof IsometricPlayerPawn) {
-    const mc = pawn.getComponents(IsometricMovementComponent)[0];
+    const mc = pawn.getNodes(IsometricMovementComponent)[0];
     mc?.resetRuntimeMotion();
   }
 

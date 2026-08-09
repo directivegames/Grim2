@@ -48,7 +48,7 @@ function applyBlackKeyCutout(material: THREE.MeshBasicMaterial, threshold = 0.12
 }
 
 @ENGINE.GameClass()
-export class WeaponSlashSpriteComponent extends ENGINE.SceneComponent {
+export class WeaponSlashSpriteComponent extends ENGINE.SceneNode {
   private _mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial> | null = null;
   private _texture: THREE.Texture | null = null;
   private _frameAspect = 2.4;
@@ -214,7 +214,7 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneComponent {
     this._mesh = new THREE.Mesh(geometry, material);
     this._mesh.frustumCulled = false;
     this._mesh.renderOrder = 20;
-    world.scene.add(this._mesh);
+    world.add(this._mesh);
     this._applyVisibility(this._active);
   }
 }

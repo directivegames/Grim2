@@ -49,9 +49,10 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
   private _groundReady = false;
 
   public override initialize(options?: ENGINE.ActorOptions): void {
-    const root = ENGINE.SceneComponent.create({ name: 'Root' });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
     root.position.set(0, HIDDEN_LOAD_Y, 0);
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
     public override beginPlay(): boolean {
@@ -78,7 +79,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     }
 
     const existing = MobileSceneChunkLoaderActor._instance
-      ?? world.getActors().find((actor): actor is MobileSceneChunkLoaderActor =>
+      ?? world.getRootNodes().find((actor): actor is MobileSceneChunkLoaderActor =>
         actor instanceof MobileSceneChunkLoaderActor);
 
     if (existing) {
@@ -86,7 +87,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     }
 
     const actor = MobileSceneChunkLoaderActor.create({ name: 'MobileSceneChunkLoader' });
-    world.addActor(actor);
+    world.add(actor);
     return actor;
   }
 
@@ -144,11 +145,11 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
 
   private _spawnInnocentSpawnPoint(point: SpawnPointPlacement): void {
     const world = this.getWorld();
-    if (!world || world.getActors().some(actor => actor.name === point.name)) {
+    if (!world || world.getRootNodes().some(actor => actor.name === point.name)) {
       return;
     }
 
-    world.addActor(InnocentSpawnPointActor.create({
+    world.add(InnocentSpawnPointActor.create({
       name: point.name,
       position: point.position.clone(),
       scale: point.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
@@ -167,11 +168,13 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     if (!world || !INNOCENT_PROP) {
       return;
     }
-    if (world.getActors().some(actor => actor.name.toLowerCase() === 'innocent')) {
+    if (world.getRootNodes().some(actor => actor.name.toLowerCase() === 'innocent')) {
       return;
     }
 
-    const visual = ENGINE.GLTFMeshComponent.create({
+    const visual = ENGINE.ModelMeshNode.create({
+      name: 'innocent',
+      isRoot: true,
       modelUrl: INNOCENT_PROP.modelUrl,
       material: INNOCENT_PROP.material,
       position: INNOCENT_PROP.position.clone(),
@@ -182,9 +185,8 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const actor = ENGINE.Actor.create({ name: 'innocent', rootComponent: visual });
-    world.addActor(actor);
-    actor.setHiddenInGame(true);
+    world.add(visual);
+    visual.setHiddenInGame(true);
 
     if (!visual.isModelLoaded()) {
       await visual.waitForLoad().catch((error) => {
@@ -192,7 +194,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       });
     }
 
-    downscaleModelTextures(visual.getModel(), MOBILE_TEXTURE_MAX_DIM);
+    downscaleModelTextures(visual, MOBILE_TEXTURE_MAX_DIM);
     downscaleModelTextures(visual.getModelTemplate(), MOBILE_TEXTURE_MAX_DIM);
   }
 
@@ -214,29 +216,28 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       return;
     }
 
-    const placeholder = world.getActors().find(actor => actor.name === 'MobileGround');
-    const placeholderMesh = placeholder?.rootComponent;
-    if (placeholderMesh instanceof ENGINE.MeshComponent && placeholderMesh.mesh) {
+    const placeholder = world.getRootNodes().find(actor => actor.name === 'MobileGround');
+    if (placeholder instanceof ENGINE.MeshNode && placeholder.mesh) {
       // Keep physics + navmesh, drop only the visual so tiles render on top.
-      placeholderMesh.mesh.visible = false;
+      placeholder.mesh.visible = false;
     }
 
     // Low grey backdrop (visual only) below all tiles — fills the gaps the desktop
     // scene's large base Ground used to cover. Spans town + bedroom.
-    world.addActor(ENGINE.Actor.create({
+    const backdrop = ENGINE.MeshNode.create({
       name: 'MobileGroundBackdrop',
-      rootComponent: ENGINE.MeshComponent.create({
-        geometry: new THREE.BoxGeometry(520, 0.1, 520),
-        material: new THREE.MeshStandardMaterial({
-          color: new THREE.Color(0.07, 0.07, 0.08),
-          roughness: 1,
-        }),
-        position: new THREE.Vector3(40, -1.35, -20),
-        physicsOptions: { enabled: false },
-        castShadow: false,
-        receiveShadow: false,
+      isRoot: true,
+      geometry: new THREE.BoxGeometry(520, 0.1, 520),
+      material: new THREE.MeshStandardMaterial({
+        color: new THREE.Color(0.07, 0.07, 0.08),
+        roughness: 1,
       }),
-    }));
+      position: new THREE.Vector3(40, -1.35, -20),
+      physicsOptions: { enabled: false },
+      castShadow: false,
+      receiveShadow: false,
+    });
+    world.add(backdrop);
   }
 
   private _spawnSpawnBlockers(): void {
@@ -252,11 +253,11 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
 
   private _spawnSpawnBlocker(blocker: SpawnBlockerPlacement): void {
     const world = this.getWorld();
-    if (!world || world.getActors().some(actor => actor.name === blocker.name)) {
+    if (!world || world.getRootNodes().some(actor => actor.name === blocker.name)) {
       return;
     }
 
-    world.addActor(SpawnBlockerActor.create({
+    world.add(SpawnBlockerActor.create({
       name: blocker.name,
       position: blocker.position.clone(),
       scale: blocker.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
@@ -276,11 +277,13 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
 
   private _spawnGroundTile(tile: GroundTilePlacement): void {
     const world = this.getWorld();
-    if (!world || world.getActors().some(actor => actor.name === tile.name)) {
+    if (!world || world.getRootNodes().some(actor => actor.name === tile.name)) {
       return;
     }
 
-    const mesh = ENGINE.MeshComponent.create({
+    const mesh = ENGINE.MeshNode.create({
+      name: tile.name,
+      isRoot: true,
       material: tile.material,
       position: tile.position.clone(),
       scale: tile.scale?.clone() ?? new THREE.Vector3(1, 1, 1),
@@ -290,7 +293,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    world.addActor(ENGINE.Actor.create({ name: tile.name, rootComponent: mesh }));
+    world.add(mesh);
   }
 
   private _ensureLighting(): void {
@@ -304,34 +307,31 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       return;
     }
 
-    world.addActor(ENGINE.Actor.create({
+    world.add(ENGINE.AmbientLightNode.create({
       name: 'MobileAmbientLight',
-      rootComponent: ENGINE.AmbientLightComponent.create({
-        color: new THREE.Color(0.42, 0.36, 0.62),
-        intensity: 4.5,
-      }),
+      isRoot: true,
+      color: new THREE.Color(0.42, 0.36, 0.62),
+      intensity: 4.5,
     }));
 
     // Town fill (gameplay around origin).
-    world.addActor(ENGINE.Actor.create({
+    world.add(ENGINE.PointLightNode.create({
       name: 'MobileTownLight',
-      rootComponent: ENGINE.PointLightComponent.create({
-        color: new THREE.Color(0.78, 0.6, 1),
-        intensity: 60,
-        distance: 120,
-        position: new THREE.Vector3(0, 14, 0),
-      }),
+      isRoot: true,
+      color: new THREE.Color(0.78, 0.6, 1),
+      intensity: 60,
+      distance: 120,
+      position: new THREE.Vector3(0, 14, 0),
     }));
 
     // Bedroom diorama fill (intro camera target).
-    world.addActor(ENGINE.Actor.create({
+    world.add(ENGINE.PointLightNode.create({
       name: 'MobileBedroomLight',
-      rootComponent: ENGINE.PointLightComponent.create({
-        color: new THREE.Color(0.85, 0.62, 1),
-        intensity: 28,
-        distance: 40,
-        position: BEDROOM_ANCHOR.clone(),
-      }),
+      isRoot: true,
+      color: new THREE.Color(0.85, 0.62, 1),
+      intensity: 28,
+      distance: 40,
+      position: BEDROOM_ANCHOR.clone(),
     }));
   }
 
@@ -344,7 +344,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
 
   private async _spawnGlbPlacement(placement: GlbPlacement): Promise<void> {
     const world = this.getWorld();
-    if (!world || world.getActors().some(actor => actor.name === placement.name)) {
+    if (!world || world.getRootNodes().some(actor => actor.name === placement.name)) {
       return;
     }
 
@@ -353,7 +353,9 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     const noCollision =
       url.includes('woodenfence') ||
       url.includes('wall.glb');
-    const visual = ENGINE.GLTFMeshComponent.create({
+    const visual = ENGINE.ModelMeshNode.create({
+      name: placement.name,
+      isRoot: true,
       modelUrl: placement.modelUrl,
       material: placement.material,
       position: placement.position.clone(),
@@ -366,11 +368,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const actor = ENGINE.Actor.create({
-      name: placement.name,
-      rootComponent: visual,
-    });
-    world.addActor(actor);
+    world.add(visual);
 
     if (!visual.isModelLoaded()) {
       await visual.waitForLoad().catch((error) => {
@@ -382,7 +380,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
     // across instances, so this only does real work the first time each is seen.
     // Process both the displayed clone and the cached template (override meshes swap
     // the clone's material but the template keeps the original full-size texture resident).
-    downscaleModelTextures(visual.getModel(), MOBILE_TEXTURE_MAX_DIM);
+    downscaleModelTextures(visual, MOBILE_TEXTURE_MAX_DIM);
     downscaleModelTextures(visual.getModelTemplate(), MOBILE_TEXTURE_MAX_DIM);
   }
 }

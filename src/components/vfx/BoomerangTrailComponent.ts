@@ -16,7 +16,7 @@ interface PooledDisc {
 }
 
 @ENGINE.GameClass()
-export class BoomerangTrailComponent extends ENGINE.SceneComponent {
+export class BoomerangTrailComponent extends ENGINE.SceneNode {
   private readonly _pool:   PooledDisc[] = [];
   private readonly _active: PooledDisc[] = [];
   private readonly _free:   PooledDisc[] = [];
@@ -27,7 +27,7 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
 
-  public override initialize(options?: ENGINE.SceneComponentOptions): void {
+  public override initialize(options?: ENGINE.SceneNodeOptions): void {
     super.initialize(options);
   }
 
@@ -170,7 +170,7 @@ export class BoomerangTrailComponent extends ENGINE.SceneComponent {
     const mesh = new THREE.Mesh(DISC_GEO, mat);
     mesh.rotation.x = -Math.PI / 2; // flat on ground
     mesh.visible = false;
-    world.scene.add(mesh);
+    world.add(mesh);
     return { mesh, mat, elapsed: 0 };
   }
 }

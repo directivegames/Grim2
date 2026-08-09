@@ -53,7 +53,7 @@ export class SpawnBlockerActor extends ENGINE.Actor {
   @ENGINE.property({ type: 'boolean', category: 'Spawn Blocker' })
   public showWireframeInGame = false;
 
-  private _mesh: ENGINE.MeshComponent | null = null;
+  private _mesh: ENGINE.MeshNode | null = null;
   private _fillMaterial: THREE.MeshBasicMaterial | null = null;
   private _edgeLines: THREE.LineSegments | null = null;
   private _edgeMaterial: THREE.LineBasicMaterial | null = null;
@@ -62,7 +62,7 @@ export class SpawnBlockerActor extends ENGINE.Actor {
   public override initialize(options?: ActorOptions): void {
     ensureSpawnBlockerCollisionProfile();
 
-    const root = ENGINE.MeshComponent.create({
+    const root = ENGINE.MeshNode.create({
       name: 'BlockerRoot',
       material: INVISIBLE_MATERIAL,
       physicsOptions: {
@@ -77,7 +77,8 @@ export class SpawnBlockerActor extends ENGINE.Actor {
     this._mesh = root;
     this._applyBoxGeometry(root);
 
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
   public override postLoad(): void {
@@ -135,11 +136,11 @@ export class SpawnBlockerActor extends ENGINE.Actor {
   /** Point-in-OBB test (respects actor position, rotation, and scale). */
   public containsWorldPoint(worldPos: THREE.Vector3): boolean {
     _localPoint.copy(worldPos);
-    this.rootComponent.worldToLocal(_localPoint);
+    this.worldToLocal(_localPoint);
 
-    const sx = this.halfExtentX * Math.abs(this.rootComponent.scale.x);
-    const sy = this.halfExtentY * Math.abs(this.rootComponent.scale.y);
-    const sz = this.halfExtentZ * Math.abs(this.rootComponent.scale.z);
+    const sx = this.halfExtentX * Math.abs(this.scale.x);
+    const sy = this.halfExtentY * Math.abs(this.scale.y);
+    const sz = this.halfExtentZ * Math.abs(this.scale.z);
 
     return (
       Math.abs(_localPoint.x) <= sx &&
@@ -160,12 +161,12 @@ export class SpawnBlockerActor extends ENGINE.Actor {
     return this._isEditorWorld() || this.showWireframeInGame;
   }
 
-  private _getMesh(): ENGINE.MeshComponent | null {
+  private _getMesh(): ENGINE.MeshNode | null {
     if (this._mesh) {
       return this._mesh;
     }
-    const root = this.rootComponent;
-    return root instanceof ENGINE.MeshComponent ? root : null;
+    const root = this;
+    return root instanceof ENGINE.MeshNode ? root : null;
   }
 
   private _refreshEditorPreview(): void {
@@ -178,7 +179,7 @@ export class SpawnBlockerActor extends ENGINE.Actor {
     this._syncVisualMaterial();
   }
 
-  private _applyBoxGeometry(mesh: ENGINE.MeshComponent): void {
+  private _applyBoxGeometry(mesh: ENGINE.MeshNode): void {
     const w = Math.max(0.5, this.halfExtentX * 2);
     const h = Math.max(0.5, this.halfExtentY * 2);
     const d = Math.max(0.5, this.halfExtentZ * 2);
@@ -193,7 +194,7 @@ export class SpawnBlockerActor extends ENGINE.Actor {
     this._updateEdgeLines(mesh, geom);
   }
 
-  private _updateEdgeLines(mesh: ENGINE.MeshComponent, boxGeom: THREE.BoxGeometry): void {
+  private _updateEdgeLines(mesh: ENGINE.MeshNode, boxGeom: THREE.BoxGeometry): void {
     const threeMesh = mesh.mesh;
     if (!threeMesh) {
       return;

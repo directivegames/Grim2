@@ -38,7 +38,7 @@ function easeOutCubic(t: number): number {
 // ─── Piece tracking ───────────────────────────────────────────────────────────
 
 interface LetterPiece {
-  component: ENGINE.GLTFMeshComponent;
+  component: ENGINE.ModelMeshNode;
   velocity: THREE.Vector3;
   spinX: number;
   spinY: number;
@@ -57,7 +57,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
   private _isActive = false;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create({ name: 'Root' });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
 
     const flashMat = new THREE.MeshBasicMaterial({
       color: 0xff6600,
@@ -88,7 +88,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
       const speed = 3.5 + Math.random() * 4.5;
       const upward = 2.5 + Math.random() * 4;
 
-      const letter = ENGINE.GLTFMeshComponent.create({
+      const letter = ENGINE.ModelMeshNode.create({
         name: 'Letter',
         modelUrl: DEMONLETTER_MODEL_URL,
         scale: LETTER_SCALE.clone(),
@@ -117,7 +117,8 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
       });
     }
 
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -246,7 +247,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
       });
     }
 
-    this.rootComponent.position.copy(position);
+    this.position.copy(position);
     this.setHidden(false, true);
   }
 
@@ -271,7 +272,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     _activeCount++;
 
     const actor = DemonboxMailExplosionVFXActor.create({ position: position.clone() });
-    world.addActor(actor);
+    world.add(actor);
     actor._isActive = true;
     return actor;
   }
@@ -286,7 +287,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
     const created: DemonboxMailExplosionVFXActor[] = [];
     for (let i = 0; i < MAX_ACTIVE; i++) {
       const actor = DemonboxMailExplosionVFXActor.create({ position: new THREE.Vector3(0, -1000, 0) });
-      world.addActor(actor);
+      world.add(actor);
       actor._isActive = false;
       actor.setHidden(true, true);
       _pool.push(actor);
@@ -298,7 +299,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
   /** Destroy all instances (active and pooled) and clear the pool. Call on world unload. */
   public static destroyAllRuntime(world: ENGINE.World): void {
     const toDestroy: DemonboxMailExplosionVFXActor[] = [];
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof DemonboxMailExplosionVFXActor) {
         toDestroy.push(actor);
       }

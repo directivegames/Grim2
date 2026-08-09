@@ -19,8 +19,8 @@ const UPDATE_DISTANCE_SQ = UPDATE_DISTANCE * UPDATE_DISTANCE;
 const UPDATE_INTERVAL = 0.1;
 
 @ENGINE.GameClass()
-export class FireLightFlickerComponent extends ENGINE.SceneComponent {
-  private _light: ENGINE.PointLightComponent | null = null;
+export class FireLightFlickerComponent extends ENGINE.SceneNode {
+  private _light: ENGINE.PointLightNode | null = null;
   private _baseIntensity = 0;
   private readonly _baseColor = new THREE.Color();
   private readonly _scratchColor = new THREE.Color();
@@ -121,12 +121,12 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
 
   private _bindLight(): void {
     this._bound = true;
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) {
       return;
     }
 
-    const lights = actor.getComponents(ENGINE.PointLightComponent);
+    const lights = actor.getNodes(ENGINE.PointLightNode);
     if (lights.length === 0) {
       return;
     }
@@ -144,7 +144,7 @@ export class FireLightFlickerComponent extends ENGINE.SceneComponent {
     this._surgeTimer = 0.2 + Math.random() * 0.5;
   }
 
-  private _readColor(light: ENGINE.PointLightComponent, out: THREE.Color): void {
+  private _readColor(light: ENGINE.PointLightNode, out: THREE.Color): void {
     const c = light.color as THREE.Color | number | { _: number[] };
     if (c instanceof THREE.Color) {
       out.copy(c);

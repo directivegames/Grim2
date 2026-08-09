@@ -13,18 +13,18 @@ const BLADE_LIGHT_T = 0.72;
 const LIGHT_LIFT = 0.18;
 
 @ENGINE.GameClass()
-export class WeaponSwingLightComponent extends ENGINE.SceneComponent {
-  private _light: ENGINE.PointLightComponent | null = null;
+export class WeaponSwingLightComponent extends ENGINE.SceneNode {
+  private _light: ENGINE.PointLightNode | null = null;
   private _currentIntensity = 0;
   private _fadeStartIntensity = 0;
   private _fadeElapsed = 0;
   private _isFading = false;
   private readonly _scratchPos = new THREE.Vector3();
 
-  public override initialize(options?: ENGINE.SceneComponentOptions): void {
+  public override initialize(options?: ENGINE.SceneNodeOptions): void {
     super.initialize(options);
 
-    this._light = ENGINE.PointLightComponent.create({
+    this._light = ENGINE.PointLightNode.create({
       name: 'WeaponSwingNeonLight',
       color: NEON_BLUE,
       intensity: 0,

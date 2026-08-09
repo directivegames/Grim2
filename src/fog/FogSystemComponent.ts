@@ -17,7 +17,7 @@ import {
 } from './FogCardMaterial.js';
 import { shouldDisableWebGpuTslEffects } from '../utils/browser-compat.js';
 
-import type { ComponentDescriptionOptions } from '@gnsx/genesys.js';
+import type { NodeDescriptionOptions } from '@gnsx/genesys.js';
 import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
 const DEFAULT_CARD_MODEL_URL = '@project/assets/models/SM_FogCard_01.glb';
@@ -48,7 +48,7 @@ function createFallbackTexture(value: number): THREE.DataTexture {
   return texture;
 }
 
-export interface FogSystemComponentOptions extends ENGINE.SceneComponentOptions {
+export interface FogSystemComponentOptions extends ENGINE.SceneNodeOptions {
   cardModelUrl?: string;
   baseColorMapUrl?: string;
   opacityMapUrl?: string;
@@ -60,7 +60,7 @@ export interface FogSystemComponentOptions extends ENGINE.SceneComponentOptions 
 }
 
 @ENGINE.GameClass()
-export class FogSystemComponent extends ENGINE.SceneComponent {
+export class FogSystemComponent extends ENGINE.SceneNode {
   @ENGINE.property({ required: true, description: 'GLB mesh used as the fog card surface' })
   public cardModelUrl: ENGINE.ModelPath = DEFAULT_CARD_MODEL_URL;
 
@@ -321,7 +321,7 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this.updateFogValues();
   }
 
-  public override describe(options?: ComponentDescriptionOptions): Record<string, unknown> {
+  public override describe(options?: NodeDescriptionOptions): Record<string, unknown> {
     const result = super.describe(options);
     if (options?.includeDetails) {
       result['cardModelUrl'] = this.cardModelUrl;

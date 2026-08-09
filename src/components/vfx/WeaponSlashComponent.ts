@@ -32,7 +32,7 @@ interface TrailSample {
 }
 
 @ENGINE.GameClass()
-export class WeaponSlashComponent extends ENGINE.SceneComponent {
+export class WeaponSlashComponent extends ENGINE.SceneNode {
   // Core ribbon mesh (bright center)
   private _coreMesh: THREE.Mesh | null = null;
   private _coreGeometry: THREE.BufferGeometry | null = null;
@@ -207,7 +207,7 @@ export class WeaponSlashComponent extends ENGINE.SceneComponent {
 
     this._coreMesh = new THREE.Mesh(this._coreGeometry, material);
     this._coreMesh.frustumCulled = false;
-    world.scene.add(this._coreMesh);
+    world.add(this._coreMesh);
   }
 
   private _buildGlowMesh(world: ENGINE.World): void {
@@ -241,7 +241,7 @@ export class WeaponSlashComponent extends ENGINE.SceneComponent {
     this._glowMesh = new THREE.Mesh(this._glowGeometry, material);
     this._glowMesh.frustumCulled = false;
     this._glowMesh.renderOrder = -1; // render before core so it appears underneath
-    world.scene.add(this._glowMesh);
+    world.add(this._glowMesh);
   }
 
   private _destroyMeshes(): void {

@@ -5,7 +5,7 @@
 import * as ENGINE from '@gnsx/genesys.js';
 import * as THREE from 'three';
 
-// Must run before any actor ticks — harness bundle may omit patched `NpcMovementComponent` from `node_modules`.
+// Must run before any actor ticks — harness bundle may omit patched `NpcMovementNode` from `node_modules`.
 import './apply-actor-movement-predictor-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
 import './apply-cloud-shadow-engine-patch.js';
@@ -179,13 +179,13 @@ class MyGame extends ENGINE.BaseGameLoop {
       // ensurePlaying is NOT called here — we don't want music during menus.
       // When a mission starts, ensurePlaying finds this existing actor (already loaded)
       // and calls start(), which then works reliably.
-      if (!world.getActors().some(a => a instanceof BackgroundMusicActor)) {
-        world.addActor(BackgroundMusicActor.create({ name: 'BackgroundMusicActor' }));
+      if (!world.getRootNodes().some(a => a instanceof BackgroundMusicActor)) {
+        world.add(BackgroundMusicActor.create({ name: 'BackgroundMusicActor' }));
       }
     }
 
     const startMenu = StartMenuUI.attach(world, () => {
-      world.addActor(GrimIntroActor.create({ name: 'GrimIntroActor' }));
+      world.add(GrimIntroActor.create({ name: 'GrimIntroActor' }));
     });
 
     // Menu-only music until PLAY is pressed.
@@ -196,8 +196,8 @@ class MyGame extends ENGINE.BaseGameLoop {
 
   /** Scene-placed cinematic cameras must not override the pawn isometric camera during play. */
   private _disableSceneViewTargetCameras(world: ENGINE.World): void {
-    for (const actor of world.getActors()) {
-      for (const vtc of actor.getComponents(ENGINE.ViewTargetCameraComponent)) {
+    for (const actor of world.getRootNodes()) {
+      for (const vtc of actor.getNodes(ENGINE.ViewTargetCameraNode)) {
         vtc.setActive(false);
       }
     }
@@ -210,42 +210,42 @@ class MyGame extends ENGINE.BaseGameLoop {
 
   /** Scene policerdone cars use static point lights — drive them at runtime. */
   private _attachPoliceLightFlashers(world: ENGINE.World): void {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (!actor.name.startsWith('Policerdone')) {
         continue;
       }
-      const mesh = actor.getComponent(ENGINE.GLTFMeshComponent);
+      const mesh = actor.getNode(ENGINE.ModelMeshNode);
       if (!mesh?.modelUrl?.includes('policerdone')) {
         continue;
       }
-      if (actor.getComponent(PoliceLightFlasherComponent)) {
+      if (actor.getNode(PoliceLightFlasherComponent)) {
         continue;
       }
       const flasher = PoliceLightFlasherComponent.create({ name: 'PoliceLightFlasher' });
-      actor.rootComponent.add(flasher);
+      actor.add(flasher);
     }
   }
 
   /** Burning props (e.g. Car 1 Redon 03) — organic fire light flicker. */
   private _attachFireLightFlickers(world: ENGINE.World): void {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (!this._actorHasFireVfx(actor)) {
         continue;
       }
-      if (actor.getComponent(FireLightFlickerComponent)) {
+      if (actor.getNode(FireLightFlickerComponent)) {
         continue;
       }
-      const lights = actor.getComponents(ENGINE.PointLightComponent);
+      const lights = actor.getNodes(ENGINE.PointLightNode);
       if (lights.length === 0) {
         continue;
       }
       const flicker = FireLightFlickerComponent.create({ name: 'FireLightFlicker' });
-      actor.rootComponent.add(flicker);
+      actor.add(flicker);
     }
   }
 
-  private _actorHasFireVfx(actor: ENGINE.Actor): boolean {
-    for (const vfx of actor.getComponents(ENGINE.VFXComponent)) {
+  private _actorHasFireVfx(actor: ENGINE.SceneNode): boolean {
+    for (const vfx of actor.getNodes(ENGINE.VFXNode)) {
       const path = (vfx as { vfxPath?: string }).vfxPath;
       if (path?.includes('fire.vfx')) {
         return true;
@@ -259,8 +259,8 @@ class MyGame extends ENGINE.BaseGameLoop {
    * Spawn only gameplay-critical marker/manager actors here; desktop keeps the scene-authored setup.
    */
   private _ensureMobileRuntimeSceneActors(world: ENGINE.World): void {
-    if (!world.getActors().some(actor => actor instanceof ZombieHordeManager)) {
-      world.addActor(ZombieHordeManager.create({ name: 'MobileZombieHordeManager' }));
+    if (!world.getRootNodes().some(actor => actor instanceof ZombieHordeManager)) {
+      world.add(ZombieHordeManager.create({ name: 'MobileZombieHordeManager' }));
     }
 
     // Weapon mesh roots — the mobile-empty scene has none placed in the editor.
@@ -304,15 +304,15 @@ class MyGame extends ENGINE.BaseGameLoop {
     // Pre-spawn the boss at his authored scene position (hidden) so that
     // PostmanBossActor.activateForMission finds an existing instance rather than
     // using the player-relative fallback spawn.
-    if (!world.getActors().some(actor => actor instanceof PostmanBossActor)) {
+    if (!world.getRootNodes().some(actor => actor instanceof PostmanBossActor)) {
       const boss = PostmanBossActor.create({
         name: 'PostmanBossActor',
         position: new THREE.Vector3(113.5, -7.1, -11.3),
       });
-      world.addActor(boss);
+      world.add(boss);
     }
 
-    if (world.getActors(EnemySpawnPointActor).length > 0) {
+    if (world.getRootNodes(EnemySpawnPointActor).length > 0) {
       return;
     }
 
@@ -333,7 +333,7 @@ class MyGame extends ENGINE.BaseGameLoop {
     const placements = ringOffsets.map(offset => spawnAnchor.clone().add(offset));
 
     placements.forEach((position, index) => {
-      world.addActor(EnemySpawnPointActor.create({
+      world.add(EnemySpawnPointActor.create({
         name: `MobileEnemySpawn_${index + 1}`,
         position,
       }));
@@ -342,7 +342,7 @@ class MyGame extends ENGINE.BaseGameLoop {
 
   /** World-space cloud shadows — flat multiply overlay plane. */
   private _spawnCloudShadows(world: ENGINE.World): void {
-    world.addActor(CloudShadowActor.create({
+    world.add(CloudShadowActor.create({
       name: 'CloudShadows',
       cloudMapUrl: DEFAULT_CLOUD_SHADOW_MAP,
     }));
@@ -350,11 +350,11 @@ class MyGame extends ENGINE.BaseGameLoop {
 
   /** Cheap CSS film-grain overlay — cinematic without a GPU post stack. */
   private _spawnFilmGrain(world: ENGINE.World): void {
-    if (world.getActors().some(a => a instanceof FilmGrainActor)) {
+    if (world.getRootNodes().some(a => a instanceof FilmGrainActor)) {
       return;
     }
     const profile = getGraphicsQualityProfile();
-    world.addActor(FilmGrainActor.create({
+    world.add(FilmGrainActor.create({
       name: 'FilmGrain',
       enabled: profile.filmGrain,
       opacity: profile.filmGrainOpacity || 0.09,
@@ -372,16 +372,16 @@ class MyGame extends ENGINE.BaseGameLoop {
 
     for (const { position, scale } of placements) {
       const fog = ScenicFogActor.create();
-      fog.rootComponent.position.copy(position);
-      fog.rootComponent.scale.set(scale, 1, scale);
-      world.addActor(fog);
+      fog.position.copy(position);
+      fog.scale.set(scale, 1, scale);
+      world.add(fog);
     }
   }
 
   /** Compile shaders during the title screen, then enable PLAY when ready. */
   private _startWarmupSequence(world: ENGINE.World, startMenu: StartMenuUI): void {
     const weaponActor = SpinningWeaponActor.create();
-    world.addActor(weaponActor);
+    world.add(weaponActor);
 
     GameAudioManager.ensureExists(world);
 

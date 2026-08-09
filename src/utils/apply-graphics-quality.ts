@@ -82,7 +82,7 @@ export function applyGraphicsQuality(
         opacity: profile.filmGrainOpacity,
         animated: true,
       });
-      for (const actor of world.getActors()) {
+      for (const actor of world.getRootNodes()) {
         if (actor instanceof FilmGrainActor) {
           const grain = actor.getFilmGrainComponent();
           if (grain) {
@@ -93,7 +93,7 @@ export function applyGraphicsQuality(
       }
     } else {
       FilmGrainUI.detach(world);
-      for (const actor of world.getActors()) {
+      for (const actor of world.getRootNodes()) {
         if (actor instanceof FilmGrainActor) {
           const grain = actor.getFilmGrainComponent();
           if (grain) grain.enabled = false;
@@ -104,13 +104,13 @@ export function applyGraphicsQuality(
 
   if (!mobile && !disableTsl) {
     CloudShadowState.applySettings({ enabled: profile.cloudShadows });
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof CloudShadowActor) {
         actor.setHiddenInGame(!profile.cloudShadows);
       }
     }
 
-    const fogs = world.getActors().filter((a) => a instanceof ScenicFogActor) as ScenicFogActor[];
+    const fogs = world.getRootNodes().filter((a) => a instanceof ScenicFogActor) as ScenicFogActor[];
     fogs.forEach((fog, index) => {
       const show = profile.scenicFog && index < profile.scenicFogCount;
       fog.setHiddenInGame(!show);
@@ -118,7 +118,7 @@ export function applyGraphicsQuality(
   }
 
   if (!mobile) {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof ZombieHordeManager) {
         actor.applyGraphicsHordeCap(profile.desktopHordeCap);
       }

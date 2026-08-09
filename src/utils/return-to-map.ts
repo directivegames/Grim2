@@ -54,7 +54,7 @@ export function cleanupAfterMission(world: ENGINE.World): void {
   // Stop mission logic before touching the live world so horde / mission tick cannot run.
   missionRunner.stop(world);
 
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     if (actor instanceof BackgroundMusicActor) {
       actor.stop();
     }
@@ -75,7 +75,7 @@ export function cleanupAfterMission(world: ENGINE.World): void {
     'after-mission-cleanup',
   );
 
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     if (actor instanceof ZombieHordeManager) {
       actor.resetForMainMenu();
       break;

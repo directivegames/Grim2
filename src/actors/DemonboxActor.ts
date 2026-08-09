@@ -1,18 +1,18 @@
 /**
- * DemonboxActor — suicide-bomber enemy.
+ * DemonboxActor �?suicide-bomber enemy.
  *
- * Animation mapping (Demonbox.glb clips → state machine states):
- *   idle   → "Arm_Circle_Shuffle"  (standing still, no aggro)
- *   run    → "run_fast_3_inplace"  (chasing player)
- *   windup → "Clapping_Run"        (stopped at blast range, building to explosion)
- *   death  → "dying_backwards"     (killed by player before explosion)
+ * Animation mapping (Demonbox.glb clips �?state machine states):
+ *   idle   �?"Arm_Circle_Shuffle"  (standing still, no aggro)
+ *   run    �?"run_fast_3_inplace"  (chasing player)
+ *   windup �?"Clapping_Run"        (stopped at blast range, building to explosion)
+ *   death  �?"dying_backwards"     (killed by player before explosion)
  *
  * Behaviour:
- *   idle   — waits until player enters aggroRadius
- *   chase  — navigates toward player via NPC movement
- *   windup — stops, plays windup anim, flashes red slow→fast over windupDuration seconds,
+ *   idle   �?waits until player enters aggroRadius
+ *   chase  �?navigates toward player via NPC movement
+ *   windup �?stops, plays windup anim, flashes red slow→fast over windupDuration seconds,
  *            then explodes: damages player if inside blastRadius, spawns mail VFX, destroys self
- *   dead   — triggered when health reaches 0; plays death anim + ragdoll, no explosion
+ *   dead   �?triggered when health reaches 0; plays death anim + ragdoll, no explosion
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -51,7 +51,7 @@ const BLOB_SHADOW_FEET_Y = 0.02;
 
 /** Period of a single red flash at the START of the wind-up (seconds per half-cycle). */
 const FLASH_HALF_PERIOD_START = 0.4;
-/** Period at the END of the wind-up — flash is at peak frequency just before explosion. */
+/** Period at the END of the wind-up �?flash is at peak frequency just before explosion. */
 const FLASH_HALF_PERIOD_END = 0.05;
 
 /** How long until ragdoll cleanup fires after death is triggered. */
@@ -59,7 +59,7 @@ const DEATH_ANIM_DURATION_SEC = 1.0;
 const DEATH_SETTLE_SEC = 0.5;
 const DEATH_GRAVITY = 9;
 
-/** Throttle NPC path updates — no need to recalculate path every frame. */
+/** Throttle NPC path updates �?no need to recalculate path every frame. */
 const PATH_UPDATE_INTERVAL_SEC = 0.2;
 
 const SHARED_ROOT_GEOMETRY = new THREE.CapsuleGeometry(
@@ -153,7 +153,7 @@ export class DemonboxActor extends ENGINE.Actor {
   private _hitFlashRemainingSec = 0;
   private _hitFlashRestoreFns: Array<() => void> = [];
 
-  private _animationComponent: ENGINE.AnimationStateMachineComponent | null = null;
+  private _animationComponent: ENGINE.AnimationStateMachineNode | null = null;
   private _blobShadow: BlobShadowComponent | null = null;
 
   private _animationInitialized = false;
@@ -196,7 +196,7 @@ export class DemonboxActor extends ENGINE.Actor {
         audio.play(clip, 1.0, true);
       }
     }
-    // Only flash yellow when not in windup — windup already uses red flash
+    // Only flash yellow when not in windup �?windup already uses red flash
     if (this._state !== 'windup') {
       this._flashYellow();
     }
@@ -208,7 +208,7 @@ export class DemonboxActor extends ENGINE.Actor {
   public override initialize(options?: ActorOptions): void {
     ensureDemonboxNpcCollisionProfile();
 
-    const root = ENGINE.MeshComponent.create({
+    const root = ENGINE.MeshNode.create({
       name: 'CapsuleRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
@@ -219,12 +219,12 @@ export class DemonboxActor extends ENGINE.Actor {
       },
     });
 
-    const pivot = ENGINE.SceneComponent.create({
+    const pivot = ENGINE.SceneNode.create({
       name: 'Pivot',
       position: new THREE.Vector3(0, CAPSULE_HEIGHT * 0.5, 0),
     });
 
-    const visual = ENGINE.GLTFMeshComponent.create({
+    const visual = ENGINE.ModelMeshNode.create({
       name: 'Visual',
       modelUrl: DEMONBOX_MODEL_URL,
       position: new THREE.Vector3(0, -CAPSULE_HEIGHT * 0.5, 0),
@@ -234,7 +234,7 @@ export class DemonboxActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const anim = ENGINE.AnimationStateMachineComponent.create({ name: 'Animation', configUrl: DEMONBOX_ANIM_URL });
+    const anim = ENGINE.AnimationStateMachineNode.create({ name: 'Animation', configUrl: DEMONBOX_ANIM_URL });
     this._animationComponent = anim;
 
     const stats = RootDeathCharacterStats.create({
@@ -247,7 +247,7 @@ export class DemonboxActor extends ENGINE.Actor {
       speed: this.moveSpeed,
     });
 
-    const npc = ENGINE.NpcMovementComponent.create({
+    const npc = ENGINE.NpcMovementNode.create({
       name: 'NpcMovement',
       pathFollowingAccuracy: 0.25,
       actorFollowingDistance: this.blastStopRange,
@@ -256,7 +256,7 @@ export class DemonboxActor extends ENGINE.Actor {
       useNavigationServer: true,
       turnSpeed: 3.0,
       characterControllerOptions: {
-        ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
+        ...ENGINE.CharacterMovementNode.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
         simulatedGravityScale: 1.0,
         applyImpulsesToDynamicBodies: false,
         slideEnabled: true,
@@ -276,7 +276,9 @@ export class DemonboxActor extends ENGINE.Actor {
     root.add(pivot);
     root.add(this._blobShadow);
 
-    super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
+    super.initialize(options);
+    this.add(root);
+    root.add(...[stats, npc]);
   }
 
   // ── doBeginPlay ──────────────────────────────────────────────────────────
@@ -284,22 +286,22 @@ export class DemonboxActor extends ENGINE.Actor {
     public override beginPlay(): boolean {
     if (!super.beginPlay()) {
       return false;
-    }const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    }const visual = this.getNode(ENGINE.ModelMeshNode);
     if (visual) {
       visual.castShadow = false;
       visual.receiveShadow = false;
     }
 
-    const shadow = this._blobShadow ?? this.getComponent(BlobShadowComponent);
+    const shadow = this._blobShadow ?? this.getNode(BlobShadowComponent);
     if (shadow) {
       this._blobShadow = shadow;
       shadow.position.set(0, BLOB_SHADOW_FEET_Y, 0);
     }
 
-    const npc = this.getComponent(ENGINE.NpcMovementComponent) as { maxSpeed: number } | null;
+    const npc = this.getNode(ENGINE.NpcMovementNode) as { maxSpeed: number } | null;
     if (npc) npc.maxSpeed = this.moveSpeed;
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.setMaxHealth(this.maxHealth);
       this._lastTrackedHealth = stats.getCurrentHealth();
@@ -320,8 +322,8 @@ export class DemonboxActor extends ENGINE.Actor {
     }
 
     if (!isGameplayUnlocked()) {
-      this.getComponent(ENGINE.NpcMovementComponent)?.stop();
-      const anim = this._animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+      this.getNode(ENGINE.NpcMovementNode)?.stop();
+      const anim = this._animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
       if (anim?.isReady()) anim.setParameter('state', 'idle');
       super.tickPrePhysics(deltaTime);
       return;
@@ -352,7 +354,7 @@ export class DemonboxActor extends ENGINE.Actor {
   private _tickAnimationInit(deltaTime: number): void {
     if (this._animationInitialized) return;
     this._animInitTimer += deltaTime;
-    const anim = this._animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this._animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) {
       // Use the current behaviour state so a fast aggro-acquire before the anim
       // system is ready doesn't result in 'idle' stomping over 'run'.
@@ -371,7 +373,7 @@ export class DemonboxActor extends ENGINE.Actor {
     this._animSyncTimer += deltaTime;
     if (this._animSyncTimer < DemonboxActor.ANIM_SYNC_INTERVAL) return;
     this._animSyncTimer = 0;
-    const anim = this._animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this._animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (!anim?.isReady()) return;
     anim.setParameter('state', this._animTargetFromState());
   }
@@ -399,7 +401,7 @@ export class DemonboxActor extends ENGINE.Actor {
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return;
 
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     player.getWorldPosition(this._playerPos);
     const dist = this._myPos.distanceTo(this._playerPos);
 
@@ -424,9 +426,9 @@ export class DemonboxActor extends ENGINE.Actor {
 
   private _enterChase(): void {
     this._state = 'chase';
-    const anim = this._animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this._animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) anim.setParameter('state', 'run');
-    const npc = this.getComponent(ENGINE.NpcMovementComponent) as { enabled: boolean } | null;
+    const npc = this.getNode(ENGINE.NpcMovementNode) as { enabled: boolean } | null;
     if (npc) npc.enabled = true;
   }
 
@@ -440,7 +442,7 @@ export class DemonboxActor extends ENGINE.Actor {
     if (this._pathUpdateTimer < PATH_UPDATE_INTERVAL_SEC) return;
     this._pathUpdateTimer = 0;
 
-    const npc = this.getComponent(ENGINE.NpcMovementComponent);
+    const npc = this.getNode(ENGINE.NpcMovementNode);
     if (!npc) return;
     this._steerGoal.copy(this._playerPos);
     this._steerGoal.y = this._myPos.y;
@@ -453,9 +455,9 @@ export class DemonboxActor extends ENGINE.Actor {
     this._flashAccum = 0;
     this._flashOn = false;
 
-    this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+    this.getNode(ENGINE.NpcMovementNode)?.stop();
 
-    const anim = this._animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this._animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) anim.setParameter('state', 'windup');
   }
 
@@ -467,7 +469,7 @@ export class DemonboxActor extends ENGINE.Actor {
   ): void {
     this._windupTimer += deltaTime;
 
-    // Flash period interpolates from slow → fast as the timer progresses
+    // Flash period interpolates from slow �?fast as the timer progresses
     const progress = Math.min(this._windupTimer / this.windupDuration, 1.0);
     const halfPeriod =
       FLASH_HALF_PERIOD_START + (FLASH_HALF_PERIOD_END - FLASH_HALF_PERIOD_START) * progress;
@@ -487,7 +489,7 @@ export class DemonboxActor extends ENGINE.Actor {
   // ── Red flash ─────────────────────────────────────────────────────────────
 
   private _setRedFlash(on: boolean): void {
-    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this.getNode(ENGINE.ModelMeshNode);
     if (!visual) return;
 
     // Clone materials once so we don't modify shared assets
@@ -530,7 +532,7 @@ export class DemonboxActor extends ENGINE.Actor {
     if (this._isHitFlashing) return;
     this._isHitFlashing = true;
 
-    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this.getNode(ENGINE.ModelMeshNode);
     if (!visual) { this._isHitFlashing = false; return; }
 
     const restoreList: Array<() => void> = [];
@@ -587,15 +589,15 @@ export class DemonboxActor extends ENGINE.Actor {
     this._explosionTriggered = true;
     this._setRedFlash(false);
 
-    const npc = this.getComponent(ENGINE.NpcMovementComponent);
+    const npc = this.getNode(ENGINE.NpcMovementNode);
     npc?.stop();
 
     if (this._blobShadow) this._blobShadow.visible = false;
 
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
 
     if (distToPlayer <= this.blastRadius && isGameplayUnlocked()) {
-      const stats = player.getComponent(ENGINE.CharacterStatsComponent);
+      const stats = player.getNode(ENGINE.CharacterStatsNode);
       if (stats) {
         const hitInfo: DamageHitInfo = {
           hitLocation: this._myPos.clone(),
@@ -648,7 +650,7 @@ export class DemonboxActor extends ENGINE.Actor {
       }
     }
 
-    const npc = this.getComponent(ENGINE.NpcMovementComponent);
+    const npc = this.getNode(ENGINE.NpcMovementNode);
     npc?.stop();
     if (npc) {
       (npc as unknown as { enabled: boolean }).enabled = false;
@@ -656,11 +658,10 @@ export class DemonboxActor extends ENGINE.Actor {
       (npc as unknown as { setVelocities(f: number, r: number, v: number): void }).setVelocities(0, 0, 0);
     }
 
-    const root = this.rootComponent as ENGINE.MeshComponent;
-    root.overridePhysicsOptions({ enabled: false });
+    this.overridePhysicsOptions({ enabled: false });
 
     const deathPos = new THREE.Vector3();
-    this.rootComponent.getWorldPosition(deathPos);
+    this.getWorldPosition(deathPos);
 
     if (world) {
       KOSignUI.getInstance(world).showKO(deathPos);
@@ -677,7 +678,7 @@ export class DemonboxActor extends ENGINE.Actor {
     }
     if (launchDir.lengthSq() < 0.001) launchDir.set(1, 0, 0);
 
-    this.rootComponent.rotation.y = Math.atan2(launchDir.x, launchDir.z);
+    this.rotation.y = Math.atan2(launchDir.x, launchDir.z);
 
     const lateralSpeed = 7 + Math.random() * 4;
     const upSpeed = (DEATH_ANIM_DURATION_SEC * DEATH_GRAVITY) / 2;
@@ -690,7 +691,7 @@ export class DemonboxActor extends ENGINE.Actor {
     );
     this._ragdollGroundY = deathPos.y;
 
-    const anim = this._animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this._animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) anim.setParameter('state', 'death');
   }
 
@@ -702,12 +703,12 @@ export class DemonboxActor extends ENGINE.Actor {
     this._ragdollVelocity.y -= DEATH_GRAVITY * deltaTime;
     this._ragdollVelocity.x *= airDrag;
     this._ragdollVelocity.z *= airDrag;
-    this.rootComponent.position.addScaledVector(this._ragdollVelocity, deltaTime);
+    this.position.addScaledVector(this._ragdollVelocity, deltaTime);
 
-    if (this.rootComponent.position.y <= this._ragdollGroundY) {
-      this.rootComponent.position.y = this._ragdollGroundY;
+    if (this.position.y <= this._ragdollGroundY) {
+      this.position.y = this._ragdollGroundY;
       if (this._ragdollLandPos === null) {
-        this._ragdollLandPos = this.rootComponent.position.clone();
+        this._ragdollLandPos = this.position.clone();
         this._ragdollVelocity.y = 0;
       } else if (this._ragdollVelocity.y < 0) {
         this._ragdollVelocity.y = 0;
@@ -724,7 +725,7 @@ export class DemonboxActor extends ENGINE.Actor {
 
       const w = this.getWorld();
       if (w) {
-        const landPos = this._ragdollLandPos ?? this.rootComponent.position.clone();
+        const landPos = this._ragdollLandPos ?? this.position.clone();
         GoreExplosionActor.spawnAt(w, landPos);
         DeadGraveActor.spawnAt(w, landPos.clone(), new THREE.Vector3(0, 0, 0));
         getGameAudioManager(w).play('zombieDeath', 1.0, true);
@@ -737,7 +738,7 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── Horde interface ───────────────────────────────────────────────────────
 
-  /** Called by the horde manager after reveal — skip aggro wait and start chasing. */
+  /** Called by the horde manager after reveal �?skip aggro wait and start chasing. */
   public wakeForHordeSpawn(): void {
     if (this._deathSequenceStarted || this._explosionTriggered) return;
     this._hasAggro = true;
@@ -751,7 +752,7 @@ export class DemonboxActor extends ENGINE.Actor {
     this.maxHealth = DemonboxActor.BASE_MAX_HEALTH * healthMult;
     this.blastDamage = Math.round(DemonboxActor.BASE_BLAST_DAMAGE * damageMult);
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats || this._deathSequenceStarted) return;
 
     stats.setMaxHealth(this.maxHealth);
@@ -775,7 +776,7 @@ export class DemonboxActor extends ENGINE.Actor {
       return false;
     }
     this._setRedFlash(false);
-    this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
+    this.getNode(ENGINE.CharacterStatsNode)?.onHealthChanged.remove(this._onHealthChanged);
     zombieSpatialManager.unregisterZombie(this);
     return true;
   }

@@ -15,7 +15,6 @@ import {
 } from '../data/mission-types.js';
 import type { RiskLevel } from '../data/risk-levels.js';
 import { RISK_LEVELS } from '../data/risk-levels.js';
-import { CHAIN_REAP_COMBO_GRACE_SEC } from './risk5-plus.js';
 import { grimVault } from './GrimVault.js';
 
 export type MissionBoard = Partial<Record<RiskLevel, MissionConfig>>;
@@ -134,7 +133,7 @@ export function rollMissionConfigForType(
       return createChainReapMissionConfig(
         rollInScaledRange(risk, [20, 28], [70, 95]),
         rollInScaledRange(risk, [240, 300], [240, 300]),
-        CHAIN_REAP_COMBO_GRACE_SEC,
+        0,
         risk,
       );
     case 'boss-fight':

@@ -158,9 +158,9 @@ function _ensureFistVfxPools(world: ENGINE.World, debrisTexture: THREE.Texture |
   }
 
   if (!_fistVfxSceneAttached) {
-    for (const slot of _debrisSlots) world.scene.add(slot.sprite);
-    for (const slot of _flashSlots) world.scene.add(slot.mesh);
-    for (const slot of _shockSlots) world.scene.add(slot.mesh);
+    for (const slot of _debrisSlots) world.add(slot.sprite);
+    for (const slot of _flashSlots) world.add(slot.mesh);
+    for (const slot of _shockSlots) world.add(slot.mesh);
     _fistVfxSceneAttached = true;
   }
 
@@ -179,7 +179,7 @@ function _ensureFistVfxPools(world: ENGINE.World, debrisTexture: THREE.Texture |
 export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
   private _sceneFistActor: ENGINE.SceneNode | null = null;
-  private _explosionVfx: ENGINE.VFXComponent | null = null;
+  private _explosionVfx: ENGINE.VFXNode | null = null;
   private _phase: FistPhase = 'rising';
   private _phaseElapsed = 0;
   private _groundY = 0;
@@ -199,15 +199,16 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private readonly _originScratch = new THREE.Vector3();
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create({ name: 'Root' });
-    super.initialize({ ...options, rootComponent: root });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
+    super.initialize(options);
+    this.add(root);
 
-    this._explosionVfx = ENGINE.VFXComponent.create({
+    this._explosionVfx = ENGINE.VFXNode.create({
       name: 'ExplosionVfx',
       vfxPath: EXPLOSION_CLOUD_VFX,
       autoStart: false,
     });
-    this.rootComponent.add(this._explosionVfx);
+    this.add(this._explosionVfx);
   }
 
     public override beginPlay(): boolean {
@@ -225,7 +226,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       return false;
     }
 
-    this._groundY = this.rootComponent.position.y;
+    this._groundY = this.position.y;
     this._phase = 'rising';
     this._phaseElapsed = 0;
     this._hasHit = false;
@@ -320,16 +321,16 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
   public static spawnAt(world: ENGINE.World, position: THREE.Vector3): FistOfAnnoyanceActor {
     const actor = FistOfAnnoyanceActor.create({ position: position.clone() });
-    world.addActor(actor);
+    world.add(actor);
     return actor;
   }
 
   private _setFistPosition(y: number): void {
     if (!this._sceneFistActor) return;
     this._sceneFistActor.position.set(
-      this.rootComponent.position.x,
+      this.position.x,
       y,
-      this.rootComponent.position.z,
+      this.position.z,
     );
   }
 
@@ -345,7 +346,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
       if (zombie instanceof PostmanBossActor) continue;
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
-      zombie.rootComponent.getWorldPosition(this._zPosScratch);
+      zombie.getWorldPosition(this._zPosScratch);
       const dx = this._zPosScratch.x - this._fistPosScratch.x;
       const dz = this._zPosScratch.z - this._fistPosScratch.z;
       if (dx * dx + dz * dz > FIST_HIT_RADIUS * FIST_HIT_RADIUS) continue;
@@ -357,7 +358,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
         this._hitNormalScratch.normalize();
       }
       this._hitLocationScratch.copy(this._zPosScratch);
-      zombie.getComponent(ENGINE.CharacterStatsComponent)?.takeDamage(ONE_HIT_DAMAGE, {
+      zombie.getNode(ENGINE.CharacterStatsNode)?.takeDamage(ONE_HIT_DAMAGE, {
         hitLocation: this._hitLocationScratch,
         hitNormal: this._hitNormalScratch,
       });
@@ -399,9 +400,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
     slot.inUse = true;
     this._originScratch.set(
-      this.rootComponent.position.x,
+      this.position.x,
       this._groundY,
-      this.rootComponent.position.z,
+      this.position.z,
     );
 
     slot.mesh.scale.setScalar(0.3);
@@ -421,9 +422,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
 
     slot.inUse = true;
     this._originScratch.set(
-      this.rootComponent.position.x,
+      this.position.x,
       this._groundY + 0.04,
-      this.rootComponent.position.z,
+      this.position.z,
     );
 
     slot.mesh.scale.setScalar(0.2);
@@ -444,9 +445,9 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
     if (!world) return;
 
     this._originScratch.set(
-      this.rootComponent.position.x,
+      this.position.x,
       this._groundY,
-      this.rootComponent.position.z,
+      this.position.z,
     );
 
     await this._ensureDebrisTexture();

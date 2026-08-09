@@ -69,7 +69,7 @@ function _orientStreak(mesh: THREE.Mesh, tangent: THREE.Vector3): void {
 }
 
 @ENGINE.GameClass()
-export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
+export class WeaponSlashParticleComponent extends ENGINE.SceneNode {
   private readonly _pool: SlashParticle[] = [];
   private readonly _free: SlashParticle[] = [];
   private readonly _active: SlashParticle[] = [];
@@ -83,7 +83,7 @@ export class WeaponSlashParticleComponent extends ENGINE.SceneComponent {
     const world = this.getWorld();
     if (!world) return false;
     for (const p of this._pool) {
-      world.scene.add(p.mesh);
+      world.add(p.mesh);
     }
   
     return true;

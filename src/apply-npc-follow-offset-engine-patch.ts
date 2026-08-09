@@ -1,7 +1,7 @@
 /**
  * The editor / harness can bundle its own copy of `@gnsx/genesys.js` without our
  * `node_modules` edits. Zombie horde logic needs follow-target world offsets on
- * `NpcMovementComponent`; if those methods are missing at runtime, install them here.
+ * `NpcMovementNode`; if those methods are missing at runtime, install them here.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -25,11 +25,11 @@ function patchedUpdateActorFollowingTarget(this: any, currentPosition: THREE.Vec
   if (!this.actorToFollow) return;
 
   const actorPosition = actorPosScratch;
-  this.actorToFollow.rootComponent.getWorldPosition(actorPosition);
+  this.actorToFollow.getWorldPosition(actorPosition);
   const distanceToActor = currentPosition.distanceTo(actorPosition);
 
   const hold = this.actorFollowingDistance;
-  const Ctor = ENGINE.NpcMovementComponent as unknown as { ACTOR_FOLLOW_HOLD_HYSTERESIS_OUT?: number };
+  const Ctor = ENGINE.NpcMovementNode as unknown as { ACTOR_FOLLOW_HOLD_HYSTERESIS_OUT?: number };
   const hOut = Ctor.ACTOR_FOLLOW_HOLD_HYSTERESIS_OUT ?? 0.14;
 
   if (distanceToActor <= hold) {
@@ -53,8 +53,8 @@ function patchedUpdateActorFollowingTarget(this: any, currentPosition: THREE.Vec
 }
 
 function applyPatch(): void {
-  // Avoid casting `NpcMovementComponent.prototype` directly (strict SDK tsconfig rejects it).
-  const proto = (ENGINE.NpcMovementComponent as any).prototype as Record<string, unknown>;
+  // Avoid casting `NpcMovementNode.prototype` directly (strict SDK tsconfig rejects it).
+  const proto = (ENGINE.NpcMovementNode as any).prototype as Record<string, unknown>;
   if (proto[PATCHED]) return;
 
   if (typeof proto.clearFollowTargetWorldOffset === 'function') {

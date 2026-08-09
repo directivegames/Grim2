@@ -6,7 +6,7 @@ const MAX_REVEAL_ATTEMPTS = 8;
 
 /** True when the GLTF mesh is loaded and at least one renderable mesh exists. */
 export function isActorVisualReady(actor: ENGINE.Actor): boolean {
-  const visual = actor.getComponent(ENGINE.GLTFMeshComponent);
+  const visual = actor.getNode(ENGINE.ModelMeshNode);
   if (!visual?.isModelLoaded()) {
     return false;
   }
@@ -33,7 +33,7 @@ export interface HordeRevealOptions {
  */
 export function revealActorWhenVisualReady(options: HordeRevealOptions): void {
   const { actor, onReady, onFailed } = options;
-  const visual = actor.getComponent(ENGINE.GLTFMeshComponent);
+  const visual = actor.getNode(ENGINE.ModelMeshNode);
 
   const tryReveal = (attemptsLeft = MAX_REVEAL_ATTEMPTS): void => {
     if (!actor.getWorld()) {

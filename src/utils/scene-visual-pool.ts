@@ -3,7 +3,7 @@
  * Names: "fistofannoyance", "fistofannoyance 02", "weapon", "weapon 02", etc.
  *
  * Engine 14: scene weapons/fists serialize as ModelMeshActor (SceneNode roots),
- * not Actor — collect via getRootNodes, never getActors().
+ * not Actor — collect via getRootNodes, never getRootNodes().
  */
 import * as ENGINE from '@gnsx/genesys.js';
 

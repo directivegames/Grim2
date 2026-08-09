@@ -21,7 +21,7 @@ const SAVE_GRACE_MS = 2500;
  * Innocents only die when the mission save timer expires.
  */
 export class InnocentHandler {
-  private _prop: ENGINE.Actor | null = null;
+  private _prop: ENGINE.SceneNode | null = null;
   private _bound = false;
   private _active = false;
   private _ending = false;
@@ -41,7 +41,7 @@ export class InnocentHandler {
   /** Find scene actor named "innocent" and hide until first spawn. */
   public bind(world: ENGINE.World): boolean {
     this._prop =
-      world.getActors().find((a) => a.name.toLowerCase() === SCENE_INNOCENT_NAME) ?? null;
+      world.getRootNodes().find((a) => a.name.toLowerCase() === SCENE_INNOCENT_NAME) ?? null;
 
     if (!this._prop) {
       console.warn(
@@ -51,7 +51,7 @@ export class InnocentHandler {
       return false;
     }
 
-    this._prop.rootComponent.position.set(0, -1000, 0);
+    this._prop.position.set(0, -1000, 0);
     this._prop.setHiddenInGame(true);
     this._bound = true;
     this._active = false;
@@ -89,7 +89,7 @@ export class InnocentHandler {
     if (nav?.isReady?.()) {
       snapPositionToNavFloor(nav, floorPos, floorPos);
     }
-    this._prop.rootComponent.position.copy(floorPos);
+    this._prop.position.copy(floorPos);
 
     spawnInnocentSmokeAt(world, floorPos);
 
@@ -116,7 +116,7 @@ export class InnocentHandler {
     if (!player) return;
 
     player.getWorldPosition(this._scratchPlayerPos);
-    this._prop.rootComponent.getWorldPosition(this._scratchSelfPos);
+    this._prop.getWorldPosition(this._scratchSelfPos);
     this._scratchSelfPos.y = this._scratchPlayerPos.y;
 
     if (
@@ -130,7 +130,7 @@ export class InnocentHandler {
     if (!this._prop || !this._active || this._ending || this._prop.isHiddenInGame()) {
       return false;
     }
-    this._prop.rootComponent.getWorldPosition(out);
+    this._prop.getWorldPosition(out);
     out.y += 0.65;
     return true;
   }
@@ -151,7 +151,7 @@ export class InnocentHandler {
       return;
     }
 
-    this._prop.rootComponent.getWorldPosition(this._worldPos);
+    this._prop.getWorldPosition(this._worldPos);
     spawnInnocentSmokeAt(world, this._worldPos);
     window.setTimeout(() => {
       this._prop?.setHiddenInGame(true);
@@ -170,7 +170,7 @@ export class InnocentHandler {
       return;
     }
 
-    this._prop.rootComponent.getWorldPosition(this._worldPos);
+    this._prop.getWorldPosition(this._worldPos);
     spawnInnocentSmokeAt(world, this._worldPos);
     window.setTimeout(() => {
       this._prop?.setHiddenInGame(true);

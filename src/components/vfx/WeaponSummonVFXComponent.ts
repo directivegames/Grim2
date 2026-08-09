@@ -94,7 +94,7 @@ function _acquireSpark(): Spark | null {
 }
 
 @ENGINE.GameClass()
-export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
+export class WeaponSummonVFXComponent extends ENGINE.SceneNode {
   private readonly _activeSparks: Spark[] = [];
 
     public override beginPlay(): boolean {
@@ -102,7 +102,7 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
       return false;
     }const world = this.getWorld();
     if (world) {
-      _ensurePoolInScene(world.scene);
+      _ensurePoolInScene(world);
     }
   
     return true;
@@ -112,7 +112,7 @@ export class WeaponSummonVFXComponent extends ENGINE.SceneComponent {
     const world = this.getWorld();
     if (!world) return;
 
-    _ensurePoolInScene(world.scene);
+    _ensurePoolInScene(world);
 
     for (let i = 0; i < count; i++) {
       const spark = _acquireSpark();

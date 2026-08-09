@@ -79,7 +79,7 @@ function createBlackKeyedTexture(source: THREE.Texture, threshold = 32): THREE.T
 }
 
 @ENGINE.GameClass()
-export class BloodSplatterComponent extends ENGINE.SceneComponent {
+export class BloodSplatterComponent extends ENGINE.SceneNode {
   private readonly _drops: BloodDrop[] = [];
   private readonly _meshPool: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>[] = [];
   private _poolIndex = 0;
@@ -192,7 +192,7 @@ export class BloodSplatterComponent extends ENGINE.SceneComponent {
     for (let i = 0; i < MAX_POOL_SIZE; i++) {
       const mesh = this._createDropMesh();
       mesh.visible = false;
-      world.scene.add(mesh);
+      world.add(mesh);
       this._meshPool.push(mesh);
     }
   }

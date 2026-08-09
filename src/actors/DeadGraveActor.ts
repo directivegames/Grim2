@@ -14,7 +14,7 @@ const GRAVE_MODEL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grave.glb` 
 
 // Shared geometry and material reused across every grave to avoid churning
 // Three.js buffers/programs when many graves spawn. The material is invisible
-// (the root is never rendered) â€” the visible GLB is a child.
+// (the root is never rendered) â€?the visible GLB is a child.
 const SHARED_ROOT_GEOMETRY = new THREE.BoxGeometry(0.7, 1.1, 0.3);
 const SHARED_ROOT_MATERIAL = new THREE.MeshStandardMaterial({ visible: false });
 
@@ -61,7 +61,7 @@ function ensureDeadGraveCollisionProfile(): void {
 /** Seconds before non-pooled grave auto-destroys (pooled graves never destroy). */
 const GRAVE_LIFETIME_SEC = 8;
 
-/** Max simultaneous graves â€” oldest (FIFO) gets recycled when limit hit. */
+/** Max simultaneous graves â€?oldest (FIFO) gets recycled when limit hit. */
 const MAX_GRAVES = 25;
 
 /** After this many seconds, or once movement stops, drop physics for good. */
@@ -88,7 +88,7 @@ export class DeadGraveActor extends ENGINE.Actor {
   public override initialize(options?: ActorOptions): void {
     ensureDeadGraveCollisionProfile();
 
-    const root = ENGINE.MeshComponent.create({
+    const root = ENGINE.MeshNode.create({
       name: 'GraveRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
@@ -101,7 +101,7 @@ export class DeadGraveActor extends ENGINE.Actor {
 
     root.rotation.y = Math.random() * Math.PI * 2;
 
-    const visual = ENGINE.GLTFMeshComponent.create({
+    const visual = ENGINE.ModelMeshNode.create({
       name: 'GraveVisual',
       modelUrl: GRAVE_MODEL_URL,
       scale: new THREE.Vector3(0.2, 0.2, 0.2),
@@ -111,7 +111,8 @@ export class DeadGraveActor extends ENGINE.Actor {
 
     root.add(visual);
 
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
     public override beginPlay(): boolean {
@@ -142,7 +143,7 @@ export class DeadGraveActor extends ENGINE.Actor {
 
   /**
    * Spawn a grave at the given position.
-   * Uses pooling â€” recycles oldest grave if at cap.
+   * Uses pooling â€?recycles oldest grave if at cap.
    */
   public static spawnAt(
     world: ENGINE.World,
@@ -165,7 +166,7 @@ export class DeadGraveActor extends ENGINE.Actor {
 
     const grave = DeadGraveActor.create({ position: position.clone() });
     grave._isPooled = true;
-    world.addActor(grave);
+    world.add(grave);
 
     gravePool.push({ actor: grave, spawnGameTime });
     return grave;
@@ -187,21 +188,21 @@ export class DeadGraveActor extends ENGINE.Actor {
 
   private recycle(position: THREE.Vector3): void {
     this._aliveSec = 0;
-    this.rootComponent.position.copy(position);
-    this.rootComponent.rotation.y = Math.random() * Math.PI * 2;
-    this.rootComponent.updateMatrixWorld();
+    this.position.copy(position);
+    this.rotation.y = Math.random() * Math.PI * 2;
+    this.updateMatrixWorld();
     this._enableSettlingPhysics();
   }
 
   private _beginSettling(): void {
     this._settleElapsedSec = 0;
-    this._lastSettlePos.copy(this.rootComponent.position);
+    this._lastSettlePos.copy(this.position);
     this._physicsActive = true;
   }
 
   private _enableSettlingPhysics(): void {
     this._beginSettling();
-    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
+    this.overridePhysicsOptions({
       enabled: true,
       motionType: ENGINE.PhysicsMotionType.Dynamic,
       collisionProfile: DEAD_GRAVE_PROFILE,
@@ -211,8 +212,8 @@ export class DeadGraveActor extends ENGINE.Actor {
   private _tickSettle(deltaTime: number): void {
     this._settleElapsedSec += deltaTime;
 
-    const movedSq = this.rootComponent.position.distanceToSquared(this._lastSettlePos);
-    this._lastSettlePos.copy(this.rootComponent.position);
+    const movedSq = this.position.distanceToSquared(this._lastSettlePos);
+    this._lastSettlePos.copy(this.position);
 
     const stoppedMoving =
       this._settleElapsedSec >= GRAVE_SETTLE_MIN_SEC &&
@@ -224,13 +225,13 @@ export class DeadGraveActor extends ENGINE.Actor {
     }
   }
 
-  /** Remove the Rapier body once the grave has landed â€” visual stays put. */
+  /** Remove the Rapier body once the grave has landed â€?visual stays put. */
   private _freezePhysics(): void {
     if (!this._physicsActive) {
       return;
     }
     this._physicsActive = false;
-    (this.rootComponent as ENGINE.MeshComponent).overridePhysicsOptions({
+    this.overridePhysicsOptions({
       enabled: false,
     });
   }

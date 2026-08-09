@@ -179,10 +179,10 @@ export class PostmanBossActor extends ENGINE.Actor {
 
   private _walkTiles: PostmanWalkTile[] = [];
 
-  private animationComponent: ENGINE.AnimationStateMachineComponent | null = null;
-  private _visualMesh: ENGINE.GLTFMeshComponent | null = null;
+  private animationComponent: ENGINE.AnimationStateMachineNode | null = null;
+  private _visualMesh: ENGINE.ModelMeshNode | null = null;
   /** Pivot between root and GLTF — only this node yaws for facing. */
-  private _facingPivot: ENGINE.SceneComponent | null = null;
+  private _facingPivot: ENGINE.SceneNode | null = null;
   /** World travel yaw (radians); matches player pawn atan2(x, z). */
   private _facingYaw = 0;
   private _animationInitialized = false;
@@ -210,19 +210,19 @@ export class PostmanBossActor extends ENGINE.Actor {
   };
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.MeshComponent.create({
+    const root = ENGINE.MeshNode.create({
       name: 'CapsuleRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
       physicsOptions: { enabled: false },
     });
 
-    const pivot = ENGINE.SceneComponent.create({
+    const pivot = ENGINE.SceneNode.create({
       name: 'Pivot',
       position: new THREE.Vector3(0, CAPSULE_HEIGHT * 0.5, 0),
     });
 
-    this._visualMesh = ENGINE.GLTFMeshComponent.create({
+    this._visualMesh = ENGINE.ModelMeshNode.create({
       name: 'Visual',
       modelUrl: POSTMAN_BOSS_MODEL_URL,
       position: new THREE.Vector3(0, -CAPSULE_HEIGHT * 0.5, 0),
@@ -232,7 +232,7 @@ export class PostmanBossActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const anim = ENGINE.AnimationStateMachineComponent.create({ name: 'Animation', configUrl: POSTMAN_BOSS_ANIM_URL });
+    const anim = ENGINE.AnimationStateMachineNode.create({ name: 'Animation', configUrl: POSTMAN_BOSS_ANIM_URL });
     this.animationComponent = anim;
 
     const stats = RootDeathCharacterStats.create({
@@ -258,24 +258,26 @@ export class PostmanBossActor extends ENGINE.Actor {
     });
     root.add(shadow);
 
-    super.initialize({ ...options, rootComponent: root, sceneComponents: [stats] });
+    super.initialize(options);
+    this.add(root);
+    root.add(...[stats]);
   }
 
     public override beginPlay(): boolean {
     if (!super.beginPlay()) {
       return false;
-    }const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    }const stats = this.getNode(ENGINE.CharacterStatsNode);
     stats?.onHealthChanged.add(this._onHealthChanged);
 
     if (!this._visualMesh) {
-      this._visualMesh = this.getComponent(ENGINE.GLTFMeshComponent);
+      this._visualMesh = this.getNode(ENGINE.ModelMeshNode);
     }
     if (!this.animationComponent) {
-      this.animationComponent = this.getComponent(ENGINE.AnimationStateMachineComponent);
+      this.animationComponent = this.getNode(ENGINE.AnimationStateMachineNode);
     }
 
     this._syncVisualFacingOffset();
-    const visual = this._visualMesh ?? this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this._visualMesh ?? this.getNode(ENGINE.ModelMeshNode);
     if (visual && !visual.isModelLoaded()) {
       void visual.waitForLoad().then(() => {
         this._syncAnimState('idle');
@@ -284,12 +286,12 @@ export class PostmanBossActor extends ENGINE.Actor {
       });
     }
 
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     if (!this._scenePlacementPosition) {
       this._scenePlacementPosition = this._myPos.clone();
       const pivot = this._facingPivot;
       this._scenePlacementYaw =
-        pivot && pivot !== this.rootComponent ? pivot.rotation.y : this.rootComponent.rotation.y;
+        pivot && pivot !== this ? pivot.rotation.y : this.rotation.y;
     }
 
     this._enterDormant();
@@ -306,19 +308,19 @@ export class PostmanBossActor extends ENGINE.Actor {
     this._deathSequenceStarted = false;
     this.deactivateBossFight();
 
-    this.rootComponent.position.copy(this._scenePlacementPosition);
-    this.rootComponent.rotation.y = 0;
+    this.position.copy(this._scenePlacementPosition);
+    this.rotation.y = 0;
 
     const pivot = this._facingPivot;
-    if (pivot && pivot !== this.rootComponent) {
+    if (pivot && pivot !== this) {
       pivot.rotation.y = this._scenePlacementYaw;
     } else {
-      this.rootComponent.rotation.y = this._scenePlacementYaw;
+      this.rotation.y = this._scenePlacementYaw;
     }
     this._facingYaw = this._scenePlacementYaw;
     this._syncVisualFacingOffset();
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.setMaxHealth(POSTMAN_BOSS_BASE_HEALTH);
       stats.heal(POSTMAN_BOSS_BASE_HEALTH);
@@ -332,7 +334,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     if (!super.endPlay()) {
       return false;
     }
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     stats?.onHealthChanged.remove(this._onHealthChanged);
     if (this._bossActive) {
       zombieSpatialManager.unregisterZombie(this);
@@ -347,7 +349,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     onDied: () => void,
     risk5PlusTier = 0,
   ): PostmanBossActor | null {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof PostmanBossActor) {
         actor._beginBossFight(riskLevel, onDied, risk5PlusTier);
         return actor;
@@ -361,8 +363,8 @@ export class PostmanBossActor extends ENGINE.Actor {
       player.getWorldPosition(spawn);
       spawn.z -= 8;
     }
-    boss.rootComponent.position.copy(spawn);
-    world.addActor(boss);
+    boss.position.copy(spawn);
+    world.add(boss);
     boss._beginBossFight(riskLevel, onDied, risk5PlusTier);
     return boss;
   }
@@ -405,14 +407,14 @@ export class PostmanBossActor extends ENGINE.Actor {
     this._moveSpeed = tuning.moveSpeed;
     this._patternBulletCount = tuning.patternBulletCount;
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.setMaxHealth(tuning.maxHealth);
       stats.heal(tuning.maxHealth);
     }
 
     this._snapBossToNavFloor();
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
 
     const world = this.getWorld();
     if (world) {
@@ -506,7 +508,7 @@ export class PostmanBossActor extends ENGINE.Actor {
 
     const beat = COMBAT_CYCLE[this._cycleIndex];
     if (beat === 'move') {
-      this.rootComponent.getWorldPosition(this._myPos);
+      this.getWorldPosition(this._myPos);
       const dx = this._moveGoal.x - this._myPos.x;
       const dz = this._moveGoal.z - this._myPos.z;
       if (dx * dx + dz * dz > 1e-8) {
@@ -634,16 +636,16 @@ export class PostmanBossActor extends ENGINE.Actor {
 
   /** Scene-placed boss may still have physics on root — turn off so position writes work. */
   private _prepareForFreeMovement(): void {
-    const root = this.rootComponent as unknown as {
+    const root = this as unknown as {
       setPhysicsOptions?: (o: { enabled: boolean }) => void;
     };
     root.setPhysicsOptions?.({ enabled: false });
-    this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+    this.getNode(ENGINE.NpcMovementNode)?.stop();
   }
 
   /** @returns true while the boss is actively repositioning (walk anim). */
   private _tickStrafeMovement(dt: number): boolean {
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     this._moveGoal.y = this._myPos.y;
 
     const dx = this._moveGoal.x - this._myPos.x;
@@ -656,20 +658,20 @@ export class PostmanBossActor extends ENGINE.Actor {
 
     const step = Math.min(this._moveSpeed * dt, dist - MOVE_ARRIVE_DIST * 0.5);
     if (step > 0) {
-      this.rootComponent.position.x += (dx / dist) * step;
-      this.rootComponent.position.z += (dz / dist) * step;
+      this.position.x += (dx / dist) * step;
+      this.position.z += (dz / dist) * step;
       zombieSpatialManager.updateZombiePosition(this);
     }
 
     this._applyFacingFromDirection(dx, dz);
 
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     const remain = Math.hypot(this._moveGoal.x - this._myPos.x, this._moveGoal.z - this._myPos.z);
     return remain > STATIONARY_MOVE_THRESHOLD;
   }
 
   private _pickRoadWaypoint(): void {
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
 
     if (
       this._walkTiles.length > 0 &&
@@ -695,18 +697,18 @@ export class PostmanBossActor extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     const nav = (world.gameLoop?.navigationServer ?? null) as NavMeshQuery | null;
     const snapped = new THREE.Vector3();
     if (nav && snapPositionToNavFloor(nav, this._myPos, snapped)) {
       snapped.y += POSTMAN_BOSS_CAPSULE_HALF_HEIGHT;
-      this.rootComponent.position.copy(snapped);
+      this.position.copy(snapped);
       return;
     }
 
     if (this._myPos.y < POSTMAN_BOSS_CAPSULE_HALF_HEIGHT) {
       this._myPos.y = POSTMAN_BOSS_CAPSULE_HALF_HEIGHT;
-      this.rootComponent.position.copy(this._myPos);
+      this.position.copy(this._myPos);
     }
   }
 
@@ -722,7 +724,7 @@ export class PostmanBossActor extends ENGINE.Actor {
   }
 
   private _getPhase(): 1 | 2 | 3 {
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) return 1;
     const ratio = stats.getCurrentHealth() / Math.max(1, stats.getMaxHealth());
     if (ratio > 0.66) return 1;
@@ -820,7 +822,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     this._patternStep = wave;
 
     player.getWorldPosition(this._playerPos);
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     this._flatDir.copy(this._playerPos).sub(this._myPos).setY(0);
     if (this._flatDir.lengthSq() < 1e-6) {
       this._flatDir.set(0, 0, 1);
@@ -911,7 +913,7 @@ export class PostmanBossActor extends ENGINE.Actor {
       return;
     }
     player.getWorldPosition(this._playerPos);
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     this._flatDir.copy(this._playerPos).sub(this._myPos).setY(0);
     if (this._flatDir.lengthSq() < 1e-6) {
       this._flatDir.set(0, 0, 1);
@@ -950,7 +952,7 @@ export class PostmanBossActor extends ENGINE.Actor {
       return;
     }
 
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     this._flatDir.set(0, 0, 1);
     this._computeBulletSpawnPos(this._muzzlePos, this._flatDir);
     const muzzleY = this._muzzlePos.y;
@@ -1004,7 +1006,7 @@ export class PostmanBossActor extends ENGINE.Actor {
 
   /** Floor-height spawn point, nudged along the bullet's travel direction. */
   private _computeBulletSpawnPos(out: THREE.Vector3, travelDir: THREE.Vector3): void {
-    this.rootComponent.getWorldPosition(out);
+    this.getWorldPosition(out);
 
     let floorY = out.y - POSTMAN_BOSS_CAPSULE_HALF_HEIGHT;
     const player = this.getWorld()?.getFirstPlayerPawn();
@@ -1042,7 +1044,7 @@ export class PostmanBossActor extends ENGINE.Actor {
         obj.layers.enable(0);
       }
     });
-    const visual = this._visualMesh ?? this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this._visualMesh ?? this.getNode(ENGINE.ModelMeshNode);
     if (visual) {
       visual.visible = !hidden;
       visual.traverse(child => {
@@ -1062,7 +1064,7 @@ export class PostmanBossActor extends ENGINE.Actor {
       return;
     }
     player.getWorldPosition(this._playerPos);
-    this.rootComponent.getWorldPosition(this._myPos);
+    this.getWorldPosition(this._myPos);
     this._flatDir.copy(this._playerPos).sub(this._myPos).setY(0);
     if (this._flatDir.lengthSq() < 1e-8) {
       return;
@@ -1072,18 +1074,18 @@ export class PostmanBossActor extends ENGINE.Actor {
 
   /** Reset hierarchy so only one node carries travel yaw (like Grim's visual mesh). */
   private _syncVisualFacingOffset(): void {
-    const visual = this._visualMesh ?? this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this._visualMesh ?? this.getNode(ENGINE.ModelMeshNode);
     if (!visual) {
       return;
     }
 
     visual.rotation.y = 0;
     const parent = visual.parent;
-    if (parent instanceof ENGINE.SceneComponent && parent !== this.rootComponent) {
+    if (parent instanceof ENGINE.SceneNode && parent !== this) {
       parent.rotation.y = 0;
       this._facingPivot = parent;
     }
-    this.rootComponent.rotation.y = 0;
+    this.rotation.y = 0;
   }
 
   /**
@@ -1097,10 +1099,10 @@ export class PostmanBossActor extends ENGINE.Actor {
     const yaw = Math.atan2(dx, dz);
     this._facingYaw = yaw;
 
-    const visual = this._visualMesh ?? this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this._visualMesh ?? this.getNode(ENGINE.ModelMeshNode);
     const parent = visual?.parent;
 
-    if (parent instanceof ENGINE.SceneComponent && parent !== this.rootComponent) {
+    if (parent instanceof ENGINE.SceneNode && parent !== this) {
       parent.rotation.y = yaw;
       if (visual) {
         visual.rotation.y = 0;
@@ -1108,7 +1110,7 @@ export class PostmanBossActor extends ENGINE.Actor {
       return;
     }
 
-    this.rootComponent.rotation.y = yaw;
+    this.rotation.y = yaw;
     if (visual) {
       visual.rotation.y = 0;
     }
@@ -1119,7 +1121,7 @@ export class PostmanBossActor extends ENGINE.Actor {
   }
 
   private _syncAnimState(state: 'idle' | 'walk' | 'attack' | 'death'): void {
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this.animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) {
       anim.setParameter('state', state);
     }
@@ -1128,7 +1130,7 @@ export class PostmanBossActor extends ENGINE.Actor {
   private _tickAnimationInit(dt: number): void {
     if (this._animationInitialized) return;
     this._animInitTimer += dt;
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this.animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) {
       this._syncAnimState(this._bossActive ? 'idle' : 'idle');
       this._animationInitialized = true;
@@ -1144,7 +1146,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     this._isFlashing = true;
     this._flashRemainingSec = 0.12;
 
-    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this.getNode(ENGINE.ModelMeshNode);
     if (!visual) {
       this._isFlashing = false;
       return;
