@@ -8,9 +8,8 @@ my-game/
 │   └── default.genesys-scene    # Default level file (more assets are added as you create them)
 ├── src/                         # TypeScript source code
 │   ├── game.ts                  # Entry point - GameMode + GameLoop + main()
-│   ├── player.ts                # Player pawn class
 │   ├── auto-imports.ts          # Auto-generated: imports all source (DO NOT MODIFY)
-│   └── game-data.ts             # Auto-generated: property metadata (DO NOT MODIFY)
+│   └── game-data.ts             # Auto-generated when using @property (DO NOT MODIFY)
 ├── .engine/                     # Read-only engine source mirror — use as the primary API reference
 ├── .agents/                     # Skill files (including this one) consumed by AI tooling
 ├── .genesys/                    # SDK base files (configs, scripts) — do not modify
@@ -23,6 +22,8 @@ my-game/
 ├── AGENTS.md                    # AI-agent rules
 └── my-game.genesys-project      # Project metadata file (extension is the project marker)
 ```
+
+Templates may add more `src/` files (for example a player pawn). The empty template ships only `game.ts` plus generated `auto-imports.ts`.
 
 The engine source under .engine/ is the primary reference for class hierarchies, method signatures, and conventions when extending or composing engine APIs.
 
@@ -75,6 +76,6 @@ src/game-data.ts — Metadata for @ENGINE.property() decorated fields. Do not mo
 The .genesys-project file in the root configures engine settings and default scenes.
 
 Fields:
-- defaultScene — Scene loaded at runtime.
-- defaultEditorScene — Scene loaded in editor.
+- defaultScene — Default scene path for play / runtime.
+- defaultServerScene — Optional dedicated-server scene override.
 - engineVersion — Compatible engine version.

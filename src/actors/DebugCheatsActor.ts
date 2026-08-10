@@ -49,22 +49,28 @@ export class DebugCheatsActor extends ENGINE.Actor {
     }
   };
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    if (typeof window !== 'undefined') {
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }if (typeof window !== 'undefined') {
       window.addEventListener('keydown', this._onWindowKeyDown);
     }
+  
+    return true;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (typeof window !== 'undefined') {
       window.removeEventListener('keydown', this._onWindowKeyDown);
     }
-    super.doEndPlay();
+    return true;
   }
 
   public static ensureExists(world: ENGINE.World): DebugCheatsActor {
-    const existing = world.getActors().find(
+    const existing = world.getRootNodes().find(
       (a): a is DebugCheatsActor => a instanceof DebugCheatsActor,
     );
     if (existing) {
@@ -72,7 +78,7 @@ export class DebugCheatsActor extends ENGINE.Actor {
     }
 
     const actor = DebugCheatsActor.create({ name: 'DebugCheats' });
-    world.addActor(actor);
+    world.add(actor);
     return actor;
   }
 }

@@ -5,10 +5,10 @@
  * .d.ts declaration files from the engine package dist directory.
  *
  * Usage:
- *   node .agents/skills/engine-reference/scripts/engine-reference.js <ClassName> [ClassName2 ...]
+ *   node .agents/skills/genesys/ptc/engine-reference/scripts/engine-reference.js <ClassName> [ClassName2 ...]
  *
  * Example:
- *   node .agents/skills/engine-reference/scripts/engine-reference.js PointLightComponent CharacterMovementComponent
+ *   node .agents/skills/genesys/ptc/engine-reference/scripts/engine-reference.js PointLightNode CharacterMovementNode
  */
 
 import * as fs from 'fs';

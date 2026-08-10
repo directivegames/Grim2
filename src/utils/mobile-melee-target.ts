@@ -38,7 +38,7 @@ export function hasMobileMeleeTargetInAim(world: ENGINE.World): boolean {
     return false;
   }
 
-  pawn.rootComponent.getWorldPosition(_playerPos);
+  pawn.getWorldPosition(_playerPos);
 
   const nearby = zombieSpatialManager.getNearbyZombies(_playerPos, MOBILE_MELEE_RANGE);
   for (const zombie of nearby) {
@@ -46,7 +46,7 @@ export function hasMobileMeleeTargetInAim(world: ENGINE.World): boolean {
       continue;
     }
 
-    zombie.rootComponent.getWorldPosition(_zombiePos);
+    zombie.getWorldPosition(_zombiePos);
     const dx = _zombiePos.x - _playerPos.x;
     const dz = _zombiePos.z - _playerPos.z;
     const distSq = dx * dx + dz * dz;
@@ -79,7 +79,7 @@ export function getNearestMobileMeleeTarget(world: ENGINE.World): ENGINE.Actor |
     return null;
   }
 
-  pawn.rootComponent.getWorldPosition(_playerPos);
+  pawn.getWorldPosition(_playerPos);
 
   const nearby = zombieSpatialManager.getNearbyZombies(_playerPos, MOBILE_MELEE_RANGE);
   let best: ENGINE.Actor | null = null;
@@ -89,7 +89,7 @@ export function getNearestMobileMeleeTarget(world: ENGINE.World): ENGINE.Actor |
     if (!isLivingZombie(zombie)) {
       continue;
     }
-    zombie.rootComponent.getWorldPosition(_zombiePos);
+    zombie.getWorldPosition(_zombiePos);
     const dx = _zombiePos.x - _playerPos.x;
     const dz = _zombiePos.z - _playerPos.z;
     const distSq = dx * dx + dz * dz;

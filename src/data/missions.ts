@@ -31,11 +31,8 @@ export interface MissionDef {
   selectable: boolean;
   /**
    * Mission goal pool id — goals are rolled at START from [`mission-pools.ts`](./mission-pools.ts).
-   * Legacy fixed `missionConfig` is still supported for one-off entries.
    */
   missionPoolId?: string;
-  /** @deprecated Prefer `missionPoolId` + risk roll. */
-  missionConfig?: MissionConfig;
 }
 
 /** All Burdenville map locations. Only selectable missions can be started. */
@@ -157,7 +154,7 @@ export function getSelectableMissions(): MissionDef[] {
   return MISSIONS.filter((m) => m.selectable);
 }
 
-/** Fixed gameplay config when a mission still uses `missionConfig` directly. */
-export function getMissionGameplayConfig(mission: MissionDef): MissionConfig | undefined {
-  return mission.missionConfig;
+/** Fixed gameplay config is no longer authored on MissionDef — use missionPoolId + risk roll. */
+export function getMissionGameplayConfig(_mission: MissionDef): MissionConfig | undefined {
+  return undefined;
 }

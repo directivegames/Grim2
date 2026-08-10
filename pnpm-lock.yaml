@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@gnsx/genesys.js':
-        specifier: 13.5.2-dev
-        version: 13.5.2-dev(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.185.5)
+        specifier: 14.0.1-dev
+        version: 14.0.1-dev(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.185.6)
       three:
-        specifier: npm:@gnsx/three@0.185.14
-        version: '@gnsx/three@0.185.14'
+        specifier: npm:@gnsx/three@0.185.15
+        version: '@gnsx/three@0.185.15'
     devDependencies:
       '@gltf-transform/core':
         specifier: ^4.3.0
@@ -37,8 +37,8 @@ importers:
         specifier: 25.9.3
         version: 25.9.3
       '@types/three':
-        specifier: npm:@gnsx/three-types@0.185.5
-        version: '@gnsx/three-types@0.185.5'
+        specifier: npm:@gnsx/three-types@0.185.6
+        version: '@gnsx/three-types@0.185.6'
       '@types/ws':
         specifier: 8.18.1
         version: 8.18.1
@@ -360,14 +360,14 @@ packages:
   '@gltf-transform/functions@4.3.0':
     resolution: {integrity: sha512-FZggHVgt3DHOezgESBrf2vDzuD2FYQYaNT2sT/aP316SIwhuiIwby3z7rhV9joDvWqqUaPkf1UmkjlOaY9riSQ==}
 
-  '@gnsx/genesys.js@13.5.2-dev':
-    resolution: {integrity: sha512-1TC7epFq34tfp0KigI6l3KO+eEbX2eL2vNtLjSd/WgtzOHjH/LQtmZveG2rRh4v2NH26t91nxER3/ezVpOUvrQ==}
+  '@gnsx/genesys.js@14.0.1-dev':
+    resolution: {integrity: sha512-tOLx3mXUCmNoj4IkwJQnjpD6yem/t/1TOWB0+n3IwMLP4o5V8pyKATpClBnrW6euhl7u98TKIAUGtIawNKecQQ==}
 
-  '@gnsx/three-types@0.185.5':
-    resolution: {integrity: sha512-qPZn+fOBapmU6N7rsomyBVjVmriPasAOsmjhkzGBqJ8ya60hldGhNElU5cunMiUxGzz1c/KfIAk/UPBUJS46LQ==}
+  '@gnsx/three-types@0.185.6':
+    resolution: {integrity: sha512-D6MGOjwvdcd5bTnPq8XdTNYgLTWoZaK1dfNJ663ia5LWGLaB62yit+bKlqnQfdRJNihbQ0CNmWd9kXinx66zFA==}
 
-  '@gnsx/three@0.185.14':
-    resolution: {integrity: sha512-GteIupdxbcXpQH8PoNIKs7TPJcEkttecEG6XSbO6sfPrIfdrW0ZN9tvdrE6bWr1HHuLUl88SDU2aRb8Zh3C+kw==}
+  '@gnsx/three@0.185.15':
+    resolution: {integrity: sha512-V6BK57aVjgA849CWJROwzVAfAbvEFUSbY6SNW5A6Rz4qP9g2ZAznpLa3tX0UBxo4VXqmIo7SbAOIwH9O+JroPA==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -552,8 +552,8 @@ packages:
     resolution: {integrity: sha512-47XIizs9XZXvuJgoaJUIE2lFoID8ugvc0jzSHP+Ptfk8nTbnR8g788wv48N03Kx0UkAv559HWRQ3yzOgzlRNUA==}
     engines: {node: '>= 18'}
 
-  '@nodable/entities@2.1.0':
-    resolution: {integrity: sha512-nyT7T3nbMyBI/lvr6L5TyWbFJAI9FTgVRakNoBqCD+PmID8DzFrrNdLLtHMwMszOtqZa8PAOV24ZqDnQrhQINA==}
+  '@nodable/entities@3.0.0':
+    resolution: {integrity: sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -992,6 +992,9 @@ packages:
     resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
     engines: {node: '>=8'}
 
+  anynum@1.0.1:
+    resolution: {integrity: sha512-N6//FLET/tXYNM/F6ABca1oH6fWB+KlTt909Le28WMDBk8oaT4vY17DCrwg2MvmuqUKt3Ni4N5dGJ/EoBgcO6A==}
+
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
@@ -1346,8 +1349,8 @@ packages:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
 
-  esbuild-wasm@0.28.1:
-    resolution: {integrity: sha512-p/GD4E8oYRjg3kjdKrnMb0s4PzXgJF42e0MF4H0+ACyK/kIlFRp3e0fzOleIG+wBBm6MM3XQrbpe7soEA+vJIA==}
+  esbuild-wasm@0.28.2:
+    resolution: {integrity: sha512-GccVwhv3mmOUVQHCQm2Ox/rby8n/EqUwvZxE6Pjfikrq/lWw9g9WX/u9EykWnpot3Ko6j426DgQdea2xWKIAQA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -1504,11 +1507,11 @@ packages:
   fast-uri@3.1.0:
     resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
 
-  fast-xml-builder@1.1.5:
-    resolution: {integrity: sha512-4TJn/8FKLeslLAH3dnohXqE3QSoxkhvaMzepOIZytwJXZO69Bfz0HBdDHzOTOon6G59Zrk6VQ2bEiv1t61rfkA==}
+  fast-xml-builder@1.3.0:
+    resolution: {integrity: sha512-F74cZEdCvuw9P41GAC3rod4X04jjWGM1JPEv/GWSqFTWLsdyMSBMBMlm9Hk3GLBgLBbdBNY8yee0pQh2RBVESQ==}
 
-  fast-xml-parser@5.7.1:
-    resolution: {integrity: sha512-8Cc3f8GUGUULg34pBch/KGyPLglS+OFs05deyOlY7fL2MTagYPKrVQNmR1fLF/yJ9PH5ZSTd3YDF6pnmeZU+zA==}
+  fast-xml-parser@5.10.1:
+    resolution: {integrity: sha512-IEMIf7298kXuZSRFoGfMYrl7is8LpavODgbNz1cwIudv7KwVFnuU+UsMporfq6PD6aXSlawZlARiA3UywCTfMw==}
     hasBin: true
 
   fastq@1.20.1:
@@ -1522,9 +1525,6 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
-
-  fflate@0.8.2:
-    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
 
   fflate@0.8.3:
     resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
@@ -1837,6 +1837,9 @@ packages:
   is-typed-array@1.1.15:
     resolution: {integrity: sha512-p3EcsicXjit7SaskXHs1hA91QxgTw46Fv6EFKKGS5DRFLD8yKnohjF3hxoju94b/OcMZoQukzpPpBE9uLVKzgQ==}
     engines: {node: '>= 0.4'}
+
+  is-unsafe@2.0.0:
+    resolution: {integrity: sha512-2LdV822R+wmI86unXA93WCFpL6g+av8ynWk0nrHyJqGop5VoocYsSLFgN8jrfalT6iGeLNM4KXuVSsULP53kEA==}
 
   is-weakmap@2.0.2:
     resolution: {integrity: sha512-K5pXYOm9wqY1RgjpL3YTkF39tni1XajUIkawTLUo9EZEVUFga5gSQJF8nNS7ZwJQ02y+1YCNYcMh+HIf1ZqE+w==}
@@ -2207,8 +2210,8 @@ packages:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
     engines: {node: '>=8'}
 
-  path-expression-matcher@1.5.0:
-    resolution: {integrity: sha512-cbrerZV+6rvdQrrD+iGMcZFEiiSrbv9Tfdkvnusy6y0x0GKBXREFg/Y65GhIfm0tnLntThhzCnfKwp1WRjeCyQ==}
+  path-expression-matcher@1.6.2:
+    resolution: {integrity: sha512-enSlaiat05iasnzmgNxRj8reFdj3puY2QpNgP1aPIaVfT6nn9ICuPoFlKHk8EN22HcwewshO+mN2DGbkCEOtqQ==}
     engines: {node: '>=14.0.0'}
 
   path-key@3.1.1:
@@ -2544,8 +2547,8 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  strnum@2.2.3:
-    resolution: {integrity: sha512-oKx6RUCuHfT3oyVjtnrmn19H1SiCqgJSg+54XqURKp5aCMbrXrhLjRN9TjuwMjiYstZ0MzDrHqkGZ5dFTKd+zg==}
+  strnum@2.4.1:
+    resolution: {integrity: sha512-M9eUSMT2dCB2cTNPG7UYj6KuK7RJR2SN2+yCV/fTW3xzTCS6EaGZ5pSMgDIjB7r8zSfTGk+dvvn9rTjpVS9Mwg==}
 
   supports-color@10.2.2:
     resolution: {integrity: sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==}
@@ -2568,11 +2571,6 @@ packages:
   tar-stream@2.2.0:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
     engines: {node: '>=6'}
-
-  three-mesh-bvh@0.9.14:
-    resolution: {integrity: sha512-xJzfUXnLYjgw5tRKGxjfJW3Pcx0IbwNskvpdwRryhK07SYrKrYB4W8zAaPxu784gK7G4lCBgG+vfG3YeYn95kg==}
-    peerDependencies:
-      three: '>= 0.159.0'
 
   timers-browserify@2.0.12:
     resolution: {integrity: sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==}
@@ -2839,12 +2837,13 @@ packages:
       utf-8-validate:
         optional: true
 
-  xatlas-three@0.2.1:
-    resolution: {integrity: sha512-lSdakwxt2AzGmEP2dnYqmS8KqM8ErxBzwAwuEtrbOLxVpWaSJZB5FAUZ4+cT/kKSLlyHZVm866rTCtT+9RjJgg==}
-
   xml-name-validator@5.0.0:
     resolution: {integrity: sha512-EvGK8EJ3DhaHfbRlETOWAS5pO9MZITeauHKJyb8wyajUfQUenkIg2MvLDTZ4T/TgIcm3HU0TFBgWWboAZ30UHg==}
     engines: {node: '>=18'}
+
+  xml-naming@0.3.0:
+    resolution: {integrity: sha512-ghig2TBE/H11aOVgmahA3MhimvkBr6JIYknH/Dhdk10nXwdbIqBJsbfMxpvFPG8bAw77gN29aQWvKpmVoPlvPQ==}
+    engines: {node: '>=16.0.0'}
 
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
@@ -3072,30 +3071,28 @@ snapshots:
       ndarray-lanczos: 0.3.0
       ndarray-pixels: 5.0.1
 
-  '@gnsx/genesys.js@13.5.2-dev(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.185.5)':
+  '@gnsx/genesys.js@14.0.1-dev(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(@gnsx/three-types@0.185.6)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@msgpack/msgpack': 3.1.3
       '@recast-navigation/core': 0.43.1
-      '@recast-navigation/three': 0.43.1(@gnsx/three-types@0.185.5)(@gnsx/three@0.185.14)
+      '@recast-navigation/three': 0.43.1(@gnsx/three-types@0.185.6)(@gnsx/three@0.185.15)
       '@tweenjs/tween.js': 25.0.0
       dat.gui: 0.7.9
-      esbuild-wasm: 0.28.1
+      esbuild-wasm: 0.28.2
       fflate: 0.8.3
       jiti: 2.7.0
-      manifold-3d: 3.5.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(esbuild-wasm@0.28.1)
+      manifold-3d: 3.5.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(esbuild-wasm@0.28.2)
       nanoid: 6.0.1
       nipplejs: 0.10.2
-      postprocessing: 6.39.4(@gnsx/three@0.185.14)
+      postprocessing: 6.39.4(@gnsx/three@0.185.15)
       recast-navigation: 0.43.1
       reflect-metadata: 0.2.2
       stats.js: 0.17.0
-      three: '@gnsx/three@0.185.14'
-      three-mesh-bvh: 0.9.14(@gnsx/three@0.185.14)
+      three: '@gnsx/three@0.185.15'
       ts-morph: 27.0.2
       tweakpane: 4.0.5
       ws: 8.21.3
-      xatlas-three: 0.2.1
       yaml: 2.9.0
       zod: 4.4.3
       zustand: 5.0.14
@@ -3111,16 +3108,16 @@ snapshots:
       - use-sync-external-store
       - utf-8-validate
 
-  '@gnsx/three-types@0.185.5':
+  '@gnsx/three-types@0.185.6':
     dependencies:
       '@dimforge/rapier3d-compat': 0.12.0
       '@tweenjs/tween.js': 23.1.3
       '@types/stats.js': 0.17.4
       '@types/webxr': 0.5.24
-      fflate: 0.8.2
+      fflate: 0.8.3
       meshoptimizer: 1.1.1
 
-  '@gnsx/three@0.185.14': {}
+  '@gnsx/three@0.185.15': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -3265,7 +3262,7 @@ snapshots:
 
   '@msgpack/msgpack@3.1.3': {}
 
-  '@nodable/entities@2.1.0': {}
+  '@nodable/entities@3.0.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -3290,12 +3287,12 @@ snapshots:
       '@recast-navigation/core': 0.43.1
       '@recast-navigation/wasm': 0.43.1
 
-  '@recast-navigation/three@0.43.1(@gnsx/three-types@0.185.5)(@gnsx/three@0.185.14)':
+  '@recast-navigation/three@0.43.1(@gnsx/three-types@0.185.6)(@gnsx/three@0.185.15)':
     dependencies:
       '@recast-navigation/core': 0.43.1
       '@recast-navigation/generators': 0.43.1
-      '@types/three': '@gnsx/three-types@0.185.5'
-      three: '@gnsx/three@0.185.14'
+      '@types/three': '@gnsx/three-types@0.185.6'
+      three: '@gnsx/three@0.185.15'
 
   '@recast-navigation/wasm@0.43.1': {}
 
@@ -3629,6 +3626,8 @@ snapshots:
   ansi-styles@4.3.0:
     dependencies:
       color-convert: 2.0.1
+
+  anynum@1.0.1: {}
 
   argparse@2.0.1: {}
 
@@ -4120,7 +4119,7 @@ snapshots:
       is-date-object: 1.1.0
       is-symbol: 1.1.1
 
-  esbuild-wasm@0.28.1: {}
+  esbuild-wasm@0.28.2: {}
 
   esbuild@0.28.1:
     optionalDependencies:
@@ -4350,16 +4349,19 @@ snapshots:
 
   fast-uri@3.1.0: {}
 
-  fast-xml-builder@1.1.5:
+  fast-xml-builder@1.3.0:
     dependencies:
-      path-expression-matcher: 1.5.0
+      path-expression-matcher: 1.6.2
+      xml-naming: 0.3.0
 
-  fast-xml-parser@5.7.1:
+  fast-xml-parser@5.10.1:
     dependencies:
-      '@nodable/entities': 2.1.0
-      fast-xml-builder: 1.1.5
-      path-expression-matcher: 1.5.0
-      strnum: 2.2.3
+      '@nodable/entities': 3.0.0
+      fast-xml-builder: 1.3.0
+      is-unsafe: 2.0.0
+      path-expression-matcher: 1.6.2
+      strnum: 2.4.1
+      xml-naming: 0.3.0
 
   fastq@1.20.1:
     dependencies:
@@ -4368,8 +4370,6 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.5):
     optionalDependencies:
       picomatch: 4.0.5
-
-  fflate@0.8.2: {}
 
   fflate@0.8.3: {}
 
@@ -4702,6 +4702,8 @@ snapshots:
     dependencies:
       which-typed-array: 1.1.20
 
+  is-unsafe@2.0.0: {}
+
   is-weakmap@2.0.2: {}
 
   is-weakref@1.1.1:
@@ -4840,7 +4842,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  manifold-3d@3.5.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(esbuild-wasm@0.28.1):
+  manifold-3d@3.5.1(@gltf-transform/core@4.3.0)(@gltf-transform/extensions@4.3.0)(@gltf-transform/functions@4.3.0)(esbuild-wasm@0.28.2):
     dependencies:
       '@gltf-transform/core': 4.3.0
       '@gltf-transform/extensions': 4.3.0
@@ -4850,8 +4852,8 @@ snapshots:
       '@jscadui/3mf-export': 0.5.0
       commander: 13.1.0
       convert-source-map: 2.0.0
-      esbuild-wasm: 0.28.1
-      fast-xml-parser: 5.7.1
+      esbuild-wasm: 0.28.2
+      fast-xml-parser: 5.10.1
       fflate: 0.8.3
       magic-string: 0.30.21
 
@@ -5091,7 +5093,7 @@ snapshots:
 
   path-exists@4.0.0: {}
 
-  path-expression-matcher@1.5.0: {}
+  path-expression-matcher@1.6.2: {}
 
   path-key@3.1.1: {}
 
@@ -5130,9 +5132,9 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postprocessing@6.39.4(@gnsx/three@0.185.14):
+  postprocessing@6.39.4(@gnsx/three@0.185.15):
     dependencies:
-      three: '@gnsx/three@0.185.14'
+      three: '@gnsx/three@0.185.15'
 
   prebuild-install@7.1.3:
     dependencies:
@@ -5575,7 +5577,9 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  strnum@2.2.3: {}
+  strnum@2.4.1:
+    dependencies:
+      anynum: 1.0.1
 
   supports-color@10.2.2: {}
 
@@ -5601,10 +5605,6 @@ snapshots:
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.2
-
-  three-mesh-bvh@0.9.14(@gnsx/three@0.185.14):
-    dependencies:
-      three: '@gnsx/three@0.185.14'
 
   timers-browserify@2.0.12:
     dependencies:
@@ -5871,9 +5871,9 @@ snapshots:
 
   ws@8.21.3: {}
 
-  xatlas-three@0.2.1: {}
-
   xml-name-validator@5.0.0: {}
+
+  xml-naming@0.3.0: {}
 
   xmlchars@2.2.0: {}
 

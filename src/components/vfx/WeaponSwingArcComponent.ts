@@ -5,14 +5,14 @@
  * giving visual feedback on where the weapon will hit when attacking.
  *
  * Implementation follows the same pattern as BlobShadowComponent:
- * - Extends ENGINE.MeshComponent directly
+ * - Extends ENGINE.MeshNode directly
  * - Flat on floor via rotation in initialize()
  * - Updates via tickPrePhysics for continuous mouse tracking
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { SceneComponentOptions } from '@gnsx/genesys.js';
+import type { SceneNodeOptions } from '@gnsx/genesys.js';
 
 /** Arc radius - slightly larger than typical melee range for visibility. */
 const ARC_RADIUS = 1.3;
@@ -66,8 +66,8 @@ function createHalfCircleGeometry(radius: number, segments: number): THREE.Buffe
 const SHARED_ARC_GEOMETRY = createHalfCircleGeometry(ARC_RADIUS, ARC_SEGMENTS);
 
 @ENGINE.GameClass()
-export class WeaponSwingArcComponent extends ENGINE.MeshComponent {
-  public override initialize(options?: SceneComponentOptions): void {
+export class WeaponSwingArcComponent extends ENGINE.MeshNode {
+  public override initialize(options?: SceneNodeOptions): void {
     const material = new THREE.MeshBasicMaterial({
       color: 0x00e8ff,
       transparent: true,

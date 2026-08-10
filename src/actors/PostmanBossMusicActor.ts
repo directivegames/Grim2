@@ -10,20 +10,21 @@ const BOSS_TRACK = '@project/assets/sounds/postmanhell.mp3';
 
 @ENGINE.GameClass()
 export class PostmanBossMusicActor extends ENGINE.Actor {
-  private _sound: ENGINE.SoundComponent | null = null;
+  private _sound: ENGINE.SoundNode | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
   private _stopped = false;
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    this._stopped = false;
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._stopped = false;
 
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'postmanBossMusic';
     soundResource.audioPath = BOSS_TRACK;
     soundResource.volume = BASE_VOLUME * gameSettings.musicVolume;
 
-    this._sound = ENGINE.SoundComponent.create({
+    this._sound = ENGINE.SoundNode.create({
       loop: true,
       autoPlay: false,
       positional: false,
@@ -31,7 +32,7 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
       sounds: [soundResource],
     });
 
-    this.addComponent(this._sound);
+    this.add(this._sound);
 
     void this._sound.waitForLoad().then(async () => {
       if (this._stopped || !this._sound) return;
@@ -42,6 +43,8 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
       if (this._stopped || !this._sound) return;
       void this._sound.play('postmanBossMusic');
     });
+  
+    return true;
   }
 
   public stopNow(): void {
@@ -56,14 +59,14 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
 
   public static stopAll(world: ENGINE.World): void {
     const toRemove: PostmanBossMusicActor[] = [];
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof PostmanBossMusicActor) {
         actor.stopNow();
         toRemove.push(actor);
       }
     }
     if (toRemove.length > 0) {
-      world.removeActors(...toRemove);
+      world.remove(...toRemove);
     }
   }
 
@@ -71,13 +74,16 @@ export class PostmanBossMusicActor extends ENGINE.Actor {
     PostmanBossMusicActor.stopAll(world);
 
     const actor = PostmanBossMusicActor.create({ name: 'PostmanBossMusicActor' });
-    world.addActor(actor);
+    world.add(actor);
     return actor;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._stopped = true;
     this._sound?.stopAll();
-    super.doEndPlay();
+    return true;
   }
 }

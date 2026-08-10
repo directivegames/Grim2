@@ -17,7 +17,7 @@ import {
 } from './FogCardMaterial.js';
 import { shouldDisableWebGpuTslEffects } from '../utils/browser-compat.js';
 
-import type { ComponentDescriptionOptions } from '@gnsx/genesys.js';
+import type { NodeDescriptionOptions } from '@gnsx/genesys.js';
 import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
 const DEFAULT_CARD_MODEL_URL = '@project/assets/models/SM_FogCard_01.glb';
@@ -48,7 +48,7 @@ function createFallbackTexture(value: number): THREE.DataTexture {
   return texture;
 }
 
-export interface FogSystemComponentOptions extends ENGINE.SceneComponentOptions {
+export interface FogSystemComponentOptions extends ENGINE.SceneNodeOptions {
   cardModelUrl?: string;
   baseColorMapUrl?: string;
   opacityMapUrl?: string;
@@ -60,7 +60,7 @@ export interface FogSystemComponentOptions extends ENGINE.SceneComponentOptions 
 }
 
 @ENGINE.GameClass()
-export class FogSystemComponent extends ENGINE.SceneComponent {
+export class FogSystemComponent extends ENGINE.SceneNode {
   @ENGINE.property({ required: true, description: 'GLB mesh used as the fog card surface' })
   public cardModelUrl: ENGINE.ModelPath = DEFAULT_CARD_MODEL_URL;
 
@@ -190,15 +190,18 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this._syncBillboardLoop();
   }
 
-  public override beginPlay(): void {
-    super.beginPlay();
-    if (!this._mesh) {
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }if (!this._mesh) {
       this._log('beginPlay -> reload because no mesh exists yet');
       void this.reload();
     } else {
       this._log('beginPlay -> mesh already exists');
     }
     this._syncBillboardLoop();
+  
+    return true;
   }
 
   public override onEditorAddToWorld(): void {
@@ -230,10 +233,13 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this._updateBillboardToCamera();
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._stopBillboardLoop();
     this._clearMesh();
-    super.endPlay();
+    return true;
   }
 
   public async reload(): Promise<void> {
@@ -264,6 +270,8 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this._mesh.castShadow = false;
     this._mesh.receiveShadow = false;
     this._mesh.renderOrder = this.renderOrder;
+    // Runtime preview mesh must not be persisted into the scene graph on save.
+    this._mesh.setTransient(true);
     this.add(this._mesh);
     this._updateBillboardToCamera();
     this._log('reload complete: mesh/material attached', {
@@ -313,7 +321,7 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
     this.updateFogValues();
   }
 
-  public override describe(options?: ComponentDescriptionOptions): Record<string, unknown> {
+  public override describe(options?: NodeDescriptionOptions): Record<string, unknown> {
     const result = super.describe(options);
     if (options?.includeDetails) {
       result['cardModelUrl'] = this.cardModelUrl;
@@ -455,8 +463,24 @@ export class FogSystemComponent extends ENGINE.SceneComponent {
       this._mesh.removeFromParent();
       this._mesh.geometry.dispose();
       this._mesh.material.dispose();
+      this._mesh = null;
     }
-    this._mesh = null;
+
+    // Drop any FogCard meshes restored from older saves (not tracked in `_mesh`).
+    for (const child of [...this.children]) {
+      if (child.name !== 'FogCard') continue;
+      child.removeFromParent();
+      if (child instanceof THREE.Mesh) {
+        child.geometry?.dispose();
+        const material = child.material;
+        if (Array.isArray(material)) {
+          for (const entry of material) entry.dispose();
+        } else {
+          material?.dispose();
+        }
+      }
+    }
+
     this._material = null;
     this._textures = null;
   }

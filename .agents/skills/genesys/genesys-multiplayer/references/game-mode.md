@@ -2,6 +2,8 @@
 
 GameMode is the server-only class that owns the canonical rules of the match. It runs only on the server and in standalone (single-player) mode. It does not exist on clients; clients must not call GameMode methods directly.
 
+`GameMode` itself is an unreplicated `InfoNode` — the framework classes it spawns (`PlayerController`, `Pawn`, `PlayerInfo`, `GameSessionInfo`) are the replicated `SceneNode`/`PrimitiveNode` roots; each already calls `ENGINE.ensureReplicationGroup(this)` internally, so subclassing them "just works" without extra replication plumbing (see [node-replication](node-replication.md)).
+
 ## What GameMode Does
 
 - Decides whether a connecting player is allowed to join (`canPlayerJoin`).
@@ -40,7 +42,7 @@ override async onPlayerJoined(clientId: ClientId): Promise<PlayerController | nu
 
 ### onPlayerDisconnected
 
-Called when a player disconnects. Use it to clean up player-owned actors, notify other players, or start a respawn timer.
+Called when a player disconnects. Use it to clean up player-owned nodes, notify other players, or start a respawn timer.
 
 ```typescript
 override onPlayerDisconnected(clientId: ClientId, pawn: Pawn | null, reason: DisconnectReason): void {
@@ -71,7 +73,7 @@ class MyGameMode extends ENGINE.GameMode {
 }
 ```
 
-The engine calls these factories in `onPlayerJoined`. Each factory must return a fully constructed actor created with `.create()` — do not pass a `world` argument; the engine wires the world when adding the actor.
+The engine calls these factories in `onPlayerJoined`. Each factory must return a fully constructed node created with `.create()` — do not pass a `world` argument; the engine wires the world when adding the node.
 
 Override the getter methods (`getPawnFactory`, `getPlayerControllerFactory`, `getPlayerInfoFactory`) instead when the factory depends on runtime state that is not available at `initialize` time.
 
@@ -97,7 +99,7 @@ export function main(container: HTMLElement): ENGINE.IGameLoop {
 
 ## GameSessionInfo
 
-GameMode spawns a `GameSessionInfo` actor at the start of play. Unlike GameMode itself, `GameSessionInfo` is replicated and is visible to all clients. Use it as the canonical place to store match state that clients need to read.
+GameMode spawns a `GameSessionInfo` node at the start of play. Unlike GameMode itself, `GameSessionInfo` is replicated and is visible to all clients. Use it as the canonical place to store match state that clients need to read.
 
 Built-in replicated properties on `GameSessionInfo`:
 - `sessionState` — current lifecycle state (`WaitingForPlayers`, `InProgress`, `Ending`, etc.).
@@ -105,7 +107,7 @@ Built-in replicated properties on `GameSessionInfo`:
 - `maxPlayers` — maximum players allowed.
 - `countdown` — countdown timer value, or `undefined` when not counting down.
 
-The server keeps these in sync automatically. On the server, read and write them via `gameMode.getGameSessionInfo()`. On clients, `GameSessionInfo` is a regular replicated actor in the world — retrieve it from the world's actor list.
+The server keeps these in sync automatically. On the server, read and write them via `gameMode.getGameSessionInfo()`. On clients, `GameSessionInfo` is a regular replicated node in the world — retrieve it with `world.getNode(ENGINE.GameSessionInfo)`.
 
 To expose additional match state to clients, extend `GameSessionInfo` and add replicated properties, then register the subclass via `getGameSessionInfoFactory()` on your `GameMode`.
 
@@ -127,7 +129,7 @@ override getGameSessionInfoFactory(): () => ENGINE.GameSessionInfo {
 
 ## PlayerInfo
 
-The server spawns one `PlayerInfo` actor per connected player. `PlayerInfo` is replicated, so all clients can read every player's data — use it for scoreboards, player lists, team assignments, and lobby ready-up systems.
+The server spawns one `PlayerInfo` node per connected player. `PlayerInfo` is replicated, so all clients can read every player's data — use it for scoreboards, player lists, team assignments, and lobby ready-up systems.
 
 Built-in replicated properties on `PlayerInfo`:
 - `clientId` — `ClientId` (uint16) unique identifier for the player's connection.
@@ -141,7 +143,7 @@ Built-in replicated properties on `PlayerInfo`:
 
 `identityToken` is present on `PlayerInfo` but is not replicated — it is server-only and used to re-link a reconnecting player to their preserved info.
 
-On the server, access a specific player's info via `controller.getPlayerInfo()`. On clients, all `PlayerInfo` actors are regular replicated actors in the world — retrieve them with `world.getActors(ENGINE.PlayerInfo)` to build a scoreboard or player list.
+On the server, access a specific player's info via `controller.getPlayerInfo()`. On clients, all `PlayerInfo` instances are regular replicated nodes in the world — retrieve them with `world.getNodes(ENGINE.PlayerInfo)` to build a scoreboard or player list.
 
 To add per-player state that clients need to see, extend `PlayerInfo` and register the subclass via `getPlayerInfoFactory()` on your `GameMode`.
 
@@ -164,7 +166,7 @@ override getPlayerInfoFactory(): () => Promise<ENGINE.PlayerInfo> {
 ## What Not to Do
 
 - Do not call GameMode methods from a client. They only exist on the server; calling them on a client throws or silently does nothing.
-- Do not store match state that clients need to see directly on GameMode. GameMode is not replicated — put shared state on `GameSessionInfo` or another replicated actor instead.
-- Do not spawn actors from `canPlayerJoin`. Only spawn from `onPlayerJoined` or later.
+- Do not store match state that clients need to see directly on GameMode. GameMode is not replicated — put shared state on `GameSessionInfo` or another replicated node instead.
+- Do not spawn nodes from `canPlayerJoin`. Only spawn from `onPlayerJoined` or later.
 
 Reference: See GameMode.ts in engine source.

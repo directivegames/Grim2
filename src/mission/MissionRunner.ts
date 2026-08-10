@@ -86,14 +86,14 @@ class MissionRunnerImpl {
     this._world = world;
     this._running = true;
 
-    const playerStart = world.getActors(ENGINE.PlayerStart)[0];
+    const playerStart = world.getNodes(ENGINE.PlayerStart)[0];
     if (playerStart) {
-      playerStart.rootComponent.getWorldPosition(this._playerPos);
+      playerStart.getWorldPosition(this._playerPos);
       setPlayerSpawnAnchor(this._playerPos);
     } else {
       const pawn = world.getFirstPlayerPawn();
       if (pawn) {
-        pawn.rootComponent.getWorldPosition(this._playerPos);
+        pawn.getWorldPosition(this._playerPos);
         setPlayerSpawnAnchor(this._playerPos);
       }
     }
@@ -369,7 +369,7 @@ class MissionRunnerImpl {
         ? Math.min(risk.spawnCap, 100)
         : risk.spawnCap;
 
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof ZombieHordeManager) {
         actor.applyMissionRisk(
           healthMult,
@@ -388,7 +388,7 @@ class MissionRunnerImpl {
   }
 
   private _clearHordeRisk(world: ENGINE.World): void {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof ZombieHordeManager) {
         actor.clearMissionRisk();
         return;
@@ -428,7 +428,7 @@ class MissionRunnerImpl {
     const player = world.getFirstPlayerPawn();
     if (!player) return null;
 
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
 
     if (getInnocentSpawnPointCount() > 0) {
       const marker = pickInnocentSpawnPoint(this._usedInnocentMarkers, this._innocentSpawnPos);
@@ -457,7 +457,7 @@ class MissionRunnerImpl {
       return;
     }
 
-    const boss = this._activeBoss ?? w.getActors().find(a => a instanceof PostmanBossActor);
+    const boss = this._activeBoss ?? w.getRootNodes().find(a => a instanceof PostmanBossActor);
     if (boss instanceof PostmanBossActor) {
       boss.revealForCombat();
     }
@@ -493,7 +493,7 @@ class MissionRunnerImpl {
     const world = this._world;
     if (world) {
       PostmanBossMusicActor.stopAll(world);
-      const bg = world.getActors().find(a => a instanceof BackgroundMusicActor);
+      const bg = world.getRootNodes().find(a => a instanceof BackgroundMusicActor);
       if (bg instanceof BackgroundMusicActor) {
         bg.stop();
       }

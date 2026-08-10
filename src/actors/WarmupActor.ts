@@ -47,13 +47,14 @@ export class WarmupActor extends ENGINE.Actor {
   private _uiImagesReady = false;
 
   // Component references for pool pre-building
-  private _boomerangTrail: ENGINE.SceneComponent | null = null;
-  private _summonVFX: ENGINE.SceneComponent | null = null;
-  private _bloodSplatter: ENGINE.SceneComponent | null = null;
+  private _boomerangTrail: ENGINE.SceneNode | null = null;
+  private _summonVFX: ENGINE.SceneNode | null = null;
+  private _bloodSplatter: ENGINE.SceneNode | null = null;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
-    super.initialize({ ...options, rootComponent: root });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
+    super.initialize(options);
+    this.add(root);
   }
 
   /**
@@ -106,23 +107,23 @@ export class WarmupActor extends ENGINE.Actor {
     // 2. Pre-warm grave actors (spawn multiple to cover rapid kills)
     for (let i = 0; i < effectWarmupCount; i++) {
       const grave = DeadGraveActor.create({ position: HIDDEN_POS });
-      world.addActor(grave);
+      world.add(grave);
       this._warmupActors.push(grave);
     }
 
     // 3. Pre-warm gore explosions (MAX_ACTIVE = 3, so warm 3)
     for (let i = 0; i < effectWarmupCount; i++) {
       const gore = GoreExplosionActor.create({ position: HIDDEN_POS.clone() });
-      world.addActor(gore);
+      world.add(gore);
       this._warmupActors.push(gore);
     }
 
     if (effectWarmupCount > 0) {
-      const fistExplosionVfx = ENGINE.VFXComponent.create({
+      const fistExplosionVfx = ENGINE.VFXNode.create({
         vfxPath: FIST_EXPLOSION_CLOUD_VFX,
         autoStart: true,
       });
-      this.rootComponent.add(fistExplosionVfx);
+      this.add(fistExplosionVfx);
     }
 
     if (!mobile) {
@@ -151,7 +152,7 @@ export class WarmupActor extends ENGINE.Actor {
   /**
    * Register components for internal warmup (called by other actors during their setup).
    */
-  public registerComponent(component: ENGINE.SceneComponent, type: 'boomerangTrail' | 'summonVFX' | 'bloodSplatter'): void {
+  public registerComponent(component: ENGINE.SceneNode, type: 'boomerangTrail' | 'summonVFX' | 'bloodSplatter'): void {
     switch (type) {
       case 'boomerangTrail':
         this._boomerangTrail = component;
@@ -199,7 +200,7 @@ export class WarmupActor extends ENGINE.Actor {
       let ready = 0;
       for (const actor of this._warmupActors) {
         let loaded = true;
-        for (const gltfMesh of actor.getComponents(ENGINE.GLTFMeshComponent)) {
+        for (const gltfMesh of actor.getNodes(ENGINE.ModelMeshNode)) {
           if (gltfMesh.isLoading()) {
             loaded = false;
             break;
@@ -236,7 +237,7 @@ export class WarmupActor extends ENGINE.Actor {
     // Check if all warmup actors have had time to initialize
     const allActorsReady = this._warmupActors.every(actor => {
       // Check if every GLTF mesh on the actor has finished loading.
-      for (const gltfMesh of actor.getComponents(ENGINE.GLTFMeshComponent)) {
+      for (const gltfMesh of actor.getNodes(ENGINE.ModelMeshNode)) {
         if (gltfMesh.isLoading()) {
           return false;
         }
@@ -292,7 +293,7 @@ export class WarmupActor extends ENGINE.Actor {
     onProgress?: WarmupProgressCallback,
   ): WarmupActor {
     const warmup = WarmupActor.create({ position: HIDDEN_POS });
-    world.addActor(warmup);
+    world.add(warmup);
     warmup.startWarmup(onComplete, onProgress);
     return warmup;
   }

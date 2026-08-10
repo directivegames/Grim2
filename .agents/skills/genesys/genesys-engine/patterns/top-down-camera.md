@@ -2,15 +2,15 @@ Use when the user wants an RTS-style, strategy, or overhead camera that pans acr
 
 ## Overview
 
-`TopDownMovementComponent` moves the possessed pawn root on X/Z (pan) and optionally on Y or via a child camera local Z (zoom). Attach a `THREE.Camera` as a child of the pawn root with a fixed pitch (typical overhead angle). Input sources are toggled independently — keyboard, middle-mouse drag, edge scroll, and mouse wheel do not require separate game code.
+`TopDownMovementNode` moves the possessed pawn root on X/Z (pan) and optionally on Y or via a child camera local Z (zoom). Attach a `THREE.Camera` as a child of the pawn root with a fixed pitch (typical overhead angle). Input sources are toggled independently — keyboard, middle-mouse drag, edge scroll, and mouse wheel do not require separate game code.
 
-`PanCameraRigComponent` and `TopDownPanMode` were removed. Use this component's `panSpace`, `zoomMode`, and input toggles instead.
+`PanCameraRigComponent` and `TopDownPanMode` were removed. Use this node's `panSpace`, `zoomMode`, and input toggles instead.
 
 ## Minimal Setup
 
 ```typescript
 const pawn = ENGINE.MovementPawn.create({
-  movementComponent: ENGINE.TopDownMovementComponent.create({
+  movementNode: ENGINE.TopDownMovementNode.create({
     panSpeed: 40,
     zoomSpeed: 30,
   }),
@@ -18,8 +18,8 @@ const pawn = ENGINE.MovementPawn.create({
 });
 
 const camera = new THREE.PerspectiveCamera(ENGINE.CAMERA_FOV, 1, 0.1, 1000);
-pawn.rootComponent.add(camera);
-pawn.rootComponent.setLocalRotation(ENGINE.MathHelpers.makeRotationDegrees({ pitch: -75 }));
+pawn.add(camera);
+pawn.setLocalRotation(ENGINE.MathHelpers.makeRotationDegrees({ pitch: -75 }));
 
 const controller = ENGINE.DefaultPlayerController.create({ noPointerLock: true });
 controller.possess(pawn);
@@ -32,7 +32,7 @@ Reference: engine demos `navigation.ts` and `timer.ts`.
 | Property | Default | Purpose |
 | --- | --- | --- |
 | `panSpace` | `world` | `world` = fixed X/Z; `cameraRelative` = pan follows yaw |
-| `panYawPivotName` | `''` | SceneComponent name for yaw when `cameraRelative`; empty = root yaw |
+| `panYawPivotName` | `''` | SceneNode name for yaw when `cameraRelative`; empty = root yaw |
 | `panSpeed` | `10` | Keyboard/gamepad pan speed |
 | `invertPan` | `false` | Flip keyboard pan axes |
 | `clampToBounds` | `false` | Clamp X/Z via `setPanBounds()` |
@@ -43,7 +43,7 @@ Reference: engine demos `navigation.ts` and `timer.ts`.
 | `mouseDragPanEnabled` | `false` | Middle-mouse drag |
 | `edgeScrollEnabled` | `false` | Cursor near screen edge |
 
-Mouse drag and edge scroll are forwarded automatically through `DefaultPlayerController` → `MovementPawn.movementComponent` — no pawn delegate wiring required.
+Mouse drag and edge scroll are forwarded automatically through `DefaultPlayerController` → `MovementPawn.movementNode` — no pawn delegate wiring required.
 
 ## Zoom
 
@@ -66,7 +66,7 @@ Runtime API: `setZoomDistance()`, `getZoomDistance()` (camera local Z only).
 **Keyboard-only overhead (engine demo default):**
 
 ```typescript
-ENGINE.TopDownMovementComponent.create({
+ENGINE.TopDownMovementNode.create({
   keyboardPanEnabled: true,
   keyboardZoomEnabled: true,
   zoomMode: ENGINE.TopDownZoomMode.RootY,
@@ -76,7 +76,7 @@ ENGINE.TopDownMovementComponent.create({
 **RTS mouse camera (replaces old `screenRelative` + `PanCameraRigComponent`):**
 
 ```typescript
-ENGINE.TopDownMovementComponent.create({
+ENGINE.TopDownMovementNode.create({
   keyboardPanEnabled: false,
   mouseDragPanEnabled: true,
   edgeScrollEnabled: true,
@@ -90,12 +90,12 @@ ENGINE.TopDownMovementComponent.create({
 ## Map Bounds
 
 ```typescript
-movementComponent.setPanBounds({ minX: -100, maxX: 100, minZ: -100, maxZ: 100 });
-movementComponent.clampToBounds = true;
+movementNode.setPanBounds({ minX: -100, maxX: 100, minZ: -100, maxZ: 100 });
+movementNode.clampToBounds = true;
 ```
 
 ## Related
 
-- [Pawn and PlayerController](../references/pawn-player-controller.md) — possession and movement component forwarding.
+- [Pawn and PlayerController](../references/pawn-player-controller.md) — possession and movement node forwarding.
 - [Input Handling](../references/input-handling.md) — `PlayerController` input routing.
-- [Camera System](../references/camera.md) — child camera on pawn, `Actor.getCamera()`.
+- [Camera System](../references/camera.md) — child camera on pawn, `SceneNode.getCamera()`.

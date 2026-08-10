@@ -27,6 +27,8 @@ export async function launchGame() {
       storageProvider,
     });
 
+    ENGINE.NetRuntime.initialize(ENGINE.NetRuntimeType.Standalone);
+
     // Create the game runtime
     const gameRuntime = new ENGINE.GameRuntime({
       provider: storageProvider,

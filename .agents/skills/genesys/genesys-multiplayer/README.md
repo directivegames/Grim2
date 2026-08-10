@@ -20,7 +20,11 @@ Each RPC type encodes a specific direction and execution contract, so the right 
 
 GameMode owns the canonical rules of the match: scoring, win conditions, player spawning, and session lifecycle. Letting clients hold a copy would require keeping all those copies in sync, opening the door to authoritative conflicts and exploits. Because only the server ever runs GameMode, there is a single source of truth for match state.
 
-Clients interact with match state through replicated properties on other actors (PlayerInfo, GameState, etc.) rather than through GameMode directly.
+Clients interact with match state through replicated properties on other nodes (`PlayerInfo`, `GameSessionInfo`, etc.) rather than through GameMode directly.
+
+## Node Architecture
+
+Genesys multiplayer is built on `SceneNode` / `PrimitiveNode` roots, not the deprecated `Actor` shell. A networked root becomes a net entity by attaching a `ReplicationGroup` (`ENGINE.ensureReplicationGroup(this)`), not merely by setting `replicated = true` — that flag alone only marks a node as *eligible* to join a nearby group's member map. `PlayerController`, `Pawn`, `PlayerInfo`, and `GameSessionInfo` are `SceneNode`/`PrimitiveNode` subclasses that already do this internally; custom root classes must call `ensureReplicationGroup` themselves. `Actor` remains as a deprecated compatibility class whose `replicated` setter creates the group for you — new code should prefer a semantic node root instead. See [node-replication](references/node-replication.md).
 
 ## Contents
 

@@ -1,12 +1,12 @@
 /**
- * BigUndeadActor — ranged kiting elite. Fires 3 vomitballs, retreats when rushed.
+ * BigUndeadActor �?ranged kiting elite. Fires 3 vomitballs, retreats when rushed.
  *
- * Animation mapping (GLB clips → state machine states):
- *   idle    → "dying_backwards"
- *   walk    → "Running"
- *   attack  → "dying_backwards"
- *   hit     → "Charged_Spell_Cast"
- *   death   → "Walking"
+ * Animation mapping (GLB clips �?state machine states):
+ *   idle    �?"dying_backwards"
+ *   walk    �?"Running"
+ *   attack  �?"dying_backwards"
+ *   hit     �?"Charged_Spell_Cast"
+ *   death   �?"Walking"
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -29,6 +29,7 @@ import { getGameAudioManager } from '../utils/game-audio.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
 import { BIG_UNDEAD_BASE_PROJECTILE_DAMAGE } from '../data/combat-balance.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
+import { RootDeathCharacterStats } from '../components/RootDeathCharacterStats.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -126,9 +127,9 @@ export class BigUndeadActor extends ENGINE.Actor {
 
   private blackboard: ENGINE.Blackboard | null = null;
   private wanderRoot: ENGINE.WanderAction | null = null;
-  private animationComponent: ENGINE.AnimationStateMachineComponent | null = null;
+  private animationComponent: ENGINE.AnimationStateMachineNode | null = null;
   private _blobShadow: BlobShadowComponent | null = null;
-  private _ragdollPivot: ENGINE.SceneComponent | null = null;
+  private _ragdollPivot: ENGINE.SceneNode | null = null;
 
   private _kiteState: KiteState = 'wander';
   private _hasAggro = false;
@@ -177,11 +178,11 @@ export class BigUndeadActor extends ENGINE.Actor {
         audioManager.play(hitSound, 1.0, true);
       }
     }
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this.animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) {
       anim.setParameter('state', 'hit');
     }
-    this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+    this.getNode(ENGINE.NpcMovementNode)?.stop();
     if (this._kiteState === 'fire') {
       this._kiteState = 'cooldown';
       this._shotsFired = BALLS_PER_BURST;
@@ -193,7 +194,8 @@ export class BigUndeadActor extends ENGINE.Actor {
   public override initialize(options?: ActorOptions): void {
     ensureBigUndeadNpcCollisionProfile();
 
-    const root = ENGINE.MeshComponent.create({
+    const root = ENGINE.MeshNode.create({
+      name: 'CapsuleRoot',
       geometry: SHARED_ROOT_GEOMETRY,
       material: SHARED_ROOT_MATERIAL,
       physicsOptions: {
@@ -203,12 +205,14 @@ export class BigUndeadActor extends ENGINE.Actor {
       },
     });
 
-    const pivot = ENGINE.SceneComponent.create({
+    const pivot = ENGINE.SceneNode.create({
+      name: 'Pivot',
       position: new THREE.Vector3(0, CAPSULE_HEIGHT * 0.5, 0),
     });
     this._ragdollPivot = pivot;
 
-    const visual = ENGINE.GLTFMeshComponent.create({
+    const visual = ENGINE.ModelMeshNode.create({
+      name: 'Visual',
       modelUrl: BIG_UNDEAD_MODEL_URL,
       position: new THREE.Vector3(0, -CAPSULE_HEIGHT * 0.5, 0),
       rotation: new THREE.Euler(0, Math.PI, 0),
@@ -217,10 +221,11 @@ export class BigUndeadActor extends ENGINE.Actor {
       receiveShadow: false,
     });
 
-    const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: BIG_UNDEAD_ANIM_URL });
+    const anim = ENGINE.AnimationStateMachineNode.create({ name: 'Animation', configUrl: BIG_UNDEAD_ANIM_URL });
     this.animationComponent = anim;
 
-    const stats = ENGINE.CharacterStatsComponent.create({
+    const stats = RootDeathCharacterStats.create({
+      name: 'Stats',
       maxHealth: this.maxHealth,
       healthRegen: 0,
       attackCooldown: 1,
@@ -229,7 +234,8 @@ export class BigUndeadActor extends ENGINE.Actor {
       speed: this.moveSpeed,
     });
 
-    const npc = ENGINE.NpcMovementComponent.create({
+    const npc = ENGINE.NpcMovementNode.create({
+      name: 'NpcMovement',
       pathFollowingAccuracy: 0.3,
       actorFollowingDistance: 1.0,
       stopDistance: 1.0,
@@ -237,7 +243,7 @@ export class BigUndeadActor extends ENGINE.Actor {
       useNavigationServer: true,
       turnSpeed: 2.0,
       characterControllerOptions: {
-        ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
+        ...ENGINE.CharacterMovementNode.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
         simulatedGravityScale: 1.0,
         applyImpulsesToDynamicBodies: false,
         slideEnabled: true,
@@ -250,20 +256,22 @@ export class BigUndeadActor extends ENGINE.Actor {
       },
     });
 
-    this._blobShadow = BlobShadowComponent.create({ radius: 0.65, opacity: 0.35 });
+    this._blobShadow = BlobShadowComponent.create({ name: 'BlobShadow', radius: 0.65, opacity: 0.35 });
 
     pivot.add(visual);
     pivot.add(anim);
     root.add(pivot);
     root.add(this._blobShadow);
 
-    super.initialize({ ...options, rootComponent: root, sceneComponents: [stats, npc] });
+    super.initialize(options);
+    this.add(root);
+    root.add(...[stats, npc]);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }const visual = this.getNode(ENGINE.ModelMeshNode);
     if (visual) {
       visual.castShadow = false;
       visual.receiveShadow = false;
@@ -271,12 +279,12 @@ export class BigUndeadActor extends ENGINE.Actor {
 
     this._ensureBlobShadowAtFeet();
 
-    const npc = this.getComponent(ENGINE.NpcMovementComponent) as { maxSpeed: number } | null;
+    const npc = this.getNode(ENGINE.NpcMovementNode) as { maxSpeed: number } | null;
     if (npc) {
       npc.maxSpeed = this.moveSpeed;
     }
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.setMaxHealth(this.maxHealth);
       this._lastTrackedHealth = stats.getCurrentHealth();
@@ -292,9 +300,11 @@ export class BigUndeadActor extends ENGINE.Actor {
     this.wanderRoot.initialize(this.blackboard);
 
     zombieSpatialManager.registerZombie(this);
+  
+    return true;
   }
 
-  /** Horde spawn / relocate — immediately chase instead of waiting for aggro radius. */
+  /** Horde spawn / relocate �?immediately chase instead of waiting for aggro radius. */
   public wakeForHordeSpawn(): void {
     if (this._deathSequenceStarted) {
       return;
@@ -305,7 +315,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     this._fireShotTimer = 0;
     this._postBurstTimer = 0;
     this.wanderRoot?.reset();
-    const npc = this.getComponent(ENGINE.NpcMovementComponent) as { enabled?: boolean } | null;
+    const npc = this.getNode(ENGINE.NpcMovementNode) as { enabled?: boolean } | null;
     if (npc) {
       npc.enabled = true;
     }
@@ -320,8 +330,8 @@ export class BigUndeadActor extends ENGINE.Actor {
     }
 
     if (!isGameplayUnlocked()) {
-      this.getComponent(ENGINE.NpcMovementComponent)?.stop();
-      const anim = this.getComponent(ENGINE.AnimationStateMachineComponent);
+      this.getNode(ENGINE.NpcMovementNode)?.stop();
+      const anim = this.getNode(ENGINE.AnimationStateMachineNode);
       if (anim?.isReady()) anim.setParameter('state', 'idle');
       return;
     }
@@ -339,8 +349,8 @@ export class BigUndeadActor extends ENGINE.Actor {
       return;
     }
 
-    this.rootComponent.getWorldPosition(this._myPos);
-    player.rootComponent.getWorldPosition(this._playerPos);
+    this.getWorldPosition(this._myPos);
+    player.getWorldPosition(this._playerPos);
     const dist = this._myPos.distanceTo(this._playerPos);
 
     this._spatialUpdateTimer += deltaTime;
@@ -365,7 +375,7 @@ export class BigUndeadActor extends ENGINE.Actor {
       this._applyKiteMovement(dist);
       this._tickFireBurst(world, player, deltaTime, dist);
     } else {
-      this.getComponent(ENGINE.NpcMovementComponent)?.stop();
+      this.getNode(ENGINE.NpcMovementNode)?.stop();
     }
 
     if (this._kiteState === 'wander' && this.blackboard && this.wanderRoot) {
@@ -412,7 +422,7 @@ export class BigUndeadActor extends ENGINE.Actor {
   }
 
   private _stopNpcMovement(): void {
-    const npc = this.getComponent(ENGINE.NpcMovementComponent) as {
+    const npc = this.getNode(ENGINE.NpcMovementNode) as {
       stop: () => void;
       useNavigationServer: boolean;
     } | null;
@@ -426,7 +436,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     this._shotsFired = 0;
     this._fireShotTimer = 0;
     this._stopNpcMovement();
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this.animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) {
       anim.setParameter('state', 'attack');
     }
@@ -473,10 +483,10 @@ export class BigUndeadActor extends ENGINE.Actor {
 
   private _fireShot(world: ENGINE.World, player: ENGINE.Pawn): void {
     this._facePlayer(player);
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
 
-    const muzzleYaw = this.rootComponent.rotation.y;
-    this.rootComponent.getWorldPosition(this._muzzlePos);
+    const muzzleYaw = this.rotation.y;
+    this.getWorldPosition(this._muzzlePos);
     this._muzzlePos.y += 1.1;
     this._muzzlePos.x += Math.sin(muzzleYaw) * 0.4;
     this._muzzlePos.z += Math.cos(muzzleYaw) * 0.4;
@@ -491,22 +501,22 @@ export class BigUndeadActor extends ENGINE.Actor {
   }
 
   private _facePlayer(player: ENGINE.Pawn): void {
-    this.rootComponent.getWorldPosition(this._myPos);
-    player.rootComponent.getWorldPosition(this._playerPos);
+    this.getWorldPosition(this._myPos);
+    player.getWorldPosition(this._playerPos);
     this._flatDir.copy(this._playerPos).sub(this._myPos);
     this._flatDir.y = 0;
     if (this._flatDir.lengthSq() < 1e-8) return;
 
     const yaw = Math.atan2(this._flatDir.x, this._flatDir.z);
     // NPC rotates root during movement; visual GLTF child has Math.PI baked in.
-    this.rootComponent.rotation.y = yaw + Math.PI;
+    this.rotation.y = yaw + Math.PI;
     if (this._ragdollPivot) {
       this._ragdollPivot.rotation.y = 0;
     }
   }
 
   private _applyKiteMovement(dist: number): void {
-    const npc = this.getComponent(ENGINE.NpcMovementComponent) as {
+    const npc = this.getNode(ENGINE.NpcMovementNode) as {
       useNavigationServer: boolean;
       setTargetPosition: (p: THREE.Vector3, stop?: number) => void;
       stop: () => void;
@@ -530,8 +540,8 @@ export class BigUndeadActor extends ENGINE.Actor {
       this._ragdollPivot.rotation.y = 0;
     }
 
-    this.rootComponent.getWorldPosition(this._myPos);
-    player.rootComponent.getWorldPosition(this._playerPos);
+    this.getWorldPosition(this._myPos);
+    player.getWorldPosition(this._playerPos);
 
     if (this._kiteState === 'retreat' || dist < RETREAT_MIN_DIST) {
       this._flatDir.copy(this._myPos).sub(this._playerPos);
@@ -568,7 +578,7 @@ export class BigUndeadActor extends ENGINE.Actor {
   }
 
   private _syncAnimation(_dist: number, inHitReaction: boolean): void {
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this.animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (!anim?.isReady()) return;
     if (this._deathSequenceStarted) return;
 
@@ -599,7 +609,7 @@ export class BigUndeadActor extends ENGINE.Actor {
   private _tickAnimationInit(deltaTime: number): void {
     if (this._animationInitialized) return;
     this._animInitTimer += deltaTime;
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this.animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) {
       anim.setParameter('state', 'idle');
       this._animationInitialized = true;
@@ -608,7 +618,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     }
   }
 
-  public override handleDeath(hitInfo?: DamageHitInfo): void {
+  public handleDeath(hitInfo?: DamageHitInfo): void {
     if (this._deathSequenceStarted) return;
     this._deathSequenceStarted = true;
 
@@ -627,21 +637,20 @@ export class BigUndeadActor extends ENGINE.Actor {
       }
     }
 
-    const npc = this.getComponent(ENGINE.NpcMovementComponent);
+    const npc = this.getNode(ENGINE.NpcMovementNode);
     npc?.stop();
     if (npc) {
       (npc as unknown as { enabled: boolean }).enabled = false;
     }
 
     const deathPos = new THREE.Vector3();
-    this.rootComponent.getWorldPosition(deathPos);
+    this.getWorldPosition(deathPos);
 
     if (world) {
       KOSignUI.getInstance(world).showKO(deathPos);
     }
 
-    const root = this.rootComponent as ENGINE.MeshComponent;
-    root.overridePhysicsOptions({ enabled: false });
+    this.overridePhysicsOptions({ enabled: false });
 
     if (npc) {
       (npc as unknown as { hasCharacterController: boolean }).hasCharacterController = false;
@@ -659,7 +668,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     }
     if (launchDir.lengthSq() < 0.001) launchDir.set(1, 0, 0);
 
-    this.rootComponent.rotation.y = Math.atan2(launchDir.x, launchDir.z);
+    this.rotation.y = Math.atan2(launchDir.x, launchDir.z);
 
     const lateralSpeed = 7 + Math.random() * 4;
     const upSpeed = (DEATH_ANIM_DURATION_SEC * DEATH_GRAVITY) / 2;
@@ -672,7 +681,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     );
     this._ragdollGroundY = deathPos.y;
 
-    const anim = this.animationComponent ?? this.getComponent(ENGINE.AnimationStateMachineComponent);
+    const anim = this.animationComponent ?? this.getNode(ENGINE.AnimationStateMachineNode);
     if (anim?.isReady()) {
       anim.setParameter('state', 'death');
     }
@@ -684,12 +693,12 @@ export class BigUndeadActor extends ENGINE.Actor {
     this._ragdollVelocity.y -= DEATH_GRAVITY * deltaTime;
     this._ragdollVelocity.x *= airDrag;
     this._ragdollVelocity.z *= airDrag;
-    this.rootComponent.position.addScaledVector(this._ragdollVelocity, deltaTime);
+    this.position.addScaledVector(this._ragdollVelocity, deltaTime);
 
-    if (this.rootComponent.position.y <= this._ragdollGroundY) {
-      this.rootComponent.position.y = this._ragdollGroundY;
+    if (this.position.y <= this._ragdollGroundY) {
+      this.position.y = this._ragdollGroundY;
       if (this._ragdollLandPos === null) {
-        this._ragdollLandPos = this.rootComponent.position.clone();
+        this._ragdollLandPos = this.position.clone();
         this._ragdollVelocity.y = 0;
       } else if (this._ragdollVelocity.y < 0) {
         this._ragdollVelocity.y = 0;
@@ -705,10 +714,10 @@ export class BigUndeadActor extends ENGINE.Actor {
       this._ragdollTimer = -999;
       const w = this.getWorld();
       if (w) {
-        GoreExplosionActor.spawnAt(w, this._ragdollLandPos ?? this.rootComponent.position);
+        GoreExplosionActor.spawnAt(w, this._ragdollLandPos ?? this.position);
         getGameAudioManager(w).play('zombieDeath', 1.0, true);
       }
-      this._spawnDeathObjects(this._ragdollLandPos ?? this.rootComponent.position.clone());
+      this._spawnDeathObjects(this._ragdollLandPos ?? this.position.clone());
       this.onDied?.();
       this.destroy();
     }
@@ -723,14 +732,14 @@ export class BigUndeadActor extends ENGINE.Actor {
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
 
     const smokeActor = ENGINE.Actor.create();
-    smokeActor.rootComponent.position.copy(landPos);
-    smokeActor.rootComponent.position.y += 0.1;
-    const smokeVfx = ENGINE.VFXComponent.create({
+    smokeActor.position.copy(landPos);
+    smokeActor.position.y += 0.1;
+    const smokeVfx = ENGINE.VFXNode.create({
       vfxPath: '@project/assets/VFX/smoke.vfx.json',
       autoStart: true,
     });
-    smokeActor.rootComponent.add(smokeVfx);
-    world.addActor(smokeActor);
+    smokeActor.add(smokeVfx);
+    world.add(smokeActor);
 
     setTimeout(() => {
       smokeActor.destroy();
@@ -738,21 +747,21 @@ export class BigUndeadActor extends ENGINE.Actor {
   }
 
   private _ensureBlobShadowAtFeet(): void {
-    const shadow = this._blobShadow ?? this.getComponent(BlobShadowComponent);
+    const shadow = this._blobShadow ?? this.getNode(BlobShadowComponent);
     if (!shadow) return;
     this._blobShadow = shadow;
 
     const pivot = this._ragdollPivot;
     if (pivot && shadow.parent === pivot) {
       pivot.remove(shadow);
-      this.rootComponent.add(shadow);
+      this.add(shadow);
     }
     shadow.position.set(0, BLOB_SHADOW_FEET_Y, 0);
     shadow.visible = !this._deathSequenceStarted;
   }
 
   private _hideBlobShadow(): void {
-    const shadow = this._blobShadow ?? this.getComponent(BlobShadowComponent);
+    const shadow = this._blobShadow ?? this.getNode(BlobShadowComponent);
     if (!shadow) return;
     this._blobShadow = shadow;
     shadow.visible = false;
@@ -765,7 +774,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     this.maxHealth = BigUndeadActor.BASE_MAX_HEALTH * healthMult;
     this.projectileDamage = Math.round(BIG_UNDEAD_BASE_PROJECTILE_DAMAGE * damageMult);
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats || this._deathSequenceStarted) {
       return;
     }
@@ -801,7 +810,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     if (this._isFlashing) return;
     this._isFlashing = true;
 
-    const visual = this.getComponent(ENGINE.GLTFMeshComponent);
+    const visual = this.getNode(ENGINE.ModelMeshNode);
     if (!visual) {
       this._isFlashing = false;
       return;
@@ -858,14 +867,17 @@ export class BigUndeadActor extends ENGINE.Actor {
     this._flashRemainingSec = 0.15;
   }
 
-  protected override doEndPlay(): void {
-    this.getComponent(ENGINE.CharacterStatsComponent)?.onHealthChanged.remove(this._onHealthChanged);
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
+    this.getNode(ENGINE.CharacterStatsNode)?.onHealthChanged.remove(this._onHealthChanged);
     zombieSpatialManager.unregisterZombie(this);
     this.wanderRoot?.destroy();
     this.wanderRoot = null;
     this.blackboard?.clear();
     this.blackboard = null;
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

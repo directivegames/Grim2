@@ -10,7 +10,7 @@ import {
 
 import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
-export type FilmGrainComponentOptions = ENGINE.SceneComponentOptions & {
+export type FilmGrainComponentOptions = ENGINE.SceneNodeOptions & {
   enabled?: boolean;
   opacity?: number;
   baseFrequency?: number;
@@ -20,7 +20,7 @@ export type FilmGrainComponentOptions = ENGINE.SceneComponentOptions & {
 };
 
 @ENGINE.GameClass()
-export class FilmGrainComponent extends ENGINE.SceneComponent {
+export class FilmGrainComponent extends ENGINE.SceneNode {
   @ENGINE.property({ type: 'boolean', category: 'Film Grain', description: 'Enable film grain overlay' })
   public override enabled: boolean = DEFAULT_FILM_GRAIN_SETTINGS.enabled;
 
@@ -77,9 +77,12 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
   private _retrySeconds = 0;
   private _grainAttached = false;
 
-  public override beginPlay(): void {
-    super.beginPlay();
-    this._syncGrain();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._syncGrain();
+  
+    return true;
   }
 
   public override onEditorAddToWorld(): void {
@@ -118,12 +121,15 @@ export class FilmGrainComponent extends ENGINE.SceneComponent {
     }
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     const world = this.getWorld();
     if (world) {
       FilmGrainUI.detach(world);
     }
-    super.endPlay();
+    return true;
   }
 
   private _settings() {

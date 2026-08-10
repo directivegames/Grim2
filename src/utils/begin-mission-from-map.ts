@@ -59,7 +59,7 @@ export function beginMissionFromMap(
     setGameplayUnlocked(true);
     MobileCombatChromeUI.attach(world)?.refreshVisibility();
 
-    const bg = world.getActors().find(a => a instanceof BackgroundMusicActor);
+    const bg = world.getRootNodes().find(a => a instanceof BackgroundMusicActor);
     if (bg instanceof BackgroundMusicActor) {
       bg.stop();
     }

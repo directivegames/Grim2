@@ -201,7 +201,7 @@ export class InnocentIndicatorUI {
   private _distanceToPlayerMeters(worldPos: THREE.Vector3): number {
     const pawn = this._world?.getFirstPlayerPawn();
     if (!pawn) return 0;
-    pawn.rootComponent.getWorldPosition(this._playerScratch);
+    pawn.getWorldPosition(this._playerScratch);
     return Math.round(this._playerScratch.distanceTo(worldPos));
   }
 

@@ -43,7 +43,7 @@ export function createDefaultHordeEnemyTypes(): HordeEnemyType[] {
       modelUrl: BIG_UNDEAD_MODEL_URL,
       create(world: ENGINE.World, position: THREE.Vector3): ENGINE.Actor {
         const actor = BigUndeadActor.create({ position: position.clone() });
-        world.addActor(actor);
+        world.add(actor);
         return actor;
       },
       hookDeath(actor: ENGINE.Actor, onDied: () => void): void {
@@ -66,7 +66,7 @@ export function createDefaultHordeEnemyTypes(): HordeEnemyType[] {
       modelUrl: DEMONBOX_MODEL_URL,
       create(world: ENGINE.World, position: THREE.Vector3): ENGINE.Actor {
         const actor = DemonboxActor.create({ position: position.clone() });
-        world.addActor(actor);
+        world.add(actor);
         return actor;
       },
       hookDeath(actor: ENGINE.Actor, onDied: () => void): void {

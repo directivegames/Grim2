@@ -33,8 +33,8 @@ export function applyDefenceToIncomingDamage(rawDamage: number): number {
 
 const HOOKED = Symbol('grimDefenceHooked');
 
-/** Apply Grim Guard to all damage taken via CharacterStatsComponent. */
-export function hookPlayerDamageMitigation(stats: ENGINE.CharacterStatsComponent): void {
+/** Apply Grim Guard to all damage taken via CharacterStatsNode. */
+export function hookPlayerDamageMitigation(stats: ENGINE.CharacterStatsNode): void {
   const tagged = stats as unknown as Record<symbol, boolean>;
   if (tagged[HOOKED]) {
     return;

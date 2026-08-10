@@ -3,65 +3,64 @@
 The Pawn hierarchy and PlayerController system separate visual/physical representation (Pawn and
 subclasses) from input handling logic (PlayerController). Input handling lives entirely in the
 Controller; Pawns only expose action methods (`moveForward`, `jump`, `fire`, `interact`, etc.) for
-a Controller (player or, eventually, AI) to call.
+a Controller (player or AI) to call.
 
-## Pawn Hierarchy
+Pawns extend `PrimitiveNode`. Controllers extend `SceneNode`. They are not `Actor` subclasses.
+
+## Pawn hierarchy
 
 `Pawn` is intentionally minimal. Capabilities are layered in subclasses so a game only pulls in
 what it needs:
 
 - **Pawn** — Possession bookkeeping only (controller reference, `onPossessed` / `onUnpossessed`,
-  `getCamera()`). Uses Actor's generic snap-to-position replication (`replicateTransform = true`).
-  No movement component, no input, no combat/interaction.
-- **MovementPawn** — Adds `movementComponent` (a `BasePawnMovementComponent`) and the action
-  methods a Controller calls: `moveForward`, `moveRight`, `lookUp`, `lookRight`, `zoom`, `jump`,
-  `stopJump`. Upgrades transform replication to a timestamped `PawnNetTransform` +
-  `NetMovementPredictor` for client-side prediction/interpolation.
+  `getCamera()`). Creates a `ReplicationGroup` but does **not** auto-snap-replicate transforms
+  (that Actor-era default is gone). No movement node, no input, no combat/interaction.
+- **MovementPawn** — Adds `movementNode` (a `BasePawnMovementNode`; deprecated `movementComponent`
+  accessor remains) and action methods a Controller calls: `moveForward`, `moveRight`, `lookUp`,
+  `lookRight`, `zoom`, `jump`, `stopJump`. Upgrades transform replication via movement prediction
+  when configured.
 - **GameplayPawn** — Extends MovementPawn with combat (`fire`, `endFire`, `altFire`, `endAltFire`,
-  `reload` via equipped `IEquipment` components) and interaction (`interact`, `endInteract` via an
-  auto-created `InteractionComponent`), plus optional directional-light-following.
+  `reload` via equipped equipment nodes) and interaction (`interact`, `endInteract` via an
+  auto-created interaction node), plus optional directional-light-following.
 - **CharacterPawn** — Extends MovementPawn with a ready-made camera/animation/mesh scaffold
   (first- or third-person). No combat/interaction by itself.
 - **DefaultCharacterPawn** — Extends CharacterPawn and adds the same combat/interaction/
   light-following as GameplayPawn (duplicated, not shared — see `ICombatPawn`/`IInteractPawn`
   below), plus raw `onKeyDown`/`onKeyUp`/`onMouseDown`/`onMouseUp`/`onGamepadButtonDown`/
   `onGamepadButtonUp`/`onGamepadAxisChange` delegates forwarded by `DefaultPlayerController` for
-  compatibility with pre-refactor `Pawn`-level input handling. This is the "batteries-included"
+  compatibility with older `Pawn`-level input handling. This is the "batteries-included"
   pawn most demos and templates use; extend it directly if you just want a working player
   character.
-- **VRPawn** — Extends Pawn directly (VR input/teleport/grab, no movement component).
+- **VRPawn** — Extends Pawn directly (VR input/teleport/grab, no movement node).
 
 Pick the shallowest class that has what you need: a flying camera rig with no combat is a
 `MovementPawn`; a turret that only fires is a `GameplayPawn` without a mesh/camera scaffold; a
 playable third-person character with a gun is a `DefaultCharacterPawn`.
 
 Key API:
-- `movementComponent` (MovementPawn+) — `BasePawnMovementComponent` accessor for locomotion physics.
-- `getController()` / `getPlayerController()` — Returns the current controlling Controller (the
-  latter only if it's a `PlayerController`), or null when unpossessed.
-- `onPossessed` / `onUnpossessed` — Possession delegates (signature: `(pawn, controller)`).
+- `movementNode` (MovementPawn+) — `BasePawnMovementNode` accessor for locomotion physics.
+- `getController()` — Returns the current controlling Controller, or null when unpossessed.
+  Deprecated `getPlayerController()` returns the controller only when it is a `PlayerController`.
+- `onPossessed` / `onUnpossessed` — Possession delegates on the pawn (signature: `(pawn, controller)`).
+  Controllers also have protected `onPossess` / `onUnpossess` hooks.
 
 `GameplayPawn` and `DefaultCharacterPawn` intentionally don't share a common ancestor for their
-combat/interaction code (kept duplicated on purpose — see `GameplayPawn.ts` for why). Both
-implement the same structural shape, described by the `ICombatPawn` (`fire`/`endFire`/`altFire`/
-`endAltFire`/`reload`) and `IInteractPawn` (`interact`/`endInteract`/`getInteractionComponent`)
-interfaces in `PawnActions.ts`, with `isCombatPawn` / `isInteractPawn` type-guard helpers. Anything
-that needs to call combat/interaction actions on an arbitrary pawn (like `DefaultPlayerController`)
-should use those guards instead of `instanceof GameplayPawn`, or it will silently miss
-`DefaultCharacterPawn` (and any other pawn implementing the same shape).
+combat/interaction code. Both implement the same structural shape, described by the `ICombatPawn`
+and `IInteractPawn` interfaces in `PawnActions.ts`, with `isCombatPawn` / `isInteractPawn`
+type-guard helpers. Anything that needs to call combat/interaction actions on an arbitrary pawn
+(like `DefaultPlayerController`) should use those guards instead of `instanceof GameplayPawn`.
 
 Reference: See Pawn.ts, MovementPawn.ts, GameplayPawn.ts, CharacterPawn.ts,
-DefaultCharacterPawn.ts, and PawnActions.ts in engine source.
+DefaultCharacterPawn.ts, and PawnActions.ts in engine source (`entities/`).
 
 ## PlayerController
 
-A minimal Actor base handling player identity, networking, and possession. Implements
+A minimal SceneNode base handling player identity, networking, and possession. Implements
 IInputHandler with inert stubs — it registers itself as an input handler on beginPlay (and
 requests pointer lock unless `noPointerLock`), but does not itself translate raw input into
 gameplay actions.
 
 - Manages possession lifecycle and PlayerInfo.
-- Handles map-transition RPCs (requestLoadMap / notifyMapLoaded).
 - Registers as an InputManager handler; concrete input handling is left to a subclass.
 
 Key Accessors:
@@ -75,69 +74,74 @@ Reference: See PlayerController.ts in engine source.
 Extends PlayerController with the engine's default control scheme: reads keyboard, mouse,
 gamepad, and virtual-joystick input, normalizes it (-1 to 1), and each frame (via
 `tickPrePhysics`) calls the possessed pawn's action methods — `moveForward`/`moveRight`/`lookUp`/
-`lookRight`/`zoom`/`jump`/`stopJump` if it's a `MovementPawn` (checked via `instanceof
-MovementPawn`), and `fire`/`altFire`/`reload`/`interact` if it structurally satisfies `ICombatPawn`
-/ `IInteractPawn` (checked via `isCombatPawn` / `isInteractPawn`, which both `GameplayPawn` and
-`DefaultCharacterPawn` satisfy). A plain `Pawn` (e.g. `VRPawn`) simply skips movement/gameplay
-dispatch. If the possessed pawn is a `DefaultCharacterPawn`, its raw `onKeyDown`/`onMouseDown`/etc.
-delegates are also invoked (before this controller's own built-in handling) for backward
-compatibility with pre-refactor `Pawn`-level input handling. This is the class `GameMode` spawns
-by default and what every built-in demo/template uses.
+`lookRight`/`zoom`/`jump`/`stopJump` if it's a `MovementPawn`, and `fire`/`altFire`/`reload`/
+`interact` if it structurally satisfies `ICombatPawn` / `IInteractPawn`. A plain `Pawn` (e.g.
+`VRPawn`) simply skips movement/gameplay dispatch. If the possessed pawn is a
+`DefaultCharacterPawn`, its raw input delegates are also invoked for backward compatibility.
+This is the class `GameMode` spawns by default.
 
-Write a custom `PlayerController` subclass (rather than `DefaultPlayerController`) only when a
-game needs an entirely different control scheme (e.g. a bespoke vehicle or RTS input layout), or
-needs extra keys/actions layered on top — override `handleKeyDown`/etc., check `this.pawn
-instanceof YourPawnClass`, and call a public action method on the pawn (never re-add raw input
-handling to the pawn itself).
+Write a custom `PlayerController` subclass only when a game needs an entirely different control
+scheme, or needs extra keys/actions — override `handleKeyDown`/etc., check `this.pawn instanceof
+YourPawnClass`, and call a public action method on the pawn (never re-add raw input handling to
+the pawn itself).
 
 Reference: See DefaultPlayerController.ts in engine source.
 
-## Possession Flow
+## Possession flow
 
 PlayerController.possess(pawn)
-  -> Pawn updates its internal controller reference.
-  -> Pawn.onPossessed.invoke(pawn, controller).
+  -> Pawn updates its internal controller reference (fires `onPossessed`).
+  -> Controller.onPossess(pawn).
 
 Unpossession:
 PlayerController.unpossess()
-  -> Pawn clears its controller reference.
-  -> Pawn.onUnpossessed.invoke(pawn, controller).
+  -> Controller.onUnpossess(pawn).
+  -> Pawn clears its controller reference (fires `onUnpossessed`).
 
 ## CharacterPawn / DefaultCharacterPawn override points
 
-- createRootComponent() — Replace the default capsule collision root.
-- createMovementComponent() — Swap in a different BasePawnMovementComponent subclass.
-- getInitialCameraPositions() — Returns { pivotPosition, cameraPosition }. Equal positions produce a first-person camera; different positions produce a third-person spring-arm camera.
-- setupCamera() — Override only if the default pivot/spring-arm hierarchy does not fit.
-- setupAnimationComponent() / setupVisualComponent() — Return null to opt out (typical for first-person), or return a custom AnimationStateMachineComponent / SceneComponent.
-- zoomStep(direction) — CharacterPawn-only, one-shot spring-arm `armLength` nudge for discrete input (mouse wheel). `DefaultPlayerController` calls this instead of `zoom()` when the possessed pawn is a `CharacterPawn`, since `zoom()` is a continuous per-frame rate (forwarded to `movementComponent` like any other `MovementPawn`) and would runaway-zoom if used for a one-shot step every frame a key/trigger is held.
+- `createCollision()` — Replace the default capsule collision (returns `SceneNode | null`;
+  `MoverCharacterPawn` requires non-null).
+- `createMovementNode()` — Swap in a different `BasePawnMovementNode` subclass (CharacterPawn family).
+  `MoverCharacterPawn` uses `createMoverNode()` / `MoverNode` instead.
+- `getInitialCameraPositions()` — Returns `{ pivotPosition, cameraPosition }`. Equal positions
+  produce a first-person camera; different positions produce a third-person spring-arm camera.
+- `setupCamera()` — Override only if the default pivot/spring-arm hierarchy does not fit.
+- `setupAnimationNode()` / `setupVisualNode()` — Return null to opt out (typical for first-person),
+  or return a custom animation / visual node.
+- `zoomStep(direction)` — CharacterPawn-only, one-shot spring-arm `armLength` nudge for discrete
+  input (mouse wheel).
 
-## Related Components
+## Related movement nodes
 
-Movement Components (all subclasses of BasePawnMovementComponent, used by MovementPawn+):
-- CharacterMovementComponent — Walking, jumping, falling (first- and third-person).
-- DirectionalCharacterMovementComponent — Character with directional input model.
-- AerialMovementComponent — Flying.
-- AirplaneMovementComponent — Airplane physics.
-- VehicleMovementComponent — Car physics.
-- TopDownMovementComponent — Overhead / RTS camera pan and zoom (world or camera-relative pan; root Y or camera local-Z zoom). See [Top-Down Camera](patterns/top-down-camera.md).
-- SpectatorMovementComponent — Noclip / free-fly observer.
-- PathMovementComponent — Path-following.
-- NpcMovementComponent — NPC locomotion.
-- TweenMovementComponent — Tween-driven movement.
-- SpringArmComponent — Camera distance control (used by CharacterPawn for third-person view).
+Pawn movement nodes (subclasses of `BasePawnMovementNode`, used as `MovementPawn.movementNode`):
+- CharacterMovementNode — Walking, jumping, falling.
+- DirectionalCharacterMovementNode — Directional input model.
+- AerialMovementNode — Flying.
+- AirplaneMovementNode — Airplane physics.
+- VehicleMovementNode — Car physics.
+- TopDownMovementNode — Overhead / RTS camera pan and zoom. See [Top-Down Camera](../patterns/top-down-camera.md).
+- SpectatorMovementNode — Noclip / free-fly observer.
+- NpcMovementNode — NPC locomotion.
 
-## Setup Guidelines
+Other movement helpers (extend `SceneNode`, not drop-in `movementNode` types):
+- PathMovementNode — Path-following.
+- TweenMovementNode — Tween-driven movement.
+- SpringArmNode — Camera distance control (used by CharacterPawn for third-person view).
 
-### First Person Pawn
+Deprecated `*Component` type aliases may still resolve to these `*Node` classes.
+
+## Setup guidelines
+
+### First person pawn
 - Extend CharacterPawn (or DefaultCharacterPawn for combat/interaction).
 - Override getInitialCameraPositions() to return identical pivot and camera positions (e.g., at eye height).
-- Override setupVisualComponent() and setupAnimationComponent() to return null.
+- Override setupVisualNode() and setupAnimationNode() to return null.
 
-### Third Person Pawn
+### Third person pawn
 - Extend CharacterPawn (or DefaultCharacterPawn). Default overrides produce a third-person spring-arm camera with the engine's default character mesh and animation set.
 - Override setup methods only when customizing mesh, animation, or camera distance/pitch.
 
-### Non-Character Movers (vehicles, flying cameras, turrets, NPCs)
-- Extend MovementPawn directly and pass a `movementComponent` in options — no camera/animation scaffold is created for you.
+### Non-character movers (vehicles, flying cameras, turrets, NPCs)
+- Extend MovementPawn directly and pass a `movementNode` in options — no camera/animation scaffold is created for you.
 - Add GameplayPawn (or extend it) only if the pawn needs to fire/interact.

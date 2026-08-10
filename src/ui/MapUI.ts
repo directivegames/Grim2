@@ -1396,8 +1396,6 @@ export class MapUI {
       if (config && this._useRisk5Plus) {
         config = applyRisk5PlusToMission(config, grimVault.getRisk5PlusCompletions());
       }
-    } else {
-      config = mission.missionConfig;
     }
 
     if (!config) {

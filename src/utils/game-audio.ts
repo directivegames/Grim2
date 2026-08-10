@@ -5,7 +5,7 @@ import { GameAudioManager } from '../actors/GameAudioManager.js';
 
 let cached: GameAudioManager | null = null;
 
-/** Cached singleton lookup — avoids O(n) `world.getActors().find` on hot paths. */
+/** Cached singleton lookup — avoids O(n) `world.getRootNodes().find` on hot paths. */
 export function getGameAudioManager(world: ENGINE.World): GameAudioManager {
   if (cached?.getWorld() === world) {
     return cached;

@@ -81,22 +81,29 @@ export class MobileCombatActor extends ENGINE.Actor {
     setInputManager: () => { /* no-op */ },
   };
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const world = this.getWorld();
     if (!world) {
-      return;
+      return false;
     }
     this._registerInputHandlerBeforePlayerController(world);
+  
+    return true;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     const world = this.getWorld();
     if (world) {
       world.inputManager.removeInputHandler(this._inputHandler);
     }
     resetMobileAim();
-    super.doEndPlay();
+    return true;
   }
 
   public override tickPrePhysics(deltaTime: number): void {
@@ -136,13 +143,13 @@ export class MobileCombatActor extends ENGINE.Actor {
 
     const pawn = this.getWorld()?.getFirstPlayerPawn();
     if (pawn instanceof IsometricPlayerPawn) {
-      const move = pawn.getComponents(IsometricMovementComponent)[0];
+      const move = pawn.getNodes(IsometricMovementComponent)[0];
       move?.setMobileStickInput(0, 0);
     }
   }
 
   public static ensureExists(world: ENGINE.World): MobileCombatActor {
-    const existing = world.getActors().find(
+    const existing = world.getRootNodes().find(
       (a): a is MobileCombatActor => a instanceof MobileCombatActor,
     );
     if (existing) {
@@ -150,7 +157,7 @@ export class MobileCombatActor extends ENGINE.Actor {
     }
 
     const actor = MobileCombatActor.create({ name: 'MobileCombat' });
-    world.addActor(actor);
+    world.add(actor);
     return actor;
   }
 
@@ -217,7 +224,7 @@ export class MobileCombatActor extends ENGINE.Actor {
       return;
     }
 
-    const move = pawn.getComponents(IsometricMovementComponent)[0];
+    const move = pawn.getNodes(IsometricMovementComponent)[0];
     if (!move) {
       return;
     }
@@ -253,7 +260,7 @@ export class MobileCombatActor extends ENGINE.Actor {
       return;
     }
 
-    const weapon = world.getActors().find(
+    const weapon = world.getRootNodes().find(
       (a): a is SpinningWeaponActor => a instanceof SpinningWeaponActor,
     );
     if (!weapon) {
@@ -276,7 +283,7 @@ export class MobileCombatActor extends ENGINE.Actor {
     if (!camera) {
       return;
     }
-    target.rootComponent.getWorldPosition(this._swingAimScratch);
+    target.getWorldPosition(this._swingAimScratch);
     this._swingAimScratch.project(camera);
     const mouse = (world.inputManager as unknown as { mousePosition: THREE.Vector2 }).mousePosition;
     mouse.set(

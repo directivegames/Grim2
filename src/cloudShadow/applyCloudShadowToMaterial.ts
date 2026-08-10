@@ -108,11 +108,9 @@ export function patchObjectMaterials(root: THREE.Object3D, debugLogging: boolean
 }
 
 export function patchWorldMaterials(world: ENGINE.World, debugLogging = false): number {
-  let count = patchObjectMaterials(world.scene, debugLogging);
-  for (const actor of world.getActors()) {
-    if (actor.rootComponent) {
-      count += patchObjectMaterials(actor.rootComponent, debugLogging);
-    }
+  let count = patchObjectMaterials(world, debugLogging);
+  for (const actor of world.getRootNodes()) {
+    count += patchObjectMaterials(actor, debugLogging);
   }
   return count;
 }

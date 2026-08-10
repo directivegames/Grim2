@@ -142,13 +142,15 @@ export class ZombieHordeManager extends ENGINE.Actor {
   public waveInterval: number = WAVE_INTERVAL_SEC;
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
-    super.initialize({ ...options, rootComponent: root });
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
+    super.initialize(options);
+    this.add(root);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    this._needsHookPlaced = true;
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._needsHookPlaced = true;
     this._mobileMemoryMode = isMobileDevice();
     this._iosMemoryMode = isIosDevice();
     if (this._mobileMemoryMode) {
@@ -169,7 +171,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     }
 
     if (this._mobileMemoryMode) {
-      return;
+      return true;
     }
 
     // Warm GLB caches so first reveals are not blocked on async load.
@@ -185,13 +187,15 @@ export class ZombieHordeManager extends ENGINE.Actor {
         void ENGINE.resourceManager.loadModel(ENGINE.AssetPath.fromString(type.modelUrl));
       }
     }
+  
+    return true;
   }
 
   private hookPlacedZombies(): void {
     const world = this.getWorld();
     if (!world) return;
 
-    const placedZombies = world.getActors().filter(
+    const placedZombies = world.getRootNodes().filter(
       (a): a is NewZombieActor => a instanceof NewZombieActor && !a.isPooled
     );
 
@@ -314,7 +318,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return false;
 
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     const spawnPos = this.getSpawnPosition(this._playerPos, 'respawn');
     if (!spawnPos) {
       return false;
@@ -438,7 +442,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return;
 
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     const spawnPos = this.getSpawnPosition(this._playerPos, 'elite');
     if (!spawnPos) {
       return;
@@ -493,7 +497,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     }
 
     actor.setHiddenInGame(true);
-    actor.rootComponent.position.set(0, -1000, 0);
+    actor.position.set(0, -1000, 0);
     let pool = this._idleElitePools.get(type.id);
     if (!pool) {
       pool = [];
@@ -527,8 +531,8 @@ export class ZombieHordeManager extends ENGINE.Actor {
         if (!actor.getWorld()) {
           return;
         }
-        actor.rootComponent.position.copy(spawnPos);
-        actor.rootComponent.updateMatrixWorld();
+        actor.position.copy(spawnPos);
+        actor.updateMatrixWorld();
         actor.setHiddenInGame(false);
         if (actor instanceof BigUndeadActor) {
           actor.applyMissionRiskMultipliers(this._riskHealthMult, this._riskDamageMult);
@@ -582,7 +586,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return null;
 
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     const spawnPos = this.getSpawnPosition(this._playerPos, 'spawn');
     if (!spawnPos) {
       return null;
@@ -600,14 +604,14 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
     const zombie = NewZombieActor.create({ position: spawnPos });
     zombie.isPooled = true;
-    zombie.rootComponent.scale.set(1.224317, 1.157981, 1.410963);
+    zombie.scale.set(1.224317, 1.157981, 1.410963);
     this._applyRiskToZombie(zombie);
 
     const onDied = () => this.onPoolZombieDied(zombie);
     zombie.onDied = onDied;
     zombie.setHiddenInGame(true);
 
-    world.addActor(zombie);
+    world.add(zombie);
     this._activeZombies.set(zombie, { actor: zombie, onDiedCallback: onDied });
 
     this.revealZombieWhenVisualReady(world, zombie, spawnPos);
@@ -645,7 +649,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     const world = this.getWorld();
     if (!world) return;
 
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof NewZombieActor && actor.isPooled && actor.isHiddenInGame()) {
         actor.onDied = null;
         if (this._mobileMemoryMode && this._idlePool.size >= MOBILE_IDLE_POOL_LIMIT) {
@@ -742,7 +746,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return;
 
-    player.rootComponent.getWorldPosition(this._playerPos);
+    player.getWorldPosition(this._playerPos);
     this._relocateUsedMarkers.clear();
 
     for (const { actor: zombie } of this._activeZombies.values()) {
@@ -750,7 +754,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
         continue;
       }
 
-      zombie.rootComponent.getWorldPosition(this._zombiePos);
+      zombie.getWorldPosition(this._zombiePos);
       if (this._horizontalDistSq(this._zombiePos, this._playerPos) < RELOCATE_MIN_DISTANCE_SQ) {
         continue;
       }
@@ -775,7 +779,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
           continue;
         }
 
-        actor.rootComponent.getWorldPosition(this._zombiePos);
+        actor.getWorldPosition(this._zombiePos);
         if (this._horizontalDistSq(this._zombiePos, this._playerPos) < RELOCATE_MIN_DISTANCE_SQ) {
           continue;
         }
@@ -785,8 +789,8 @@ export class ZombieHordeManager extends ENGINE.Actor {
           continue;
         }
 
-        actor.rootComponent.position.copy(spawnPos);
-        actor.rootComponent.updateMatrixWorld();
+        actor.position.copy(spawnPos);
+        actor.updateMatrixWorld();
         if (actor instanceof BigUndeadActor) {
           actor.wakeForHordeSpawn();
         }
@@ -1004,7 +1008,10 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._needsHookPlaced = true;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._pendingWaveSpawns.length = 0;
 
     // Disconnect placed-zombie callbacks
@@ -1032,8 +1039,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
       }
       active.clear();
     }
-
-    super.doEndPlay();
+    return true;
   }
 
   public override getEditorClassIcon(): string | null {

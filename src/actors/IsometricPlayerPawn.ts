@@ -7,7 +7,7 @@
  *      └─ springArm
  *         └─ camera
  *   └─ visualMesh (Grim2.glb) ← rotation.y smooth facing; skeletal float animations
- *   └─ movementComponent (IsometricMovementComponent)
+ *   └─ movementNode (IsometricMovementComponent)
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -32,6 +32,7 @@ import { missionState } from '../mission/MissionState.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 import { destroyActorWhenGltfIdle } from '../utils/safe-actor-destroy.js';
 import { logMissionReset } from '../utils/mission-reset-log.js';
+import { RootDeathCharacterStats } from '../components/RootDeathCharacterStats.js';
 
 /**
  * True symmetric isometric tilt: elevation arctan(1/√2) ≈ 35.26° from horizontal,
@@ -111,7 +112,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       this.visualGroundClearance = options.visualGroundClearance;
     }
 
-    const playerStats = ENGINE.CharacterStatsComponent.create({
+    const playerStats = RootDeathCharacterStats.create({
+      name: 'PlayerStats',
       maxHealth: 100,
       healthRegen: 0,
       attackCooldown: 1,
@@ -120,9 +122,16 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       speed: 5,
     });
 
+    ensureGrimCollisionProfile();
     super.initialize({
       ...options,
-      sceneComponents: [...(options?.sceneComponents ?? []), playerStats],
+      children: [...(options?.children ?? []), playerStats],
+      physicsOptions: {
+        enabled: true,
+        motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
+        collisionProfile: GRIM_COLLISION_PROFILE,
+        ...options?.physicsOptions,
+      },
     });
   }
 
@@ -257,23 +266,23 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   };
 
   /**
-   * Engine Actor.handleDeath() destroys the actor. Grim stays in the scene at 0 HP;
-   * mission fail is driven by _onHealthChanged → missionState.onGrimDied().
+   * CharacterStats would destroy the root by default; Grim stays at 0 HP.
+   * Mission fail is driven by _onHealthChanged → missionState.onGrimDied().
    */
-  public override handleDeath(_hitInfo?: ENGINE.DamageHitInfo): void {
+  public handleDeath(_hitInfo?: ENGINE.DamageHitInfo): void {
     /* no-op */
   }
 
   // ── Component factory overrides ───────────────────────────────────────────
 
-  protected override setupAnimationComponent(): ENGINE.AnimationStateMachineComponent | null {
-    const anim = ENGINE.AnimationStateMachineComponent.create({ configUrl: GRIM2_ANIM_URL });
-    this.rootComponent.add(anim);
+  protected override setupAnimationNode(): ENGINE.AnimationStateMachineNode | null {
+    const anim = ENGINE.AnimationStateMachineNode.create({ configUrl: GRIM2_ANIM_URL });
+    this.add(anim);
     return anim;
   }
 
-  protected override setupVisualComponent(): ENGINE.SceneComponent | null {
-    const meshComponent = ENGINE.GLTFMeshComponent.create({
+  protected override setupVisualNode(): ENGINE.SceneNode | null {
+    const meshComponent = ENGINE.ModelMeshNode.create({
       modelUrl: GRIM2_MODEL_URL,
       material: GRIM2_MATERIAL_URL,
       scale: new THREE.Vector3(1, 1, 1),
@@ -284,7 +293,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     });
 
     // Add the 2 point lights from the scene Grim2
-    const leftLight = ENGINE.PointLightComponent.create({
+    const leftLight = ENGINE.PointLightNode.create({
       color: new THREE.Color(0.964686, 0.964686, 0.061246),
       intensity: 5,
       position: new THREE.Vector3(-0.114043, 1.331329, 0.335526),
@@ -292,7 +301,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     leftLight.name = 'Point Light';
     meshComponent.add(leftLight);
 
-    const rightLight = ENGINE.PointLightComponent.create({
+    const rightLight = ENGINE.PointLightNode.create({
       color: new THREE.Color(0.964686, 0.964686, 0.061246),
       intensity: 5,
       position: new THREE.Vector3(0.060097, 1.331329, 0.335526),
@@ -300,44 +309,43 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     rightLight.name = 'Point Light 02';
     meshComponent.add(rightLight);
 
-    this.rootComponent.add(meshComponent);
+    this.add(meshComponent);
 
     const dustTrail = DustTrailComponent.create();
-    this.rootComponent.add(dustTrail);
+    this.add(dustTrail);
 
     const shadow = BlobShadowComponent.create({ radius: 0.55, opacity: 0.35 });
-    this.rootComponent.add(shadow);
+    this.add(shadow);
 
     // Weapon swing arc indicator - shows 180° attack area on floor
     const weaponArc = WeaponSwingArcComponent.create();
-    this.rootComponent.add(weaponArc);
+    this.add(weaponArc);
     this._weaponArcComponent = weaponArc;
 
     return meshComponent;
   }
 
-  protected override createRootComponent(): ENGINE.SceneComponent {
-    ensureGrimCollisionProfile();
+  protected override createCollision(): ENGINE.SceneNode | null {
     const radius = ENGINE.CHARACTER_WIDTH / 2;
-    return ENGINE.MeshComponent.create({
-      name: 'RootComponent',
+    return ENGINE.MeshNode.create({
+      name: 'CollisionCapsule',
       geometry: new THREE.CapsuleGeometry(radius, ENGINE.CHARACTER_HEIGHT - radius * 2),
       material: new THREE.MeshStandardMaterial({ visible: false }),
+      selfHidden: true,
       physicsOptions: {
         enabled: true,
-        motionType: ENGINE.PhysicsMotionType.KinematicVelocityBased,
-        collisionProfile: GRIM_COLLISION_PROFILE,
+        contributeToParentCollider: true,
       },
     });
   }
 
-  protected override createMovementComponent(): ENGINE.BasePawnMovementComponent {
+  protected override createMovementNode(): ENGINE.BasePawnMovementNode {
     const mc = IsometricMovementComponent.create();
     mc.accelerationLambda = 30;
     mc.decelerationLambda = 25;
     // Wider controller skin + higher auto-step to reduce snagging on floor edges / thin static geometry.
     mc.characterControllerOptions = {
-      ...ENGINE.CharacterMovementComponent.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
+      ...ENGINE.CharacterMovementNode.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
       offset: 0.04,
       applyImpulsesToDynamicBodies: false,
       autoStepConfig: {
@@ -357,15 +365,15 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   protected override setupCamera(): THREE.Camera {
     const camera = new THREE.PerspectiveCamera(50, 1, ENGINE.CAMERA_NEAR, ENGINE.CAMERA_FAR);
 
-    this.cameraPivot = ENGINE.SceneComponent.create();
+    this.cameraPivot = ENGINE.SceneNode.create();
     this.cameraPivot.rotation.set(ISO_PITCH, ISO_YAW, 0, 'YXZ');
 
-    this.springArm = ENGINE.SpringArmComponent.create({
+    this.springArm = ENGINE.SpringArmNode.create({
       armLength: this.cameraDistance,
       collisionEnabled: false,
     });
 
-    this.rootComponent.add(this.cameraPivot);
+    this.add(this.cameraPivot);
     this.cameraPivot.add(this.springArm);
     this.springArm.add(camera);
 
@@ -416,8 +424,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
    */
   public override setHiddenInGame(hidden: boolean): void {
     super.setHiddenInGame(hidden);
-    this.rootComponent.visible = !hidden;
-    this.rootComponent.traverse(obj => {
+    this.visible = !hidden;
+    this.traverse(obj => {
       obj.visible = !hidden;
       if (hidden) {
         obj.layers.disableAll();
@@ -431,7 +439,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   public restoreFullHealth(): void {
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) {
       return;
     }
@@ -445,8 +453,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._healthBarUI?.updateHealth(max, max);
   }
 
-  private _findGrimVisualMesh(): ENGINE.GLTFMeshComponent | null {
-    for (const mesh of this.getComponents(ENGINE.GLTFMeshComponent)) {
+  private _findGrimVisualMesh(): ENGINE.ModelMeshNode | null {
+    for (const mesh of this.getNodes(ENGINE.ModelMeshNode)) {
       const url = (mesh as unknown as { modelUrl?: string }).modelUrl ?? '';
       if (url.includes('Grim2')) {
         return mesh;
@@ -460,7 +468,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       return;
     }
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) {
       return;
     }
@@ -490,7 +498,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._soulHealBuffer = 0;
     this.grimGrinderSoulProgress = 0;
 
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       // heal() is gated on isDead, so we must clear private state directly first,
       // then fire onHealthChanged so the health bar updates before applyGrimVaultStats
@@ -527,15 +535,15 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       logMissionReset(`${phase}:spawn-missing`, {
         playerStartFound: false,
         grimPos: {
-          x: this.rootComponent.position.x,
-          y: this.rootComponent.position.y,
-          z: this.rootComponent.position.z,
+          x: this.position.x,
+          y: this.position.y,
+          z: this.position.z,
         },
       });
       return;
     }
 
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       mc.resetRuntimeMotion();
 
@@ -548,7 +556,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
         position: target,
         rotation: new THREE.Euler(0, this._missionSpawnYaw, 0),
       });
-      const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+      const stats = this.getNode(ENGINE.CharacterStatsNode);
       logMissionReset(`${phase}:spawn-teleport`, {
         playerStart: {
           x: this._missionSpawnPosition.x,
@@ -561,15 +569,15 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
         maxHealth: stats?.getMaxHealth(),
       });
     } else {
-      this.rootComponent.position.copy(this._missionSpawnPosition);
-      this.rootComponent.rotation.y = this._missionSpawnYaw;
+      this.position.copy(this._missionSpawnPosition);
+      this.rotation.y = this._missionSpawnYaw;
       logMissionReset(`${phase}:spawn-direct`, {
         x: this._missionSpawnPosition.x,
         y: this._missionSpawnPosition.y,
         z: this._missionSpawnPosition.z,
       });
     }
-    this.rootComponent.updateWorldMatrix(true, true);
+    this.updateWorldMatrix(true, true);
   }
 
   private static readonly _spawnTargetScratch = new THREE.Vector3();
@@ -581,19 +589,19 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       return;
     }
 
-    const playerStart = world.getActors(ENGINE.PlayerStart)[0];
+    const playerStart = world.getNodes(ENGINE.PlayerStart)[0];
     if (!playerStart) {
       return;
     }
 
-    playerStart.rootComponent.getWorldPosition(this._playerPosScratch);
+    playerStart.getWorldPosition(this._playerPosScratch);
     this._missionSpawnPosition = this._playerPosScratch.clone();
-    this._missionSpawnYaw = playerStart.rootComponent.rotation.y;
+    this._missionSpawnYaw = playerStart.rotation.y;
   }
 
   /** Apply purchased Grim upgrades to runtime stats (call after vault changes or mission start). */
   public applyGrimVaultStats(): void {
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) {
       return;
     }
@@ -613,18 +621,18 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     hookPlayerDamageMitigation(stats);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
-    this._captureMissionSpawnFromPlayerStart();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._captureMissionSpawnFromPlayerStart();
     if (!this._missionSpawnPosition) {
-      this.rootComponent.getWorldPosition(this._playerPosScratch);
+      this.getWorldPosition(this._playerPosScratch);
       this._missionSpawnPosition = this._playerPosScratch.clone();
-      this._missionSpawnYaw = this.rootComponent.rotation.y;
+      this._missionSpawnYaw = this.rotation.y;
     }
 
     this.applyGrimVaultStats();
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       this._lastKnownHealth = stats.getCurrentHealth();
       stats.onHealthChanged.add(this._onHealthChanged);
@@ -640,9 +648,11 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
       // Initialize KO sign UI
       void this._initKOSignUI();
     }
+  
+    return true;
   }
 
-  private async _initHealthBarUI(stats: ENGINE.CharacterStatsComponent): Promise<void> {
+  private async _initHealthBarUI(stats: ENGINE.CharacterStatsNode): Promise<void> {
     this._healthBarUI = await HealthBarUI.getInstance(this.getWorld());
     this._healthBarUI.updateHealth(stats.getCurrentHealth(), stats.getMaxHealth());
   }
@@ -684,7 +694,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
   /** Facing from current movement velocity; falls back to visual facing when still. */
   public getMovementYaw(): number {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const vel = mc.getWorldVelocity();
       if (vel.lengthSq() > 0.01) {
@@ -699,22 +709,22 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
    * Uses velocity when moving; otherwise the visual mesh euler.
    */
   public getDriveYaw(): number {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const vel = mc.getWorldVelocity();
       if (vel.lengthSq() > 0.01) {
         return Math.atan2(vel.x, vel.z);
       }
     }
-    if (this.visualComponent) {
-      return this.visualComponent.rotation.y;
+    if (this.visualNode) {
+      return this.visualNode.rotation.y;
     }
     return this._facingYaw;
   }
 
   /** Yaw for grimgrinder.glb — follows actual movement velocity (A/D differ correctly). */
   public getGrimGrinderCarYaw(): number {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const vel = mc.getWorldVelocity();
       if (vel.lengthSq() > 0.01) {
@@ -788,7 +798,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     const slomoZoomFactor = slomo < 0.5 ? (1.0 - slomo) * 0.3 : 0;
 
     // Zoom in slightly when health is low (death tension)
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     const healthPercent = stats ? stats.getCurrentHealth() / stats.getMaxHealth() : 1.0;
     const deathZoomFactor = healthPercent < 0.25 ? (0.25 - healthPercent) * 0.5 : 0;
 
@@ -803,7 +813,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     let target = IsometricPlayerPawn.BASE_FOV;
 
     // Speed boost: FOV increases when moving fast
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (mc instanceof IsometricMovementComponent) {
       const speed = mc.getWorldVelocity().length();
       if (speed > 3) {
@@ -964,8 +974,8 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   // ── Visual facing ─────────────────────────────────────────────────────────
 
   private _updateVisualFacing(deltaTime: number): void {
-    if (!this.visualComponent) return;
-    const mc = this.movementComponent;
+    if (!this.visualNode) return;
+    const mc = this.movementNode;
     if (!(mc instanceof IsometricMovementComponent)) return;
 
     const vel = mc.getWorldVelocity();
@@ -977,7 +987,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     diff = ((diff + Math.PI) % (Math.PI * 2)) - Math.PI;
     this._facingYaw += Math.sign(diff) * Math.min(Math.abs(diff), ROTATE_SPEED * deltaTime);
 
-    this.visualComponent.rotation.y = this._facingYaw;
+    this.visualNode.rotation.y = this._facingYaw;
   }
 
   /**
@@ -998,7 +1008,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
     if (this._raycaster.ray.intersectPlane(this._groundPlane, this._mouseHitPoint)) {
       // Calculate angle from player to mouse hit point
-      this.rootComponent.getWorldPosition(this._playerPosScratch);
+      this.getWorldPosition(this._playerPosScratch);
       const dx = this._mouseHitPoint.x - this._playerPosScratch.x;
       const dz = this._mouseHitPoint.z - this._playerPosScratch.z;
       const aimAngle = Math.atan2(dx, dz);
@@ -1012,7 +1022,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     if (this._sceneGrim2PlaceholderRemoved) return;
     const world = this.getWorld();
     if (!world) return;
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor.uuid !== SCENE_PLACEHOLDER_GRIM2_ACTOR_UUID) continue;
 
       // Defer destroy until GLTF load callbacks finish (avoids "ensure failed").
@@ -1034,7 +1044,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   // ── Animation parameters ─────────────────────────────────────────────────
 
   protected override getAnimationParameters(): Record<string, unknown> {
-    const mc = this.movementComponent;
+    const mc = this.movementNode;
     if (!(mc instanceof IsometricMovementComponent)) return { state: 'float' };
 
     const moving = mc.getWorldVelocity().length() > 0.1;
@@ -1265,7 +1275,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
 
     // Compute desired offset in root-local (=world) XZ toward the fist
     const playerPos = this._cinematicPlayerPos;
-    this.rootComponent.getWorldPosition(playerPos);
+    this.getWorldPosition(playerPos);
 
     this._cinematicDesired.set(
       this._cinematicTarget.x - playerPos.x,
@@ -1315,7 +1325,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
   }
 
   private _tickPassiveRegen(deltaTime: number): void {
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     if (!stats) return;
 
     const current = stats.getCurrentHealth();
@@ -1339,7 +1349,10 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     stats.heal(hpToHeal);
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     // Ensure slomo is restored if the pawn is destroyed mid-cinematic
     const world = this.getWorld();
     if (world) {
@@ -1350,7 +1363,7 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     this._streakOrbitYaw = 0;
     this._slomoOverlayEl?.remove();
     this._slomoOverlayEl = null;
-    const stats = this.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = this.getNode(ENGINE.CharacterStatsNode);
     stats?.onHealthChanged.remove(this._onHealthChanged);
     this._vignetteEl?.remove();
     this._vignetteEl = null;
@@ -1368,6 +1381,6 @@ export class IsometricPlayerPawn extends ENGINE.CharacterPawn {
     // Clean up KO sign UI
     this._koSignUI?.destroy();
     this._koSignUI = null;
-    super.doEndPlay();
+    return true;
   }
 }

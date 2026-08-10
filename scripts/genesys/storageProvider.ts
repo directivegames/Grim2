@@ -27,7 +27,7 @@ export class StorageProvider implements ENGINE.IStorageProvider {
     }
     else if (filePath.startsWith(ENGINE.ENGINE_PATH_PREFIX)) {
       filePath = AssetPath.stripPrefix(filePath, ENGINE.ENGINE_PATH_PREFIX);
-      rootPath = path.join(getProjectRoot(), 'node_modules', 'genesys.js');
+      rootPath = path.join(getProjectRoot(), 'node_modules', '@gnsx', 'genesys.js');
     }
 
     if (rootPath !== undefined) {

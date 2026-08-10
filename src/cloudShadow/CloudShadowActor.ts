@@ -14,12 +14,12 @@ export type CloudShadowActorOptions = ENGINE.ActorOptions & CloudShadowComponent
 export class CloudShadowActor extends ENGINE.Actor {
   public override initialize(options?: CloudShadowActorOptions): void {
     super.initialize(options);
-    const component = CloudShadowComponent.create(options);
-    this.setRootComponent(component, true);
+    const component = CloudShadowComponent.create({ name: 'CloudShadow', ...options });
+    this.add(component);
   }
 
   public getCloudShadowComponent(): CloudShadowComponent | null {
-    return this.rootComponent instanceof CloudShadowComponent ? this.rootComponent : null;
+    return this.getNode(CloudShadowComponent);
   }
 
   public override getEditorClassIcon(): string | null {

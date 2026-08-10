@@ -59,6 +59,7 @@ import './components/FireLightFlickerComponent.js';
 import './components/GrimGrinderControllerComponent.js';
 import './components/movement/IsometricMovementComponent.js';
 import './components/PoliceLightFlasherComponent.js';
+import './components/RootDeathCharacterStats.js';
 import './components/vfx/BillboardSmokePuffs.js';
 import './components/vfx/BlobShadowComponent.js';
 import './components/vfx/BloodSplatterComponent.js';

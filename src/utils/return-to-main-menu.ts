@@ -19,6 +19,6 @@ export function returnToMainMenu(world: ENGINE.World): void {
   const menu = StartMenuUI.reopenAfterQuit(world);
   MenuMusicActor.ensureExists(world);
   menu.setOnPlay(() => {
-    world.addActor(GrimIntroActor.create({ name: 'GrimIntroActor' }));
+    world.add(GrimIntroActor.create({ name: 'GrimIntroActor' }));
   });
 }

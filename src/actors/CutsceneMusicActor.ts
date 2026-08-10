@@ -6,20 +6,21 @@ const CUTSCENE_TRACK = '@project/assets/sounds/cutscenemusic.mp3';
 
 @ENGINE.GameClass()
 export class CutsceneMusicActor extends ENGINE.Actor {
-  private _sound: ENGINE.SoundComponent | null = null;
+  private _sound: ENGINE.SoundNode | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
   private _stopped = false;
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    this._stopped = false;
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._stopped = false;
 
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'cutsceneMusic';
     soundResource.audioPath = CUTSCENE_TRACK;
     soundResource.volume = BASE_CUTSCENE_MUSIC_VOLUME * gameSettings.musicVolume;
 
-    this._sound = ENGINE.SoundComponent.create({
+    this._sound = ENGINE.SoundNode.create({
       loop: true,
       autoPlay: false,
       positional: false,
@@ -27,7 +28,7 @@ export class CutsceneMusicActor extends ENGINE.Actor {
       sounds: [soundResource],
     });
 
-    this.addComponent(this._sound);
+    this.add(this._sound);
 
     void this._sound.waitForLoad().then(async () => {
       if (this._stopped || !this._sound) return;
@@ -38,6 +39,8 @@ export class CutsceneMusicActor extends ENGINE.Actor {
       if (this._stopped || !this._sound) return;
       void this._sound.play('cutsceneMusic');
     });
+  
+    return true;
   }
 
   public stopNow(): void {
@@ -52,31 +55,34 @@ export class CutsceneMusicActor extends ENGINE.Actor {
 
   public static stopAll(world: ENGINE.World): void {
     const toRemove: CutsceneMusicActor[] = [];
-    for (const a of world.getActors()) {
+    for (const a of world.getRootNodes()) {
       if (a instanceof CutsceneMusicActor) {
         a.stopNow();
         toRemove.push(a);
       }
     }
     if (toRemove.length > 0) {
-      world.removeActors(...toRemove);
+      world.remove(...toRemove);
     }
   }
 
   public static ensureExists(world: ENGINE.World): CutsceneMusicActor {
-    const existing = world.getActors().find(a => a instanceof CutsceneMusicActor);
+    const existing = world.getRootNodes().find(a => a instanceof CutsceneMusicActor);
     if (existing instanceof CutsceneMusicActor) {
       return existing;
     }
     const actor = CutsceneMusicActor.create({ name: 'CutsceneMusicActor' });
-    world.addActor(actor);
+    world.add(actor);
     return actor;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._stopped = true;
     this._sound?.stopAll();
-    super.doEndPlay();
+    return true;
   }
 }
 

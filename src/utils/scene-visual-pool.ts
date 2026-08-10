@@ -1,6 +1,9 @@
 /**
  * Shared pool for editor-placed scene meshes (fists, weapons).
  * Names: "fistofannoyance", "fistofannoyance 02", "weapon", "weapon 02", etc.
+ *
+ * Engine 14: scene weapons/fists serialize as ModelMeshActor (SceneNode roots),
+ * not Actor — collect via getRootNodes, never getRootNodes().
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
@@ -37,29 +40,29 @@ export function isSceneWeaponActor(name: string): boolean {
   return n === WEAPON_PREFIX || /^weapon\s+0*\d+$/.test(n);
 }
 
-function sortByIndex(a: ENGINE.Actor, b: ENGINE.Actor, indexFn: (name: string) => number): number {
+function sortByIndex(a: ENGINE.SceneNode, b: ENGINE.SceneNode, indexFn: (name: string) => number): number {
   const da = indexFn(a.name);
   const db = indexFn(b.name);
   if (da !== db) return da - db;
   return a.name.localeCompare(b.name);
 }
 
-export function collectSceneFists(world: ENGINE.World): ENGINE.Actor[] {
-  const fists: ENGINE.Actor[] = [];
-  for (const actor of world.getActors()) {
-    if (isSceneFistActor(actor.name)) {
-      fists.push(actor);
+export function collectSceneFists(world: ENGINE.World): ENGINE.SceneNode[] {
+  const fists: ENGINE.SceneNode[] = [];
+  for (const root of world.getRootNodes()) {
+    if (isSceneFistActor(root.name)) {
+      fists.push(root);
     }
   }
   fists.sort((a, b) => sortByIndex(a, b, fistSortIndex));
   return fists;
 }
 
-export function collectSceneWeapons(world: ENGINE.World): ENGINE.Actor[] {
-  const weapons: ENGINE.Actor[] = [];
-  for (const actor of world.getActors()) {
-    if (isSceneWeaponActor(actor.name)) {
-      weapons.push(actor);
+export function collectSceneWeapons(world: ENGINE.World): ENGINE.SceneNode[] {
+  const weapons: ENGINE.SceneNode[] = [];
+  for (const root of world.getRootNodes()) {
+    if (isSceneWeaponActor(root.name)) {
+      weapons.push(root);
     }
   }
   weapons.sort((a, b) => sortByIndex(a, b, weaponSortIndex));
@@ -68,9 +71,9 @@ export function collectSceneWeapons(world: ENGINE.World): ENGINE.Actor[] {
 
 // ─── Fist pool ───────────────────────────────────────────────────────────────
 
-const _fistsInUse = new Set<ENGINE.Actor>();
+const _fistsInUse = new Set<ENGINE.SceneNode>();
 
-export function acquireSceneFist(world: ENGINE.World): ENGINE.Actor | null {
+export function acquireSceneFist(world: ENGINE.World): ENGINE.SceneNode | null {
   for (const fist of collectSceneFists(world)) {
     if (!_fistsInUse.has(fist)) {
       _fistsInUse.add(fist);
@@ -80,22 +83,22 @@ export function acquireSceneFist(world: ENGINE.World): ENGINE.Actor | null {
   return null;
 }
 
-export function releaseSceneFist(fist: ENGINE.Actor | null): void {
+export function releaseSceneFist(fist: ENGINE.SceneNode | null): void {
   if (!fist) return;
   _fistsInUse.delete(fist);
-  fist.rootComponent.position.y = HIDDEN_Y;
+  fist.position.y = HIDDEN_Y;
 }
 
 export function parkAllSceneFists(world: ENGINE.World): void {
   for (const fist of collectSceneFists(world)) {
     if (!_fistsInUse.has(fist)) {
-      fist.rootComponent.position.y = HIDDEN_Y;
+      fist.position.y = HIDDEN_Y;
     }
   }
 }
 
 export function parkAllSceneWeapons(world: ENGINE.World): void {
   for (const weapon of collectSceneWeapons(world)) {
-    weapon.rootComponent.visible = false;
+    weapon.visible = false;
   }
 }

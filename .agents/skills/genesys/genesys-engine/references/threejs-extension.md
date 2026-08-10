@@ -1,10 +1,10 @@
 # Three.js Extension
 
-The engine augments native Three.js classes with world-space operations, component discovery, and lifecycle hooks.
+The engine augments native Three.js classes with world-space operations, node discovery, and lifecycle hooks.
 
 Reference: See ThreeJsExtensions.ts in engine source.
 
-## World-Space Transform Operations
+## World-space transform operations
 
 Native Three.js only provides local-space transform manipulation. The extension adds world-space setters:
 
@@ -14,14 +14,14 @@ Native Three.js only provides local-space transform manipulation. The extension 
 - setWorldScale(scale)
 - setWorldTransform({position, rotation, scale})
 
-## World-Space Transform Queries
+## World-space transform queries
 
 - getWorldTransform()
 - getWorldPosition(target?)
 - getWorldRotation(target?)
 - getWorldScale(target?)
 
-## Absolute Transform Flags
+## Absolute transform flags
 
 Flags that ensure objects maintain fixed world positions regardless of parent movement:
 
@@ -31,14 +31,14 @@ Flags that ensure objects maintain fixed world positions regardless of parent mo
 
 The updateWorldMatrix() and updateMatrixWorld() methods respect these flags.
 
-## Component Discovery
+## Node discovery
 
-Methods for finding components within the scene graph hierarchy:
+Methods for finding nodes within the scene graph hierarchy:
 
-- getComponent(Type) — Find first object of specified type in this subtree (depth-first).
-- getComponents(Type) — Find all objects of specified type in this subtree.
+- getNode(Type) — Find first object of specified type in this subtree (depth-first).
+- getNodes(Type) — Find all objects of specified type in this subtree.
 
-## Lifecycle Hooks
+## Lifecycle hooks
 
 Standardized methods propagated through the scene graph:
 
@@ -47,22 +47,23 @@ Standardized methods propagated through the scene graph:
 - tickPrePhysics(deltaTime) — Update called before physics.
 - tickPostPhysics(deltaTime) — Update called after physics.
 
-## Actor Association
+## Root association
 
-- getActor() — Traverse up parent hierarchy to find the owning Actor.
+- getRoot() — Traverse up the parent hierarchy to find the placeable root SceneNode.
+- getActor() — Deprecated; returns an Actor root only, otherwise null. Prefer getRoot().
 
-## Serialization Support
+## Serialization support
 
 - asExportedObject() — Serialize to JSON format.
 - describe(options?) — Generate structured debug description.
 - isTransient() / setTransient(boolean) — Mark object as non-persistent.
 
-## Visibility Utilities
+## Visibility utilities
 
 - isHidden()
 - setHidden(hidden, propagateToChildren?)
 
-## Local Transform Setters
+## Local transform setters
 
 Fluent API for setting local transforms:
 

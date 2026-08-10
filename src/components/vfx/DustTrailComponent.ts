@@ -1,5 +1,5 @@
 /**
- * DustTrailComponent — foot dust while the player moves (billboard puffs, no VFXComponent).
+ * DustTrailComponent — foot dust while the player moves (billboard puffs, no VFXNode).
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
@@ -23,15 +23,22 @@ const DUST_TEXTURE_PATH = '@project/assets/textures/vfx/DustPuffSoft.webp';
 const _spawnPos = new THREE.Vector3();
 
 @ENGINE.GameClass()
-export class DustTrailComponent extends ENGINE.SceneComponent {
+export class DustTrailComponent extends ENGINE.SceneNode {
   private readonly _puffs: BillboardSmokePuff[] = [];
   private _dustTexture: THREE.Texture | null = null;
   private _checkTimer = 0;
   private _spawnTimer = 0;
   private _wasMoving = false;
 
-  public override async beginPlay(): Promise<void> {
-    super.beginPlay();
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
+    void this._beginPlayAsync();
+    return true;
+  }
+
+  private async _beginPlayAsync(): Promise<void> {
     this._dustTexture = await loadSmokeTexture(DUST_TEXTURE_PATH);
     const world = this.getWorld();
     if (world && this._dustTexture) {
@@ -52,8 +59,8 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
     }
     this._checkTimer = 0;
 
-    const actor = this.getActor();
-    const mc = actor?.getComponent(IsometricMovementComponent);
+    const actor = this.getRoot();
+    const mc = actor?.getNode(IsometricMovementComponent);
     const isMoving = !!mc && mc.getWorldVelocity().lengthSq() >= MIN_SPEED_SQ;
 
     if (!isMoving) {
@@ -93,9 +100,12 @@ export class DustTrailComponent extends ENGINE.SceneComponent {
     });
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     disposeBillboardSmokePuffs(this._puffs);
     this._dustTexture = null;
-    super.endPlay();
+    return true;
   }
 }

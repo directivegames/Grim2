@@ -13,10 +13,10 @@ function updatePlayerList(
   contentDiv: HTMLElement,
   world: ENGINE.World,
 ): void {
-  const playerInfoActors = world.getActors(ENGINE.PlayerInfo);
+  const playerInfoNodes = world.getNodes(ENGINE.PlayerInfo);
   contentDiv.replaceChildren();
 
-  if (playerInfoActors.length === 0) {
+  if (playerInfoNodes.length === 0) {
     const empty = document.createElement('span');
     empty.textContent = 'No players connected';
     contentDiv.appendChild(empty);
@@ -25,7 +25,7 @@ function updatePlayerList(
 
   const localClientId = world.netWorld?.clientId;
 
-  for (const playerInfo of playerInfoActors) {
+  for (const playerInfo of playerInfoNodes) {
     const name = playerInfo.playerName || 'Unknown';
     const isLocal = playerInfo.clientId === localClientId;
 

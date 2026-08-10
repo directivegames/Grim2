@@ -7,9 +7,9 @@
 
   **Example:**  
   If an asset is located at:  
-  `node_modules/@gnsx/genesys.js/assets/models/SM_Monkey.glb`  
+  `node_modules/@gnsx/genesys.js/assets/models/SM_Cube.glb`  
   Then the corresponding URL should be:  
-  `@engine/assets/models/SM_Monkey.glb`
+  `@engine/assets/models/SM_Cube.glb`
 
 
 ## Project Assets
@@ -39,11 +39,11 @@
 - Never `TextureLoader` after resolve (baking → `.ktx2`). `TextureLoader` only for external URLs; `resolveAssetPathsInText` only for HTML.
 
 ## Prefabs
-- Prefabs are json files stored within /assets/prefabs, with the suffix .prefab.json.
-- Prefabs can be validated via `pnpm validate-prefabs`.
-- When referencing classes in prefab, use the appropriate prefix.
-  Engine classes **must** be referenced as `ENGINE.{class name}`, example: `ENGINE.Actor`, `ENGINE.SceneComponent`.
-  Custom game classes **must** be referenced as `GAME.{class name}`, example: `GAME.MyCustomActor`, `GAME.MyCustomComponent`.
+- Prefabs are json files stored under `/assets` (commonly `/assets/prefabs`), with the suffix `.prefab.json`.
+- Prefer Prefabs for reusable scene-node templates.
+- When referencing classes in prefab/serialized data, use the appropriate prefix.
+  Engine classes **must** be referenced as `ENGINE.{class name}`, example: `ENGINE.SceneNode`, `ENGINE.MeshNode`.
+  Custom game classes **must** be referenced as `GAME.{class name}`, example: `GAME.MyCustomNode`, `GAME.MyPickupRoot`.
 
 ---
 
@@ -51,17 +51,17 @@
 
 Do **not** read or open `*.genesys-scene` files unless the user explicitly asks or MCP is unavailable and filesystem fallback is appropriate. These files are large and the editor is the source of truth for scene state.
 
-For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md`): run `query_editor(getState)`, inspect only what is needed, mutate with `action_actor`, `action_component`, `action_scene`, or `batch_execute`, then `action_scene(save)` when the scene changed.
+For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md`): run `query_editor(getState)`, inspect only what is needed, mutate with `action_node`, `action_scene`, or `batch_execute` / `run_script`, then `action_scene(save)` when the scene changed.
 
 **Before writing code, decide where this state should live** (scene/editor vs runtime behaviour) and route accordingly.
 
 | State owner | Use |
 | --- | --- |
-| **Scene / editor** | MCP first — per-scene or per-instance actor transform, hierarchy, component enabled state, component properties (`material` on MeshComponent, colours, mesh/model refs, light/camera settings), prefab instance overrides, active scene |
-| **Runtime behaviour** | TypeScript — reusable gameplay logic, class defaults, constructors for new runtime objects, new actor/component classes, input, networking, UI logic, systems not already in the scene |
+| **Scene / editor** | MCP first — per-scene or per-instance node transform, hierarchy, node properties (`material` on MeshNode, colours, mesh/model refs, light/camera settings), prefab instance overrides, active scene |
+| **Runtime behaviour** | TypeScript — reusable gameplay logic, class defaults, constructors for new runtime objects, new SceneNode/PrimitiveNode subclasses, input, networking, UI logic, systems not already in the scene |
 | **Both** | Code first to build/register the capability, then MCP to place or configure it in the scene |
 
-Do **not** use `BeginPlay`, `doBeginPlay`, constructors, or one-off runtime hacks to patch a specific editor-authored actor just to persist a visual scene change. It is still correct to define reusable class defaults, construct runtime-created objects, and initialise behaviour in code when those values should apply to every instance or to objects spawned at runtime.
+Do **not** use `beginPlay`, constructors, or one-off runtime hacks to patch a specific editor-authored node just to persist a visual scene change. It is still correct to define reusable class defaults, construct runtime-created objects, and initialise behaviour in code when those values should apply to every instance or to objects spawned at runtime.
 
 ---
 
@@ -75,7 +75,7 @@ Do **not** use `BeginPlay`, `doBeginPlay`, constructors, or one-off runtime hack
 - Try to find and use appropriate art assets as needed if the user does not specify. Check both engine and project assets for something that fits the feature.
 - You **should avoid** writing **monolithic code** — do not place all logic, definitions, and configurations into a single file.  
   Instead, structure your code into modular, reusable, and maintainable components.
-- Custom actor and component classes **must not** be registered as **`EngineClass`**, use **`GameClass`** instead.
+- Custom node classes **must not** be registered as **`EngineClass`**, use **`GameClass`** instead.
 - **Do not** create documentation or test/example code unless specifically asked to.
 - Be **very brief** on the summary when the implementation is completed.
 
@@ -127,11 +127,11 @@ This process **prevents incorrect implementations** when user wording is incompl
 When planning mixed work, tag each step by state owner so scene edits are not mistaken for code tasks:
 
 - `[Code]` — TypeScript/source changes
-- `[MCP]` — scene, actor, prefab, component, material, transform, or other editor state changes
+- `[MCP]` — scene, node, prefab, material, transform, or other editor state changes
 - `[Asset]` — imported, moved, or generated asset files
 - `[Verify]` — build, lint, diagnostics, or editor re-query
 
-Example: `[MCP] Set MeshComponent material on Floor actor` → `[Verify] Re-query actor and confirm scene saved`.
+Example: `[MCP] Set MeshNode material on Floor root` → `[Verify] Re-query node and confirm scene saved`.
 # GENESYS-SDK-END
 
 # Add your custom AI instructions below.

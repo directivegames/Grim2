@@ -24,9 +24,9 @@ const UPDATE_DISTANCE_SQ = UPDATE_DISTANCE * UPDATE_DISTANCE;
 const UPDATE_INTERVAL = 0.1;
 
 @ENGINE.GameClass()
-export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
-  private _red: ENGINE.PointLightComponent | null = null;
-  private _blue: ENGINE.PointLightComponent | null = null;
+export class PoliceLightFlasherComponent extends ENGINE.SceneNode {
+  private _red: ENGINE.PointLightNode | null = null;
+  private _blue: ENGINE.PointLightNode | null = null;
   private _redBase = 0;
   private _blueBase = 0;
   private _elapsed = 0;
@@ -53,7 +53,7 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
     const player = world?.getFirstPlayerPawn();
     if (player) {
       this.getWorldPosition(this._myPos);
-      player.rootComponent.getWorldPosition(this._playerPos);
+      player.getWorldPosition(this._playerPos);
       if (this._myPos.distanceToSquared(this._playerPos) > UPDATE_DISTANCE_SQ) {
         if (this._lightsActive) {
           this._setIntensities(0, 0);
@@ -107,19 +107,22 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
     this._setIntensities(this._redBase * redEnv, this._blueBase * blueEnv);
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._setIntensities(0, 0);
-    super.endPlay();
+    return true;
   }
 
   private _bindLights(): void {
     this._bound = true;
-    const actor = this.getActor();
+    const actor = this.getRoot();
     if (!actor) {
       return;
     }
 
-    const lights = actor.getComponents(ENGINE.PointLightComponent);
+    const lights = actor.getNodes(ENGINE.PointLightNode);
     if (lights.length < 2) {
       return;
     }
@@ -148,7 +151,7 @@ export class PoliceLightFlasherComponent extends ENGINE.SceneComponent {
     this._blue = null;
   }
 
-  private _readRgb(light: ENGINE.PointLightComponent): { r: number; g: number; b: number } {
+  private _readRgb(light: ENGINE.PointLightNode): { r: number; g: number; b: number } {
     const c = light.color as THREE.Color | number | { _: number[] };
     if (c instanceof THREE.Color) {
       return { r: c.r, g: c.g, b: c.b };

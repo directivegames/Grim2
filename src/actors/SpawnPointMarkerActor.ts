@@ -15,7 +15,7 @@ export interface SpawnPointMarkerColors {
 
 export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
   @ENGINE.property({ type: 'boolean', category: 'Spawn Point' })
-  public enabled = true;
+  public override enabled = true;
 
   @ENGINE.property({ type: 'number', min: 0.15, max: 4, step: 0.05, category: 'Spawn Point' })
   public halfExtentX = 0.45;
@@ -29,7 +29,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
   @ENGINE.property({ type: 'boolean', category: 'Spawn Point' })
   public showWireframeInGame = false;
 
-  private _mesh: ENGINE.MeshComponent | null = null;
+  private _mesh: ENGINE.MeshNode | null = null;
   private _fillMaterial: THREE.MeshBasicMaterial | null = null;
   private _edgeLines: THREE.LineSegments | null = null;
   private _edgeMaterial: THREE.LineBasicMaterial | null = null;
@@ -38,11 +38,12 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
   protected abstract getMarkerColors(): SpawnPointMarkerColors;
 
   public getSpawnWorldPosition(out: THREE.Vector3): void {
-    this.rootComponent.getWorldPosition(out);
+    this.getWorldPosition(out);
   }
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.MeshComponent.create({
+    const root = ENGINE.MeshNode.create({
+      name: 'MarkerRoot',
       material: INVISIBLE_MATERIAL,
       physicsOptions: { enabled: false },
       castShadow: false,
@@ -52,7 +53,8 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
     this._mesh = root;
     this._applyBoxGeometry(root);
 
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
   public override postLoad(): void {
@@ -96,12 +98,12 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
     return this._isEditorWorld() || this.showWireframeInGame;
   }
 
-  private _getMesh(): ENGINE.MeshComponent | null {
+  private _getMesh(): ENGINE.MeshNode | null {
     if (this._mesh) {
       return this._mesh;
     }
-    const root = this.rootComponent;
-    return root instanceof ENGINE.MeshComponent ? root : null;
+    const root = this;
+    return root instanceof ENGINE.MeshNode ? root : null;
   }
 
   private _refreshEditorPreview(): void {
@@ -114,7 +116,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
     this._syncVisualMaterial();
   }
 
-  private _applyBoxGeometry(mesh: ENGINE.MeshComponent): void {
+  private _applyBoxGeometry(mesh: ENGINE.MeshNode): void {
     const w = Math.max(0.3, this.halfExtentX * 2);
     const h = Math.max(0.3, this.halfExtentY * 2);
     const d = Math.max(0.3, this.halfExtentZ * 2);
@@ -129,7 +131,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
     this._updateEdgeLines(mesh, geom);
   }
 
-  private _updateEdgeLines(mesh: ENGINE.MeshComponent, boxGeom: THREE.BoxGeometry): void {
+  private _updateEdgeLines(mesh: ENGINE.MeshNode, boxGeom: THREE.BoxGeometry): void {
     const threeMesh = mesh.mesh;
     if (!threeMesh) {
       return;
@@ -159,6 +161,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
 
     const edges = new THREE.EdgesGeometry(boxGeom);
     this._edgeLines = new THREE.LineSegments(edges, this._edgeMaterial);
+    this._edgeLines.name = 'MarkerEdges';
     this._edgeLines.frustumCulled = false;
     threeMesh.add(this._edgeLines);
   }

@@ -38,7 +38,7 @@ import { isMobileDevice } from '../utils/mobile-device.js';
 const WEAPON_COLLISION_PROFILE = 'WeaponNoBlock';
 
 type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
-const weaponAsyncPhysicsDisableQueued = new WeakSet<ENGINE.Actor>();
+const weaponAsyncPhysicsDisableQueued = new WeakSet<ENGINE.SceneNode>();
 
 function ensureWeaponCollisionProfile(): void {
   const cfg = ENGINE.CollisionConfig.getInstance();
@@ -67,37 +67,43 @@ function ensureWeaponCollisionProfile(): void {
   (cfg as unknown as { profiles: ENGINE.CollisionProfile[] }).profiles.push(profile);
 }
 
-function disableWeaponActorPhysics(weaponActor: ENGINE.Actor): void {
+function disableWeaponActorPhysics(weaponRoot: ENGINE.SceneNode): void {
   ensureWeaponCollisionProfile();
 
-  const disableMeshPhysics = (component: ENGINE.SceneComponent): void => {
-    if (component instanceof ENGINE.MeshComponent) {
-      component.overridePhysicsOptions({
+  const disableMeshPhysics = (node: ENGINE.SceneNode): void => {
+    if (node instanceof ENGINE.MeshNode || node instanceof ENGINE.ModelMeshNode) {
+      node.overridePhysicsOptions({
         enabled: false,
         collisionProfile: WEAPON_COLLISION_PROFILE,
       });
     }
   };
 
-  disableMeshPhysics(weaponActor.rootComponent);
-  for (const mesh of weaponActor.getComponents(ENGINE.MeshComponent)) {
+  disableMeshPhysics(weaponRoot);
+  for (const mesh of weaponRoot.getNodes(ENGINE.MeshNode)) {
+    disableMeshPhysics(mesh);
+  }
+  for (const mesh of weaponRoot.getNodes(ENGINE.ModelMeshNode)) {
     disableMeshPhysics(mesh);
   }
 
   // GLTF physics can be created after begin play when the model finishes loading.
-  // Queue one post-load disable pass per actor so no late Rapier body can remain.
-  const gltfMeshes = weaponActor.getComponents(ENGINE.GLTFMeshComponent);
-  if (gltfMeshes.length === 0 || weaponAsyncPhysicsDisableQueued.has(weaponActor)) {
+  // Queue one post-load disable pass per root so no late Rapier body can remain.
+  const gltfMeshes = weaponRoot.getNodes(ENGINE.ModelMeshNode);
+  if (gltfMeshes.length === 0 || weaponAsyncPhysicsDisableQueued.has(weaponRoot)) {
     return;
   }
 
-  weaponAsyncPhysicsDisableQueued.add(weaponActor);
+  weaponAsyncPhysicsDisableQueued.add(weaponRoot);
   void Promise.all(gltfMeshes.map(mesh => mesh.waitForLoad().catch(() => undefined))).then(() => {
-    if (!weaponActor.getWorld()) {
+    if (!weaponRoot.getWorld()) {
       return;
     }
-    disableMeshPhysics(weaponActor.rootComponent);
-    for (const mesh of weaponActor.getComponents(ENGINE.MeshComponent)) {
+    disableMeshPhysics(weaponRoot);
+    for (const mesh of weaponRoot.getNodes(ENGINE.MeshNode)) {
+      disableMeshPhysics(mesh);
+    }
+    for (const mesh of weaponRoot.getNodes(ENGINE.ModelMeshNode)) {
       disableMeshPhysics(mesh);
     }
   });
@@ -181,7 +187,7 @@ const enum AttackIndex {
 export class SpinningWeaponActor extends ENGINE.Actor {
 
   /** Editor-placed weapons: "weapon", "weapon 02", "weapon 03" (slot 0 = melee). */
-  private _sceneWeaponActors: ENGINE.Actor[] = [];
+  private _sceneWeaponActors: ENGINE.SceneNode[] = [];
   private _slashComponent:    WeaponSlashComponent | null = null;
   private _slashParticles:    WeaponSlashParticleComponent | null = null;
   private _swingLight:        WeaponSwingLightComponent | null = null;
@@ -301,13 +307,14 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     this._orbitAngle = 0;
 
     const world = this.getWorld();
-    if (!world) return;
+    if (!world) return false;
 
     this._sceneWeaponActors = collectSceneWeapons(world);
 
@@ -316,8 +323,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
       for (const weaponActor of this._sceneWeaponActors) {
         disableWeaponActorPhysics(weaponActor);
-        weaponActor.rootComponent.visible = false;
-        this._weaponBaseQuats.push(weaponActor.rootComponent.quaternion.clone());
+        weaponActor.visible = false;
+        this._weaponBaseQuats.push(weaponActor.quaternion.clone());
       }
     } else {
       console.warn(`[SpinningWeaponActor] No scene actors named "${WEAPON_ACTOR_NAME}" (or "weapon 02", etc.) found.`);
@@ -328,47 +335,52 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     // Create components in order - warmup happens AFTER all components exist
     this._slashComponent = WeaponSlashComponent.create();
-    this.rootComponent.add(this._slashComponent);
+    this.add(this._slashComponent);
 
     this._slashParticles = WeaponSlashParticleComponent.create();
-    this.rootComponent.add(this._slashParticles);
+    this.add(this._slashParticles);
 
     this._swingLight = WeaponSwingLightComponent.create();
-    this.rootComponent.add(this._swingLight);
+    this.add(this._swingLight);
 
     this._summonVFX = WeaponSummonVFXComponent.create();
-    this.rootComponent.add(this._summonVFX);
+    this.add(this._summonVFX);
 
     this._bloodSplatter = BloodSplatterComponent.create();
-    this.rootComponent.add(this._bloodSplatter);
+    this.add(this._bloodSplatter);
 
     this._boomerangTrail = BoomerangTrailComponent.create();
-    this.rootComponent.add(this._boomerangTrail);
+    this.add(this._boomerangTrail);
 
     this._extraBladeTrails = [
       BoomerangTrailComponent.create(),
       BoomerangTrailComponent.create(),
     ];
     for (const trail of this._extraBladeTrails) {
-      this.rootComponent.add(trail);
+      this.add(trail);
     }
 
     // Post-creation warmups (now components actually exist)
     // Blood splatter pool is already warmed in its beginPlay
     // Summon VFX warmup: burst some particles off-screen to compile shaders
     this._summonVFX?.burst(new THREE.Vector3(0, -1000, 0), 6);
+  
+    return true;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this.getWorld()?.inputManager.removeInputHandler(this._inputHandler);
-    super.doEndPlay();
+    return true;
   }
 
-  private _meleeWeapon(): ENGINE.Actor | null {
+  private _meleeWeapon(): ENGINE.SceneNode | null {
     return this._sceneWeaponActors[0] ?? null;
   }
 
-  private _getSceneWeapon(slot: number): ENGINE.Actor | null {
+  private _getSceneWeapon(slot: number): ENGINE.SceneNode | null {
     return this._sceneWeaponActors[slot] ?? null;
   }
 
@@ -489,7 +501,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   public static triggerSoulThrow(world: ENGINE.World): void {
-    const actor = world.getActors().find(
+    const actor = world.getRootNodes().find(
       (a): a is SpinningWeaponActor => a instanceof SpinningWeaponActor,
     );
     actor?.triggerSoulThrow();
@@ -592,10 +604,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       [-1.3, -1.0],
     ];
 
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
 
     for (let i = 0; i < targets.length; i++) {
-      targets[i]!.rootComponent.getWorldPosition(this._fistTargetScratch);
+      targets[i]!.getWorldPosition(this._fistTargetScratch);
       const off = offsets[i] ?? [0, 0];
       this._fistTargetScratch.x += off[0];
       this._fistTargetScratch.z += off[1];
@@ -617,7 +629,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _pickFistTargets(player: ENGINE.Pawn, maxCount: number): ENGINE.Actor[] {
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
 
     const nearby = zombieSpatialManager.getNearbyZombies(this._scratchPlayerPos, FIST_MAX_RANGE);
     const candidates: ENGINE.Actor[] = [];
@@ -629,7 +641,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     for (const zombie of nearby) {
       if ((zombie as unknown as { _deathSequenceStarted: boolean })._deathSequenceStarted) continue;
 
-      zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+      zombie.getWorldPosition(this._scratchZombiePos);
       const dx = this._scratchZombiePos.x - this._scratchPlayerPos.x;
       const dz = this._scratchZombiePos.z - this._scratchPlayerPos.z;
       const distSq = dx * dx + dz * dz;
@@ -662,7 +674,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const camera = world.getActiveCamera();
       if (camera) {
         const ndcMouse = world.inputManager.getMousePosition();
-        player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+        player.getWorldPosition(this._scratchPlayerPos);
         this._groundPlane.constant = -this._scratchPlayerPos.y;
         this._raycaster.setFromCamera(ndcMouse, camera);
         if (this._raycaster.ray.intersectPlane(this._groundPlane, this._mouseHitPoint)) {
@@ -717,7 +729,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     this._hasPrevWeaponPos = false;
 
     this._setWeaponVisible(true);
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
     this._swingLight?.beginSwing(this._comboIndex === AttackIndex.Three);
     this._slashComponent?.startTrail();
     this._slashParticles?.burstArc(
@@ -762,10 +774,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const weapon = this._meleeWeapon();
     if (!weapon) return;
 
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    player.getWorldPosition(this._scratchPlayerPos);
     const weaponY = this._scratchPlayerPos.y + WEAPON_HEIGHT;
 
-    weapon.rootComponent.position.set(
+    weapon.position.set(
       this._scratchPlayerPos.x + Math.cos(this._orbitAngle) * HANDLE_OFFSET,
       weaponY,
       this._scratchPlayerPos.z + Math.sin(this._orbitAngle) * HANDLE_OFFSET,
@@ -773,11 +785,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const visualAngle = this._meleePhase === 'swing' ? this._displayOrbitAngle : this._orbitAngle;
     this._orbitQuat.setFromAxisAngle(SpinningWeaponActor._Y_AXIS, -visualAngle + BLADE_ANGLE_OFFSET);
-    weapon.rootComponent.quaternion.copy(this._getWeaponBaseQuat(0)).premultiply(this._orbitQuat);
+    weapon.quaternion.copy(this._getWeaponBaseQuat(0)).premultiply(this._orbitQuat);
 
     if (bladePitch !== 0) {
       this._pitchQuat.setFromAxisAngle(SpinningWeaponActor._PITCH_AXIS, bladePitch);
-      weapon.rootComponent.quaternion.multiply(this._pitchQuat);
+      weapon.quaternion.multiply(this._pitchQuat);
     }
 
     this._weaponStart.set(
@@ -795,10 +807,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _setWeaponVisible(visible: boolean): void {
     const weapon = this._meleeWeapon();
     if (!weapon || this._isWeaponSlotUsedBySoulBlade(0)) return;
-    weapon.rootComponent.visible = visible;
+    weapon.visible = visible;
 
     if (this._summonVFX) {
-      weapon.rootComponent.getWorldPosition(this._scratchPos);
+      weapon.getWorldPosition(this._scratchPos);
       this._summonVFX.burst(this._scratchPos, visible ? APPEAR_COUNT : DISMISS_COUNT);
     }
   }
@@ -859,7 +871,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const camera = world.getActiveCamera();
       if (camera) {
         const ndcMouse = world.inputManager.getMousePosition();
-        player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+        player.getWorldPosition(this._scratchPlayerPos);
         this._groundPlane.constant = -this._scratchPlayerPos.y;
         this._raycaster.setFromCamera(ndcMouse, camera);
 
@@ -909,7 +921,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   private _spawnSoulBlade(player: ENGINE.Pawn, dir: THREE.Vector3, visualSlot: number): void {
-    player.rootComponent.getWorldPosition(this._soulBladeLaunchScratch);
+    player.getWorldPosition(this._soulBladeLaunchScratch);
     this._soulBladeLaunchScratch.y += BOOMERANG_HEIGHT;
     this._soulBladeLaunchScratch.addScaledVector(dir, BOOMERANG_LAUNCH_OFFSET);
     const launchPos = this._soulBladeLaunchScratch.clone();
@@ -934,10 +946,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const weapon = this._getSceneWeapon(visualSlot);
     if (weapon) {
-      weapon.rootComponent.position.copy(launchPos);
+      weapon.position.copy(launchPos);
       // The thrown weapon is visual-only; damage uses manual swept checks.
       disableWeaponActorPhysics(weapon);
-      weapon.rootComponent.visible = true;
+      weapon.visible = true;
       if (visualSlot === 0 && this._summonVFX) {
         this._summonVFX.burst(launchPos, APPEAR_COUNT);
       }
@@ -961,7 +973,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         blade.phase = 'returning';
       }
     } else {
-      player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+      player.getWorldPosition(this._scratchPlayerPos);
       this._scratchPlayerPos.y += BOOMERANG_HEIGHT;
 
       this._scratchPos.copy(this._scratchPlayerPos).sub(blade.pos);
@@ -978,10 +990,10 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     const weapon = this._getSceneWeapon(blade.visualSlot);
     if (weapon) {
       this._boomerangSpinQuat.setFromAxisAngle(SpinningWeaponActor._SPIN_AXIS, blade.spinAngle);
-      weapon.rootComponent.quaternion
+      weapon.quaternion
         .copy(this._getWeaponBaseQuat(blade.visualSlot))
         .premultiply(this._boomerangSpinQuat);
-      weapon.rootComponent.position.copy(blade.pos);
+      weapon.position.copy(blade.pos);
     }
 
     void blade.trail?.addPoint(blade.pos);
@@ -998,12 +1010,12 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     const weapon = this._getSceneWeapon(blade.visualSlot);
     if (weapon) {
-      weapon.rootComponent.visible = false;
+      weapon.visible = false;
       disableWeaponActorPhysics(weapon);
       if (blade.visualSlot === 0 && this._summonVFX) {
         this._summonVFX.burst(blade.pos, DISMISS_COUNT);
       }
-      weapon.rootComponent.position.y = WEAPON_PARK_Y;
+      weapon.position.y = WEAPON_PARK_Y;
     }
   }
 
@@ -1030,7 +1042,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
       const lastHit = this._hitCooldowns.get(zombie);
       if (lastHit !== undefined && currentTime - lastHit < HIT_COOLDOWN) continue;
 
-      zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+      zombie.getWorldPosition(this._scratchZombiePos);
       const dx = this._scratchZombiePos.x - blade.pos.x;
       const dz = this._scratchZombiePos.z - blade.pos.z;
       if (dx * dx + dz * dz > BOOMERANG_HIT_RADIUS * BOOMERANG_HIT_RADIUS) continue;
@@ -1048,7 +1060,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
         hitLocation: this._hitLocationScratch,
         hitNormal: this._hitNormalScratch,
       };
-      const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
+      const stats = zombie.getNode(ENGINE.CharacterStatsNode);
       if (stats) {
         stats.takeDamage(damage, hitInfo);
         missionState.onDamageDealt(damage);
@@ -1135,7 +1147,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
           continue;
         }
 
-        zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
+        zombie.getWorldPosition(this._scratchZombiePos);
         const distSq = this._pointToSegmentDistSq(
           this._scratchZombiePos.x, this._scratchZombiePos.z,
           stepStartX, stepStartZ,
@@ -1183,8 +1195,8 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _hitZombie(zombie: ENGINE.Actor, currentTime: number, player: ENGINE.Pawn): void {
     this._hitCooldowns.set(zombie, currentTime);
 
-    zombie.rootComponent.getWorldPosition(this._scratchZombiePos);
-    player.rootComponent.getWorldPosition(this._scratchPlayerPos);
+    zombie.getWorldPosition(this._scratchZombiePos);
+    player.getWorldPosition(this._scratchPlayerPos);
 
     this._hitNormalScratch.copy(this._scratchZombiePos).sub(this._scratchPlayerPos).setY(0);
     if (this._hitNormalScratch.lengthSq() < 1e-8) {
@@ -1199,7 +1211,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     };
 
     const damage = this._getWeaponDamage();
-    const stats = zombie.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = zombie.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.takeDamage(damage, hitInfo);
       missionState.onDamageDealt(damage);
@@ -1275,7 +1287,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   }
 
   public static findInWorld(world: ENGINE.World): SpinningWeaponActor | null {
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof SpinningWeaponActor) {
         return actor;
       }

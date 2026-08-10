@@ -21,7 +21,8 @@ description: 'Move an existing class, prefab, or set of assets into a self-conta
    - Extra assets/folders the user named explicitly.
 
 2. Create the pack if missing
-   - Use the CLI: `pnpm exec genesys-sdk new-asset-pack --name <name> --id <id> --description "<desc>" --version 0.1.0`
+   - Use the CLI: `pnpm exec genesys-sdk new-asset-pack --name <name> --description "<desc>" --pack-version 1.0.0`
+     (pack `id` is derived from `--name`; `assets/` and `src/` are scaffolded by default — use `--no-assets` / `--no-src` to skip)
    - Or instruct the user to run the editor's New Asset Pack dialog.
    - Confirm `<project>/packs/<name>/{config.json, src/, assets/}` exists.
 
@@ -51,14 +52,14 @@ description: 'Move an existing class, prefab, or set of assets into a self-conta
 7. Fix reverse-direction imports — search `<project>/src/**/*.{ts,tsx}` for
    relative imports of each moved file and rewrite to
    `import { X } from '@packs/<name>/<rel>';`. Skip `src/auto-imports.ts`
-   and `src/game-data.ts` — run `pnpm build` if `pnpm compile` reports stale
+   and `src/game-data.ts` — run `pnpm build` if it reports stale
    imports in them. Leave imports inside the moved code itself untouched.
 
-8. Verify — run all three; fix every issue; repeat until clean.
+8. Verify — run both; fix every issue; repeat until clean.
 
    ```bash
-   pnpm compile
-   pnpm validate-prefabs
+   pnpm build
+   # Prefab JSON is validated when the engine loads it (in-memory migration on outdated $version)
    pnpm check-pack-isolation --pack <name>
    ```
 

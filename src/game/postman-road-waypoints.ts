@@ -25,16 +25,15 @@ export interface PostmanWalkTile {
 const _scratch = new THREE.Vector3();
 const _scale = new THREE.Vector3();
 
-function materialUrlFromActor(actor: ENGINE.Actor): string | null {
-  const root = actor.rootComponent;
-  if (!(root instanceof ENGINE.MeshComponent)) {
+function materialUrlFromActor(actor: ENGINE.SceneNode): string | null {
+  if (!(actor instanceof ENGINE.MeshNode)) {
     return null;
   }
-  const mat = root.material as unknown;
+  const mat = actor.material as unknown;
   return typeof mat === 'string' ? mat : null;
 }
 
-function tileFromMeshRoot(root: ENGINE.MeshComponent): PostmanWalkTile | null {
+function tileFromMeshRoot(root: ENGINE.MeshNode): PostmanWalkTile | null {
   root.getWorldPosition(_scratch);
   root.getWorldScale(_scale);
 
@@ -57,18 +56,17 @@ function tileFromMeshRoot(root: ENGINE.MeshComponent): PostmanWalkTile | null {
 export function buildPostmanWalkTiles(world: ENGINE.World): PostmanWalkTile[] {
   const tiles: PostmanWalkTile[] = [];
 
-  for (const actor of world.getActors()) {
+  for (const actor of world.getRootNodes()) {
     const url = materialUrlFromActor(actor);
     if (!url || !WALKABLE_MATERIALS.has(url)) {
       continue;
     }
 
-    const root = actor.rootComponent;
-    if (!(root instanceof ENGINE.MeshComponent)) {
+    if (!(actor instanceof ENGINE.MeshNode)) {
       continue;
     }
 
-    const tile = tileFromMeshRoot(root);
+    const tile = tileFromMeshRoot(actor);
     if (tile) {
       tiles.push(tile);
     }

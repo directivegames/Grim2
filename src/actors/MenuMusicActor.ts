@@ -10,13 +10,14 @@ const MENU_TRACKS = [
 
 @ENGINE.GameClass()
 export class MenuMusicActor extends ENGINE.Actor {
-  private _sound: ENGINE.SoundComponent | null = null;
+  private _sound: ENGINE.SoundNode | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
   private _stopped = false;
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
-    this._stopped = false;
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }this._stopped = false;
 
     const pick = MENU_TRACKS[Math.floor(Math.random() * MENU_TRACKS.length)] ?? MENU_TRACKS[0];
 
@@ -25,7 +26,7 @@ export class MenuMusicActor extends ENGINE.Actor {
     soundResource.audioPath = pick;
     soundResource.volume = BASE_MENU_MUSIC_VOLUME * gameSettings.musicVolume;
 
-    this._sound = ENGINE.SoundComponent.create({
+    this._sound = ENGINE.SoundNode.create({
       loop: true,
       autoPlay: false,
       positional: false,
@@ -33,7 +34,7 @@ export class MenuMusicActor extends ENGINE.Actor {
       sounds: [soundResource],
     });
 
-    this.addComponent(this._sound);
+    this.add(this._sound);
 
     void this._sound.waitForLoad().then(async () => {
       if (this._stopped || !this._sound) return;
@@ -44,6 +45,8 @@ export class MenuMusicActor extends ENGINE.Actor {
       if (this._stopped || !this._sound) return;
       void this._sound.play('menuMusic');
     });
+  
+    return true;
   }
 
   public stopNow(): void {
@@ -58,31 +61,34 @@ export class MenuMusicActor extends ENGINE.Actor {
 
   public static stopAll(world: ENGINE.World): void {
     const toRemove: MenuMusicActor[] = [];
-    for (const a of world.getActors()) {
+    for (const a of world.getRootNodes()) {
       if (a instanceof MenuMusicActor) {
         a.stopNow();
         toRemove.push(a);
       }
     }
     if (toRemove.length > 0) {
-      world.removeActors(...toRemove);
+      world.remove(...toRemove);
     }
   }
 
   public static ensureExists(world: ENGINE.World): MenuMusicActor {
-    const existing = world.getActors().find(a => a instanceof MenuMusicActor);
+    const existing = world.getRootNodes().find(a => a instanceof MenuMusicActor);
     if (existing instanceof MenuMusicActor) {
       return existing;
     }
     const actor = MenuMusicActor.create({ name: 'MenuMusicActor' });
-    world.addActor(actor);
+    world.add(actor);
     return actor;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._stopped = true;
     this._sound?.stopAll();
-    super.doEndPlay();
+    return true;
   }
 }
 

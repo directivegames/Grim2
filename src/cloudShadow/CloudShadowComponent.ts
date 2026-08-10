@@ -15,7 +15,7 @@ import type { EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
 const OVERLAY_MESH_NAME = 'CloudShadowOverlayPlane';
 
-export type CloudShadowComponentOptions = ENGINE.SceneComponentOptions & {
+export type CloudShadowComponentOptions = ENGINE.SceneNodeOptions & {
   cloudMapUrl?: ENGINE.TexturePath;
   enabled?: boolean;
   cloudScale?: number;
@@ -38,7 +38,7 @@ export type CloudShadowComponentOptions = ENGINE.SceneComponentOptions & {
 };
 
 @ENGINE.GameClass()
-export class CloudShadowComponent extends ENGINE.SceneComponent {
+export class CloudShadowComponent extends ENGINE.SceneNode {
   @ENGINE.property({ type: 'boolean', category: 'Cloud Shadows', description: 'Enable cloud shadow overlay' })
   public override enabled: boolean = DEFAULT_CLOUD_SHADOW_SETTINGS.enabled;
 
@@ -236,9 +236,12 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
     if (options?.debugLogging !== undefined) this.debugLogging = options.debugLogging;
   }
 
-  public override beginPlay(): void {
-    super.beginPlay();
-    void this.reload();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }void this.reload();
+  
+    return true;
   }
 
   public override onEditorAddToWorld(): void {
@@ -261,9 +264,12 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
     this._syncOverlay();
   }
 
-  public override endPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     this._clearOverlay();
-    super.endPlay();
+    return true;
   }
 
   /** Rebuild overlay mesh/material (e.g. after texture change). */
@@ -297,6 +303,8 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
       mesh.name = OVERLAY_MESH_NAME;
       mesh.rotation.x = -Math.PI / 2;
       mesh.frustumCulled = false;
+      // Runtime overlay must not be persisted into the scene graph on save.
+      mesh.setTransient(true);
 
       this.add(mesh);
       this._overlayMesh = mesh;
@@ -348,6 +356,22 @@ export class CloudShadowComponent extends ENGINE.SceneComponent {
       this._overlayMesh = null;
       this._overlayMaterial = null;
     }
+
+    // Drop any overlay meshes restored from older saves (not tracked in `_overlayMesh`).
+    for (const child of [...this.children]) {
+      if (child.name !== OVERLAY_MESH_NAME) continue;
+      child.removeFromParent();
+      if (child instanceof THREE.Mesh) {
+        child.geometry?.dispose();
+        const material = child.material;
+        if (Array.isArray(material)) {
+          for (const entry of material) entry.dispose();
+        } else {
+          material?.dispose();
+        }
+      }
+    }
+
     this._loadStarted = false;
   }
 }

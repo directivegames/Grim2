@@ -13,7 +13,7 @@ const MUSIC_RATE_LERP_SPEED = 14;
 
 @ENGINE.GameClass()
 export class BackgroundMusicActor extends ENGINE.Actor {
-  private soundComponent: ENGINE.SoundComponent | null = null;
+  private soundComponent: ENGINE.SoundNode | null = null;
   private _isMuted = false;
   private _previousVolume = BASE_MUSIC_VOLUME;
   private _musicVolumeScale = gameSettings.musicVolume;
@@ -25,13 +25,16 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     super();
   }
 
-  protected override doBeginPlay(): void {
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const soundResource = new ENGINE.SoundResource();
     soundResource.name = 'backgroundMusic';
     soundResource.audioPath = '@project/assets/sounds/NeonChapel.mp3';
     soundResource.volume = BASE_MUSIC_VOLUME * gameSettings.musicVolume;
 
-    this.soundComponent = ENGINE.SoundComponent.create({
+    this.soundComponent = ENGINE.SoundNode.create({
       loop: true,
       autoPlay: false,
       autoPlayClipKey: 'backgroundMusic',
@@ -40,7 +43,9 @@ export class BackgroundMusicActor extends ENGINE.Actor {
       sounds: [soundResource],
     });
 
-    this.addComponent(this.soundComponent);
+    this.add(this.soundComponent);
+  
+    return true;
   }
 
   /** Start playback (safe to call repeatedly). */
@@ -67,13 +72,13 @@ export class BackgroundMusicActor extends ENGINE.Actor {
   }
 
   public static ensurePlaying(world: ENGINE.World): BackgroundMusicActor {
-    const existing = world.getActors().find(a => a instanceof BackgroundMusicActor);
+    const existing = world.getRootNodes().find(a => a instanceof BackgroundMusicActor);
     const actor = existing instanceof BackgroundMusicActor
       ? existing
       : BackgroundMusicActor.create({ name: 'BackgroundMusicActor' });
 
     if (!(existing instanceof BackgroundMusicActor)) {
-      world.addActor(actor);
+      world.add(actor);
     }
 
     actor.start();
@@ -148,9 +153,14 @@ export class BackgroundMusicActor extends ENGINE.Actor {
     return this._isMuted;
   }
 
-  protected override doEndPlay(): void {
+    public override endPlay(): boolean {
+    if (!super.endPlay()) {
+      return false;
+    }
     if (this.soundComponent) {
       this.soundComponent.stopAll();
     }
+  
+    return true;
   }
 }

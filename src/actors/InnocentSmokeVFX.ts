@@ -16,16 +16,16 @@ export function spawnInnocentSmokeAt(
   scale = DEFAULT_SCALE,
 ): void {
   const actor = ENGINE.Actor.create();
-  actor.rootComponent.position.copy(position);
-  actor.rootComponent.position.y += 0.1;
-  actor.rootComponent.scale.setScalar(scale);
+  actor.position.copy(position);
+  actor.position.y += 0.1;
+  actor.scale.setScalar(scale);
 
-  const smoke = ENGINE.VFXComponent.create({
+  const smoke = ENGINE.VFXNode.create({
     vfxPath: SMOKE_VFX,
     autoStart: true,
   });
-  actor.rootComponent.add(smoke);
-  world.addActor(actor);
+  actor.add(smoke);
+  world.add(actor);
 
   window.setTimeout(() => {
     if (actor.getWorld()) {

@@ -38,7 +38,7 @@ export class ZombieSpatialManager {
    * Call this in ZombieActor.doBeginPlay().
    */
   registerZombie(zombie: ENGINE.Actor): void {
-    zombie.rootComponent.getWorldPosition(this._zPos);
+    zombie.getWorldPosition(this._zPos);
     const cell = this.getCellKey(this._zPos);
 
     const oldCell = this.zombieToCell.get(zombie);
@@ -61,7 +61,7 @@ export class ZombieSpatialManager {
    * Call this periodically (e.g., every 0.5s) in tick.
    */
   updateZombiePosition(zombie: ENGINE.Actor): void {
-    zombie.rootComponent.getWorldPosition(this._zPos);
+    zombie.getWorldPosition(this._zPos);
     const newCell = this.getCellKey(this._zPos);
     const oldCell = this.zombieToCell.get(zombie);
 
@@ -109,7 +109,7 @@ export class ZombieSpatialManager {
         if (!zombies) continue;
 
         for (const zombie of zombies) {
-          zombie.rootComponent.getWorldPosition(this._zPos);
+          zombie.getWorldPosition(this._zPos);
           if (position.distanceToSquared(this._zPos) <= radiusSq) {
             this._scratchResults[this._scratchResultsLength++] = zombie;
           }

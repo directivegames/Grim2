@@ -26,13 +26,13 @@ const DEFAULT_DAMAGE = 15;
 
 @ENGINE.GameClass()
 export class VomitballProjectileActor extends ENGINE.Actor {
-  private _visual: ENGINE.GLTFMeshComponent | null = null;
+  private _visual: ENGINE.ModelMeshNode | null = null;
   private _direction = new THREE.Vector3();
   private _distanceTraveled = 0;
   private _lifetimeSec = 0;
   private _damage = DEFAULT_DAMAGE;
   private _hasHit = false;
-  private _ignoredActors: ENGINE.Actor[] = [];
+  private _ignoredRootNodes: ENGINE.SceneNode[] = [];
 
   private readonly _scratchPos = new THREE.Vector3();
   private readonly _prevPos = new THREE.Vector3();
@@ -40,9 +40,10 @@ export class VomitballProjectileActor extends ENGINE.Actor {
   private readonly _rayDir = new THREE.Vector3();
 
   public override initialize(options?: ActorOptions): void {
-    const root = ENGINE.SceneComponent.create();
+    const root = ENGINE.SceneNode.create({ name: 'Root' });
 
-    this._visual = ENGINE.GLTFMeshComponent.create({
+    this._visual = ENGINE.ModelMeshNode.create({
+      name: 'VomitballVisual',
       modelUrl: VOMITBALL_MODEL_URL,
       scale: VOMITBALL_SCALE.clone(),
       physicsOptions: { enabled: false },
@@ -52,18 +53,23 @@ export class VomitballProjectileActor extends ENGINE.Actor {
 
     root.add(this._visual);
 
-    super.initialize({ ...options, rootComponent: root });
+    super.initialize(options);
+    this.add(root);
   }
 
-  protected override doBeginPlay(): void {
-    super.doBeginPlay();
+    public override beginPlay(): boolean {
+    if (!super.beginPlay()) {
+      return false;
+    }
     const visual = this._visual;
-    if (!visual || visual.isModelLoaded()) return;
+    if (!visual || visual.isModelLoaded()) return true;
 
     void visual.waitForLoad().catch(() => {
       console.warn('VomitballProjectileActor: failed to load Vomitball.glb');
       this._retire();
     });
+  
+    return true;
   }
 
   /** Hide and destroy only after GLTF load callbacks have settled. */
@@ -86,13 +92,13 @@ export class VomitballProjectileActor extends ENGINE.Actor {
   ): VomitballProjectileActor {
     const projectile = VomitballProjectileActor.create();
     projectile._damage = damage;
-    projectile._ignoredActors = VomitballProjectileActor._buildIgnoreList(world, owner);
+    projectile._ignoredRootNodes = VomitballProjectileActor._buildIgnoreList(world, owner);
 
-    projectile.rootComponent.position.copy(from);
+    projectile.position.copy(from);
 
     projectile._direction.copy(target);
-    projectile._direction.y = projectile.rootComponent.position.y;
-    projectile._direction.sub(projectile.rootComponent.position);
+    projectile._direction.y = projectile.position.y;
+    projectile._direction.sub(projectile.position);
     projectile._direction.y = 0;
     if (projectile._direction.lengthSq() < 1e-8) {
       projectile._direction.set(0, 0, 1);
@@ -100,19 +106,19 @@ export class VomitballProjectileActor extends ENGINE.Actor {
       projectile._direction.normalize();
     }
 
-    projectile.rootComponent.rotation.y = Math.atan2(
+    projectile.rotation.y = Math.atan2(
       projectile._direction.x,
       projectile._direction.z,
     );
 
-    projectile.rootComponent.getWorldPosition(projectile._prevPos);
+    projectile.getWorldPosition(projectile._prevPos);
 
-    world.addActor(projectile);
+    world.add(projectile);
     return projectile;
   }
 
-  private static _buildIgnoreList(world: ENGINE.World, owner: ENGINE.Actor | null): ENGINE.Actor[] {
-    const ignored = zombieSpatialManager.getAllRegisteredZombies();
+  private static _buildIgnoreList(world: ENGINE.World, owner: ENGINE.Actor | null): ENGINE.SceneNode[] {
+    const ignored: ENGINE.SceneNode[] = zombieSpatialManager.getAllRegisteredZombies();
     if (owner && !ignored.includes(owner)) {
       ignored.push(owner);
     }
@@ -136,7 +142,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
       return;
     }
 
-    this.rootComponent.getWorldPosition(this._prevPos);
+    this.getWorldPosition(this._prevPos);
 
     const step = PROJECTILE_SPEED * deltaTime;
     if (this._tryHitPlayer()) {
@@ -149,7 +155,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
       return;
     }
 
-    this.rootComponent.position.addScaledVector(this._direction, step);
+    this.position.addScaledVector(this._direction, step);
     this._distanceTraveled += step;
 
     if (this._distanceTraveled >= MAX_TRAVEL_DISTANCE) {
@@ -166,8 +172,8 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     const player = world?.getFirstPlayerPawn();
     if (!world || !player) return false;
 
-    this.rootComponent.getWorldPosition(this._scratchPos);
-    player.rootComponent.getWorldPosition(this._playerPos);
+    this.getWorldPosition(this._scratchPos);
+    player.getWorldPosition(this._playerPos);
     this._playerPos.y = this._scratchPos.y;
 
     if (this._scratchPos.distanceTo(this._playerPos) > HIT_RADIUS) return false;
@@ -179,7 +185,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
       hitNormal: this._direction.clone().negate(),
     };
 
-    const stats = player.getComponent(ENGINE.CharacterStatsComponent);
+    const stats = player.getNode(ENGINE.CharacterStatsNode);
     if (stats) {
       stats.takeDamage(this._damage, hitInfo);
     }
@@ -206,13 +212,13 @@ export class VomitballProjectileActor extends ENGINE.Actor {
       direction: this._rayDir,
       maxDistance: step,
       stopOnFirstHit: true,
-      ignoredActors: this._ignoredActors,
+      ignoredRootNodes: this._ignoredRootNodes,
     });
 
     if (!hits || hits.length === 0) return false;
 
     const hit = hits[0];
-    if (hit.hitActor && this._ignoredActors.includes(hit.hitActor)) {
+    if (hit.hitRoot && this._ignoredRootNodes.includes(hit.hitRoot)) {
       return false;
     }
 
@@ -224,7 +230,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
   /** Remove active vomitballs when a mission ends or resets. */
   public static destroyAllRuntime(world: ENGINE.World): void {
     const toDestroy: VomitballProjectileActor[] = [];
-    for (const actor of world.getActors()) {
+    for (const actor of world.getRootNodes()) {
       if (actor instanceof VomitballProjectileActor) {
         toDestroy.push(actor);
       }

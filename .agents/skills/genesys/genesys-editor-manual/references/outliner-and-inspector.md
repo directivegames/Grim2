@@ -1,63 +1,47 @@
 # Outliner and Inspector
 
+The editor uses a **Node Outliner** (world-level `SceneNode` tree) and **Node Inspector** (properties for the selected node, or asset / scene-settings / prefab-document modes). Some UI strings may still say “Actor” or “Component”; MCP uses `query_node` / `action_node` with `componentId` params for node UUIDs.
+
 ## Outliner panel
 
-Dock Left/Right via Outliner Options. Hidden during prefab isolation.
+Dock Left/Right via Outliner Options.
 
 | Control | Path | Notes |
 | --- | --- | --- |
-| Search | Toolbar | Filter by name/id |
-| Add Folder | + folder | Create folder |
-| Add Actor | + → Actor Class Picker | Spawn class |
+| Search | Toolbar | Filter by name/id; Enter selects; type-to-search |
+| Add node / prefab | **+** (`NodeAddPicker`) | Component class picker or prefab place |
 | Editor hide | Eye; tooltip Hide/Show object in editor; **H** | Editor-only |
 | Editor lock | Lock; Lock/Unlock selection (**L**) | Editor-only |
-| Folder hide/lock all | Folder eye/lock | Recursive |
-| Edit Prefab | Prefab pencil on row | Isolation |
-| Scene Settings | Click scene root | Inspector → scene settings |
+| Scene Settings | Click scene **Root** | Inspector → scene settings |
 
-### Actor context menu
+Folders, **Move to Folder**, and **Add Folder** are not in the Node Outliner (v14). Organisation is the component/node hierarchy and DnD reparent.
 
-Add to Current/New Chat · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Rename** (F2) · **Copy** (`Ctrl/Cmd+C`) · **Paste** (`Ctrl/Cmd+V`) · **Duplicate** (`Ctrl/Cmd+D`) · **Move to Folder** (Root / folders / Create New Folder) · **Merge Meshes to Model…** · **Prefab** → Edit Prefab / Apply to Prefab / Resync with Prefab / Show in Asset Browser / Unlink Prefab · **Save as Prefab...** · **Remove** (Del)
+### Node context menu
 
-### Folder context menu
+Add to Current/New Chat · **Show/Hide** (H) · **Lock Selection** / **Unlock Selection** (L) · **Focus** (F) · **Rename** (F2) · **Copy** (`Ctrl/Cmd+C`) · **Paste** (`Ctrl/Cmd+V`) · **Duplicate** (`Ctrl/Cmd+D`) · **Merge Meshes to Model…** · **Save Branch as Prefab…** · **Remove** (Del)
 
-**Show/Hide All** (H) · **Lock All** / **Unlock All** (L) · **Rename** (F2) · **Merge Meshes to Model…** · **Delete Folder (Delete content)** (Del) · **Delete Folder (Keep content)** (Shift+Del)
+Prefab instance workflow (**Edit Prefab**, **Apply to Prefab**, **Resync with Prefab**, **Show in Asset Browser**, **Unlink from Prefab**) is in the **Inspector** `PrefabActions` toolbar, not the outliner RMB menu.
 
 ### Outliner-focused extras
 
-**F** Focus · **Shift+F** scroll to selected · `Ctrl/Cmd+C`/`V`/`D` · F2 rename
+**F** Focus · `Ctrl/Cmd+C`/`V`/`D` · F2 rename · Root **Paste** for world-level paste
 
 ## Inspector panel
 
-Titles vary: Inspector · Inspector (Scene Settings) · Inspector (Prefab Asset) · Inspector (Material) · …
+Titles vary: Inspector · Inspector (Scene Settings) · Inspector (Material) · Inspector (Prefab Asset) · …
+
+There is no separate component tree — properties for the selected node only (multi-select supported).
 
 | Feature | Path | Notes |
 | --- | --- | --- |
-| Edit properties | Property rows | MCP `action_component.setProperties` |
-| Reset property | Row reset — **Reset to default value** | May show **(override)** on prefab instances |
-| Copy / Paste property value | Label context: **Copy Value** (Shift+RMB) · **Paste Value** (Shift+LMB) | In-memory clipboard — **UI only**; type-checked paste; undoable |
+| Edit properties | Property rows | MCP `action_node.setProperties` (`componentId`, `properties`) |
+| Reset property | Row reset — **Reset to default value** | UI only |
+| Copy / Paste property value | Label context: **Copy Value** (Shift+RMB) · **Paste Value** (Shift+LMB) | In-memory clipboard — **UI only** |
 | Expand All / Collapse All | Inspector Options | |
-| Asset Details | Collapsible section | Starts collapsed on shorter viewports |
+| Asset Details | Collapsible section | Starts collapsed |
 | Back to Previous Selection | Back button (Esc) | Leave asset/scene-settings focus |
-| Add Component | Component tree **+** / context **Add** | MCP `action_component.add` |
-| Component Focus | Context **Focus** (F) | |
-| Duplicate component | Context **Duplicate** (`Ctrl/Cmd+D`) | MCP `action_component.duplicate` |
-| Rename component | Context **Rename** (F2) | |
-| Make Root | Context **Make Root** | Promote to root component |
-| Merge Meshes to Model… | Context menu | MCP `action_asset.mergeMeshes` — exports nested meshes to `.glb`; originals kept |
-| Remove component | Context **Remove** (Del) | MCP `action_component.remove` |
-| Reparent components | Drag in component tree | |
+| Prefab instance actions | `PrefabActions` toolbar | Edit / Apply / Resync / Browse / Unlink; **Editable Children** on placed prefab roots |
+| Merge Meshes to Model… | Outliner context | MCP `action_asset.mergeMeshes` — exports nested meshes to `.glb`; originals kept; optional **Merge Into Single Mesh** welds to one geometry |
 | VFX Editor | Property when VFX path set | Opens VFX dialog — UI only |
 
-### Prefab Inspector chrome
-
-| Action | Path | MCP |
-| --- | --- | --- |
-| Edit Prefab / Close Prefab | Prefab buttons | `open` / `close` |
-| Apply to Prefab | Button | `apply` |
-| Resync Prefab / Resync with Prefab… | Button / More Prefab Actions | `resync` |
-| Unlink from Prefab… | More Prefab Actions | `unpack` |
-| Show in Asset Browser | Prefab chrome | — |
-| Save Prefab | Prefab asset mode | `save` |
-
-Prefab isolation: viewport **Prefab Editor** banner · Exit Prefab Mode (Esc) · Outliner hidden · status **Prefab Asset Mode**.
+Prefab isolation: viewport **Prefab Editor** banner · **Close Prefab** (Esc when a previous scene exists) · Outliner hidden · status **Prefab Asset Mode**.
