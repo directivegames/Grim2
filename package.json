@@ -22,7 +22,7 @@
   "packageManager": "pnpm@10.25.0",
   "type": "module",
   "dependencies": {
-    "@gnsx/genesys.js": "link:D:\\work\\Genesys\\genesys-monorepo\\packages\\engine",
+    "@gnsx/genesys.js": "14.0.1-dev",
     "three": "npm:@gnsx/three@0.185.15"
   },
   "pnpm": {
