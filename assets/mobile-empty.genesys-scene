@@ -1,80 +1,70 @@
 {
   "$root": {
     "$bc": "ENGINE.World",
-    "children": [
-      {
+    "$uuid": "mobile-empty-world",
+    "actors": {
+      "2": {
         "$bc": "ENGINE.Actor",
         "$initOptions": {},
-        "children": [
-          {
-            "$bc": "ENGINE.MeshNode",
-            "children": {
-              "$length": 1
-            },
-            "geometry": {
-              "$bc": "THREE.BoxGeometry",
-              "_": [
-                500,
-                0.1,
-                500
-              ]
-            },
-            "material": {
-              "$bc": "$global",
-              "name": "DefaultMaterial"
-            },
-            "name": "MeshComponent",
-            "nodeId": 65041,
-            "physicsOptions": {
-              "contributeToParentCollider": true
-            },
-            "uuid": "mobile-ground-component",
-            "uvScaleTilesPerUnit": 0.2
-          }
-        ],
         "name": "MobileGround",
-        "nodeId": 55257,
-        "position": {
-          "$bc": "v3",
-          "_": [
-            0,
-            -1,
-            0
-          ]
-        },
-        "userData": {
-          "objectFlags": 6
+        "rootComponent": {
+          "$bc": "ENGINE.MeshComponent",
+          "children": {
+            "$length": 1
+          },
+          "geometry": {
+            "$bc": "THREE.BoxGeometry",
+            "_": [
+              500,
+              0.1,
+              500
+            ]
+          },
+          "material": {
+            "$bc": "$global",
+            "name": "DefaultMaterial"
+          },
+          "name": "MeshComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              0,
+              -1,
+              0
+            ]
+          },
+          "uuid": "mobile-ground-component",
+          "uvScaleTilesPerUnit": 0.2
         },
         "uuid": "mobile-ground-actor"
       },
-      {
+      "3": {
         "$bc": "ENGINE.PlayerStart",
         "$initOptions": {},
-        "children": {
-          "0": {
-            "$bc": "ENGINE.SceneNode",
-            "name": "SceneComponent",
-            "nodeId": 48162,
-            "uuid": "mobile-player-start-component"
-          },
-          "$length": 2
-        },
         "name": "Player Start",
-        "nodeId": 63075,
-        "position": {
-          "$bc": "v3",
-          "_": [
-            51.244,
-            0,
-            -2.041
-          ]
-        },
-        "userData": {
-          "objectFlags": 6
+        "rootComponent": {
+          "$bc": "ENGINE.SceneComponent",
+          "children": {
+            "$length": 1
+          },
+          "name": "SceneComponent",
+          "position": {
+            "$bc": "v3",
+            "_": [
+              51.244,
+              0,
+              -2.041
+            ]
+          },
+          "userData": {
+            "objectFlags": 1
+          },
+          "uuid": "mobile-player-start-component"
         },
         "uuid": "mobile-player-start-actor"
-      }
-    ],
+      },
+      "$length": 4
+    },
     "editorData": {
       "sceneTree": {
         "children": [
@@ -96,8 +86,7 @@
       "effects": []
     },
     "resources": null,
-    "settings": {},
-    "uuid": "mobile-empty-world"
+    "settings": {}
   },
-  "$version": 3
+  "$version": 2
 }
