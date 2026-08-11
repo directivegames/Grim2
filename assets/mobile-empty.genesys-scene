@@ -3,37 +3,24 @@
     "$bc": "ENGINE.World",
     "children": [
       {
-        "$bc": "ENGINE.Actor",
-        "$initOptions": {},
-        "children": [
-          {
-            "$bc": "ENGINE.MeshNode",
-            "children": {
-              "$length": 1
-            },
-            "geometry": {
-              "$bc": "THREE.BoxGeometry",
-              "_": [
-                500,
-                0.1,
-                500
-              ]
-            },
-            "material": {
-              "$bc": "$global",
-              "name": "DefaultMaterial"
-            },
-            "name": "MeshComponent",
-            "nodeId": 59900,
-            "physicsOptions": {
-              "contributeToParentCollider": true
-            },
-            "uuid": "mobile-ground-component",
-            "uvScaleTilesPerUnit": 0.2
-          }
-        ],
+        "$bc": "ENGINE.MeshNode",
+        "children": {
+          "$length": 1
+        },
+        "geometry": {
+          "$bc": "THREE.BoxGeometry",
+          "_": [
+            500,
+            0.1,
+            500
+          ]
+        },
+        "material": {
+          "$bc": "$global",
+          "name": "DefaultMaterial"
+        },
         "name": "MobileGround",
-        "nodeId": 40415,
+        "nodeId": 59900,
         "position": {
           "$bc": "v3",
           "_": [
@@ -45,22 +32,14 @@
         "userData": {
           "objectFlags": 6
         },
-        "uuid": "mobile-ground-actor"
+        "uuid": "mobile-ground-component",
+        "uvScaleTilesPerUnit": 0.2
       },
       {
         "$bc": "ENGINE.PlayerStart",
         "$initOptions": {},
         "children": {
-          "0": {
-            "$bc": "ENGINE.SceneNode",
-            "name": "SceneComponent",
-            "nodeId": 40145,
-            "userData": {
-              "objectFlags": 1
-            },
-            "uuid": "mobile-player-start-component"
-          },
-          "$length": 2
+          "$length": 1
         },
         "name": "Player Start",
         "nodeId": 9508,
@@ -82,7 +61,7 @@
       "sceneTree": {
         "children": [
           {
-            "id": "mobile-ground-actor",
+            "id": "mobile-ground-component",
             "nodeType": "actor"
           },
           {
