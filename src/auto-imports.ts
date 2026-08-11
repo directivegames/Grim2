@@ -43,8 +43,6 @@ import './actors/ZombieActor.js';
 import './actors/ZombieHordeManager.js';
 import './actors/ZombieRiseVFXActor.js';
 import './actors/ZombieSpatialManager.js';
-import './apply-actor-movement-predictor-engine-patch.js';
-import './apply-cloud-shadow-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
 import './cloudShadow/applyCloudShadowOnBeforeCompile.js';
 import './cloudShadow/applyCloudShadowToMaterial.js';

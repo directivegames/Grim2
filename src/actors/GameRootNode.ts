@@ -5,22 +5,9 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
 export abstract class GameRootNode extends ENGINE.PrimitiveNode {
-  public override get isRoot(): boolean {
-    return true;
-  }
-
-  public override set isRoot(value: boolean) {
-    super.isRoot = value;
-  }
-
-  /**
-   * Match deprecated Actor: non-networked roots are locally authoritative.
-   * SceneNode defaults to false without a ReplicationGroup, which skips
-   * BasePawnMovementNode ticks and freezes NPC / projectile movement.
-   */
-  public override hasAuthority(): boolean {
-    const group = this.getReplicationGroup();
-    return group ? group.hasAuthority() : true;
+  constructor() {
+    super();
+    this.isRoot = true;
   }
 
   /**

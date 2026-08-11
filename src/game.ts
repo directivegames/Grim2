@@ -6,9 +6,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 import * as THREE from 'three';
 
 // Must run before any actor ticks — harness bundle may omit patched `NpcMovementNode` from `node_modules`.
-import './apply-actor-movement-predictor-engine-patch.js';
 import './apply-npc-follow-offset-engine-patch.js';
-import './apply-cloud-shadow-engine-patch.js';
 import './auto-imports.js';
 import './fog/FogSystemActor.js';
 import { IsometricPlayerPawn } from './actors/IsometricPlayerPawn.js';
