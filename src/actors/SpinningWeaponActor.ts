@@ -13,6 +13,8 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import type { DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
@@ -184,7 +186,7 @@ const enum AttackIndex {
 // ─── SpinningWeaponActor ─────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
-export class SpinningWeaponActor extends ENGINE.Actor {
+export class SpinningWeaponActor extends GameRootNode {
 
   /** Editor-placed weapons: "weapon", "weapon 02", "weapon 03" (slot 0 = melee). */
   private _sceneWeaponActors: ENGINE.SceneNode[] = [];
@@ -229,7 +231,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private static readonly _Y_AXIS = new THREE.Vector3(0, 1, 0);
   private static readonly _PITCH_AXIS = new THREE.Vector3(1, 0, 0);
 
-  private _hitCooldowns = new Map<ENGINE.Actor, number>();
+  private _hitCooldowns = new Map<ENGINE.SceneNode, number>();
 
   // ── Soul Throw (boomerang) state ──────────────────────────────────────────
 
@@ -263,7 +265,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
   private _weaponEnd         = new THREE.Vector3();
 
   /** Reused each call to _checkForHits — avoids per-frame Set allocation. */
-  private readonly _hitZombiesThisFrame = new Set<ENGINE.Actor>();
+  private readonly _hitZombiesThisFrame = new Set<ENGINE.SceneNode>();
   /** Scratch for NDC projection in damage numbers — avoids .clone() per hit. */
   private readonly _ndcScratch = new THREE.Vector3();
 
@@ -628,11 +630,11 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     }
   }
 
-  private _pickFistTargets(player: ENGINE.Pawn, maxCount: number): ENGINE.Actor[] {
+  private _pickFistTargets(player: ENGINE.Pawn, maxCount: number): ENGINE.SceneNode[] {
     player.getWorldPosition(this._scratchPlayerPos);
 
     const nearby = zombieSpatialManager.getNearbyZombies(this._scratchPlayerPos, FIST_MAX_RANGE);
-    const candidates: ENGINE.Actor[] = [];
+    const candidates: ENGINE.SceneNode[] = [];
 
     // On mobile the player explicitly taps the skill button — allow targeting enemies
     // at any distance within max range (no minimum), so close-combat zombies are valid.
@@ -654,7 +656,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
 
     if (candidates.length === 0) return [];
 
-    const picked: ENGINE.Actor[] = [];
+    const picked: ENGINE.SceneNode[] = [];
     const pool = [...candidates];
     const count = Math.min(maxCount, pool.length);
     for (let i = 0; i < count; i++) {
@@ -1192,7 +1194,7 @@ export class SpinningWeaponActor extends ENGINE.Actor {
     return dxp * dxp + dzp * dzp;
   }
 
-  private _hitZombie(zombie: ENGINE.Actor, currentTime: number, player: ENGINE.Pawn): void {
+  private _hitZombie(zombie: ENGINE.SceneNode, currentTime: number, player: ENGINE.Pawn): void {
     this._hitCooldowns.set(zombie, currentTime);
 
     zombie.getWorldPosition(this._scratchZombiePos);

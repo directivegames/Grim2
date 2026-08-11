@@ -3,12 +3,14 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from '../actors/GameRootNode.js';
+
 import { FilmGrainComponent, type FilmGrainComponentOptions } from './FilmGrainComponent.js';
 
-export type FilmGrainActorOptions = ENGINE.ActorOptions & FilmGrainComponentOptions;
+export type FilmGrainActorOptions = ENGINE.PrimitiveNodeOptions & FilmGrainComponentOptions;
 
 @ENGINE.GameClass()
-export class FilmGrainActor extends ENGINE.Actor {
+export class FilmGrainActor extends GameRootNode {
   public override initialize(options?: FilmGrainActorOptions): void {
     super.initialize(options);
     const component = FilmGrainComponent.create({ name: 'FilmGrain', ...options });

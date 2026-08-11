@@ -4,6 +4,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import {
   debugForcePostmanMission,
   debugGrantVaultResources,
@@ -12,7 +14,7 @@ import {
 } from '../utils/debug-cheats.js';
 
 @ENGINE.GameClass()
-export class DebugCheatsActor extends ENGINE.Actor {
+export class DebugCheatsActor extends GameRootNode {
   private readonly _onWindowKeyDown = (e: KeyboardEvent): void => {
     if (e.repeat) {
       return;

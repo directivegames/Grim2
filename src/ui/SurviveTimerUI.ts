@@ -98,9 +98,12 @@ export class SurviveTimerUI {
     const timeText = mins > 0 ? `${mins}:${rem.toString().padStart(2, '0')}` : `${secs}`;
     const urgent = remainingSec <= 15 && totalSec > 15;
     const color = urgent ? '#ff6b6b' : '#a8f0ff';
-    this._line.innerHTML = `
-      <span style="color:#e8e4dc">${label}: </span>
-      <span style="color:${color}">${timeText}</span>
-    `;
+    const title = document.createElement('span');
+    title.style.color = '#e8e4dc';
+    title.textContent = `${label}: `;
+    const value = document.createElement('span');
+    value.style.color = color;
+    value.textContent = timeText;
+    this._line.replaceChildren(title, value);
   }
 }

@@ -7,7 +7,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, EditorPropertyChangedResult } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, EditorPropertyChangedResult } from '@gnsx/genesys.js';
 import {
   registerSpawnBlocker,
   unregisterSpawnBlocker,
@@ -39,7 +41,7 @@ function ensureSpawnBlockerCollisionProfile(): void {
 }
 
 @ENGINE.GameClass()
-export class SpawnBlockerActor extends ENGINE.Actor {
+export class SpawnBlockerActor extends GameRootNode {
   @ENGINE.property({ type: 'number', min: 0.25, max: 200, step: 0.25, category: 'Spawn Blocker' })
   public halfExtentX = 4;
 
@@ -59,7 +61,7 @@ export class SpawnBlockerActor extends ENGINE.Actor {
   private _edgeMaterial: THREE.LineBasicMaterial | null = null;
   private _lastGeomKey = '';
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     ensureSpawnBlockerCollisionProfile();
 
     const root = ENGINE.MeshNode.create({

@@ -1,11 +1,13 @@
 import * as ENGINE from '@gnsx/genesys.js';
+
+import { GameRootNode } from './GameRootNode.js';
 import { gameSettings } from '../utils/game-settings.js';
 
 const BASE_MAP_MUSIC_VOLUME = 0.5;
 const MAP_TRACK = '@project/assets/sounds/Mapmusic.mp3';
 
 @ENGINE.GameClass()
-export class MapMusicActor extends ENGINE.Actor {
+export class MapMusicActor extends GameRootNode {
   private _sound: ENGINE.SoundNode | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
   private _stopped = false;

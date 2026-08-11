@@ -3,6 +3,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import { ensureGameplayInputFlushOnBlur } from '../utils/flush-gameplay-input.js';
 import {
   canOpenPause,
@@ -16,7 +18,7 @@ import { PauseMenuUI } from '../ui/PauseMenuUI.js';
 import { returnToMainMenu } from '../utils/return-to-main-menu.js';
 
 @ENGINE.GameClass()
-export class PauseManagerActor extends ENGINE.Actor {
+export class PauseManagerActor extends GameRootNode {
   private readonly _inputHandler: ENGINE.IInputHandler = {
     handleKeyDown: (e: KeyboardEvent): boolean => {
       if (e.key !== 'Escape') {

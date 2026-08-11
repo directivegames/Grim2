@@ -5,7 +5,9 @@
  * Smoke: textured billboard puffs raised so the player walks through them.
  */
 import * as ENGINE from '@gnsx/genesys.js';
-import type { ActorOptions } from '@gnsx/genesys.js';
+
+import { GameRootNode } from './GameRootNode.js';
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 import * as THREE from 'three';
 
 import {
@@ -62,7 +64,7 @@ interface FogCard {
 }
 
 @ENGINE.GameClass()
-export class GroundFogActor extends ENGINE.Actor {
+export class GroundFogActor extends GameRootNode {
   @ENGINE.property({ type: 'number', step: 0.01, category: 'Ground Fog' })
   public groundVerticalOffset: number = 0;
 
@@ -72,7 +74,7 @@ export class GroundFogActor extends ENGINE.Actor {
   private _poolReady = false;
   private _smokeLayerBuilt = false;
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     super.initialize(options);
     this.add(root);

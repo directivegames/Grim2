@@ -5,7 +5,7 @@ const REVEAL_RETRY_MS = 16;
 const MAX_REVEAL_ATTEMPTS = 8;
 
 /** True when the GLTF mesh is loaded and at least one renderable mesh exists. */
-export function isActorVisualReady(actor: ENGINE.Actor): boolean {
+export function isActorVisualReady(actor: ENGINE.SceneNode): boolean {
   const visual = actor.getNode(ENGINE.ModelMeshNode);
   if (!visual?.isModelLoaded()) {
     return false;
@@ -22,7 +22,7 @@ export function isActorVisualReady(actor: ENGINE.Actor): boolean {
 }
 
 export interface HordeRevealOptions {
-  actor: ENGINE.Actor;
+  actor: ENGINE.SceneNode;
   onReady: () => void;
   onFailed: () => void;
 }

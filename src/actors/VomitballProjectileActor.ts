@@ -6,7 +6,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
@@ -25,7 +27,7 @@ const HIT_RADIUS = 0.65;
 const DEFAULT_DAMAGE = 15;
 
 @ENGINE.GameClass()
-export class VomitballProjectileActor extends ENGINE.Actor {
+export class VomitballProjectileActor extends GameRootNode {
   private _visual: ENGINE.ModelMeshNode | null = null;
   private _direction = new THREE.Vector3();
   private _distanceTraveled = 0;
@@ -39,7 +41,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
   private readonly _playerPos = new THREE.Vector3();
   private readonly _rayDir = new THREE.Vector3();
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
 
     this._visual = ENGINE.ModelMeshNode.create({
@@ -88,7 +90,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     from: THREE.Vector3,
     target: THREE.Vector3,
     damage: number = DEFAULT_DAMAGE,
-    owner: ENGINE.Actor | null = null,
+    owner: ENGINE.SceneNode | null = null,
   ): VomitballProjectileActor {
     const projectile = VomitballProjectileActor.create();
     projectile._damage = damage;
@@ -117,7 +119,7 @@ export class VomitballProjectileActor extends ENGINE.Actor {
     return projectile;
   }
 
-  private static _buildIgnoreList(world: ENGINE.World, owner: ENGINE.Actor | null): ENGINE.SceneNode[] {
+  private static _buildIgnoreList(world: ENGINE.World, owner: ENGINE.SceneNode | null): ENGINE.SceneNode[] {
     const ignored: ENGINE.SceneNode[] = zombieSpatialManager.getAllRegisteredZombies();
     if (owner && !ignored.includes(owner)) {
       ignored.push(owner);

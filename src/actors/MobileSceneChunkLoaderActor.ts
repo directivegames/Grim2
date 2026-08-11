@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import { isMobileDevice } from '../utils/mobile-device.js';
 import { downscaleModelTextures } from '../utils/downscale-model-textures.js';
 import { SpawnBlockerActor } from './SpawnBlockerActor.js';
@@ -40,7 +42,7 @@ function delay(ms: number): Promise<void> {
 }
 
 @ENGINE.GameClass()
-export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
+export class MobileSceneChunkLoaderActor extends GameRootNode {
   private static _instance: MobileSceneChunkLoaderActor | null = null;
 
   private _introPromise: Promise<void> | null = null;
@@ -48,7 +50,7 @@ export class MobileSceneChunkLoaderActor extends ENGINE.Actor {
   private _lightingReady = false;
   private _groundReady = false;
 
-  public override initialize(options?: ENGINE.ActorOptions): void {
+  public override initialize(options?: ENGINE.PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     root.position.set(0, HIDDEN_LOAD_Y, 0);
     super.initialize(options);

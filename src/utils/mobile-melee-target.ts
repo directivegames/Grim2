@@ -20,7 +20,7 @@ const _aimDir = new THREE.Vector3();
 /** Wider than the 180° swing — forgiving when tracking a single nearby zombie. */
 const AIM_CONE_MIN_DOT = -0.4;
 
-function isLivingZombie(zombie: ENGINE.Actor): boolean {
+function isLivingZombie(zombie: ENGINE.SceneNode): boolean {
   return !(zombie as unknown as { _deathSequenceStarted?: boolean })._deathSequenceStarted;
 }
 
@@ -73,7 +73,7 @@ export function hasMobileMeleeTargetInAim(world: ENGINE.World): boolean {
  * proximity fallback so mobile attacks always land when an enemy is in reach,
  * even if the right-stick aim never registers as "active".
  */
-export function getNearestMobileMeleeTarget(world: ENGINE.World): ENGINE.Actor | null {
+export function getNearestMobileMeleeTarget(world: ENGINE.World): ENGINE.SceneNode | null {
   const pawn = world.getFirstPlayerPawn();
   if (!pawn) {
     return null;
@@ -82,7 +82,7 @@ export function getNearestMobileMeleeTarget(world: ENGINE.World): ENGINE.Actor |
   pawn.getWorldPosition(_playerPos);
 
   const nearby = zombieSpatialManager.getNearbyZombies(_playerPos, MOBILE_MELEE_RANGE);
-  let best: ENGINE.Actor | null = null;
+  let best: ENGINE.SceneNode | null = null;
   let bestDistSq = MOBILE_MELEE_RANGE_SQ;
 
   for (const zombie of nearby) {

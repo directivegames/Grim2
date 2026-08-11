@@ -6,7 +6,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { POSTMAN_BOSS_BASE_BULLET_DAMAGE, POSTMAN_BOSS_BASE_BULLET_SPEED } from '../data/combat-balance.js';
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { isGameplayUnlocked } from '../utils/game-pause.js';
@@ -25,7 +27,7 @@ const BULLET_PITCH_X = Math.PI / 2;
 const DEFAULT_BULLET_SCALE = new THREE.Vector3(8, 8, 8);
 
 @ENGINE.GameClass()
-export class PostmanBulletActor extends ENGINE.Actor {
+export class PostmanBulletActor extends GameRootNode {
   /** World scale copied from the first editor-placed demonletter (if any). */
   private static _editorWorldScale: THREE.Vector3 | null = null;
 
@@ -42,7 +44,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
   private readonly _scratchPos = new THREE.Vector3();
   private readonly _playerPos = new THREE.Vector3();
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     const scale = PostmanBulletActor._resolveScale();
 
@@ -149,7 +151,7 @@ export class PostmanBulletActor extends ENGINE.Actor {
     direction: THREE.Vector3,
     speed: number = POSTMAN_BOSS_BASE_BULLET_SPEED,
     damage: number = POSTMAN_BOSS_BASE_BULLET_DAMAGE,
-    _owner: ENGINE.Actor | null = null,
+    _owner: ENGINE.SceneNode | null = null,
   ): PostmanBulletActor {
     void _owner;
     const projectile = PostmanBulletActor.create();

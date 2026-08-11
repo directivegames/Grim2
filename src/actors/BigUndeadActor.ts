@@ -1,17 +1,19 @@
 /**
- * BigUndeadActor â€?ranged kiting elite. Fires 3 vomitballs, retreats when rushed.
+ * BigUndeadActor ï¿½?ranged kiting elite. Fires 3 vomitballs, retreats when rushed.
  *
- * Animation mapping (GLB clips â†?state machine states):
- *   idle    â†?"dying_backwards"
- *   walk    â†?"Running"
- *   attack  â†?"dying_backwards"
- *   hit     â†?"Charged_Spell_Cast"
- *   death   â†?"Walking"
+ * Animation mapping (GLB clips ï¿½?state machine states):
+ *   idle    ï¿½?"dying_backwards"
+ *   walk    ï¿½?"Running"
+ *   attack  ï¿½?"dying_backwards"
+ *   hit     ï¿½?"Charged_Spell_Cast"
+ *   death   ï¿½?"Walking"
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
@@ -96,7 +98,7 @@ function ensureBigUndeadNpcCollisionProfile(): void {
 }
 
 @ENGINE.GameClass()
-export class BigUndeadActor extends ENGINE.Actor {
+export class BigUndeadActor extends GameRootNode {
 
   /** Horde manager sets this for pooled horde spawns. */
   public onDied: (() => void) | null = null;
@@ -191,7 +193,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     this._lastTrackedHealth = current;
   };
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     ensureBigUndeadNpcCollisionProfile();
 
     const root = ENGINE.MeshNode.create({
@@ -304,7 +306,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     return true;
   }
 
-  /** Horde spawn / relocate â€?immediately chase instead of waiting for aggro radius. */
+  /** Horde spawn / relocate ï¿½?immediately chase instead of waiting for aggro radius. */
   public wakeForHordeSpawn(): void {
     if (this._deathSequenceStarted) {
       return;
@@ -731,7 +733,7 @@ export class BigUndeadActor extends ENGINE.Actor {
     const gravePos = landPos.clone();
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
 
-    const smokeActor = ENGINE.Actor.create();
+    const smokeActor = ENGINE.PrimitiveNode.create({ isRoot: true });
     smokeActor.position.copy(landPos);
     smokeActor.position.y += 0.1;
     const smokeVfx = ENGINE.VFXNode.create({

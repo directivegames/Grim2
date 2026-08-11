@@ -15,7 +15,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 import {
   createDefaultHordeEnemyTypes,
   HORDE_NORMAL_ZOMBIE_SPAWN_WEIGHT,
@@ -91,7 +93,7 @@ interface RespawnQueueEntry {
 }
 
 @ENGINE.GameClass()
-export class ZombieHordeManager extends ENGINE.Actor {
+export class ZombieHordeManager extends GameRootNode {
   private _activeZombies = new Map<NewZombieActor, ActiveZombie>();
   private _respawnQueue: RespawnQueueEntry[] = [];
   private _pendingWaveSpawns: { delayRemaining: number }[] = [];
@@ -118,7 +120,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   /** Elite / alternate enemy types (Big Undead, etc.) — see HordeEnemyRegistry. */
   private readonly _hordeEnemyTypes: HordeEnemyType[] = createDefaultHordeEnemyTypes();
-  private readonly _activeEliteActors = new Map<string, Set<ENGINE.Actor>>();
+  private readonly _activeEliteActors = new Map<string, Set<ENGINE.SceneNode>>();
 
   // Scratch vectors
   private readonly _playerPos = new THREE.Vector3();
@@ -128,12 +130,12 @@ export class ZombieHordeManager extends ENGINE.Actor {
   private _relocateTimer = 0;
   private _spawnFailLogTimer = 0;
   private readonly _relocateCooldowns = new Map<NewZombieActor, number>();
-  private readonly _eliteRelocateCooldowns = new Map<ENGINE.Actor, number>();
+  private readonly _eliteRelocateCooldowns = new Map<ENGINE.SceneNode, number>();
   private readonly _relocateUsedMarkers = new Set<EnemySpawnPointActor>();
 
   /** Hidden pooled zombies kept between missions — reused before allocating new actors. */
   private readonly _idlePool = new Set<NewZombieActor>();
-  private readonly _idleElitePools = new Map<string, ENGINE.Actor[]>();
+  private readonly _idleElitePools = new Map<string, ENGINE.SceneNode[]>();
 
   @ENGINE.property({ type: 'number', min: 1, max: 50, step: 1, category: 'Horde' })
   public killsToActivate: number = KILLS_TO_ACTIVATE_HORDE;
@@ -141,7 +143,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
   @ENGINE.property({ type: 'number', min: 5, max: 60, step: 1, category: 'Horde' })
   public waveInterval: number = WAVE_INTERVAL_SEC;
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     super.initialize(options);
     this.add(root);
@@ -471,7 +473,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     this._revealActorWhenVisualReady(world, actor, spawnPos, type);
   }
 
-  private _takeIdleElite(typeId: string): ENGINE.Actor | null {
+  private _takeIdleElite(typeId: string): ENGINE.SceneNode | null {
     const pool = this._idleElitePools.get(typeId);
     if (!pool || pool.length === 0) {
       return null;
@@ -483,7 +485,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     return actor;
   }
 
-  private _returnEliteToIdlePool(type: HordeEnemyType, actor: ENGINE.Actor): void {
+  private _returnEliteToIdlePool(type: HordeEnemyType, actor: ENGINE.SceneNode): void {
     if (!(actor instanceof BigUndeadActor) && !(actor instanceof DemonboxActor)) {
       destroyActorWhenGltfIdle(actor);
       return;
@@ -506,7 +508,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
     pool.push(actor);
   }
 
-  private _onEliteEnemyDied(type: HordeEnemyType, actor: ENGINE.Actor): void {
+  private _onEliteEnemyDied(type: HordeEnemyType, actor: ENGINE.SceneNode): void {
     type.clearDeathHook(actor);
     this._activeEliteActors.get(type.id)?.delete(actor);
 
@@ -521,7 +523,7 @@ export class ZombieHordeManager extends ENGINE.Actor {
 
   private _revealActorWhenVisualReady(
     world: ENGINE.World,
-    actor: ENGINE.Actor,
+    actor: ENGINE.SceneNode,
     spawnPos: THREE.Vector3,
     type: HordeEnemyType,
   ): void {

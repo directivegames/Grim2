@@ -113,10 +113,15 @@ export class SoulProgressUI {
 
   public setProgress(collected: number, required: number, label = 'SOULS RETRIEVED'): void {
     if (!this._line) return;
-    this._line.innerHTML = `
-      <span style="color:#e8e4dc">${label}: </span>
-      <span style="color:#b8e0ff">${Math.min(collected, required)}</span>
-      <span style="color:#e8e4dc"> / ${required}</span>
-    `;
+    const title = document.createElement('span');
+    title.style.color = '#e8e4dc';
+    title.textContent = `${label}: `;
+    const value = document.createElement('span');
+    value.style.color = '#b8e0ff';
+    value.textContent = String(Math.min(collected, required));
+    const total = document.createElement('span');
+    total.style.color = '#e8e4dc';
+    total.textContent = ` / ${required}`;
+    this._line.replaceChildren(title, value, total);
   }
 }

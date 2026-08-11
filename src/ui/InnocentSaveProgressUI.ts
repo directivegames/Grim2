@@ -166,10 +166,13 @@ export class InnocentSaveProgressUI {
 
     const timerLabel = isMobileDevice() ? 'TIME: ' : 'TIME TO SAVE: ';
     this._timerLine.style.display = 'block';
-    this._timerLine.innerHTML = `
-      <span style="color:${LABEL_COLOR}">${timerLabel}</span>
-      <span style="color:${color}">${timeText}</span>
-    `;
+    const timerTitle = document.createElement('span');
+    timerTitle.style.color = LABEL_COLOR;
+    timerTitle.textContent = timerLabel;
+    const timerValue = document.createElement('span');
+    timerValue.style.color = color;
+    timerValue.textContent = timeText;
+    this._timerLine.replaceChildren(timerTitle, timerValue);
   }
 
   /** @param saved innocents successfully saved (deaths do not increment). */
@@ -181,15 +184,20 @@ export class InnocentSaveProgressUI {
 
     const mobile = isMobileDevice();
     const savedLabel = mobile ? 'SAVED: ' : 'SOULS SAVED: ';
-    this._mainLine.innerHTML = `
-      <span style="color:${LABEL_COLOR}">${savedLabel}</span>
-      <span style="color:${SAVED_COLOR}">${clampedSaved}</span>
-      <span style="color:${LABEL_COLOR}"> / ${required}</span>
-    `;
+    const mainTitle = document.createElement('span');
+    mainTitle.style.color = LABEL_COLOR;
+    mainTitle.textContent = savedLabel;
+    const mainValue = document.createElement('span');
+    mainValue.style.color = SAVED_COLOR;
+    mainValue.textContent = String(clampedSaved);
+    const mainTotal = document.createElement('span');
+    mainTotal.style.color = LABEL_COLOR;
+    mainTotal.textContent = ` / ${required}`;
+    this._mainLine.replaceChildren(mainTitle, mainValue, mainTotal);
 
     if (remaining > 0) {
-      const remainLabel = mobile ? `${remaining} left` : `${remaining} remaining`;
-      this._remainLine.innerHTML = `<span style="color:${REMAINING_COLOR}">${remainLabel}</span>`;
+      this._remainLine.textContent = mobile ? `${remaining} left` : `${remaining} remaining`;
+      this._remainLine.style.color = REMAINING_COLOR;
       this._remainLine.style.display = 'block';
     } else {
       this._remainLine.textContent = mobile ? 'All saved' : 'All souls saved';

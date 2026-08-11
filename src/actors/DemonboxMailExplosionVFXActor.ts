@@ -8,7 +8,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -48,7 +50,7 @@ interface LetterPiece {
 // ─── Actor ────────────────────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
-export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
+export class DemonboxMailExplosionVFXActor extends GameRootNode {
 
   private readonly _letters: LetterPiece[] = [];
   private _flash: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null = null;
@@ -56,7 +58,7 @@ export class DemonboxMailExplosionVFXActor extends ENGINE.Actor {
   private _elapsed = 0;
   private _isActive = false;
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
 
     const flashMat = new THREE.MeshBasicMaterial({

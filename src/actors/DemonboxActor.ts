@@ -1,23 +1,25 @@
 /**
- * DemonboxActor �?suicide-bomber enemy.
+ * DemonboxActor �?suicide-bomber enemy.
  *
- * Animation mapping (Demonbox.glb clips �?state machine states):
- *   idle   �?"Arm_Circle_Shuffle"  (standing still, no aggro)
- *   run    �?"run_fast_3_inplace"  (chasing player)
- *   windup �?"Clapping_Run"        (stopped at blast range, building to explosion)
- *   death  �?"dying_backwards"     (killed by player before explosion)
+ * Animation mapping (Demonbox.glb clips �?state machine states):
+ *   idle   �?"Arm_Circle_Shuffle"  (standing still, no aggro)
+ *   run    �?"run_fast_3_inplace"  (chasing player)
+ *   windup �?"Clapping_Run"        (stopped at blast range, building to explosion)
+ *   death  �?"dying_backwards"     (killed by player before explosion)
  *
  * Behaviour:
- *   idle   �?waits until player enters aggroRadius
- *   chase  �?navigates toward player via NPC movement
- *   windup �?stops, plays windup anim, flashes red slow→fast over windupDuration seconds,
+ *   idle   �?waits until player enters aggroRadius
+ *   chase  �?navigates toward player via NPC movement
+ *   windup �?stops, plays windup anim, flashes red slow→fast over windupDuration seconds,
  *            then explodes: damages player if inside blastRadius, spawns mail VFX, destroys self
- *   dead   �?triggered when health reaches 0; plays death anim + ragdoll, no explosion
+ *   dead   �?triggered when health reaches 0; plays death anim + ragdoll, no explosion
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
@@ -51,7 +53,7 @@ const BLOB_SHADOW_FEET_Y = 0.02;
 
 /** Period of a single red flash at the START of the wind-up (seconds per half-cycle). */
 const FLASH_HALF_PERIOD_START = 0.4;
-/** Period at the END of the wind-up �?flash is at peak frequency just before explosion. */
+/** Period at the END of the wind-up �?flash is at peak frequency just before explosion. */
 const FLASH_HALF_PERIOD_END = 0.05;
 
 /** How long until ragdoll cleanup fires after death is triggered. */
@@ -59,7 +61,7 @@ const DEATH_ANIM_DURATION_SEC = 1.0;
 const DEATH_SETTLE_SEC = 0.5;
 const DEATH_GRAVITY = 9;
 
-/** Throttle NPC path updates �?no need to recalculate path every frame. */
+/** Throttle NPC path updates �?no need to recalculate path every frame. */
 const PATH_UPDATE_INTERVAL_SEC = 0.2;
 
 const SHARED_ROOT_GEOMETRY = new THREE.CapsuleGeometry(
@@ -109,7 +111,7 @@ type DemonboxState = 'idle' | 'chase' | 'windup' | 'dead';
 // ─── DemonboxActor ────────────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
-export class DemonboxActor extends ENGINE.Actor {
+export class DemonboxActor extends GameRootNode {
 
   /** Set by horde manager to count this enemy's death toward wave tracking. */
   public onDied: (() => void) | null = null;
@@ -196,7 +198,7 @@ export class DemonboxActor extends ENGINE.Actor {
         audio.play(clip, 1.0, true);
       }
     }
-    // Only flash yellow when not in windup �?windup already uses red flash
+    // Only flash yellow when not in windup �?windup already uses red flash
     if (this._state !== 'windup') {
       this._flashYellow();
     }
@@ -205,7 +207,7 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── initialize ───────────────────────────────────────────────────────────
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     ensureDemonboxNpcCollisionProfile();
 
     const root = ENGINE.MeshNode.create({
@@ -469,7 +471,7 @@ export class DemonboxActor extends ENGINE.Actor {
   ): void {
     this._windupTimer += deltaTime;
 
-    // Flash period interpolates from slow �?fast as the timer progresses
+    // Flash period interpolates from slow �?fast as the timer progresses
     const progress = Math.min(this._windupTimer / this.windupDuration, 1.0);
     const halfPeriod =
       FLASH_HALF_PERIOD_START + (FLASH_HALF_PERIOD_END - FLASH_HALF_PERIOD_START) * progress;
@@ -738,7 +740,7 @@ export class DemonboxActor extends ENGINE.Actor {
 
   // ── Horde interface ───────────────────────────────────────────────────────
 
-  /** Called by the horde manager after reveal �?skip aggro wait and start chasing. */
+  /** Called by the horde manager after reveal �?skip aggro wait and start chasing. */
   public wakeForHordeSpawn(): void {
     if (this._deathSequenceStarted || this._explosionTriggered) return;
     this._hasAggro = true;

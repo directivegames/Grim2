@@ -7,7 +7,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 import { DeadGraveActor } from './DeadGraveActor.js';
 import { DemonboxMailExplosionVFXActor } from './DemonboxMailExplosionVFXActor.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
@@ -32,13 +34,13 @@ type WarmupCallback = () => void;
 type WarmupProgressCallback = (fraction: number, status: string) => void;
 
 @ENGINE.GameClass()
-export class WarmupActor extends ENGINE.Actor {
+export class WarmupActor extends GameRootNode {
   private static _hasCompletedOnce = false;
 
   private _onComplete: WarmupCallback | null = null;
   private _onProgress: WarmupProgressCallback | null = null;
-  private _warmupActors: ENGINE.Actor[] = [];
-  private _poolActors: Set<ENGINE.Actor> = new Set();
+  private _warmupActors: ENGINE.SceneNode[] = [];
+  private _poolActors: Set<ENGINE.SceneNode> = new Set();
   private _audioManager: GameAudioManager | null = null;
   private _slashMesh: THREE.Mesh | null = null;
   private _startTime = 0;
@@ -51,7 +53,7 @@ export class WarmupActor extends ENGINE.Actor {
   private _summonVFX: ENGINE.SceneNode | null = null;
   private _bloodSplatter: ENGINE.SceneNode | null = null;
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     super.initialize(options);
     this.add(root);

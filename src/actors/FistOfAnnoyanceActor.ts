@@ -7,7 +7,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 import { PostmanBossActor } from './PostmanBossActor.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { GoreExplosionActor } from './GoreExplosionActor.js';
@@ -176,7 +178,7 @@ function _ensureFistVfxPools(world: ENGINE.World, debrisTexture: THREE.Texture |
 // ─── FistOfAnnoyanceActor ────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
-export class FistOfAnnoyanceActor extends ENGINE.Actor {
+export class FistOfAnnoyanceActor extends GameRootNode {
 
   private _sceneFistActor: ENGINE.SceneNode | null = null;
   private _explosionVfx: ENGINE.VFXNode | null = null;
@@ -198,7 +200,7 @@ export class FistOfAnnoyanceActor extends ENGINE.Actor {
   private readonly _hitLocationScratch = new THREE.Vector3();
   private readonly _originScratch = new THREE.Vector3();
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     super.initialize(options);
     this.add(root);

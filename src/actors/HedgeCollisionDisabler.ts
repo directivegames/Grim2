@@ -7,14 +7,16 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 
 /** Filename only — avoid embedding a missing @project asset path in the bundle. */
 const HEDGE_MODEL_FILENAME = 'hedgeredon.glb';
 
 @ENGINE.GameClass()
-export class HedgeCollisionDisabler extends ENGINE.Actor {
-  public override initialize(options?: ActorOptions): void {
+export class HedgeCollisionDisabler extends GameRootNode {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     super.initialize(options);
     this.add(root);

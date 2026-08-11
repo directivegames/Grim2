@@ -5,9 +5,9 @@ import { VomitballProjectileActor } from '../actors/VomitballProjectileActor.js'
 import { ZombieRiseVFXActor } from '../actors/ZombieRiseVFXActor.js';
 import { DemonboxMailExplosionVFXActor } from '../actors/DemonboxMailExplosionVFXActor.js';
 
-const deathSmokeActors = new Set<ENGINE.Actor>();
+const deathSmokeActors = new Set<ENGINE.SceneNode>();
 
-export function trackDeathSmokeActor(actor: ENGINE.Actor): void {
+export function trackDeathSmokeActor(actor: ENGINE.SceneNode): void {
   deathSmokeActors.add(actor);
 }
 

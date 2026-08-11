@@ -3,13 +3,15 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import { gameSettings } from '../utils/game-settings.js';
 
 const BASE_VOLUME = 0.52;
 const BOSS_TRACK = '@project/assets/sounds/postmanhell.mp3';
 
 @ENGINE.GameClass()
-export class PostmanBossMusicActor extends ENGINE.Actor {
+export class PostmanBossMusicActor extends GameRootNode {
   private _sound: ENGINE.SoundNode | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
   private _stopped = false;

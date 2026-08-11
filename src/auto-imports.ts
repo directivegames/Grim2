@@ -10,6 +10,7 @@ import './actors/DialogueTriggerActor.js';
 import './actors/EnemySpawnPointActor.js';
 import './actors/FistOfAnnoyanceActor.js';
 import './actors/GameAudioManager.js';
+import './actors/GameRootNode.js';
 import './actors/GoreExplosionActor.js';
 import './actors/GrimGrinderModeActor.js';
 import './actors/GrimIntroActor.js';

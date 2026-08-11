@@ -5,8 +5,10 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 @ENGINE.GameClass()
-export class SoulActor extends ENGINE.Actor {
+export class SoulActor extends GameRootNode {
   public override getEditorClassIcon(): string | null {
     return 'Icon_Light';
   }

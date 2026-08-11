@@ -6,12 +6,14 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import type { DialogueScriptId } from '../data/dialogue-registry.js';
 import { getDialogueScript } from '../data/dialogue-registry.js';
 import { DialogueUI } from '../ui/DialogueUI.js';
 
 @ENGINE.GameClass()
-export class DialogueTriggerActor extends ENGINE.Actor {
+export class DialogueTriggerActor extends GameRootNode {
 
   @ENGINE.property({ type: 'string', category: 'Dialogue' })
   public dialogueId: DialogueScriptId = 'grim-intro';

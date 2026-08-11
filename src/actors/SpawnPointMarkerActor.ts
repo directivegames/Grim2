@@ -4,7 +4,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, EditorPropertyChangedResult } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, EditorPropertyChangedResult } from '@gnsx/genesys.js';
 
 const INVISIBLE_MATERIAL = new THREE.MeshStandardMaterial({ visible: false });
 
@@ -13,7 +15,7 @@ export interface SpawnPointMarkerColors {
   readonly edge: number;
 }
 
-export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
+export abstract class SpawnPointMarkerActor extends GameRootNode {
   @ENGINE.property({ type: 'boolean', category: 'Spawn Point' })
   public override enabled = true;
 
@@ -41,7 +43,7 @@ export abstract class SpawnPointMarkerActor extends ENGINE.Actor {
     this.getWorldPosition(out);
   }
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.MeshNode.create({
       name: 'MarkerRoot',
       material: INVISIBLE_MATERIAL,

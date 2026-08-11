@@ -4,8 +4,10 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import type { DamageHitInfo } from '@gnsx/genesys.js';
-import type { ActorOptions } from '@gnsx/genesys.js';
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 import {
   GRIM_GRINDER_BOSS_DAMAGE_FRAC,
   GRIM_GRINDER_BOSS_RESET_RADIUS,
@@ -28,7 +30,7 @@ function worldSlomo(world: ENGINE.World): { slomo: number } {
 }
 
 @ENGINE.GameClass()
-export class GrimGrinderModeActor extends ENGINE.Actor {
+export class GrimGrinderModeActor extends GameRootNode {
   private static _instance: GrimGrinderModeActor | null = null;
 
   private _active = false;
@@ -36,7 +38,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   private _timeLeft = 0;
   private _pawn: IsometricPlayerPawn | null = null;
   private _car: GrimGrinderControllerComponent | null = null;
-  private _bossCanHit = new Map<ENGINE.Actor, boolean>();
+  private _bossCanHit = new Map<ENGINE.SceneNode, boolean>();
   private _originalTakeDamage: ((amount: number, hitInfo?: DamageHitInfo) => number) | null = null;
   private _savedSlomo = 1;
 
@@ -45,7 +47,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
   private readonly _hitLocation = new THREE.Vector3();
   private readonly _hitNormal = new THREE.Vector3(1, 0, 0);
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     super.initialize(options);
     this.add(ENGINE.SceneNode.create({ name: 'Root' }));
   }
@@ -334,7 +336,7 @@ export class GrimGrinderModeActor extends ENGINE.Actor {
     }
   }
 
-  private _killEnemy(enemy: ENGINE.Actor): void {
+  private _killEnemy(enemy: ENGINE.SceneNode): void {
     const stats = enemy.getNode(ENGINE.CharacterStatsNode);
     if (!stats || stats.getCurrentHealth() <= 0) {
       return;

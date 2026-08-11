@@ -27,9 +27,9 @@ export interface HordeEnemyType {
   readonly minRiskLevel: RiskLevel;
   /** Optional GLB to preload when the horde manager starts. */
   readonly modelUrl?: ENGINE.ModelPath;
-  create(world: ENGINE.World, position: THREE.Vector3): ENGINE.Actor;
-  hookDeath(actor: ENGINE.Actor, onDied: () => void): void;
-  clearDeathHook(actor: ENGINE.Actor): void;
+  create(world: ENGINE.World, position: THREE.Vector3): ENGINE.SceneNode;
+  hookDeath(actor: ENGINE.SceneNode, onDied: () => void): void;
+  clearDeathHook(actor: ENGINE.SceneNode): void;
 }
 
 export function createDefaultHordeEnemyTypes(): HordeEnemyType[] {
@@ -41,17 +41,17 @@ export function createDefaultHordeEnemyTypes(): HordeEnemyType[] {
       maxActive: 2,
       minRiskLevel: 2,
       modelUrl: BIG_UNDEAD_MODEL_URL,
-      create(world: ENGINE.World, position: THREE.Vector3): ENGINE.Actor {
+      create(world: ENGINE.World, position: THREE.Vector3): ENGINE.SceneNode {
         const actor = BigUndeadActor.create({ position: position.clone() });
         world.add(actor);
         return actor;
       },
-      hookDeath(actor: ENGINE.Actor, onDied: () => void): void {
+      hookDeath(actor: ENGINE.SceneNode, onDied: () => void): void {
         if (actor instanceof BigUndeadActor) {
           actor.onDied = onDied;
         }
       },
-      clearDeathHook(actor: ENGINE.Actor): void {
+      clearDeathHook(actor: ENGINE.SceneNode): void {
         if (actor instanceof BigUndeadActor) {
           actor.onDied = null;
         }
@@ -64,17 +64,17 @@ export function createDefaultHordeEnemyTypes(): HordeEnemyType[] {
       maxActive: 4,
       minRiskLevel: 1,
       modelUrl: DEMONBOX_MODEL_URL,
-      create(world: ENGINE.World, position: THREE.Vector3): ENGINE.Actor {
+      create(world: ENGINE.World, position: THREE.Vector3): ENGINE.SceneNode {
         const actor = DemonboxActor.create({ position: position.clone() });
         world.add(actor);
         return actor;
       },
-      hookDeath(actor: ENGINE.Actor, onDied: () => void): void {
+      hookDeath(actor: ENGINE.SceneNode, onDied: () => void): void {
         if (actor instanceof DemonboxActor) {
           actor.onDied = onDied;
         }
       },
-      clearDeathHook(actor: ENGINE.Actor): void {
+      clearDeathHook(actor: ENGINE.SceneNode): void {
         if (actor instanceof DemonboxActor) {
           actor.onDied = null;
         }

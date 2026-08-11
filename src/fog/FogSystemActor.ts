@@ -6,13 +6,15 @@
 
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from '../actors/GameRootNode.js';
+
 import { FogSystemComponent, type FogSystemComponentOptions } from './FogSystemComponent.js';
 import type { FogCardSettings } from './FogCardMaterial.js';
 
-export interface FogSystemActorOptions extends ENGINE.ActorOptions, FogSystemComponentOptions {}
+export interface FogSystemActorOptions extends ENGINE.PrimitiveNodeOptions, FogSystemComponentOptions {}
 
 @ENGINE.GameClass()
-export class FogSystemActor extends ENGINE.Actor {
+export class FogSystemActor extends GameRootNode {
   public override initialize(options?: FogSystemActorOptions): void {
     super.initialize(options);
     const component = FogSystemComponent.create({ name: 'FogSystem', ...options });

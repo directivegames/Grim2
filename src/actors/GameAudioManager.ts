@@ -6,6 +6,8 @@
  */
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import { gameSettings } from '../utils/game-settings.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
 
@@ -25,7 +27,7 @@ const NORMAL_PLAYBACK_RATE_KEYS = new Set([
 ]);
 
 @ENGINE.GameClass()
-export class GameAudioManager extends ENGINE.Actor {
+export class GameAudioManager extends GameRootNode {
   private _soundPools = new Map<string, ENGINE.SoundNode[]>();
   private _poolCursors = new Map<string, number>();
   private _sfxVolumeScale = 1;
@@ -54,7 +56,7 @@ export class GameAudioManager extends ENGINE.Actor {
   private static readonly HIT_SOUND_COOLDOWN_MS = 80;
   private _lastHitSoundTime = 0;
 
-  public override initialize(options?: ENGINE.ActorOptions): void {
+  public override initialize(options?: ENGINE.PrimitiveNodeOptions): void {
     super.initialize(options);
   }
 

@@ -16,14 +16,14 @@ function cellKey(cellX: number, cellZ: number): number {
 
 export class ZombieSpatialManager {
   private static instance: ZombieSpatialManager;
-  private grid = new Map<number, Set<ENGINE.Actor>>();
-  private zombieToCell = new Map<ENGINE.Actor, number>();
+  private grid = new Map<number, Set<ENGINE.SceneNode>>();
+  private zombieToCell = new Map<ENGINE.SceneNode, number>();
 
   /** Scratch vector reused for all position queries — avoids per-call GC. */
   private readonly _zPos = new THREE.Vector3();
 
   /** Scratch results array reused across getNearbyZombies calls — avoids per-call allocation. */
-  private readonly _scratchResults: ENGINE.Actor[] = [];
+  private readonly _scratchResults: ENGINE.SceneNode[] = [];
   private _scratchResultsLength = 0;
 
   static getInstance(): ZombieSpatialManager {
@@ -37,7 +37,7 @@ export class ZombieSpatialManager {
    * Register a zombie in the spatial grid.
    * Call this in ZombieActor.doBeginPlay().
    */
-  registerZombie(zombie: ENGINE.Actor): void {
+  registerZombie(zombie: ENGINE.SceneNode): void {
     zombie.getWorldPosition(this._zPos);
     const cell = this.getCellKey(this._zPos);
 
@@ -60,7 +60,7 @@ export class ZombieSpatialManager {
    * Update zombie position in the grid.
    * Call this periodically (e.g., every 0.5s) in tick.
    */
-  updateZombiePosition(zombie: ENGINE.Actor): void {
+  updateZombiePosition(zombie: ENGINE.SceneNode): void {
     zombie.getWorldPosition(this._zPos);
     const newCell = this.getCellKey(this._zPos);
     const oldCell = this.zombieToCell.get(zombie);
@@ -83,7 +83,7 @@ export class ZombieSpatialManager {
    * Unregister a zombie from the grid.
    * Call this in ZombieActor.doEndPlay().
    */
-  unregisterZombie(zombie: ENGINE.Actor): void {
+  unregisterZombie(zombie: ENGINE.SceneNode): void {
     const cell = this.zombieToCell.get(zombie);
     if (cell !== undefined) {
       this.removeFromCell(zombie, cell);
@@ -95,7 +95,7 @@ export class ZombieSpatialManager {
    * Get nearby zombies within separation radius.
    * PERFORMANCE: O(1) lookup - only checks 9 cells max.
    */
-  getNearbyZombies(position: THREE.Vector3, radius: number): ENGINE.Actor[] {
+  getNearbyZombies(position: THREE.Vector3, radius: number): ENGINE.SceneNode[] {
     this._scratchResultsLength = 0;
     const radiusSq = radius * radius;
 
@@ -129,7 +129,7 @@ export class ZombieSpatialManager {
   }
 
   /** All zombies currently registered (for projectile ignore lists). Returns a new array. */
-  getAllRegisteredZombies(): ENGINE.Actor[] {
+  getAllRegisteredZombies(): ENGINE.SceneNode[] {
     return Array.from(this.zombieToCell.keys());
   }
 
@@ -147,7 +147,7 @@ export class ZombieSpatialManager {
     return cellKey(x, z);
   }
 
-  private removeFromCell(zombie: ENGINE.Actor, cell: number): void {
+  private removeFromCell(zombie: ENGINE.SceneNode, cell: number): void {
     const cellSet = this.grid.get(cell);
     if (!cellSet) {
       return;

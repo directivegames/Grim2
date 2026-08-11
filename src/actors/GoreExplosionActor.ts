@@ -6,7 +6,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 const LIFETIME = 2.5;
 const GRAVITY = 9.5;
 const CHUNK_COUNT = 8;
@@ -51,14 +53,14 @@ function easeOutCubic(value: number): number {
 }
 
 @ENGINE.GameClass()
-export class GoreExplosionActor extends ENGINE.Actor {
+export class GoreExplosionActor extends GameRootNode {
   private readonly chunkPieces: ChunkPiece[] = [];
   private readonly bloodDrops: BloodDrop[] = [];
   private flash: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null = null;
   private shockwave: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial> | null = null;
   private elapsed = 0;
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     super.initialize(options);
     this.add(root);

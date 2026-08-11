@@ -1,4 +1,6 @@
 import * as ENGINE from '@gnsx/genesys.js';
+
+import { GameRootNode } from './GameRootNode.js';
 import { gameSettings } from '../utils/game-settings.js';
 
 const BASE_MENU_MUSIC_VOLUME = 0.5;
@@ -9,7 +11,7 @@ const MENU_TRACKS = [
 ] as const;
 
 @ENGINE.GameClass()
-export class MenuMusicActor extends ENGINE.Actor {
+export class MenuMusicActor extends GameRootNode {
   private _sound: ENGINE.SoundNode | null = null;
   private _musicVolumeScale = gameSettings.musicVolume;
   private _stopped = false;

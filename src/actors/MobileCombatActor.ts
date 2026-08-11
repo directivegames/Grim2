@@ -4,6 +4,8 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 import { IsometricPlayerPawn } from './IsometricPlayerPawn.js';
 import { SpinningWeaponActor } from './SpinningWeaponActor.js';
 import {
@@ -29,7 +31,7 @@ const THROW_TAP_MIN_DEFLECTION = 0.07;
 type InputHandlersList = { inputHandlers: ENGINE.IInputHandler[] };
 
 @ENGINE.GameClass()
-export class MobileCombatActor extends ENGINE.Actor {
+export class MobileCombatActor extends GameRootNode {
   private _moveX = 0;
   private _moveY = 0;
   private _moveActive = false;
@@ -278,7 +280,7 @@ export class MobileCombatActor extends ENGINE.Actor {
   }
 
   /** Set the synthetic aim cursor toward `target` so the melee arc faces it. */
-  private _aimSwingAt(world: ENGINE.World, target: ENGINE.Actor): void {
+  private _aimSwingAt(world: ENGINE.World, target: ENGINE.SceneNode): void {
     const camera = world.getActiveCamera();
     if (!camera) {
       return;

@@ -7,7 +7,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 import { isMobileDevice } from '../utils/mobile-device.js';
 
 const SPAWN_SMOKE_VFX = '@project/assets/VFX/smoke.vfx.json';
@@ -29,14 +31,14 @@ function easeOutCubic(value: number): number {
 }
 
 @ENGINE.GameClass()
-export class ZombieRiseVFXActor extends ENGINE.Actor {
+export class ZombieRiseVFXActor extends GameRootNode {
   private groundRipple: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
   private groundRipple2: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> | null = null;
   private _smokeVfx: ENGINE.VFXNode | null = null;
   private elapsed = 0;
   private _isActive = false;
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.SceneNode.create({ name: 'Root' });
     super.initialize(options);
     this.add(root);

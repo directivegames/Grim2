@@ -14,6 +14,8 @@ import * as THREE from 'three';
 
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { GameRootNode } from './GameRootNode.js';
+
 
 
 import { ISO_YAW } from '../components/movement/IsometricMovementComponent.js';
@@ -126,7 +128,7 @@ export function ensureGrimIntroBlackCover(world: ENGINE.World): void {
 
 @ENGINE.GameClass()
 
-export class GrimIntroActor extends ENGINE.Actor {
+export class GrimIntroActor extends GameRootNode {
 
 
 

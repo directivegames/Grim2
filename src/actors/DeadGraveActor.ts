@@ -8,13 +8,15 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions } from '@gnsx/genesys.js';
 
 const GRAVE_MODEL_URL = `${ENGINE.PROJECT_PATH_PREFIX}/assets/models/Grave.glb` as ENGINE.ModelPath;
 
 // Shared geometry and material reused across every grave to avoid churning
 // Three.js buffers/programs when many graves spawn. The material is invisible
-// (the root is never rendered) â€?the visible GLB is a child.
+// (the root is never rendered) ï¿½?the visible GLB is a child.
 const SHARED_ROOT_GEOMETRY = new THREE.BoxGeometry(0.7, 1.1, 0.3);
 const SHARED_ROOT_MATERIAL = new THREE.MeshStandardMaterial({ visible: false });
 
@@ -61,7 +63,7 @@ function ensureDeadGraveCollisionProfile(): void {
 /** Seconds before non-pooled grave auto-destroys (pooled graves never destroy). */
 const GRAVE_LIFETIME_SEC = 8;
 
-/** Max simultaneous graves â€?oldest (FIFO) gets recycled when limit hit. */
+/** Max simultaneous graves ï¿½?oldest (FIFO) gets recycled when limit hit. */
 const MAX_GRAVES = 25;
 
 /** After this many seconds, or once movement stops, drop physics for good. */
@@ -78,14 +80,14 @@ interface PooledGrave {
 let gravePool: PooledGrave[] = [];
 
 @ENGINE.GameClass()
-export class DeadGraveActor extends ENGINE.Actor {
+export class DeadGraveActor extends GameRootNode {
   private _aliveSec = 0;
   private _isPooled = false;
   private _physicsActive = true;
   private _settleElapsedSec = 0;
   private readonly _lastSettlePos = new THREE.Vector3();
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     ensureDeadGraveCollisionProfile();
 
     const root = ENGINE.MeshNode.create({
@@ -143,7 +145,7 @@ export class DeadGraveActor extends ENGINE.Actor {
 
   /**
    * Spawn a grave at the given position.
-   * Uses pooling â€?recycles oldest grave if at cap.
+   * Uses pooling ï¿½?recycles oldest grave if at cap.
    */
   public static spawnAt(
     world: ENGINE.World,
@@ -225,7 +227,7 @@ export class DeadGraveActor extends ENGINE.Actor {
     }
   }
 
-  /** Remove the Rapier body once the grave has landed â€?visual stays put. */
+  /** Remove the Rapier body once the grave has landed ï¿½?visual stays put. */
   private _freezePhysics(): void {
     if (!this._physicsActive) {
       return;

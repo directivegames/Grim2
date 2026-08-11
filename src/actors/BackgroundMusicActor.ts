@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
+
+import { GameRootNode } from './GameRootNode.js';
 import { getUnscaledDeltaTime } from '../utils/slomo-time.js';
 import { gameSettings } from '../utils/game-settings.js';
 
@@ -12,7 +14,7 @@ const KILL_STREAK_MUSIC_RATE = 0.42;
 const MUSIC_RATE_LERP_SPEED = 14;
 
 @ENGINE.GameClass()
-export class BackgroundMusicActor extends ENGINE.Actor {
+export class BackgroundMusicActor extends GameRootNode {
   private soundComponent: ENGINE.SoundNode | null = null;
   private _isMuted = false;
   private _previousVolume = BASE_MUSIC_VOLUME;

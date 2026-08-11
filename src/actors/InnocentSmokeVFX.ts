@@ -15,7 +15,7 @@ export function spawnInnocentSmokeAt(
   position: THREE.Vector3,
   scale = DEFAULT_SCALE,
 ): void {
-  const actor = ENGINE.Actor.create();
+  const actor = ENGINE.PrimitiveNode.create({ isRoot: true });
   actor.position.copy(position);
   actor.position.y += 0.1;
   actor.scale.setScalar(scale);

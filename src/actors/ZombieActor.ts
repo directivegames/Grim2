@@ -1,19 +1,21 @@
 /**
- * ZombieActor �?configurable NPC.
+ * ZombieActor �?configurable NPC.
  *
  * Behaviour:
  *  1. Wanders in a small radius when the player is out of aggro range.
  *  2. Once the player enters aggroRadius the zombie locks on and ALWAYS chases
- *     (sticky aggro �?never drops). Chase uses direct XZ steer + separation (Vampire Survivors style),
+ *     (sticky aggro �?never drops). Chase uses direct XZ steer + separation (Vampire Survivors style),
  *     not Recast follow-to-player.
- *  3. When within attackRange (tight, “on top�?of player), melee attack + attack anim;
+ *  3. When within attackRange (tight, “on top�?of player), melee attack + attack anim;
  *    damage comes from MeleeAttackAction only.
  *  4. On death: stops, plays death clip, gets launched, destroyed after 3 s.
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import { killStreakTracker } from './KillStreakTracker.js';
 import { comboMeterTracker } from './ComboMeterTracker.js';
@@ -42,7 +44,7 @@ const CAPSULE_HEIGHT = 1.75;
 const ZOMBIE_FOLLOW_HOLD_DISTANCE = 0.82;
 
 /**
- * Extra distance beyond `attackRange` for leaving the “attack�?BT branch and for
+ * Extra distance beyond `attackRange` for leaving the “attack�?BT branch and for
  * `IsPlayerNear` / melee checks. Stops attack↔chase thrashing (path clears / BT resets)
  * when distance jitters at the boundary.
  */
@@ -61,11 +63,11 @@ const STEER_SEPARATION_RADIUS = 0.88;
 const STEER_SEPARATION_WEIGHT = 2.0;
 /** Tight waypoint tolerance; must be less than `STEER_LOOKAHEAD` and less than engine default (3). */
 const ZOMBIE_PATH_FOLLOWING_ACCURACY = 0.25;
-/** `setPath` drops waypoints closer than `pathFollowingAccuracy` on 3D distance �?keep XZ goal beyond that. */
+/** `setPath` drops waypoints closer than `pathFollowingAccuracy` on 3D distance �?keep XZ goal beyond that. */
 const STEER_GOAL_MIN_XY_FROM_AGENT = ZOMBIE_PATH_FOLLOWING_ACCURACY + 0.1;
 
 // ─── Collision profile (horde: zombies never block each other) ───────────────
-// All zombies use object channel `Pawn` with `Pawn �?Ignore` so capsule-vs-capsule
+// All zombies use object channel `Pawn` with `Pawn �?Ignore` so capsule-vs-capsule
 // does not depenetrate / shove. Patch existing profile too (hot reload / old data).
 
 type MutableProfileResponses = Array<{ channel: string; response: ENGINE.CollisionResponse }>;
@@ -78,10 +80,10 @@ function patchZombieNpcResponses(profile: ENGINE.CollisionProfile): void {
     if (i >= 0) responses[i] = { channel: ch, response };
     else responses.push({ channel: ch, response });
   };
-  // Ground / props �?keep solid
+  // Ground / props �?keep solid
   set(ENGINE.CollisionChannel.WorldStatic, ENGINE.CollisionResponse.Block);
   set(ENGINE.CollisionChannel.WorldDynamic, ENGINE.CollisionResponse.Block);
-  // Horde: no pawn-vs-pawn blocking (zombie–zombie; same channel as player Character “ignore pawn�?
+  // Horde: no pawn-vs-pawn blocking (zombie–zombie; same channel as player Character “ignore pawn�?
   set(ENGINE.CollisionChannel.Pawn, ENGINE.CollisionResponse.Ignore);
 }
 
@@ -123,7 +125,7 @@ class StickyChaseCondition extends ENGINE.ConditionEvaluator {
 }
 
 /**
- * Chase placeholder �?locomotion is {@link ZombieActor.applyDirectSteerChase} (no `FollowActorAction` / no nav path to player).
+ * Chase placeholder �?locomotion is {@link ZombieActor.applyDirectSteerChase} (no `FollowActorAction` / no nav path to player).
  */
 class SteerChaseNoopAction extends ENGINE.BehaviorAction {
   constructor() {
@@ -147,7 +149,7 @@ class SteerChaseNoopAction extends ENGINE.BehaviorAction {
 // ─── ZombieActor ─────────────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
-export class ZombieActor extends ENGINE.Actor {
+export class ZombieActor extends GameRootNode {
 
   // ── Editor-tunable properties ──────────────────────────────────────────────
 
@@ -201,7 +203,7 @@ export class ZombieActor extends ENGINE.Actor {
   private _navRestoreRemainingSec = 0;
   private _navRestoreSetting = true;
 
-  /** Effective chase speed (`moveSpeed` ± jitter) �?set in `doBeginPlay`. */
+  /** Effective chase speed (`moveSpeed` ± jitter) �?set in `doBeginPlay`. */
   private _jitteredSpeed = 3.5;
   private readonly _steerMyPos = new THREE.Vector3();
   private readonly _steerToPlayer = new THREE.Vector3();
@@ -209,7 +211,7 @@ export class ZombieActor extends ENGINE.Actor {
   private readonly _steerOtherPos = new THREE.Vector3();
   private readonly _steerGoal = new THREE.Vector3();
 
-  /** Scratch vectors �?reused each tick to avoid per-frame GC. */
+  /** Scratch vectors �?reused each tick to avoid per-frame GC. */
   private readonly _lodMyPos      = new THREE.Vector3();
   private readonly _lodPlayerPos  = new THREE.Vector3();
   private readonly _animCurrentPos  = new THREE.Vector3();
@@ -296,7 +298,7 @@ export class ZombieActor extends ENGINE.Actor {
   private _startupTimer = 0;
   private _startupComplete = false;
 
-  // ── Damage �?hit-reaction ──────────────────────────────────────────────────
+  // ── Damage �?hit-reaction ──────────────────────────────────────────────────
 
   private readonly _onHealthChanged = (current: number, _max: number): void => {
     if (this._deathSequenceStarted || current >= this._lastTrackedHealth || current <= 0) {
@@ -321,7 +323,7 @@ export class ZombieActor extends ENGINE.Actor {
 
   // ─── Lifecycle ─────────────────────────────────────────────────────────────
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     ensureZombieNpcCollisionProfile();
 
     const root = ENGINE.MeshNode.create({
@@ -390,7 +392,7 @@ export class ZombieActor extends ENGINE.Actor {
       },
     });
 
-    // Stock `NpcMovementNode.initialize` may not apply accuracy/follow from `create()` �?force instance fields.
+    // Stock `NpcMovementNode.initialize` may not apply accuracy/follow from `create()` �?force instance fields.
     (npc as unknown as { pathFollowingAccuracy: number }).pathFollowingAccuracy = ZOMBIE_PATH_FOLLOWING_ACCURACY;
     (npc as unknown as { actorFollowingDistance: number }).actorFollowingDistance = ZOMBIE_FOLLOW_HOLD_DISTANCE;
 
@@ -818,7 +820,7 @@ export class ZombieActor extends ENGINE.Actor {
     // Compute launch direction from hit info, fallback to random.
     const launchDir = new THREE.Vector3();
     if (hitInfo?.hitNormal) {
-      // hitNormal is already "away from damage source" �?use directly
+      // hitNormal is already "away from damage source" �?use directly
       launchDir.copy(hitInfo.hitNormal).setY(0).normalize();
     } else if (hitInfo?.hitLocation) {
       launchDir.copy(deathPos).sub(hitInfo.hitLocation).setY(0).normalize();
@@ -872,7 +874,7 @@ export class ZombieActor extends ENGINE.Actor {
       this._ragdollVelocity.z *= groundFriction;
     }
 
-    // Accumulate game time �?fires cleanup after full animation+settle duration even in slomo.
+    // Accumulate game time �?fires cleanup after full animation+settle duration even in slomo.
     this._ragdollTimer += deltaTime;
     const cleanupSec = ZombieActor.DEATH_ANIM_DURATION_SEC + ZombieActor.DEATH_SETTLE_SEC;
     if (this._ragdollTimer >= cleanupSec) {
@@ -1087,7 +1089,7 @@ export class ZombieActor extends ENGINE.Actor {
       const status = await this.behaviorRoot.execute(this.blackboard, deltaTime);
       if (status !== ENGINE.BehaviorStatus.Running) {
         this.behaviorRoot.reset();
-        // Do not force `wander` after a finished attack �?that caused a full-tree reset
+        // Do not force `wander` after a finished attack �?that caused a full-tree reset
         // every tick while still in range and broke repeat melee. Match real priority.
         if (this._attackZoneLatched) this._btBranch = 'attack';
         else if (this._hasAggro) this._btBranch = 'chase';

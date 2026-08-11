@@ -97,10 +97,15 @@ export class DamageProgressUI {
   public setProgress(dealt: number, required: number): void {
     if (!this._line) return;
     const clamped = Math.min(dealt, required);
-    this._line.innerHTML = `
-      <span style="color:#e8e4dc">DAMAGE: </span>
-      <span style="color:#ffb86c">${clamped.toLocaleString()}</span>
-      <span style="color:#e8e4dc"> / ${required.toLocaleString()}</span>
-    `;
+    const label = document.createElement('span');
+    label.style.color = '#e8e4dc';
+    label.textContent = 'DAMAGE: ';
+    const value = document.createElement('span');
+    value.style.color = '#ffb86c';
+    value.textContent = clamped.toLocaleString();
+    const total = document.createElement('span');
+    total.style.color = '#e8e4dc';
+    total.textContent = ` / ${required.toLocaleString()}`;
+    this._line.replaceChildren(label, value, total);
   }
 }

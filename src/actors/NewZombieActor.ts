@@ -1,17 +1,19 @@
 /**
- * NewZombieActor �?identical behaviour to ZombieActor, uses the new stylised zombie model.
+ * NewZombieActor �?identical behaviour to ZombieActor, uses the new stylised zombie model.
  *
- * Animation mapping (new model clips �?state machine states):
- *   idle    �?"Gunshot_Reaction"         (standing still, no aggro)
- *   walk    �?"Limping_Walk_3_inplace"   (chasing player)
- *   attack  �?"run_fast_6_inplace"       (melee range)
- *   hit     �?"NewZombie_Hit"            (taking damage, looped while held)
- *   death   �?"run_fast_10_inplace"      (on death, 2.0s then park for reset)
+ * Animation mapping (new model clips �?state machine states):
+ *   idle    �?"Gunshot_Reaction"         (standing still, no aggro)
+ *   walk    �?"Limping_Walk_3_inplace"   (chasing player)
+ *   attack  �?"run_fast_6_inplace"       (melee range)
+ *   hit     �?"NewZombie_Hit"            (taking damage, looped while held)
+ *   death   �?"run_fast_10_inplace"      (on death, 2.0s then park for reset)
  */
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import { zombieSpatialManager } from './ZombieSpatialManager.js';
 import {
   ZOMBIE_STEER_GOAL_STOP,
@@ -144,7 +146,7 @@ class NewZombieSteerChaseNoopAction extends ENGINE.BehaviorAction {
 // ─── NewZombieActor ───────────────────────────────────────────────────────────
 
 @ENGINE.GameClass()
-export class NewZombieActor extends ENGINE.Actor {
+export class NewZombieActor extends GameRootNode {
 
   // ── Editor-tunable properties ──────────────────────────────────────────────
 
@@ -214,7 +216,7 @@ export class NewZombieActor extends ENGINE.Actor {
     stop: () => void;
   } | null = null;
 
-  /** Scratch vectors �?reused each tick to avoid per-frame GC. */
+  /** Scratch vectors �?reused each tick to avoid per-frame GC. */
   private readonly _lodMyPos      = new THREE.Vector3();
   private readonly _lodPlayerPos  = new THREE.Vector3();
   private readonly _animCurrentPos  = new THREE.Vector3();
@@ -277,7 +279,7 @@ export class NewZombieActor extends ENGINE.Actor {
   public isPooled = false;
   public onDied: (() => void) | null = null;
   private _pooledHidden = false;
-  /** Scene-placed start transform �?restored between mission attempts. */
+  /** Scene-placed start transform �?restored between mission attempts. */
   private _placedStartPosition: THREE.Vector3 | null = null;
   private _placedStartRotation: THREE.Euler | null = null;
 
@@ -306,7 +308,7 @@ export class NewZombieActor extends ENGINE.Actor {
   private _startupTimer = 0;
   private _startupComplete = false;
 
-  // ── Damage �?hit-reaction ──────────────────────────────────────────────────
+  // ── Damage �?hit-reaction ──────────────────────────────────────────────────
 
   private readonly _onHealthChanged = (current: number, _max: number): void => {
     if (this._deathSequenceStarted || current >= this._lastTrackedHealth || current <= 0) {
@@ -342,7 +344,7 @@ export class NewZombieActor extends ENGINE.Actor {
 
   // ─── Lifecycle ─────────────────────────────────────────────────────────────
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     ensureNewZombieNpcCollisionProfile();
 
     const root = ENGINE.MeshNode.create({
@@ -681,7 +683,7 @@ export class NewZombieActor extends ENGINE.Actor {
       this._isHighLOD = false;
     }
 
-    // Cull blob shadow at low LOD �?at >35 units isometric it's invisible anyway.
+    // Cull blob shadow at low LOD �?at >35 units isometric it's invisible anyway.
     const wantShadow = this._lodLevel !== 'low' && !this._deathSequenceStarted && !this.isHiddenInGame();
     if (wantShadow !== this._shadowVisible) {
       this._shadowVisible = wantShadow;
@@ -732,7 +734,7 @@ export class NewZombieActor extends ENGINE.Actor {
     this._idleWalkDebounceTimer = 0;
   }
 
-  /** Scene zombies serialize the blob on the pivot at body height �?move it to the feet on root. */
+  /** Scene zombies serialize the blob on the pivot at body height �?move it to the feet on root. */
   private _ensureBlobShadowAtFeet(): void {
     const shadow = this._blobShadow ?? this.getNode(BlobShadowComponent);
     if (!shadow) {
@@ -902,7 +904,7 @@ export class NewZombieActor extends ENGINE.Actor {
     // Compute launch direction from hit info, fallback to random.
     const launchDir = new THREE.Vector3();
     if (hitInfo?.hitNormal) {
-      // hitNormal is already "away from damage source" �?use directly
+      // hitNormal is already "away from damage source" �?use directly
       launchDir.copy(hitInfo.hitNormal).setY(0).normalize();
     } else if (hitInfo?.hitLocation) {
       launchDir.copy(deathPos).sub(hitInfo.hitLocation).setY(0).normalize();
@@ -1053,7 +1055,7 @@ export class NewZombieActor extends ENGINE.Actor {
   }
 
   /**
-   * Recycle this pooled zombie �?hide it and park it off-screen.
+   * Recycle this pooled zombie �?hide it and park it off-screen.
    * The HordeManager will later call softReset() to respawn it.
    */
   private recycle(): void {
@@ -1062,7 +1064,7 @@ export class NewZombieActor extends ENGINE.Actor {
     // Hide the zombie
     this.setHiddenInGame(true);
 
-    // Physics is already disabled from the death sequence �?keep it off while
+    // Physics is already disabled from the death sequence �?keep it off while
     // parked so there is no Rapier body at the death location between now and
     // softReset(), which re-enables it at the correct spawn position.
     this.overridePhysicsOptions({
@@ -1079,7 +1081,7 @@ export class NewZombieActor extends ENGINE.Actor {
     this._ragdollLandPos = null;
 
     // Reset animation init flags so the tick's wait-for-ready loop runs again on
-    // respawn �?same as doBeginPlay() does for a freshly created actor. Without
+    // respawn �?same as doBeginPlay() does for a freshly created actor. Without
     // this, the animation never restarts if isReady() returns false in softReset().
     this._animationInitialized = false;
     this._startupComplete = false;
@@ -1112,7 +1114,7 @@ export class NewZombieActor extends ENGINE.Actor {
       this._ragdollVelocity.z *= groundFriction;
     }
 
-    // Accumulate game time �?fires cleanup after full animation+settle duration even in slomo.
+    // Accumulate game time �?fires cleanup after full animation+settle duration even in slomo.
     this._ragdollTimer += deltaTime;
     const cleanupSec = NewZombieActor.DEATH_ANIM_DURATION_SEC + NewZombieActor.DEATH_SETTLE_SEC;
     if (this._ragdollTimer >= cleanupSec) {
@@ -1132,7 +1134,7 @@ export class NewZombieActor extends ENGINE.Actor {
   }
 
   /**
-   * Soft reset for pooled zombies �?respawn at a new position with full health.
+   * Soft reset for pooled zombies �?respawn at a new position with full health.
    * Immediately enters chase mode (aggro = true).
    */
   public softReset(position: THREE.Vector3): void {
@@ -1241,7 +1243,7 @@ export class NewZombieActor extends ENGINE.Actor {
     this.beginVisibilityReassert();
   }
 
-  /** Re-apply render layers for a few ticks after reveal �?catches late-attached GLTF meshes. */
+  /** Re-apply render layers for a few ticks after reveal �?catches late-attached GLTF meshes. */
   public beginVisibilityReassert(ticks = 3): void {
     this._visibilityReassertTicks = ticks;
   }
@@ -1299,7 +1301,7 @@ export class NewZombieActor extends ENGINE.Actor {
     const gravePos = landPos.clone();
     DeadGraveActor.spawnAt(world, gravePos, new THREE.Vector3(0, 0, 0));
 
-    const smokeActor = ENGINE.Actor.create();
+    const smokeActor = ENGINE.PrimitiveNode.create({ isRoot: true });
     smokeActor.position.copy(landPos);
     smokeActor.position.y += 0.1;
     smokeActor.scale.setScalar(NewZombieActor.DEATH_SMOKE_SCALE);

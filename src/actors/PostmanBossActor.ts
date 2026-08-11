@@ -14,7 +14,9 @@
 import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
-import type { ActorOptions, DamageHitInfo } from '@gnsx/genesys.js';
+import { GameRootNode } from './GameRootNode.js';
+
+import type { PrimitiveNodeOptions, DamageHitInfo } from '@gnsx/genesys.js';
 import {
   POSTMAN_BOSS_BASE_BULLET_DAMAGE,
   POSTMAN_BOSS_BASE_BULLET_SPEED,
@@ -146,7 +148,7 @@ function tuningForRisk(risk: RiskLevel, risk5PlusTier = 0): PostmanRiskTuning {
 }
 
 @ENGINE.GameClass()
-export class PostmanBossActor extends ENGINE.Actor {
+export class PostmanBossActor extends GameRootNode {
   public onDied: (() => void) | null = null;
   public onHealthChanged: ((current: number, max: number) => void) | null = null;
 
@@ -209,7 +211,7 @@ export class PostmanBossActor extends ENGINE.Actor {
     }
   };
 
-  public override initialize(options?: ActorOptions): void {
+  public override initialize(options?: PrimitiveNodeOptions): void {
     const root = ENGINE.MeshNode.create({
       name: 'CapsuleRoot',
       geometry: SHARED_ROOT_GEOMETRY,
