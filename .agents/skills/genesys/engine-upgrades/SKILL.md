@@ -18,6 +18,7 @@ The editor bumps `@gnsx/genesys.js` in `package.json` when it opens the project,
 4. If the major number changed:
    - For each major step between the old and new major, open the matching `references/<oldMajor>-<newMajor>.md` file and apply every change in it, in order.
    - Also check `references/<oldMajor>.x.md` for any section introduced after the old version but before the major bump — those still apply even though the major changed, since the old project never picked them up.
+   - Also check `references/<newMajor>.x.md` for any section introduced at or before the new version — those changes landed within the new major line after the bump and still apply.
 5. Run migration utilities referenced by any applied guide in dry-run mode first. Do not apply until the dry run reports zero blocked files and zero unresolved references.
 6. After each reference file, run `pnpm build` then `pnpm lint`.
 7. When a step is ambiguous, confirm the new signature in `.engine/`.
@@ -35,3 +36,4 @@ Major-bump files are named `references/<oldMajor>-<newMajor>.md`. In-major files
 - [12 → 13](references/12-13.md)
 - [13 → 14](references/13-14.md)
 - [13.x — in-major changes](references/13.x.md)
+- [14.x — in-major changes](references/14.x.md)

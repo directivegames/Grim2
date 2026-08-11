@@ -81,6 +81,11 @@ Keep physics on that same node. Do **not** introduce
 `PrimitiveNode.create({ children: [onlyChild] })` when the Actor had nothing
 else. Same rule for a lone `ModelMeshNode`, `SoundNode`, etc.
 
+For shells that already exist in **saved scenes** rather than in `create()` calls,
+engine 14.0.2 ships `ENGINE.collapseSingleChildShells(world, shellClasses)`, which
+performs exactly this promote-don't-wrap cleanup across a loaded World while preserving
+world transforms and merging shell physics. See [14.x §3](../14.x.md).
+
 ### Compound placeable — flat children + physics lift
 
 Historically the nested `rootComponent` usually held `physicsOptions`. After
@@ -347,9 +352,10 @@ subclasses. Genesys also propagates lifecycle through `Object3D.add()` and
 ## 4. Treat `World` as the scene graph
 
 `World` now extends `GenesysScene`; there is no private `World.scene` child.
-The deprecated `world.scene` getter returns the World itself. Add roots
-directly to the World and remove them through `removeFromParent()` or
-`world.remove()`.
+At 14.0.0 a deprecated `world.scene` getter returned the World itself; it was
+removed in 14.0.2 (see [14.x §2](../14.x.md)), so go straight to
+`world.getRenderScene()` rather than relying on the shim. Add roots directly to
+the World and remove them through `removeFromParent()` or `world.remove()`.
 
 Play-mode rendering still parents the World under `GameLoop.rootScene`. For
 background, environment, or other render-scene targets prefer
@@ -368,9 +374,11 @@ world.add(actor, componentRoot);
 actor.removeFromParent();
 ```
 
-`addActor(s)`, `addSceneComponent(s)`, `removeActor(s)`,
-`removeSceneComponent(s)`, `getActors()`, and `getSceneComponents()` remain as
-deprecated compatibility shims. Prefer:
+`addActor(s)` and `removeActor(s)` remain as deprecated compatibility shims.
+`addSceneComponent(s)`, `removeSceneComponent(s)`, `getActors()`, and
+`getSceneComponents()` were also deprecated shims at 14.0.0, but were removed
+outright in 14.0.2 — see [14.x §1](../14.x.md) if the project is moving to
+14.0.2 or later. Prefer:
 
 ```ts
 // Before (13)
@@ -395,9 +403,10 @@ Choose queries deliberately:
 - `getRootNodes()` returns topology-based World roots;
 - `getNode()` / `getNodes()` traverse the full subtree;
 - `getNodesByTag()` includes matching descendants, not only top-level roots;
-- deprecated `getActors*` queries are SceneNode shims (`getActors` →
-  `getNodes`, `getActorsByTag` → `getNodesByTag`, …). Prefer the Node names;
-  do not keep Actor-only filters in game code when looking up placeables.
+- the `getActors*` queries were SceneNode shims at 14.0.0 (`getActors` →
+  `getNodes`, `getActorsByTag` → `getNodesByTag`, …) and were removed in 14.0.2.
+  Use the Node names; do not keep Actor-only filters in game code when looking
+  up placeables.
 
 World roots are determined by topology, not the `isRoot` flag, and include
 transient system roots. For authored/outliner roots use:
@@ -438,8 +447,9 @@ Custom `GameLoop` subclasses that override level-transition hooks must rename:
 | `reinsertPreservedActorsAcrossLevelTransition()` | `reinsertPreservedRootsAcrossLevelTransition()` |
 
 World uses a different verb order:
-`detachRootsPreservingAcrossLevelTransition()`. The deprecated
-`detachActorsPreservingAcrossLevelTransition()` Actor-only shim remains.
+`detachRootsPreservingAcrossLevelTransition()`. The Actor-only
+`detachActorsPreservingAcrossLevelTransition()` shim existed at 14.0.0 but was
+removed in 14.0.2 — see [14.x §2](../14.x.md).
 
 Rename `OpenLevelOptions.preserveActors` to `preserveRoots`.
 
