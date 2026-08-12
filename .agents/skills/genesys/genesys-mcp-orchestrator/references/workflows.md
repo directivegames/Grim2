@@ -7,15 +7,71 @@ Prefer `query_node` / `action_node` for scene and prefab document trees.
 ## Find / inspect / select nodes
 
 ```text
-query_editor(getState)
-→ query_node(find | getTree, query=…, limit=…)
+Read-only inspect/count (no getState):
+→ run_script(readOnly) — see “Count by name(s)” / “Count descendants” below
+→ or query_node(getDetails | find | getTree, …) directly
+
+Before first mutation:
+→ query_editor(getState)
+→ query_node(getDetails, componentIds=[…])   // when ids are already known
+→ query_node(find | getTree, query=<string>, limit=…)
 → query_node(getDetails | getEditableProperties, componentIds=[…])
 → action_node(select, componentIds=[…])   // optional
 ```
 
+- Known ids (from `@scene/Name [nodeUuid=…]`, selection, or a prior find): call `getDetails(componentIds=[…])` first — skip name `find`.
+- **One name substring:** `find` with `query: '<string>'` (plain string only — never `{ name: [...] }`).
+- **Several exact names or subtree count:** one `getTree(limit)` then filter/walk in script — **never** call both `find` and `getTree` for the same question.
 - Prefer `find` / bounded `getTree` for discovery; reserve `getDetails` for chosen ids.
+- `find` / `getTree` return a flat `nodes[]` with `parentId` and direct `childIds`. A `query` filter matches nodes only — it does not expand a subtree.
+- Trust `childIds` on the first find hit; do not re-probe with `getTree` for the same name.
 - Use `getEditableProperties` only before `action_node.setProperties` — never alongside bare `getDetails` on the same node.
 - Compact summary: `query_node(getDocument)` or `genesysmcp://scene/summary`.
+
+### Count descendants (attached roots)
+
+One `run_script(readOnly)` — do not glob scene files or call both `find` and `getTree`.
+
+```js
+const rootIds = ['uuid-a', 'uuid-b']; // from [nodeUuid=…] markers or selection
+const { nodes } = await genesys.queryNode({ operation: 'getTree', limit: 500 });
+const byId = new Map(nodes.map((n) => [n.id, n]));
+function countSubtree(id) {
+  const node = byId.get(id);
+  if (!node) return 0;
+  return 1 + (node.childIds ?? []).reduce((sum, childId) => sum + countSubtree(childId), 0);
+}
+const perRoot = Object.fromEntries(rootIds.map((id) => [id, countSubtree(id)]));
+return { perRoot, total: Object.values(perRoot).reduce((a, b) => a + b, 0) };
+```
+
+### Count by name(s)
+
+One `run_script(readOnly)` — no `getState`, no `find`+`getTree` chain. `query` must be a string if you use `find` (e.g. `query: 'CircleBox'`) — not `{ name: [...] }`.
+
+```js
+const names = ['CircleBox_12', 'CircleBox_13'];
+const wanted = new Set(names.map((n) => n.toLowerCase()));
+
+const { nodes } = await genesys.queryNode({ operation: 'getTree', limit: 500 });
+const byId = new Map(nodes.map((n) => [n.id, n]));
+
+function countSubtree(id) {
+  const node = byId.get(id);
+  if (!node) return 0;
+  return 1 + (node.childIds ?? []).reduce((sum, childId) => sum + countSubtree(childId), 0);
+}
+
+const roots = nodes.filter((n) => wanted.has(String(n.name ?? '').toLowerCase()));
+const perName = Object.fromEntries(roots.map((n) => [n.name, countSubtree(n.id)]));
+
+return {
+  requested: names,
+  found: roots.map((n) => n.name),
+  perName,
+  total: Object.values(perName).reduce((a, b) => a + b, 0),
+};
+```
 
 ## Bulk property / select / delete
 

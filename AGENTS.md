@@ -51,7 +51,7 @@
 
 Do **not** read or open `*.genesys-scene` files unless the user explicitly asks or MCP is unavailable and filesystem fallback is appropriate. These files are large and the editor is the source of truth for scene state.
 
-For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md`): run `query_editor(getState)`, inspect only what is needed, mutate with `action_node`, `action_scene`, or `batch_execute` / `run_script`, then `action_scene(save)` when the scene changed.
+For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md`). Before **mutations**, run `query_editor(getState)`; read-only queries can go straight to `query_node` / `run_script(readOnly)`. Mutate with `action_node`, `action_scene`, or `batch_execute` / `run_script`, then `action_scene(save)` when the scene changed.
 
 **Before writing code, decide where this state should live** (scene/editor vs runtime behaviour) and route accordingly.
 

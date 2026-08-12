@@ -24,7 +24,7 @@ The default surface is **compact**. Missing descriptors for hidden tools (`actio
 
 Not readiness on their own: disk MCP config, `project_none`, `unauthorized`, or `editorReady: false`.
 
-When Off or probe fails: report `blockingReasons` when available; use code/filesystem tools; do not read `*.genesys-scene` unless the user asks or MCP is genuinely unavailable; do not retry MCP via shell.
+When Off or probe fails: report `blockingReasons` when available; use code/filesystem tools; do not read `*.genesys-scene` or glob/grep node display names / `@scene/…` unless the user asks or MCP is genuinely unavailable; do not retry MCP via shell.
 
 ## Readiness and Dispatch
 
@@ -41,6 +41,25 @@ When Off or probe fails: report `blockingReasons` when available; use code/files
 **Bulk find→mutate:** first MCP call should be one `run_script(apply, groupUndo=true)` that probes, finds, mutates, saves, and returns a compact summary — do not pre-query nodes through the model or grep `*.genesys-scene` while ready.
 
 Prefer `query_node` / `action_node` for world/prefab scene-node trees.
+
+## Attached node context
+
+- `@scene/Name` or `@scene/Name [nodeUuid=…]` is a **live scene node**, not a `.genesys-scene` file and not `query_project(findFiles)`.
+- Prefer the `nodeUuid` marker (or selection ids) as `componentIds` for `query_node(getDetails)` / `action_node`.
+- When MCP is ready: **never** glob, grep, or `findFiles` for node display names.
+
+## Script API vs engine
+
+- `genesys` in `run_script` = MCP tool proxies only (`queryNode`, `actionNode`, …).
+- **No** `genesys.getWorld()`, `getRootNodes()`, or other engine runtime APIs. Fetch `genesysmcp://api/typescript` if unsure — do not invent methods.
+
+## Tree shape
+
+- `find` / `getTree` return a **flat** `nodes[]` with `parentId` + **`childIds`** (direct children only).
+- `query` is a **plain string** (case-insensitive substring on name, className, or id). It filters matching nodes only — it does **not** expand a nested subtree.
+- Wrong: `query: { name: ['A', 'B'] }` or any object/array. Right: `query: 'A'` or one `getTree` + `names.includes(n.name)` in script.
+- Subtree size: walk `childIds` in one `run_script(readOnly)`, or use `childIds.length` when depth is known shallow. Do not chain exploratory `getDetails` after a successful `find` that already has `childIds`.
+- Do not call both `find` and `getTree` for the same discovery question.
 
 ## Approval and Build
 
@@ -64,6 +83,8 @@ Treat as failed when: `ok === false`, `error.code` present, `status === "blocked
 
 On failure: read `error.code` / `message`; if `recoverable`, fix and retry **once**; apply "Did you mean …" suggestions exactly; on `editor_not_ready` / `editor_busy` report blockers and stop. **Never report success after `ok: false`.**
 
+User-facing replies: state the outcome (counts, names, blockers). Do not quote `script_threw`, Zod text, or “query shape was wrong” unless the user asked for debugging. On `expected string, received object` for `query`: pass a string or use `getTree` + in-script filter; one silent retry max.
+
 ## Critical Call Shapes
 
 - Prefer `query_node` / `action_node` for world/prefab scene-node trees.
@@ -71,6 +92,14 @@ On failure: read `error.code` / `message`; if `recoverable`, fix and retry **onc
 - `describe_tool` takes `name`, not `toolName`.
 - Nested wrapper args: put `mode` / `approval` / `groupUndo` / `code` inside tool `arguments`.
 - `query_asset(find)` indexes project/pack assets only — not `@engine/...`. Use `getDetails` to existence-check an `@engine/...` path.
+
+### `query_node` find / getTree
+
+- `query` is a **string** substring only — never `{ name: [...] }`, arrays, or other objects (Zod fails with `expected string, received object`, often as `script_threw` if uncaught).
+- **One exact name / substring:** `operation: 'find'` with `query: 'CircleBox_12'`.
+- **Several exact names or subtree counts:** one `getTree(limit)` (≤500), filter in script, walk `childIds` — do not invent a structured `query` object.
+- Pick **one** discovery op per question (`find` **or** `getTree`); never both for the same count.
+- **Read-only inspect/count:** skip `getState`; it is required only before the first **mutation** (or when MCP availability is unknown).
 
 ## Discovery
 
