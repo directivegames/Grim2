@@ -7,7 +7,7 @@ alwaysApply: true
 
 **Naming:** Genesys in skills, rules, and code means the same product as **Sandbox Studio** in the app UI. Prefer Genesys MCP in agent prose; the IDE server id is the Sandbox Studio environment channel.
 
-For scene-visible or editor-authored changes, use Genesys MCP before editing code or `*.genesys-scene` / `*.prefab.json` files. This includes scene-node hierarchy, materials, colours, meshes, lights, cameras, node properties, prefab overrides, active scene/prefab, and editor state.
+For scene-visible or editor-authored changes, use Genesys MCP before editing code or `*.genesys-scene` / `*.prefab.json` files. This includes scene-node hierarchy, materials, colours, meshes, lights, cameras, node properties, prefab overrides, active scene/prefab, and editor state. Viewport capture is MCP: `action_editor(action="captureScreenshot", includeImage=true)` — not a desktop screenshot. Open orchestrator `references/workflows.md` for the recipe.
 
 Before implementing, decide where the state belongs:
 
@@ -17,7 +17,7 @@ Before implementing, decide where the state belongs:
 
 Do not patch a specific editor-authored object in `beginPlay`, constructors, or one-off runtime code just to persist a visual scene change.
 
-Before the first Genesys MCP tool call in a task, read `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md` and follow it. Open `references/workflows.md` only for task-specific recipes.
+Before the first Genesys MCP tool call in a task, read `.agents/skills/genesys-mcp-orchestrator/SKILL.md` and follow it. Open `references/workflows.md` only for task-specific recipes.
 
 MCP availability rules:
 
@@ -27,7 +27,7 @@ MCP availability rules:
 
 Descriptor/server presence means probe-capable, not ready. Before any **mutation**, run `query_editor(getState)` or the orchestrator skill's equivalent readiness probe. Pure read-only `query_node` / `run_script(readOnly)` does not require `getState` when MCP tools are already Connected. If the probe fails, report the blocking reason, continue with normal code/filesystem work where possible, and do not retry MCP in the same turn.
 
-Sandbox Studio must be running with Genesys MCP enabled, and a project must be open (`project_none` otherwise). Connect the matching environment channel in the IDE (server id from Configure / connection details — do not invent the id). Disk MCP config alone is not readiness. `unauthorized` means re-run Configure or copy current connection details from Sandbox Studio AI Settings → MCP.
+Sandbox Studio must be running with Genesys MCP enabled, and a project must be open (`project_none` otherwise). Connect the matching environment channel in the IDE (server id from Configure / connection details — do not invent the id). Disk MCP config alone is not readiness. `unauthorized` means re-run Configure or copy current connection details from Sandbox Studio AI Settings → MCP. `app_offline` means launch Sandbox Studio; `app_restarting` means retry shortly after an app restart. Do not ask the user to reload MCP solely because Sandbox Studio restarted.
 
 Never call the MCP HTTP endpoint, `curl`, `Invoke-WebRequest`, localhost URLs, or shell workarounds. Use only Genesys MCP tools directly or via `CallMcpTool` after checking schemas when required.
 

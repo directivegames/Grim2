@@ -51,7 +51,7 @@
 
 Do **not** read or open `*.genesys-scene` files unless the user explicitly asks or MCP is unavailable and filesystem fallback is appropriate. These files are large and the editor is the source of truth for scene state.
 
-For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys/genesys-mcp-orchestrator/SKILL.md`). Before **mutations**, run `query_editor(getState)`; read-only queries can go straight to `query_node` / `run_script(readOnly)`. Mutate with `action_node`, `action_scene`, or `batch_execute` / `run_script`, then `action_scene(save)` when the scene changed.
+For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys-mcp-orchestrator/SKILL.md`). Before **mutations**, run `query_editor(getState)`; read-only queries can go straight to `query_node` / `run_script(readOnly)`. Mutate with `action_node`, `action_scene`, or `batch_execute` / `run_script`, then `action_scene(save)` when the scene changed.
 
 **Before writing code, decide where this state should live** (scene/editor vs runtime behaviour) and route accordingly.
 
@@ -91,8 +91,8 @@ Do **not** use `beginPlay`, constructors, or one-off runtime hacks to patch a sp
 
 ## UI
 - Any HTML UI you create **MUST NOT** be added to the document root directly. Add them to the game UI container, which can be accessed through `world.gameContainer`.
-- For in-game UI (HUD, menus, buttons, bars, inventories, crosshairs, minimaps, counters, etc.), **prefer the engine's `BaseUIComponent` widgets** (Game UI Kit) over hand-rolling HTML / CSS. See the `genesys-ui-kit` skill in `.agents/skills/genesys/genesys-ui-kit/` — its `references/catalog.md` lists every shipped widget. Fall back to raw HTML only when the user asks for a custom look or no widget matches.
-- **Safe UI (XSS):** Dynamic strings (player names, chat, scores, RPC / `joinParams`) go through text setters (`setLabel`, `setMessage`, `setTitle`) or `element.textContent` — never `innerHTML`, `setHTML`, `iconHtml` / `setIconHtml`, or `imageHtml`. Those `*Html` APIs are for developer-authored markup only (e.g. `ENGINE.Icons.*`). Do not put network or player strings into `customStyles`. Follow the **Safe UI** section in the `genesys-ui-kit` skill and `.agents/skills/genesys/genesys-ui-kit/references/safe-ui.md`.
+- For in-game UI (HUD, menus, buttons, bars, inventories, crosshairs, minimaps, counters, etc.), **prefer the engine's `BaseUIComponent` widgets** (Game UI Kit) over hand-rolling HTML / CSS. See the `genesys-ui-kit` skill in `.agents/skills/genesys-ui-kit/` — its `references/catalog.md` lists every shipped widget. Fall back to raw HTML only when the user asks for a custom look or no widget matches.
+- **Safe UI (XSS):** Dynamic strings (player names, chat, scores, RPC / `joinParams`) go through text setters (`setLabel`, `setMessage`, `setTitle`) or `element.textContent` — never `innerHTML`, `setHTML`, `iconHtml` / `setIconHtml`, or `imageHtml`. Those `*Html` APIs are for developer-authored markup only (e.g. `ENGINE.Icons.*`). Do not put network or player strings into `customStyles`. Follow the **Safe UI** section in the `genesys-ui-kit` skill and `.agents/skills/genesys-ui-kit/references/safe-ui.md`.
 
 ## Testing Constraints
 - You may **only** use `pnpm build` to verify code compilation.

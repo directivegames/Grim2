@@ -1,0 +1,117 @@
+<!-- AUTO-GENERATED from the engine's UI component source. Do not edit by hand. -->
+
+# Genesys UI Kit Catalog
+
+Every widget below is a `BaseUIComponent` subclass shipped with `@gnsx/genesys.js`. Construct with `new ENGINE.<Class>(world.uiManager, options)` then `await component.initialize()`.
+
+## Safe UI
+
+Dynamic strings (player names, chat, scores, RPC / join data) → text setters or `textContent`. APIs named `*Html`, `icon`, `imageHtml`, and `UIElement.setHTML()` accept **developer-authored markup only** (e.g. `ENGINE.Icons.*`). Never interpolate network or player strings into HTML.
+
+- Game projects: `.agents/skills/genesys-ui-kit/references/safe-ui.md`
+- Engine package: `docs/ui/safe-ui-patterns.md`
+
+## control
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.Button` | Interactive button with variant, size, disabled, and loading states. | confirm, cancel, submit, menu action, call to action, cta | `ButtonOptions` |
+| `ENGINE.Toggle` | Pill-shaped on/off switch with disabled state. | toggle, switch, on/off, enable, setting, option | `ToggleOptions` |
+
+## data
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.Avatar` | Round profile picture with initials, status dot, and optional ring. | profile, player portrait, user chip, lobby roster | `AvatarOptions` |
+| `ENGINE.Badge` | Pill-shaped status / category label with 8 colors and 3 sizes. | status, tag, category, count chip, indicator, label | `BadgeOptions` |
+| `ENGINE.Card` | Surface container with default, glass, and elevated variants. | panel, tile, modal body, section, callout | `CardOptions` |
+| `ENGINE.ChatMessage` | Chat row with avatar, colored name, timestamp, body, and optional system style. | chat, lobby chat, system message, team comms, feed entry | `ChatMessageOptions` |
+| `ENGINE.Keystroke` | Keyboard key chip used in keybind hints and controls panels. | keybind hint, shortcut chip, controls panel, tutorial overlay | `KeystrokeOptions` |
+| `ENGINE.NumberDisplay` | Stats card with icon, label, animated value, and optional trend chip. | score, gold, coins, currency, counter, level, kills, stat card, stats display | `NumberDisplayOptions` |
+| `ENGINE.PlayerCard` | Composite card with player avatar, name + handle, and optional badge or score. | player roster, lobby entry, leaderboard row, party member, friend chip | `PlayerCardOptions` |
+| `ENGINE.StatCard` | Metric display card: icon · label · large value · trend indicator · subtitle. | stat, metric, score, wins, accuracy, kda, dashboard, post-match, leaderboard | `StatCardOptions` |
+
+## feedback
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.Achievement` | Toast that slides in from top-right with icon, title, description, and rarity border. | achievement, toast, unlock, notification, reward, badge unlock | `AchievementOptions` |
+| `ENGINE.NotificationBadge` | Tiny overlay pill showing an unread count or a solid dot indicator. | unread count, inbox badge, alert dot, notification overlay, icon badge | `NotificationBadgeOptions` |
+| `ENGINE.ReloadIndicator` | Circular progress overlay showing reload duration with cancel support. | reload, cooldown, cast, channel, progress overlay | `ReloadIndicatorOptions` |
+| `ENGINE.Tooltip` | Floating text panel anchored to a target element with a directional arrow. | hover hint, help text, shortcut hint, inline explainer | `TooltipOptions` |
+
+## hud
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.AbilityIcon` | 64×64 HUD ability slot with icon, hotkey chip, and radial cooldown overlay. | ability, skill, spell, hotbar, ability slot, cooldown | `AbilityIconOptions` |
+| `ENGINE.AmmoCounter` | Displays current/max ammunition with a low-ammo warning. | ammo, ammunition, magazine, bullets, reload | `AmmoCounterOptions` |
+| `ENGINE.CenterMessage` | Full-screen centered hero banner with 48px title and optional subtitle. Fade-in 0.4s. | victory, defeat, round start, round end, announcement, overlay, banner | `CenterMessageOptions` |
+| `ENGINE.Crosshair` | Center-screen reticle with configurable size, color, and style. | crosshair, reticle, aim, cursor, shooter | `CrosshairOptions` |
+| `ENGINE.Message` | Compact single-line chat/system message with optional avatar and bold sender name. | chat, message, system message, kill feed, notification line, hud text | `MessageOptions` |
+| `ENGINE.ProgressBar` | Themed progress indicator with header (label + percentage) above a rounded fill track. | health, mana, stamina, experience, xp, boss hp, progress, cooldown, loading | `ProgressBarOptions` |
+| `ENGINE.StatBar` | HUD progress bar for shield, mana, stamina, and energy with icon slot. | shield, mana, stamina, energy, hud bar, stat bar, health bar | `StatBarOptions` |
+| `ENGINE.WeaponCard` | Semi-transparent HUD card: icon slot · weapon name · current/max ammo. | weapon, ammo, magazine, gun, hud weapon, loadout, equipped weapon | `WeaponCardOptions` |
+
+## input
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.Input` | Text input with label, helper / error text, and optional icons. | form field, username, email, search, password, chat composer | `InputOptions` |
+
+## inventory
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.InventoryBar` | Horizontal hotbar showing equipped items with add / remove / find operations. | hotbar, inventory, quickslot, toolbar, equipment | `InventoryBarOptions` |
+| `ENGINE.InventoryGrid` | Full-screen grid inventory with drag-drop and configurable rows / columns. | inventory, backpack, storage, chest, loot grid | `InventoryGridOptions` |
+| `ENGINE.ItemCard` | Inventory item card: image area · name · rarity badge (composed) · quantity · price. | item, inventory, collectible, loot, shop, store, equipment, weapon card | `ItemCardOptions` |
+
+## menu
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.ControlsPanel` | HUD help panel listing keyboard / mouse bindings. | controls, help, keybinds, tutorial, instructions | `ControlsPanelOptions` |
+
+## navigation
+
+| Class | Summary | Use Cases | Options Type |
+|-------|---------|-----------|--------------|
+| `ENGINE.Compass` | HUD compass showing cardinal directions relative to camera rotation. | compass, direction, heading, navigation, cardinal | `CompassOptions` |
+| `ENGINE.Minimap` | Radar-style HUD showing player position and tracked targets. | minimap, radar, map, mini-map, tracking, enemies on map | `MinimapOptions` |
+| `ENGINE.NavItem` | Sidebar nav row with icon, label, optional notification badge, and active state. | sidebar, nav row, menu entry, tab list item | `NavItemOptions` |
+
+## Asset Paths
+
+| Class | Template | Styles |
+|-------|----------|--------|
+| `ENGINE.AbilityIcon` | `@engine/assets/ui/templates/ability-icon.html` | `@engine/assets/ui/styles/ability-icon.css` |
+| `ENGINE.Achievement` | `@engine/assets/ui/templates/achievement.html` | `@engine/assets/ui/styles/achievement.css` |
+| `ENGINE.AmmoCounter` | `@engine/assets/ui/templates/ammo-counter.html` | `@engine/assets/ui/styles/ammo-counter.css` |
+| `ENGINE.Avatar` | `@engine/assets/ui/templates/avatar.html` | `@engine/assets/ui/styles/avatar.css` |
+| `ENGINE.Badge` | `@engine/assets/ui/templates/badge.html` | `@engine/assets/ui/styles/badge.css` |
+| `ENGINE.Button` | `@engine/assets/ui/templates/button.html` | `@engine/assets/ui/styles/button.css` |
+| `ENGINE.Card` | `@engine/assets/ui/templates/card.html` | `@engine/assets/ui/styles/card.css` |
+| `ENGINE.CenterMessage` | `@engine/assets/ui/templates/center-message.html` | `@engine/assets/ui/styles/center-message.css` |
+| `ENGINE.ChatMessage` | `@engine/assets/ui/templates/chat-message.html` | `@engine/assets/ui/styles/chat-message.css` |
+| `ENGINE.Compass` | `@engine/assets/ui/templates/compass.html` | `@engine/assets/ui/styles/compass.css` |
+| `ENGINE.ControlsPanel` | `@engine/assets/ui/templates/controls-help.html` | `@engine/assets/ui/styles/controls-help.css` |
+| `ENGINE.Crosshair` | `@engine/assets/ui/templates/crosshair.html` | `@engine/assets/ui/styles/crosshair.css` |
+| `ENGINE.Input` | `@engine/assets/ui/templates/input.html` | `@engine/assets/ui/styles/input.css` |
+| `ENGINE.InventoryBar` | `@engine/assets/ui/templates/inventory-bar.html` | `@engine/assets/ui/styles/inventory-bar.css` |
+| `ENGINE.InventoryGrid` | `@engine/assets/ui/templates/inventory-grid.html` | `@engine/assets/ui/styles/inventory-grid.css` |
+| `ENGINE.ItemCard` | `@engine/assets/ui/templates/item-card.html` | `@engine/assets/ui/styles/item-card.css` |
+| `ENGINE.Keystroke` | `@engine/assets/ui/templates/keystroke.html` | `@engine/assets/ui/styles/keystroke.css` |
+| `ENGINE.Message` | `@engine/assets/ui/templates/message.html` | `@engine/assets/ui/styles/message.css` |
+| `ENGINE.Minimap` | `@engine/assets/ui/templates/minimap.html` | `@engine/assets/ui/styles/minimap.css` |
+| `ENGINE.NavItem` | `@engine/assets/ui/templates/nav-item.html` | `@engine/assets/ui/styles/nav-item.css` |
+| `ENGINE.NotificationBadge` | `@engine/assets/ui/templates/notification-badge.html` | `@engine/assets/ui/styles/notification-badge.css` |
+| `ENGINE.NumberDisplay` | `@engine/assets/ui/templates/number-display.html` | `@engine/assets/ui/styles/number-display.css` |
+| `ENGINE.PlayerCard` | `@engine/assets/ui/templates/player-card.html` | `@engine/assets/ui/styles/player-card.css` |
+| `ENGINE.ProgressBar` | `@engine/assets/ui/templates/progress-bar.html` | `@engine/assets/ui/styles/progress-bar.css` |
+| `ENGINE.ReloadIndicator` | `@engine/assets/ui/templates/reload-indicator.html` | `@engine/assets/ui/styles/reload-indicator.css` |
+| `ENGINE.StatBar` | `@engine/assets/ui/templates/stat-bar.html` | `@engine/assets/ui/styles/stat-bar.css` |
+| `ENGINE.StatCard` | `@engine/assets/ui/templates/stat-card.html` | `@engine/assets/ui/styles/stat-card.css` |
+| `ENGINE.Toggle` | `@engine/assets/ui/templates/toggle.html` | `@engine/assets/ui/styles/toggle.css` |
+| `ENGINE.Tooltip` | `@engine/assets/ui/templates/tooltip.html` | `@engine/assets/ui/styles/tooltip.css` |
+| `ENGINE.WeaponCard` | `@engine/assets/ui/templates/weapon-card.html` | `@engine/assets/ui/styles/weapon-card.css` |
