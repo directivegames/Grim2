@@ -67,8 +67,8 @@ export class PostmanBossMusicActor extends GameRootNode {
         toRemove.push(actor);
       }
     }
-    if (toRemove.length > 0) {
-      world.remove(...toRemove);
+    for (const actor of toRemove) {
+      actor.destroy();
     }
   }
 

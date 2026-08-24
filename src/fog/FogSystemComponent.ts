@@ -460,25 +460,14 @@ export class FogSystemComponent extends ENGINE.SceneNode {
 
   private _clearMesh(): void {
     if (this._mesh) {
-      this._mesh.removeFromParent();
-      this._mesh.geometry.dispose();
-      this._mesh.material.dispose();
+      this._mesh.destroy({ forceDispose: true });
       this._mesh = null;
     }
 
     // Drop any FogCard meshes restored from older saves (not tracked in `_mesh`).
     for (const child of [...this.children]) {
       if (child.name !== 'FogCard') continue;
-      child.removeFromParent();
-      if (child instanceof THREE.Mesh) {
-        child.geometry?.dispose();
-        const material = child.material;
-        if (Array.isArray(material)) {
-          for (const entry of material) entry.dispose();
-        } else {
-          material?.dispose();
-        }
-      }
+      child.destroy({ forceDispose: true });
     }
 
     this._material = null;

@@ -121,13 +121,10 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneNode {
       return false;
     }
     if (this._mesh) {
-      this._mesh.visible = false;
-      this._mesh.material.dispose();
-      this._mesh.geometry.dispose();
-      this._mesh.removeFromParent();
+      this._mesh.destroy({ forceDispose: true });
       this._mesh = null;
-    }
-    if (this._texture) {
+      this._texture = null;
+    } else if (this._texture) {
       this._texture.dispose();
       this._texture = null;
     }

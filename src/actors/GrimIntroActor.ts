@@ -506,7 +506,7 @@ export class GrimIntroActor extends GameRootNode {
 
     this._disableSceneViewTargetCameras(world);
 
-    world.remove(this);
+    this.destroy();
 
     ensureGrimIntroBlackCover(world);
 

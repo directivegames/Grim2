@@ -119,7 +119,7 @@ export function spawnCloudShadowTslTest(
   // Remove previous test plane if re-spawned.
   const existing = scene.getObjectByName(TEST_PLANE_NAME);
   if (existing) {
-    existing.removeFromParent();
+    existing.destroy({ forceDispose: true });
   }
 
   cloudTexture.wrapS = THREE.RepeatWrapping;

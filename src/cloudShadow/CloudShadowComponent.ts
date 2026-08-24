@@ -350,9 +350,7 @@ export class CloudShadowComponent extends ENGINE.SceneNode {
 
   private _clearOverlay(): void {
     if (this._overlayMesh) {
-      this._overlayMesh.geometry.dispose();
-      this._overlayMaterial?.dispose();
-      this.remove(this._overlayMesh);
+      this._overlayMesh.destroy({ forceDispose: true });
       this._overlayMesh = null;
       this._overlayMaterial = null;
     }
@@ -360,16 +358,7 @@ export class CloudShadowComponent extends ENGINE.SceneNode {
     // Drop any overlay meshes restored from older saves (not tracked in `_overlayMesh`).
     for (const child of [...this.children]) {
       if (child.name !== OVERLAY_MESH_NAME) continue;
-      child.removeFromParent();
-      if (child instanceof THREE.Mesh) {
-        child.geometry?.dispose();
-        const material = child.material;
-        if (Array.isArray(material)) {
-          for (const entry of material) entry.dispose();
-        } else {
-          material?.dispose();
-        }
-      }
+      child.destroy({ forceDispose: true });
     }
 
     this._loadStarted = false;

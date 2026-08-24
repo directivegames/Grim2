@@ -246,9 +246,7 @@ export class WeaponSlashComponent extends ENGINE.SceneNode {
 
   private _destroyMeshes(): void {
     if (this._coreMesh) {
-      this._coreMesh.removeFromParent();
-      this._coreGeometry?.dispose();
-      (this._coreMesh.material as THREE.Material).dispose();
+      this._coreMesh.destroy({ forceDispose: true });
       this._coreMesh      = null;
       this._coreGeometry  = null;
       this._corePosAttr   = null;
@@ -256,9 +254,7 @@ export class WeaponSlashComponent extends ENGINE.SceneNode {
       this._coreIndexAttr = null;
     }
     if (this._glowMesh) {
-      this._glowMesh.removeFromParent();
-      this._glowGeometry?.dispose();
-      (this._glowMesh.material as THREE.Material).dispose();
+      this._glowMesh.destroy({ forceDispose: true });
       this._glowMesh      = null;
       this._glowGeometry  = null;
       this._glowPosAttr   = null;

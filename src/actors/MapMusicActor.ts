@@ -63,8 +63,8 @@ export class MapMusicActor extends GameRootNode {
         toRemove.push(a);
       }
     }
-    if (toRemove.length > 0) {
-      world.remove(...toRemove);
+    for (const actor of toRemove) {
+      actor.destroy();
     }
   }
 

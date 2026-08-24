@@ -216,7 +216,7 @@ export class GrimGrinderControllerComponent extends ENGINE.SceneNode {
       }
     }
     for (const anim of toRemove) {
-      anim.parent?.remove(anim);
+      anim.destroy();
     }
   }
 
