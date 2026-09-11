@@ -1,0 +1,15 @@
+{
+  "type": "project-template",
+  "id": "grim",
+  "name": "Grim",
+  "description": "An isometric action game where you play as Grim, fighting undead through a dark city with melee combat, abilities, and a shop.",
+  "version": "1.0.0",
+  "tags": [
+    "isometric",
+    "action",
+    "game-example"
+  ],
+  "category": "examples",
+  "thumbnail": "thumbnail.png",
+  "engineVersion": "16.0.1-dev"
+}
