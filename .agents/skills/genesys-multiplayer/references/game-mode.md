@@ -7,7 +7,7 @@ GameMode is the server-only class that owns the canonical rules of the match. It
 ## What GameMode Does
 
 - Decides whether a connecting player is allowed to join (`canPlayerJoin`).
-- Spawns PlayerController, Pawn, and PlayerInfo for each player that joins (`onPlayerJoined`).
+- Spawns PlayerController, Pawn, and PlayerInfo after the client finishes loading the level (`onPlayerJoined`).
 - Responds to player disconnects and handles cleanup or respawn logic (`onPlayerDisconnected`).
 - Provides factory hooks for customising which classes are instantiated for each player.
 
@@ -28,7 +28,9 @@ override canPlayerJoin(_clientId: ClientId, joinParams: JoinParams): PlayerJoinR
 
 ### onPlayerJoined
 
-Called after a client is admitted. The default implementation spawns a PlayerController, adds it to the world, assigns ownership, and calls `handleNewPlayer` to spawn the pawn. Override to add custom logic after spawn — `super.onPlayerJoined` must be called to preserve the standard flow.
+Called when player entities are spawned. In multiplayer that is after the client finishes loading the level, not at handshake. The default implementation spawns a PlayerController, assigns ownership, and calls `handleNewPlayer` to spawn the pawn. The engine also spawns and links `PlayerInfo` at that point. Override to add custom logic after spawn — `super.onPlayerJoined` must be called to preserve the standard flow.
+
+A connected client has no controller, pawn, or `PlayerInfo` until this runs. Do not treat `getPlayerControllerForClient` returning `null` during load as an error.
 
 ```typescript
 override async onPlayerJoined(clientId: ClientId): Promise<PlayerController | null> {
@@ -40,9 +42,20 @@ override async onPlayerJoined(clientId: ClientId): Promise<PlayerController | nu
 }
 ```
 
+### onClientLevelLoaded
+
+Called after the client's PlayerInfo, PlayerController, and pawn already exist. Override for post-entry logic (HUD, match start). Do not spawn those entities here.
+
+```typescript
+override async onClientLevelLoaded(controller: PlayerController, clientId: ClientId): Promise<void> {
+  await super.onClientLevelLoaded(controller, clientId);
+  this.announcePlayerReady(clientId);
+}
+```
+
 ### onPlayerDisconnected
 
-Called when a player disconnects. Use it to clean up player-owned nodes, notify other players, or start a respawn timer.
+Called when a player disconnects after they have entered the world (controller or pawn exists). Use it to clean up player-owned nodes, notify other players, or start a respawn timer. It does **not** run if the client disconnects while still loading the level — do not pair `canPlayerJoin` bookkeeping with this hook unless you also handle that early-leave path.
 
 ```typescript
 override onPlayerDisconnected(clientId: ClientId, pawn: Pawn | null, reason: DisconnectReason): void {
@@ -73,7 +86,7 @@ class MyGameMode extends ENGINE.GameMode {
 }
 ```
 
-The engine calls these factories in `onPlayerJoined`. Each factory must return a fully constructed node created with `.create()` — do not pass a `world` argument; the engine wires the world when adding the node.
+The engine calls these factories when the player enters the world (`onPlayerJoined` and the surrounding PlayerInfo spawn). Each factory must return a fully constructed node created with `.create()` — do not pass a `world` argument; the engine wires the world when adding the node.
 
 Override the getter methods (`getPawnFactory`, `getPlayerControllerFactory`, `getPlayerInfoFactory`) instead when the factory depends on runtime state that is not available at `initialize` time.
 
@@ -170,6 +183,6 @@ override getPlayerInfoFactory(): () => Promise<ENGINE.PlayerInfo> {
 
 - Do not call GameMode methods from a client. They only exist on the server; calling them on a client throws or silently does nothing.
 - Do not store match state that clients need to see directly on GameMode. GameMode is not replicated — put shared state on `GameSessionInfo` or another replicated node instead.
-- Do not spawn nodes from `canPlayerJoin`. Only spawn from `onPlayerJoined` or later.
+- Do not spawn nodes from `canPlayerJoin`. Only spawn from `onPlayerJoined` or later. A client that is still loading the level has not entered the game yet.
 
 Reference: See GameMode.ts in engine source.

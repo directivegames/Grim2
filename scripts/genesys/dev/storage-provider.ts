@@ -113,21 +113,21 @@ export class DevStorageProvider implements ENGINE.IStorageProvider {
 
   async downloadFileAsBuffer(path: ENGINE.AssetPath): Promise<ArrayBuffer> {
     const resolvedPath = await this.resolvePath(path);
-    const response = await fetch(resolvedPath.getResolvedPath());
+    const response = await this.fetchAsset(resolvedPath.getResolvedPath());
     this.checkResponse(path, response);
     return response.arrayBuffer();
   }
 
   async downloadFileAsJson<T>(path: ENGINE.AssetPath): Promise<T> {
     const resolvedPath = await this.resolvePath(path);
-    const response = await fetch(resolvedPath.getResolvedPath());
+    const response = await this.fetchAsset(resolvedPath.getResolvedPath());
     this.checkResponse(path, response);
     return response.json();
   }
 
   async downloadFileAsText(path: ENGINE.AssetPath): Promise<string> {
     const resolvedPath = await this.resolvePath(path);
-    const response = await fetch(resolvedPath.getResolvedPath());
+    const response = await this.fetchAsset(resolvedPath.getResolvedPath());
     this.checkResponse(path, response);
     return response.text();
   }
@@ -216,7 +216,7 @@ export class DevStorageProvider implements ENGINE.IStorageProvider {
   async exists(path: ENGINE.AssetPath): Promise<boolean> {
     try {
       const resolvedPath = await this.resolvePath(path);
-      const response = await fetch(resolvedPath.getResolvedPath(), { method: 'HEAD' });
+      const response = await this.fetchAsset(resolvedPath.getResolvedPath(), { method: 'HEAD' });
       return response.ok;
     } catch {
       return false;
@@ -265,5 +265,26 @@ export class DevStorageProvider implements ENGINE.IStorageProvider {
     if (!response.ok) {
       throw new Error(`Failed to fetch ${path.initialPath}: ${response.status} ${response.statusText}`);
     }
+  }
+
+  /**
+   * Vite transforms `.css` into a JS module unless the request is marked direct.
+   * UI widgets inject the response into a `<style>` tag, so we must receive raw CSS.
+   */
+  private fetchAsset(url: string, init: RequestInit = {}): Promise<Response> {
+    const headers = new Headers(init.headers);
+    let fetchUrl = url;
+
+    const pathWithoutHash = url.split('#')[0];
+    if (/\.css(?:$|\?)/i.test(pathWithoutHash)) {
+      if (!/[?&]direct\b/.test(fetchUrl)) {
+        fetchUrl += fetchUrl.includes('?') ? '&direct' : '?direct';
+      }
+      if (!headers.has('Accept')) {
+        headers.set('Accept', 'text/css');
+      }
+    }
+
+    return fetch(fetchUrl, { ...init, headers });
   }
 }

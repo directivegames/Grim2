@@ -44,7 +44,8 @@ interactables and selects by `canInteract`, priority, then distance.
 
 These pieces compose: a keyed door extends `DoorNode`, a coin subclasses `PickupNode`,
 a level exit uses `TriggerZoneNode`, a custom crate implements `IInteractable` or
-extends `ProximityInteractableNode`.
+extends `ProximityInteractableNode`. Repeated pickups or doors that share the same
+authored hierarchy should be Prefabs (`genesys-prefabs`), not copy-pasted node trees.
 
 ## Footguns
 

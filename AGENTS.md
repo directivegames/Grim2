@@ -40,7 +40,8 @@
 
 ## Prefabs
 - Prefabs are json files stored under `/assets` (commonly `/assets/prefabs`), with the suffix `.prefab.json`.
-- Prefer Prefabs for reusable scene-node templates.
+- Prefer Prefabs for reusable scene-node templates when the same hierarchy is placed more than once, stays in sync, or is spawned at runtime. See the `genesys-prefabs` skill.
+- Create, place, and isolate via MCP first (`genesys.actionPrefab` / `batch_execute`); do not hand-edit `.prefab.json`.
 - When referencing classes in prefab/serialized data, use the appropriate prefix.
   Engine classes **must** be referenced as `ENGINE.{class name}`, example: `ENGINE.SceneNode`, `ENGINE.MeshNode`.
   Custom game classes **must** be referenced as `GAME.{class name}`, example: `GAME.MyCustomNode`, `GAME.MyPickupRoot`.
@@ -51,7 +52,7 @@
 
 Do **not** read or open `*.genesys-scene` files unless the user explicitly asks or MCP is unavailable and filesystem fallback is appropriate. These files are large and the editor is the source of truth for scene state.
 
-For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys-mcp-orchestrator/SKILL.md`). Before **mutations**, run `query_editor(getState)`; read-only queries can go straight to `query_node` / `run_script(readOnly)`. Mutate with `action_node`, `action_scene`, or `batch_execute` / `run_script`, then `action_scene(save)` when the scene changed.
+For scene-visible or editor-authored changes, use Genesys MCP first when Connected or Probe-capable (see `.cursor/rules/genesys-mcp.mdc` and `.agents/skills/genesys-mcp-orchestrator/SKILL.md`). Before **mutations**, run `query_editor(getState)`; read-only queries can go straight to `query_node` / `run_script(readOnly)`. Mutate with `action_node`, `action_scene`, compact-hidden `action_prefab` (`genesys.actionPrefab`), or `batch_execute` / `run_script`. Flush scenes with `action_scene(save)`; flush Prefab Editor with `action_prefab.save` / `close`.
 
 **Before writing code, decide where this state should live** (scene/editor vs runtime behaviour) and route accordingly.
 
@@ -98,7 +99,7 @@ Do **not** use `beginPlay`, constructors, or one-off runtime hacks to patch a sp
 - You may **only** use `pnpm build` to verify code compilation.
 - You **must** use `pnpm lint` to detect and auto-fix linting issues.
 - For every shell command (`pnpm`, `git`, TypeScript tools, etc.), set `workingDirectory` to this game project root — the folder that contains `package.json` and the `.genesys-project` file. Do not rely on the default shell cwd; it may be the Genesys desktop app process directory.
-- To register newly added game classes in the running editor, use MCP `action_build(action="buildProject")`; `pnpm build-project` talks to the SDK app file server and is not reliable from an agent shell.
+- To register newly added game classes in the running editor, use MCP `action_build(action="buildProject")`.
 - Do **not** run `pnpm test`, `pnpm dev`, or `pnpm start` — these commands are **not supported**.
 - All testing is the responsibility of the user.  
   You are encouraged to:

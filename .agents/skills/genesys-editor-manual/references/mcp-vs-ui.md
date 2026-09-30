@@ -19,8 +19,11 @@ MCP node era: use `query_node` / `action_node`. MCP schemas name node UUIDs `com
 | Node copy / paste | — | UI only | Outliner Copy / Paste — recreate via MCP `action_node.add` if needed |
 | Scene open / save / set active | `action_scene` | Available | Menu Save Scene (`Ctrl/Cmd+S`); Asset Browser open scene |
 | Scene create / duplicate | `action_scene.create` / `duplicate` | Available | Menu New Scene; Asset Browser New Asset → Scene |
-| Prefab create / open / place | — (`action_asset` has no prefab ops) | Unavailable / UI only | Asset Browser New → Prefab; double-click `.prefab.json`; drag to place |
-| Undo / redo | `action_editor.undo` / `redo` | Available | `Ctrl/Cmd+Z` / `Ctrl/Cmd+Y` |
+| Prefab create / place / isolate | Compact-hidden `action_prefab` (`create`, `instantiate`, `open`, `close`, `save`) via `run_script` / `batch_execute` | Available | Asset Browser New → Prefab; double-click `.prefab.json`; drag from Asset Browser or Place bar Prefab picker to place; pin a prefab onto the Place bar; Outliner Save Branch as Prefab |
+| Prefab Apply / Resync / Unlink | `action_prefab.apply` / `resync` / `unlink` on a placed instance root | Available | Inspector PrefabActions; Outliner/viewport Prefab submenu |
+| Prefab createFromNode | `action_prefab.createFromNode` | Available | Outliner Save Branch as Prefab |
+| Prefab editable children | `action_prefab.setEditableChildren` | Available | Prefab submenu Editable Children |
+| Undo / redo | `action_editor.undo` / `redo` | Available | `Ctrl/Cmd+Z` / `Ctrl/Cmd+Y`; title-bar Undo / Redo / **Undo History** (jump is UI only) |
 | Editor hide / lock | — | UI only | Outliner eye / lock; H / L (editor-only) |
 | Drop to surface | — | UI only | Hotkey End |
 | Asset find refs | `query_asset.getReferences` | Available | Asset context Find References |
@@ -44,12 +47,10 @@ MCP node era: use `query_node` / `action_node`. MCP schemas name node UUIDs `com
 | Play Local Project | — | UI only | Dashboard *(dev SDK)* |
 | Diagnostics | `query_diagnostics` | Available | Title bar Errors; console |
 
-Compact-hidden (still callable via `run_script` / `batch_execute` / `search_tools`): `action_asset`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`.
+Compact-hidden (still callable via `run_script` / `batch_execute` / `search_tools`): `action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`.
 
 installAssetPack: scaffolds an empty `packs/<name>/` only — not catalog / cloud packs (use Browse Asset Packs).
 
-<!-- PREFAB_TODO: Prefab editor/MCP UX removed; engine migrates legacy `.prefab.json` in memory on load. -->
-
 Editor-only hide/lock: never describe as runtime `bHidden` / gameplay visibility.
 
-UI vs MCP naming: the Node Outliner may still show legacy labels (e.g. “Actor”) in a few places; MCP and engine types use `*Node` (`MeshNode`, `InteractionNode`, …). Prefab instance actions (Edit Prefab, Apply, Resync, Unlink) live in the Inspector `PrefabActions` toolbar and in the Outliner/viewport Prefab submenu.
+UI vs MCP naming: the Node Outliner may still show legacy labels (e.g. “Actor”) in a few places; MCP and engine types use `*Node` (`MeshNode`, `InteractionNode`, …). Prefab instance actions (Edit Prefab, Apply, Resync, Unlink) live in the Inspector `PrefabActions` toolbar and in the Outliner/viewport Prefab submenu. Transform / reparent / duplicate stay UI-only.

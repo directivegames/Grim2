@@ -191,7 +191,7 @@ edit TypeScript (@GameClass / @ENGINE.GameClass)
 
 - `run_script(readOnly)` cannot call apply actions such as `actionBuild`.
 - Empty `classes: []` with `ok: true` means not loaded yet — rebuild and query again.
-- `buildProject` ≠ game `pnpm build-project`. Also: `buildLightmap` (needs `scenePath`).
+- `buildLightmap` needs `scenePath`.
 
 ## Screenshot
 
@@ -226,3 +226,68 @@ Full class pattern: [webgpu-tsl-node-material-assets/SKILL.md](../../webgpu-tsl-
 - Scene slice: `run_script(readOnly)` — filter `queryNode(find|getTree)` in-script; return a small summary only.
 - Assets: `query_asset(find)` → `getDetails` (project/packs; `@engine/...` via `getDetails` only).
 - After TS edits: `buildProject` → optional `getBusyState` after a long build → `query_diagnostics(getBuildErrors)` when authoritative. Unavailable diagnostics = unknown, not success.
+
+## Prefabs
+
+Decision table and gotchas: [genesys-prefabs](../../genesys-prefabs/SKILL.md). Compact-hidden: `genesys.actionPrefab` / `batch_execute` (`tool: "action_prefab"`). Inspect with `query_node` + `query_asset(find, assetType: "prefab")`.
+
+### Extract a branch
+
+```js
+const { componentId } = /* selected branch root, not a placed instance */;
+const created = await genesys.actionPrefab({ action: 'createFromNode', componentId });
+return { prefabPath: created.prefabPath, status: created.status };
+```
+
+### Place N instances then save the scene
+
+```js
+const prefabPath = '@project/assets/prefabs/Crate.prefab.json';
+const placedIds = [];
+for (let i = 0; i < 3; i += 1) {
+  const placed = await genesys.actionPrefab({
+    action: 'instantiate',
+    prefabPath,
+    transform: { position: { x: i * 2, y: 0, z: 0 } },
+  });
+  placedIds.push(...(placed.affectedComponentIds ?? []));
+}
+await genesys.actionScene({ action: 'save' });
+return { prefabPath, placedIds, counts: { placed: placedIds.length } };
+```
+
+### Edit source in isolation
+
+```js
+const prefabPath = '@project/assets/prefabs/Crate.prefab.json';
+await genesys.actionPrefab({ action: 'open', prefabPath });
+const { nodes } = await genesys.queryNode({ operation: 'getTree', limit: 200 });
+const root = nodes.find((n) => n.isWorldRoot);
+if (root) {
+  await genesys.actionNode({
+    action: 'setProperties',
+    componentId: root.id,
+    properties: { /* editable paths from getEditableProperties */ },
+  });
+}
+await genesys.actionPrefab({ action: 'save' });
+await genesys.actionPrefab({ action: 'close' });
+return { prefabPath, edited: Boolean(root) };
+```
+
+Do not call `action_scene.save` while `queryEditor(getState).documentType === 'prefab'`. After `open`/`close`, discard previous `componentId`s.
+
+### Apply vs resync vs unlink
+
+Need a **placed instance root** (`isPrefabInstance`), not Prefab Editor:
+
+```js
+const componentId = 'placed-root-uuid';
+await genesys.actionPrefab({ action: 'apply', componentId, dryRun: true });
+// apply — write instance edits into the .prefab.json asset
+// resync — discard instance overrides (keeps uuid / world transform / display name / editableChildren)
+// unlink — bake into ordinary nodes (nested instances kept)
+return { componentId };
+```
+
+`createFromNode` / `apply` / `resync` / `unlink` are not undoable. Engine `@engine/...` prefabs: place is OK; apply and unlink are blocked.

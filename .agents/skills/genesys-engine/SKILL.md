@@ -36,7 +36,6 @@ description: Core Genesys engine reference and the entry point for any game feat
 - After TypeScript edits, run `pnpm lint` and rebuild so the editor picks up newly registered `GAME.*` classes.
 - When MCP is connected, use `action_build(action="buildProject")` to register the updated bundle in the running editor.
 - `pnpm build` compiles project code but does not by itself refresh class registration in a running editor session.
-- `pnpm build-project` talks to the SDK app file server and can fail from an agent shell; prefer MCP `action_build` for editor registration.
 - Confirm availability before spawn actions with `query_editor(operation="getRegisteredClasses", filter="YourClass")`.
 
 ## Subsystem skills
@@ -51,9 +50,11 @@ Load the skill that owns the area rather than deriving it from engine source:
 - `genesys-audio` — sound effects, music, spatial audio, buses.
 - `genesys-vfx` — particles, explosions, trails, VFX definitions.
 - `pickups-interactions-and-doors` — collectibles, usable objects, doors, switches, trigger volumes.
+- `genesys-prefabs` — when to use Prefabs vs classes / Models / scene nodes; editor isolation and MCP `action_prefab`.
 - `genesys-multiplayer` — replication, RPCs, server authority, GameMode.
 - `webgpu-tsl-node-material-assets` — custom TSL node materials and `.material.json` assets.
 - `asset-pack-authoring` — packaging classes, prefabs, and assets into a distributable pack.
+- `genesys-asset-compiler` — build-time KTX2 / Meshopt / MP3 compression, texture excludes, and the conversion hook.
 - `engine-upgrades` — migrating game code across engine versions.
 - `engine-search` / `engine-reference` — find an engine class by keyword, then read its source.
 - `genesys-mcp-orchestrator` / `genesys-editor-manual` — driving the live editor via MCP, or teaching its UI.

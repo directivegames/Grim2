@@ -22,12 +22,68 @@ Use `createJoint` to join two nodes, or `createJointFromBodies` to join two raw 
 
 ## Raycasts / hit tests
 
-`performHitTest(options: HitTestOptions): HitTestResult[]`.
+Use `raycast(options): PhysicsQueryHit | null` for the nearest hit and
+`raycastAll(options): PhysicsQueryHit[]` for every hit ordered nearest first.
 
-- `HitTestOptions`: `origin`, `direction` (a unit vector; scaled by `maxDistance` for the ray), `maxDistance`, `stopOnFirstHit`, optional `collisionProfile`, `ignoredRootNodes`, `ignoredNodes`.
-- `HitTestResult`: `origin`, `direction`, `hitLocation`, `hitNormal`, `hitNode: PrimitiveNode | null`, `hitRoot: SceneNode | null`.
-- Sensor/trigger colliders are always excluded from hit tests — a raycast never reports a trigger volume.
-- `stopOnFirstHit: false` returns every collider the ray intersects, not sorted by distance.
+- Options: `origin`, `direction` (normalized internally), `maxDistance`, optional
+  `collisionProfile`, `ignoredRootNodes`, `ignoredNodes`, and `includeTriggers` (default false).
+- Results include `hitLocation`, `hitNormal`, `hitNode`, and `distance`.
+- `performHitTest` remains available for compatibility. Prefer the explicit raycast methods in new code.
+
+## Sweeps, overlaps, and point queries
+
+All scene queries share `PhysicsQueryOptions` (`collisionProfile`, ignore lists,
+and `includeTriggers`). Shape queries take a `PhysicsShape`, or a `PhysicsBodyShape`
+bag which is converted. Overlap results are unique by node.
+
+- `sweepShape(options)` returns the first hit along a unit direction.
+- `overlapShape(options)` returns nodes overlapping a posed shape.
+- `projectPoint(options)` returns the closest point and whether the query point is inside.
+- `overlapPoint(options)` returns nodes containing a point.
+
+```typescript
+const sweep = physicsEngine.sweepShape({
+  position: origin,
+  shape: ENGINE.PhysicsShape.sphere(0.4)!,
+  direction: this.forwardDirection(),
+  maxDistance: 8,
+  ignoredRootNodes: [this.getRoot()!],
+});
+if (sweep?.hitNode) {
+  console.log('swept into', sweep.hitNode.name, 'at', sweep.distance);
+}
+
+const overlaps = physicsEngine.overlapShape({
+  position: this.getWorldPosition(new THREE.Vector3()),
+  shape: ENGINE.PhysicsShape.box(new THREE.Vector3(2, 2, 2))!,
+});
+```
+
+## Node pair queries
+
+These include all physics shapes attached to each `PrimitiveNode`, including compounds.
+
+- `contactBetweenNodes(nodeA, nodeB, maxDistance?)` — closest points; negative `distance` is penetration.
+- `sweepBetweenNodes(nodeA, velocityA, nodeB, velocityB, maxTime)` — first impact along world-space velocities.
+- `getContactingNodes(node, includeTriggers?)` — nodes touching after the last physics step.
+
+```typescript
+const contact = physicsEngine.contactBetweenNodes(crateA, crateB, 0.05);
+if (contact && contact.distance < 0) {
+  console.log('penetrating by', -contact.distance);
+}
+
+const hit = physicsEngine.sweepBetweenNodes(
+  projectile,
+  velocity,
+  wall,
+  new THREE.Vector3(),
+  dt,
+);
+if (hit) {
+  console.log('impact at t=', hit.time);
+}
+```
 
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
@@ -50,23 +106,21 @@ export class HitscanWeaponNode extends ENGINE.SceneNode {
     const origin = new THREE.Vector3();
     this.getWorldPosition(origin);
 
-    const results = physicsEngine.performHitTest({
+    const hit = physicsEngine.raycast({
       origin,
       direction: this.forwardDirection(),
       maxDistance: this.range,
-      stopOnFirstHit: true,
       collisionProfile: ENGINE.DefaultCollisionProfile.BlockAllDynamic,
       ignoredRootNodes: [this.getRoot()!],
     });
 
-    const hit = results[0];
     if (!hit?.hitNode) {
       return;
     }
 
     console.log(`Hit ${hit.hitNode.name} at`, hit.hitLocation, 'normal', hit.hitNormal);
     // Spawn impact VFX at hit.hitLocation oriented to hit.hitNormal, then apply
-    // this.damage to hit.hitNode / hit.hitRoot if it exposes a health API.
+    // this.damage to hit.hitNode.getRoot() if it exposes a health API.
   }
 }
 ```
@@ -112,11 +166,11 @@ const jointId = physicsEngine.createJoint({
 
 | File | Contents |
 | --- | --- |
-| `.engine/src/physics/PhysicsEngine.ts` | `IPhysicsEngine` interface, `HitTestOptions`/`Result`, `PhysicsBodyDesc`/`Shape`, scalar/vector param enums, `CharacterControllerOptions` |
+| `.engine/src/physics/PhysicsEngine.ts` | `IPhysicsEngine` interface, `PhysicsShape`, ray/sweep/overlap/point/node-contact query types, `PhysicsBodyDesc`/`PhysicsBodyShape`, scalar/vector param enums, `CharacterControllerOptions` |
 | `.engine/src/physics/BasePhysicsEngine.ts` | Shared engine logic; `JointType`, `JointDesc`; node/joint/direct-body bookkeeping |
 | `.engine/src/physics/IPhysicsVehicle.ts` | `VehicleWheelConfig`, `VehicleWheelState`, `VehicleState`, `IPhysicsVehicle` |
 | `.engine/src/physics/PhysicsTypes.ts` | `PhysicsMotionType`, `CollisionMeshType`, `NodePhysicsOptions`, voxel/heightfield collision descriptors |
 | `.engine/src/physics/createPhysicsEngine.ts` | Backend factory (Rapier only) |
-| `.engine/src/physics/implementations/RapierPhysics.ts` | Rapier backend: raycasts, joints, direct bodies, collision groups/ignore, character controller |
+| `.engine/src/physics/implementations/RapierPhysics.ts` | Rapier backend: scene queries, joints, direct bodies, collision groups/ignore, character controller |
 | `.engine/src/physics/implementations/RapierVehicle.ts` | Rapier `DynamicRayCastVehicleController` wrapper backing `IPhysicsVehicle` |
 | `.engine/src/nodes/SceneNode.ts` | `getPhysicsEngine()` accessor |

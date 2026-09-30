@@ -56,6 +56,8 @@ Menu shows View / Help / Quit, plus the same App Settings and Editor Settings en
 | Control | Notes |
 | --- | --- |
 | Save | Same as Save Scene |
+| Undo / Redo | `Ctrl/Cmd+Z` / `Ctrl/Cmd+Shift+Z` or `Ctrl/Cmd+Y`; hidden in Play Mode |
+| Undo History | Clock icon next to Redo; dropdown of the active document’s steps (newest first). Click a row to jump; **Opened {document}** undoes everything. Hover a row for undo/redo step count. Hidden in Play Mode |
 | Errors (alert) | Build / play error overlay (Fix with AI when available) |
 | Agent Nova / AI Assistant | Toggle assistant (`1`) *(when Assistant enabled)* |
 | Build Lightmap | Bake dialog (desktop + open scene) |

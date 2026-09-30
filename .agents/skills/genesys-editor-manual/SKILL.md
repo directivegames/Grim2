@@ -19,7 +19,7 @@ Do not read every reference up front. Open the smallest file that answers the qu
 | Getting Started, Environment Setup, AI/MCP settings, Project Recovery, Play Local | [app-setup-and-recovery.md](references/app-setup-and-recovery.md) |
 | Title-bar Menu, Tools, Play, Build, Upload, Help | [menus-and-play.md](references/menus-and-play.md) |
 | Outliner, Inspector, Focus, copy/paste properties, components, prefab chrome | [outliner-and-inspector.md](references/outliner-and-inspector.md) |
-| Viewport gizmos/view/snap, Asset Browser, specialised dialogs | [viewport-and-assets.md](references/viewport-and-assets.md) |
+| Viewport gizmos/view/snap, Place bar, Asset Browser, specialised dialogs | [viewport-and-assets.md](references/viewport-and-assets.md) |
 | Exact hotkey | [hotkeys.md](references/hotkeys.md) |
 
 ## Decision table

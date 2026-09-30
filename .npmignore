@@ -13,6 +13,8 @@
 **/*.mcp-port
 .cursor/mcp.json
 **/.placeholder
+# Regenerated on every project create/update/open (see skills-sync.ts); never commit the link itself.
+.claude/skills
 # Ignore all of .genesys except the sdk/ folder (SDK base files)
 **/.genesys/*
 !.genesys/sdk/

@@ -33,4 +33,4 @@ Never call the MCP HTTP endpoint, `curl`, `Invoke-WebRequest`, localhost URLs, o
 
 When MCP is ready, query the editor for live scene state via `query_node`. Do not grep/read `*.genesys-scene` unless the user explicitly asks or MCP is genuinely unavailable. Attached `@scene/…` / `@scene/… [nodeUuid=…]` lines are live nodes — pass `nodeUuid` as `componentIds`; never discover them with filesystem tools.
 
-Prefer `query_node` / `action_node` for scene and prefab document trees.
+Prefer `query_node` / `action_node` for scene and prefab document trees. Prefab create / place / isolate / apply / resync / unlink: compact-hidden `action_prefab` via `run_script` (`genesys.actionPrefab`) or `batch_execute` — see `genesys-prefabs`. Do not hand-edit `.prefab.json`.

@@ -16,11 +16,23 @@ Perspective / Top / Bottom / Front / Back / Left / Right · Show Wireframe / Sky
 
 Snap button → translate/rotate/scale snap toggles + values · Reset to defaults
 
-## Place toolbar
+## Place bar
 
-Toggle Place (viewport left edge) · Primitives: Ground/Cube/Sphere/Cone/Cylinder · Lights: Point/Spot/Rect Area/Ambient/Directional/Hemisphere
+Toggle Place (**+** on the viewport left edge). **⋯** beside **+**: Add to Place Bar, Icons Only / Show Labels, Presets (built-in / user / team), Restore Default Place Bar.
 
-Spawned types are `*Node` classes (e.g. `MeshNode`, `PointLightNode`).
+Default items: Ground / Cube / Sphere / Cone / Cylinder · Lights flyout (Point / Spot / Rect Area / Ambient / Directional / Hemisphere) · Empty Actor.
+
+| Action | How |
+| --- | --- |
+| Place with preview | Drag a Place item onto the viewport |
+| Place at look-at | Click a spawn item (Cube, Empty, pinned Prefab, …) |
+| Pin an asset | Drag a Prefab, Model, VFX, or JS Class from the Asset Browser onto the Place bar |
+| Add a node class | Add to Place Bar (⋯, empty bar, or right-click the bar chrome) → Nodes (e.g. Player Start). Empty Actor is already on the bar |
+| Rearrange | Drag a Place item along the bar. Right-click → Move Up / Move Down. Arrow keys while a Place item is focused |
+| Hide an item | Right-click → Hide from Place Bar |
+| Insert a separator | Right-click a Place item → Insert Separator Below |
+
+Scene and Prefab documents keep separate Place bar layouts. Spawned types are `*Node` classes (e.g. `MeshNode`, `PointLightNode`).
 
 ## Viewport context menu (stationary right-click)
 
@@ -35,7 +47,7 @@ Viewport stays a short subset: no Add, Rename, Copy, Paste, or Save Branch as Pr
 | Fly camera | Right-drag; WASD while flying (speed in status bar) |
 | Drop to Surface | End |
 | Focus / frame | F (Outliner/Viewport Focus; MCP `action_editor.frameSelection`) |
-| Place from assets | Drag Asset Browser → viewport. Loading drops show a Placing… indicator |
+| Place from assets | Drag Asset Browser → viewport, or drag onto the Place bar to pin. Loading drops show a Placing… indicator |
 
 Contextual: instanced paint/erase · CSG Export Geometry · camera preview pin/close
 
@@ -49,7 +61,7 @@ Contextual: instanced paint/erase · CSG Export Geometry · camera preview pin/c
 | Navigate | Back / Forward / Breadcrumbs |
 | Empty-area context | New Asset/Resource/Folder · Delete Folder · Import Files… · Show in Finder/Explorer · Refresh · Refresh thumbnails |
 | Open | Double-click (scene/prefab/material/resource/…) |
-| Prefab | Open Prefab (`.prefab.json`) |
+| Prefab | Open Prefab (`.prefab.json`; MCP `action_prefab.open`) |
 | Model | Open In Model Viewer · Extract Material… · Create Animation Config · Create Skeleton Profile |
 | Scene | Set as Game/Server Default Scene · Refresh Thumbnail |
 | Common | Find References · Show in Finder/Explorer · Open in Code Editor · Rename (F2) · Duplicate · Delete · Import Copy to Project… (engine assets) · Add to Current/New Chat |
@@ -66,7 +78,7 @@ Contextual: instanced paint/erase · CSG Export Geometry · camera preview pin/c
 | Model Viewer | Model context — GLTF tree chevron Shift-click expands or collapses the whole branch |
 | Foundry / Scenario | Title bar Foundry |
 | Find Asset References | Find References |
-| Save Branch as Prefab | Outliner |
+| Save Branch as Prefab | Outliner (MCP `action_prefab.createFromNode`) |
 | Merge Meshes to Model | Outliner — writes Model GLB under `@project/assets/models`; optional Merge Into Single Mesh |
 | Project Settings | Menu; status-bar renderer click |
 | Play Mode Settings | Play ▾ |
@@ -77,4 +89,4 @@ Contextual: instanced paint/erase · CSG Export Geometry · camera preview pin/c
 
 ## Status bar (glance)
 
-Renderer (→ Project Settings) · Camera mode · FOV · Fly speed · Wireframe/Skybox/Grid · Selection / Prefab Asset Mode · New Agent Chat (Space) · Background tasks · Notifications bell (toast history)
+Renderer (→ Project Settings) · Camera mode · FOV · Fly speed · Wireframe/Skybox/Grid · Node selection count (`No nodes selected` when none; hover lists names when several nodes are selected) · New Agent Chat (Space) · Background tasks · Notifications bell (toast history)

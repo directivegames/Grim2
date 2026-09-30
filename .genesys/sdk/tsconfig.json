@@ -28,7 +28,8 @@
     "types": [
       "node"
     ],
-    "paths": {}
+    "paths": {},
+    "preserveSymlinks": true
   },
   "include": [
     "../../src/**/*",

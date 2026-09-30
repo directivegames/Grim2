@@ -46,7 +46,7 @@ What happens internally (`.engine/src/entities/GlobalParticleManager.ts`):
 2. For each particle system, `getOrCreateVFXParticles(name, settings)` looks up `name` in an internal registry; if it already exists (same name from an earlier call), the existing `InstancedMesh` is reused instead of creating a new one.
 3. For each emitter, a `VFXEmitterCore` is created, positioned/rotated/scaled from `options`, added as a child of the manager, and started (`emitter.startEmitting(true)`).
 4. The manager records `{ emitter, attachTime: world.getGameTime(), lifetime }` in an internal list and ticks every attached emitter's `update()` each frame in `tickPrePhysics`.
-5. Once `currentTime - attachTime >= lifetime`, the emitter is dropped from the list and `removeFromParent()`'d. `lifetime` is `duration + particlesLifetime[1]` for non-looping emitters, or `Infinity` when `loop: true`.
+5. Once `currentTime - attachTime >= lifetime`, the emitter is dropped from the list and `removeFromParent()`'d. `lifetime` is the definition clip length (`delay` / `endTime` / bursts / particle lifetime, plus sub-emitter child lifetimes) for non-looping emitters, or `Infinity` when a clip-emitting emitter has `loop: true`. Sub-emitter splash targets share that same lifetime so they are not removed while rain is still falling.
 
 Consequence: step 5 never fires for a looping emitter. There is no `despawnVFX(handle)` / `stopVFX(name)` API — the only broad hammer is `cleanupAllVFX()`, which the manager calls on its own `endPlay()` (i.e. world teardown) and which removes *every* attached fire-and-forget VFX in the world, not just yours. Do not build a looping effect this way if anything needs to turn it off before the world ends.
 

@@ -24,7 +24,11 @@ Attaching to a moving node — add a `VFXNode` as a child of any placeable so it
 
 Attaching at a fixed world position — either place a standalone `VFXNode` as its own root: `ENGINE.VFXNode.create({ isRoot: true, position, vfxPath })` then `world.add(vfxNode)`; or use `world.globalParticleManager.spawnVFX(...)` with `options.position` for a one-off that needs no persistent node at all.
 
-One-shot vs looping — set via the emitter's `loop` field (`VFXEmitterSettings.loop`, default `false`) and `spawnMode` (`'time'` spreads emission across `duration`; `'burst'` emits `nbParticles` immediately). `VFXNode.emitAtPosition()` only works with `spawnMode: 'burst'` emitters.
+One-shot vs looping — set via the emitter's `loop` field (`VFXEmitterSettings.loop`, default `false`) and `spawnMode` (`'time'` spreads emission across `duration` and keeps going when `loop` is true; `'burst'` emits `nbParticles` immediately, and with `loop: true` fires another burst each `duration`). `VFXNode.emitAtPosition()` only works with `spawnMode: 'burst'` emitters.
+
+Sub-emitters — `VFXEmitterSettings.subEmitters` bursts another emitter in the same definition at predicted plane collision or particle death (`on: 'collision' | 'death'`, `emitterIndex`). Collision links accept `planes: 'all' | 'emitter' | 'extra'` (default `'all'`): `'all'` fires at the first impact, `'emitter'` only the particle-system floor, `'extra'` only `VFXCollisionPlaneNode` rectangles. CPU uses the same ballistic impact as GPU plane collision, including extra rectangles baked at spawn, so rain-kill + splash works without a CPU particle sim. Use `'emitter'` for a ripple that should stay on the ground while the splash still hits a car. The target emitter does not emit on the clip; size its particle pool for concurrent splashes, not one burst. Do not point two emitters at each other (cycles are rejected on load).
+
+Place extra collision rectangles with `VFXCollisionPlaneNode` (local XY is the rectangle, `+Z` is the collide-from side). Parent them under a `VFXNode` for local effects, or set `collision.extraPlaneGroup` so emitters also hit world planes that share that group (weather hitting cars/roofs). `spawnVFX` has no VFXNode parent, so extras only apply when a group matches. Planes are static for each particle’s life.
 
 ## Footguns
 
@@ -41,7 +45,14 @@ Start with `.engine/src/vfx/index.ts`, then open the file you need.
 | File | Contents |
 | --- | --- |
 | `vfx/VFXNode.ts` | Node wrapper: load definition, create emitters in `beginPlay`, start/stop/emit-at-position API |
+| `vfx/VFXCollisionPlaneNode.ts` | Placeable extra collision rectangle + world registry + nearest-K gather |
 | `vfx/types.ts` | `VFXParticlesSettings`, `VFXEmitterSettings`, `VFXDefinition` (JSON schema + validation), `EaseFunction` list |
+| `vfx/colorRamp.ts` | Lifetime colour stops: resolve/migrate from `colorStart`/`colorEnd`, sample, pack GPU uniforms |
+| `vfx/clipTime.ts` | Clip-time start/stop/bursts and preview clip duration (independent of `emitter.loop`) |
+| `vfx/clipKeyframes.ts` | Clip-time rate/size/speed/light/colour keys: sample, integrate, and last-key clip length |
+| `vfx/emitterLight.ts` | Clip-gated point-light weight for `emitLight` emitters |
+| `vfx/planeCollision.ts` | GPU plane collision: emitter-local plane baked to world at spawn, analytic impact time, kill/bounce, WebGL/WebGPU helpers |
+| `vfx/subEmitters.ts` | On-collision / on-death sub-emitter prediction from the same ballistic arc the GPU plane uses |
 | `vfx/easings.ts` | TSL implementations of every `EaseFunction`, selected by `easeFunction` |
 | `vfx/core/VFXEmitterCore.ts` | Spawn-pattern logic: timed vs burst emission, position/rotation/direction/color randomization per particle |
 | `vfx/core/VFXParticlesShared.ts` | Shared instanced-mesh particle buffer (WebGL/WebGPU base), pooling/ring-buffer `emit()` |

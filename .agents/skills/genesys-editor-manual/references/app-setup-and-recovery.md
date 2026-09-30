@@ -67,4 +67,4 @@ Copyable error details are in the dialog for support. Menu stays usable during r
 
 ## Play Local Project *(dev SDK only)*
 
-From the dashboard Play Local Project card (or Play Launcher): pick a local Genesys project folder, optionally build, and start the game without opening the full editor. Remembers last folder and Build Project Before Playing.
+From the dashboard Play Local Project card (or Play Launcher): pick a local Genesys project folder, optionally build, and start the game without opening the full editor. The folder picker starts in the last opened project folder (then the last Play Local folder). Remembers the last Play Local folder and Build Project Before Playing.

@@ -66,6 +66,8 @@ const boss = spawn('prefabs/enemies/boss', { position: new THREE.Vector3(20, 0, 
 world.add(boss);
 ```
 
+Editor placement of the same asset uses compact-hidden `action_prefab.instantiate` (see `genesys-prefabs`). Runtime `spawn` / `instantiatePrefabAsync` does not go through MCP.
+
 ### Construction sequences
 
 From `.create()` or `spawn()`:

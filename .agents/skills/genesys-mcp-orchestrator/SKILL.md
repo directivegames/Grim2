@@ -11,7 +11,7 @@ Use this skill for live Genesys editor/project work through MCP. For editor UI h
 
 ## Availability Gate
 
-The default surface is compact. Missing descriptors for hidden tools (`action_asset`, `query_asset`, `query_diagnostics`, navmesh tools) is expected.
+The default surface is compact. Missing descriptors for hidden tools (`action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, navmesh tools) is expected.
 
 | State | Signal | Action |
 |-------|--------|--------|
@@ -56,7 +56,7 @@ Prefer `query_node` / `action_node` for world/prefab scene-node trees.
 ## Tree shape
 
 - `find` / `getTree` return a flat `nodes[]` with `parentId` + `childIds` (direct children only).
-- `query` is a plain string (case-insensitive substring on name, className, or id). It filters matching nodes only — it does not expand a nested subtree.
+- `query` is a plain string (case-insensitive substring on name, className, id, or prefabPath). It filters matching nodes only — it does not expand a nested subtree.
 - Wrong: `query: { name: ['A', 'B'] }` or any object/array. Right: `query: 'A'` or one `getTree` + `names.includes(n.name)` in script.
 - Subtree size: walk `childIds` in one `run_script(readOnly)`, or use `childIds.length` when depth is known shallow. Do not chain exploratory `getDetails` after a successful `find` that already has `childIds`.
 - Do not call both `find` and `getTree` for the same discovery question.

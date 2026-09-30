@@ -97,6 +97,27 @@ function runValidation(projectRoot: string, packName: string): void {
   }
 }
 
+function countFilesByExtension(assetsDir: string): Record<string, number> {
+  const counts: Record<string, number> = {};
+  if (!fs.existsSync(assetsDir)) return counts;
+
+  function walk(dir: string): void {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (!entry.name.startsWith('.')) walk(fullPath);
+      } else if (entry.isFile()) {
+        const ext = path.extname(entry.name).toLowerCase().slice(1);
+        if (ext) counts[ext] = (counts[ext] || 0) + 1;
+      }
+    }
+  }
+
+  walk(assetsDir);
+  return counts;
+}
+
 function zipPackContents(packRoot: string, outZipPath: string): void {
   const zip = new AdmZip();
   // addLocalFolder writes the folder's contents at the zip root (no <name>/ prefix inside).
@@ -116,12 +137,20 @@ function main(): void {
   let newVersion = oldVersion;
   if (args.bump) newVersion = bumpSemver(oldVersion, args.bump);
   else if (args.setVersion) { validateSemver(args.setVersion); newVersion = args.setVersion; }
-  if (newVersion !== oldVersion) {
-    console.log(`Version: ${oldVersion} -> ${newVersion}`);
+  const assetsDir = path.join(packRoot, 'assets');
+  const contents = countFilesByExtension(assetsDir);
+  const hasContents = Object.keys(contents).length > 0;
+
+  if (newVersion !== oldVersion || hasContents) {
     if (!args.dryRun) {
       config.version = newVersion;
+      if (hasContents) config.contents = contents;
       writePackConfig(packRoot, config);
     }
+  }
+
+  if (newVersion !== oldVersion) {
+    console.log(`Version: ${oldVersion} -> ${newVersion}`);
   } else {
     console.log(`Version: ${oldVersion} (unchanged)`);
   }

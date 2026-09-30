@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -8,6 +9,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
+const require = createRequire(path.join(PROJECT_ROOT, 'package.json'));
 
 /**
  * Walks `<project>/packs/` and emits a `@packs/<name>` alias per installed pack
@@ -33,6 +35,26 @@ function collectPackAliases(): { find: string; replacement: string }[] {
   return aliases;
 }
 
+/**
+ * pnpm GVS realpaths Vite into the global store. `vite-plugin-node-polyfills`
+ * injects a bare `vite-plugin-node-polyfills/shims/*` import into any file that
+ * references `process` / `Buffer` / `global` — including Vite's own client —
+ * which then cannot resolve from the store. Pin those specifiers to the ESM
+ * builds; `require.resolve` returns `.cjs`, which Rolldown wraps in CJS interop
+ * and TDZ-crashes (`__vite__cjsImport0_... before initialization`).
+ */
+function collectPolyfillShimAliases(): { find: string; replacement: string }[] {
+  return ['buffer', 'global', 'process'].map((name) => ({
+    find: `vite-plugin-node-polyfills/shims/${name}`,
+    replacement: require.resolve(`vite-plugin-node-polyfills/shims/${name}`).replace(
+      /index\.cjs$/,
+      'index.js',
+    ),
+  }));
+}
+
+const polyfillShimAliases = collectPolyfillShimAliases();
+
 export default defineConfig({
   // Enable TypeScript support
   esbuild: {
@@ -42,6 +64,13 @@ export default defineConfig({
   plugins: [
     nodePolyfills({
       include: ['path'],
+      globals: {
+        // Buffer/global inject into the optimizer graph and TDZ-crash under
+        // Rolldown. `path-browserify` still needs `process.cwd()` for resolve.
+        Buffer: false,
+        global: false,
+        process: true,
+      },
     }),
     (mkcert as any)(),
   ],
@@ -49,7 +78,11 @@ export default defineConfig({
   // Configure module resolution
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-    alias: collectPackAliases(),
+    alias: [...collectPackAliases(), ...polyfillShimAliases],
+  },
+
+  optimizeDeps: {
+    exclude: polyfillShimAliases.map((alias) => alias.find),
   },
 
   // Configure the dev server
@@ -61,7 +94,9 @@ export default defineConfig({
     cors: true,
     // Serve source maps for debugging
     fs: {
-      allow: ['..', '.']
+      // Shim files resolve into the GVS store; allow their dist dirs so the
+      // browser can load them after the alias rewrite.
+      allow: ['..', '.', ...polyfillShimAliases.map((alias) => path.dirname(alias.replacement))],
     }
   },
 

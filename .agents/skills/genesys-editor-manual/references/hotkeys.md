@@ -60,6 +60,7 @@ Ignored in Play Mode and while typing in a field. Unmodified keys only (`Ctrl/Cm
 | Hotkey | Action |
 | --- | --- |
 | `Ctrl/Cmd+C` | Copy selected nodes (skipped if a text range is highlighted) |
+| `Ctrl/Cmd+X` | Cut selected nodes (copy, then delete; skipped if a text range is highlighted) |
 | `Ctrl/Cmd+V` | Paste nodes as children of the selection (works with viewport focus; empty selection / Scene root pastes at the world root) |
 | `Ctrl/Cmd+Shift+V` | Paste as Sibling — insert after the selected node under the same parent (empty selection / Scene root pastes at the world root) |
 | `Ctrl/Cmd+D` | Duplicate selection |
@@ -75,6 +76,9 @@ Ignored in Play Mode and while typing in a field. Unmodified keys only (`Ctrl/Cm
 | --- | --- |
 | Arrow Up / Arrow Down | Move focus and selection |
 | Arrow Right / Arrow Left | Expand, or collapse / move to parent |
+| `Ctrl/Cmd+Arrow Up` / `Ctrl/Cmd+Arrow Down` | Move the selected nodes up / down among their siblings (Outliner only; needs a contiguous block under one parent) |
+| `Ctrl/Cmd+F` | Focus the Outliner filter (not type-to-filter; ignored while typing in a field or in Play Mode) |
+| `Ctrl/Cmd+Shift+A` | Open the Outliner Add picker for the current selection (Ctrl/Cmd+A stays select-all) |
 | F2 | Rename (Outliner focused row; Asset Browser selected project file — not folders) |
 | Shift+click chevron | Expand or collapse the whole branch |
 
@@ -93,5 +97,7 @@ There is no chevron tooltip. Shift+F does **not** scroll the Outliner.
 | --- | --- | --- |
 | Shift+RMB / Shift+LMB | Inspector property label | Copy Value / Paste Value (in-memory clipboard) |
 | Ctrl+scroll | Asset Browser grid | Change thumbnail size |
+| `Ctrl/Cmd+click` / Shift+click | Asset Browser content | Toggle an item, or select a range |
+| `Ctrl/Cmd+A` | Asset Browser content | Select all items in the current folder |
 | Shift+hold | Instanced-geometry brush | Temporarily eraser |
 | Insert / Del / Esc | Spline point edit | Insert at hover / delete selected point / cancel drag or deselect |

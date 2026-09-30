@@ -8,9 +8,12 @@ These tools are not first-class MCP tools in compact mode (the default). They ar
 | --- | --- | --- |
 | `action_asset` | `action` | `createFolder`, `createMaterial`, `delete`, `import`, `installAssetPack`, `mergeMeshes`, `move`, `rename` |
 | `action_navmesh` | `action` | `clear`, `export`, `generate`, `import`, `setSettings`, `toggleDebug` |
+| `action_prefab` | `action` | `apply`, `close`, `create`, `createFromNode`, `instantiate`, `open`, `resync`, `save`, `setEditableChildren`, `unlink` |
+| `action_store` | `action` | `createItem`, `deleteItem`, `publish`, `setImage`, `takeDown`, `updateItem` |
 | `query_asset` | `query` | `find`, `getDetails`, `getAssetPackInfo`, `getReferences` |
 | `query_diagnostics` | `query` | `getBuildErrors`, `getConsole` |
 | `query_navmesh` | `query` | `getInfo`, `getSettings` |
+| `query_store` | `query` | `getState`, `listItems` |
 
 ### `action_asset`
 
@@ -50,6 +53,46 @@ Dispatch via `batch_execute`:
 
 ```text
 { tool: "action_navmesh", args: { action: "clear", ... } }
+```
+
+### `action_prefab`
+
+Action Prefab · kind: `action`
+
+Create, place, isolate, apply, resync, or unlink Prefabs. Compact-hidden — call via run_script (genesys.actionPrefab) or batch_execute. Inspect with query_node and query_asset(find, assetType="prefab"). Requires `action`. Ops: create, createFromNode (destructive), instantiate, open, close, save, apply, resync, unlink (destructive), setEditableChildren. Isolation edits use action_node then action_prefab.save — never action_scene.save while a prefab document is open. instantiate does not autosave.
+
+Operations: `apply` *(destructive)*, `close`, `create` *(undoable)*, `createFromNode` *(destructive)*, `instantiate` *(undoable)*, `open`, `resync` *(destructive)*, `save`, `setEditableChildren` *(undoable)*, `unlink` *(destructive)*
+
+Dispatch via `run_script`:
+
+```js
+genesys.actionPrefab({ action: 'apply', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "action_prefab", args: { action: "apply", ... } }
+```
+
+### `action_store`
+
+Action Store · kind: `action`
+
+Create and manage the game's store items on the creator's behalf (the editor holds the Studio login; no token is needed). Compact-hidden — call via run_script (genesys.actionStore) or batch_execute. Requires `action`. Ops: createItem (name, description, coins or free, consumable, optional https imageUrl; new items are drafts — only the creator sees them in the editor), updateItem (sku plus any of name, description, coins / free, imageUrl or null), publish (players can buy), takeDown (back to draft), deleteItem (destructive; owners keep it), setImage (sku + filePath: a PNG, JPEG or WebP anywhere on this computer or @project/..., uploaded to the game's assets). Returns the item's sku.
+
+Operations: `createItem`, `deleteItem` *(destructive)*, `publish`, `setImage`, `takeDown`, `updateItem`
+
+Dispatch via `run_script`:
+
+```js
+genesys.actionStore({ action: 'createItem', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "action_store", args: { action: "createItem", ... } }
 ```
 
 ### `query_asset`
@@ -110,4 +153,24 @@ Dispatch via `batch_execute`:
 
 ```text
 { tool: "query_navmesh", args: { operation: "getInfo", ... } }
+```
+
+### `query_store`
+
+Query Store · kind: `query`
+
+Read the game's in-game store (Sandbox Coins items sold to players). Compact-hidden — call via run_script (genesys.queryStore) or batch_execute. Ops: getState (game id, whether src/store is installed, who the store API recognises, environment, payment mode), listItems (every item including drafts: sku, name, description, price, consumable, imageUrl, draft). Runs in the editor with the creator's Studio login; a project must be open.
+
+Operations: `getState`, `listItems`
+
+Dispatch via `run_script`:
+
+```js
+genesys.queryStore({ operation: 'getState', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "query_store", args: { operation: "getState", ... } }
 ```

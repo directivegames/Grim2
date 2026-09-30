@@ -53,6 +53,10 @@ Rules:
 - Properties are transmitted in a compact binary format. See Net Type and Quantization below for how to control wire encoding.
 - A replicated property that holds a reference to another node is only reconciled on the client once both nodes have replicated. If the referenced node is not itself replicated (inside a group), the reference will never resolve on the client.
 
+## Reparenting
+
+Reparent the **entity root** only (`isRoot && replicated`). Moving a replicated non-root member at runtime is unsupported. The server replicates the root's parent; if that parent is not on the client yet, the entity stays under its previous parent until the parent exists, then snaps over. Do not reparent unreplicated spawn trees expecting clients to follow — those stay where `MultiplayerSpawner` attached them.
+
 ## Net Type and Quantization
 
 By default the engine auto-infers binary encoding from the TypeScript type. For `number` this defaults to an unquantized `float32` — correct but wasteful for integers. Always provide a `net` override for numeric properties so the codec uses the appropriate wire type.
@@ -200,19 +204,34 @@ Scene-placed roots are nodes loaded from a scene file — both the server and ev
 Dynamically spawned roots (pickups, projectiles, spawned enemies, per-player private entities) do not exist ahead of time on the client, so a bare `world.add(node)` on the server has nothing for the client to bind to. Use a `MultiplayerSpawner` node instead:
 
 ```typescript
+@ENGINE.GameClass()
+class PickupSpawner extends ENGINE.MultiplayerSpawner {
+  @ENGINE.SpawnMethod()
+  async spawnPickup(position: THREE.Vector3): Promise<PickupRoot | null> {
+    const pickup = await ENGINE.instantiatePrefabAsync('@project/assets/prefabs/pickup.prefab.json');
+    pickup?.setWorldPosition(position);
+    return pickup;
+  }
+
+  @ENGINE.SpawnMethod({ audience: 'owner' })
+  async spawnPrivateItem(ownerClientId: ENGINE.ClientId): Promise<SceneNode | null> {
+    return await ENGINE.instantiatePrefabAsync('@project/assets/prefabs/private-item.prefab.json');
+  }
+}
+
 // Scene- or code-placed once, as a sibling of where spawns should appear:
-const spawner = ENGINE.MultiplayerSpawner.create({ defaultPrefabPath: '@project/assets/prefabs/pickup.prefab.json' });
+const spawner = PickupSpawner.create();
 world.add(spawner);
 
 // Server: spawn a pickup visible to every client
-await spawner.spawn();
+await spawner.spawnPickup(position);
 
-// Server: spawn a private entity visible only to one player (e.g. a hand-held item)
-await spawner.spawnOwnerOnly(ownerClientId);
+// Server: spawn a private entity visible only to one player
+await spawner.spawnPrivateItem(ownerClientId);
 ```
 
 `MultiplayerSpawner` keeps a journal of its spawns (recipe + args) keyed by its own stable `NodePath`. The server notifies clients (or the owner-only audience) of new/removed journal entries; each client materializes the same recipe locally via `applyRemoteSpawn`, so both sides end up with an equivalent tree that the generic `ReplicationInfo` channel can then bind to and delta-update. Late-joining clients replay the spawner's current journal instead of missing spawns that happened before they connected.
 
-`PlayerController`, `Pawn`, `PlayerInfo`, and `GameSessionInfo` are spawned and bound through the engine's built-in join/session flow (`GameMode.onPlayerJoined` → `handleNewPlayer` → `restartPlayer`, and `NetWorld`'s handshake) — game code should not try to hand-spawn these framework types with a `MultiplayerSpawner` of its own; call the `GameMode` hooks documented in [game-mode](game-mode.md) instead.
+`GameSessionInfo` is spawned once at world begin play (`GameMode.ensureGameSessionInfo`). `PlayerController`, `Pawn`, and `PlayerInfo` are spawned and bound through the engine's built-in join flow (`GameMode.onPlayerJoined` after the client loads the level → `handleNewPlayer` → `restartPlayer`) — game code should not try to hand-spawn these framework types with a `MultiplayerSpawner` of its own; call the `GameMode` hooks documented in [game-mode](game-mode.md) instead.
 
-Reference: See `ReplicationInfo.ts`, `MultiplayerSpawner.ts`, and `ServerAuthorityNetWorld.ts` in engine source (`.engine/src/multiplayer/`, `.engine/src/nodes/`).
+Reference: See `ReplicationInfo.ts`, `MultiplayerSpawner.ts`, and `ServerAuthorityNetWorld.ts` in engine source (`.engine/src/multiplayer/`, `.engine/src/nodes/multiplayer/`).

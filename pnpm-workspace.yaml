@@ -1,0 +1,21 @@
+# pnpm reads project settings here, not package.json#pnpm.
+# Disable the 1-day publish delay so freshly published @gnsx/* packages can install.
+minimumReleaseAge: 0
+virtualStoreType: global
+# GVS keeps nested deps out of the project tree. Hoist these so `tsc` (with
+# preserveSymlinks) can resolve types that re-export them.
+publicHoistPattern:
+  - '*eslint*'
+  - '*prettier*'
+  - 'meshoptimizer'
+  - 'node-stdlib-browser'
+allowBuilds:
+  esbuild: true
+  sharp: true
+  canvas: true
+  # Node WebTransport (optional engine dep). Unlisted packages get a
+  # "set this to true or false" placeholder and ERR_PNPM_IGNORED_BUILDS.
+  '@fails-components/webtransport-transport-http3-quiche': true
+# pnpm defaults verifyDepsBeforeRun to install (since pnpm 11; unchanged in 12), which nested-installs on
+# `pnpm exec` / `pnpm build`. The SDK already runs `pnpm install` explicitly.
+verifyDepsBeforeRun: false
