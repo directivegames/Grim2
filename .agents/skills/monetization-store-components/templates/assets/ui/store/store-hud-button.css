@@ -1,0 +1,50 @@
+/* Store HUD chip — kit glass surface: rgba(42,45,68,.6) + blur, 16px radius. */
+.store-hud,
+.store-hud * {
+  box-sizing: border-box;
+}
+
+/*
+ * width: max-content keeps the chip from stretching across a full-width HUD row.
+ * The margin stays 24px on desktop and clears the notch and home bar on phones.
+ */
+.store-hud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  margin: max(24px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px));
+  padding: 6px;
+  background: rgba(42, 45, 68, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: 'Inter', system-ui, sans-serif;
+  pointer-events: auto;
+}
+
+.store-hud[data-store-hud-side='right'] {
+  margin-left: auto;
+}
+
+.store-hud-open,
+.store-hud-key {
+  display: inline-flex;
+  align-items: center;
+}
+
+.store-hud-key {
+  padding-right: 4px;
+}
+
+.store-hud-key:empty {
+  display: none;
+}
+
+/* No keyboard on a touch device: the hotkey hint means nothing there. */
+@media (hover: none) and (pointer: coarse) {
+  .store-hud-key {
+    display: none;
+  }
+}

@@ -11,7 +11,7 @@ Use this skill for live Genesys editor/project work through MCP. For editor UI h
 
 ## Availability Gate
 
-The default surface is compact. Missing descriptors for hidden tools (`action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, navmesh tools) is expected.
+The default surface is compact. Missing descriptors for hidden tools (`action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, navmesh tools, `query_profiler`, `action_profiler`) is expected. Frame cost: [genesys-profiler](../genesys-profiler/SKILL.md). JavaScript heap and VRAM: [memory-profiling](../memory-profiling/SKILL.md).
 
 | State | Signal | Action |
 |-------|--------|--------|
@@ -38,6 +38,12 @@ Before the first mutation: `query_editor(operation="getState")` or `genesys.quer
 
 `batch_execute` has no `code` field. Script API methods are camelCase (`queryEditor`, `queryNode`, `actionNode`, …); snake_case names are MCP tool names only.
 
+## Scenario
+
+When the Scenario MCP server is connected, generate with it. Use `action_asset_generation` `start` only when that server is not available. Credit-spending calls ask for approval in the Assistant panel and the card shows the estimated credits; a `dry_run` cost estimate does not. To bring a Scenario asset into the project, always use `action_asset_generation` with `action: "import"`, `scenarioAssetIds`, and a short English `name` for the file. Omit `saveFolder` unless the user named a folder. Call `apply` only when the user asked to put the asset in the scene. Never download Scenario files by hand.
+
+After a Scenario MCP generation succeeds, import it by default unless the user asked to keep it only in Scenario. `import` is not a generation: it spends no credits and is allowed even when the user said not to use the asset generation tool. The recipe is in [references/workflows.md](references/workflows.md).
+
 Bulk find→mutate: first MCP call should be one `run_script(apply, groupUndo=true)` that probes, finds, mutates, saves, and returns a compact summary — do not pre-query nodes through the model or grep `*.genesys-scene` while ready.
 
 Prefer `query_node` / `action_node` for world/prefab scene-node trees.
@@ -60,6 +66,10 @@ Prefer `query_node` / `action_node` for world/prefab scene-node trees.
 - Wrong: `query: { name: ['A', 'B'] }` or any object/array. Right: `query: 'A'` or one `getTree` + `names.includes(n.name)` in script.
 - Subtree size: walk `childIds` in one `run_script(readOnly)`, or use `childIds.length` when depth is known shallow. Do not chain exploratory `getDetails` after a successful `find` that already has `childIds`.
 - Do not call both `find` and `getTree` for the same discovery question.
+
+## Clarifying Questions
+
+When `request_user_input` is listed, call it instead of asking a clarifying question in chat, then wait. Use it only when a wrong assumption would change the work. Otherwise state the assumption and continue. One question is enough; do not exceed three. Recommended option first, with "(Recommended)" on its label. Do not add Other.
 
 ## Approval and Build
 
@@ -103,11 +113,12 @@ User-facing replies: state the outcome (counts, names, blockers). Do not quote `
 
 ## Discovery
 
-Viewport capture: `action_editor(action="captureScreenshot", includeImage=true)` — live editor viewport, not OS/desktop. Recipe: [workflows.md](references/workflows.md#screenshot).
+Viewport capture: `action_editor(action="captureScreenshot", includeImage=true)`. `target` defaults to `"auto"`: while Play is running this returns the game, otherwise the editor viewport. `surface: "all"` captures extra multiplayer windows one after another. Not an OS/desktop screenshot, and only when the user asks for a picture. Do not poll. Recipe: [workflows.md](references/workflows.md#screenshot). Do not use it to verify a scene (what exists, where it is, what is selected, or whether an edit landed). Read that with `query_node` and `query_editor`.
 
 Before saying a capability is unavailable, do not stop at Cursor tool-name search (catalog names and truncated descriptions miss router ops). Check:
 
-1. Known compact routers and their ops (`action_editor`, `action_node`, `action_scene`, `action_build`, `query_editor`, `query_node`, …) — call directly (`run_script`, `batch_execute`, …).
+1. Known compact routers and their ops (`action_editor`, `action_node`, `action_scene`, `action_build`, `query_editor`, `query_node`, `action_asset_generation`, `query_asset_generation`, …) — call directly (`run_script`, `batch_execute`, …).
+   Dispatch: generar arte, skybox o cielo → `action_asset_generation`. Recipe: [workflows.md](references/workflows.md#generate-a-skybox).
 2. Genesys `search_tools(query=…)` (names, descriptions, and ops) or [workflows.md](references/workflows.md).
 3. Known hidden tool → `run_script` (`genesys.*`) or `batch_execute` (`tool:`); see [compact-hidden-tools.md](references/compact-hidden-tools.md). Do not `describe_tool` first.
 4. Use `search_tools` / `describe_tool` only for exploration, unknown tools, or after a schema/validation failure — never both for the same tool in one task.

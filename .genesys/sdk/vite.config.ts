@@ -55,6 +55,40 @@ function collectPolyfillShimAliases(): { find: string; replacement: string }[] {
 
 const polyfillShimAliases = collectPolyfillShimAliases();
 
+type DepSourcemapTransformContext = {
+  environment: {
+    mode: string;
+    depsOptimizer?: {
+      isOptimizedDepFile(id: string): boolean;
+    };
+  };
+};
+
+/**
+ * The dev server otherwise base64-inlines each prebundled dependency's source
+ * map into the script response. V8 keeps that string for the life of the page.
+ * A short external URL is fetched only when a debugger opens the script.
+ */
+function keepDepSourcemapsExternal() {
+  return {
+    name: 'keep-dep-sourcemaps-external',
+    apply: 'serve' as const,
+    enforce: 'post' as const,
+    transform(this: DepSourcemapTransformContext, code: string, id: string) {
+      if (this.environment.mode !== 'dev') return null;
+      const file = id.split('?', 1)[0];
+      if (!file.endsWith('.js')) return null;
+      if (!this.environment.depsOptimizer?.isOptimizedDepFile(file)) return null;
+      if (code.includes('sourceMappingURL=')) return null;
+      if (!fs.existsSync(`${file}.map`)) return null;
+      return {
+        code: `${code}\n//# sourceMappingURL=${path.basename(file)}.map\n`,
+        map: { mappings: '' },
+      };
+    },
+  };
+}
+
 export default defineConfig({
   // Enable TypeScript support
   esbuild: {
@@ -73,6 +107,7 @@ export default defineConfig({
       },
     }),
     (mkcert as any)(),
+    keepDepSourcemapsExternal(),
   ],
 
   // Configure module resolution

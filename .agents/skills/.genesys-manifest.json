@@ -16,9 +16,16 @@
     "genesys-multiplayer",
     "genesys-navigation",
     "genesys-physics",
+    "genesys-polybuilder",
     "genesys-prefabs",
+    "genesys-profiler",
+    "genesys-subagents",
     "genesys-ui-kit",
     "genesys-vfx",
+    "memory-profiling",
+    "monetization-store",
+    "monetization-store-components",
+    "monetization-store-items",
     "pickups-interactions-and-doors",
     "webgpu-tsl-node-material-assets"
   ]

@@ -1,0 +1,13 @@
+{
+  "patterns": [
+    {
+      "id": "example-asset-cache",
+      "kind": "owner",
+      "message": "Example: large retainer on a project asset path — replace with your real paths and delete this rule.",
+      "minRetainedBytes": 1048576,
+      "match": {
+        "pathContains": "@project/assets/"
+      }
+    }
+  ]
+}

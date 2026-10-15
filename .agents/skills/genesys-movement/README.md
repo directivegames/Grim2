@@ -1,46 +1,44 @@
 # genesys-movement (skill)
 
-Maps pawn locomotion architecture in the engine and provides a decision guide between the two
-parallel movement systems.
+Maps pawn locomotion architecture in the engine and provides a decision guide between classic
+`BasePawnMovementNode` subclasses and `GSSNode`.
 
 ## Why two movement systems?
 
 Classic `BasePawnMovementNode` subclasses (`CharacterMovementNode`, `VehicleMovementNode`, etc.)
-predate the Mover stack. Each one is a self-contained, single-purpose locomotion node with
-multiplayer prediction/reconciliation built in, assigned to `MovementPawn.movementNode`.
+are self-contained, single-purpose locomotion nodes with built-in multiplayer prediction, assigned
+to `MovementPawn.movementNode`.
 
-`MoverNode` is a newer, composable alternative: one node holds several named `IMovementMode`
-instances (walking, falling, flying, driving, ...) and switches between them at runtime via
-automatic transitions, plus supports stacking temporary (`LayeredMove`) and persistent
-(`MovementModifier`) effects on top of whichever mode is active. It does not (yet) have the
-classic system's built-in networked prediction — see the decision table in `SKILL.md`.
+`GSSNode` (Gameplay Simulation System) is the composable alternative: one node holds named movement modes
+(`GSSWalkingMode`, `GSSFallingMode`), abilities, effects, tags, and attributes. Modes switch at runtime
+via `IGSSMovementModeTransition` / `queueMovementMode`. Network prediction is opt-in (`useNetworkPrediction`
+plus `NetPredictionManager`).
 
-Neither system is deprecated. A game can use classic nodes for some pawns and Mover for others.
+The Mover stack remains loadable only so existing games do not break. It is unsupported and must
+not be selected for new work. Use `references/mover-to-gss.md` to migrate it.
+
+A game can mix classic nodes on some pawns and GSS on others. That split is only
+safe when those pawns do not interact through collision, traces, or effects. GSS
+rewinds and re-simulates nearby `IRewindable` actors during movement and prediction-aware
+queries; classic pawns are not rewindable. Interactions with them will mis-predict unless
+the game adds equivalent history, rewind/restore, and re-simulation — the work GSS
+is meant to take off the game. Static geometry is fine. Independent locomotion that never
+contacts a sim pawn is also fine.
 
 ## Contents
 
-- `SKILL.md` — Entry point: methodology, the Classic vs Mover decision guide, Mover core
-  guidelines, and a mode-switching pawn example.
-- `references/mover-mechanics.md` — `MoverNode`'s produce → simulate → apply tick cycle, the
-  core data types (`MovementInputCmd`, `MovementSyncState`, `MovementAuxState`, `ProposedMove`),
-  `IMoverTransition`, `LayeredMove`, `MovementModifier`, sync tags, and backends.
-- `references/mover-modes.md` — Catalog of every built-in `IMovementMode`: options, sync tags,
-  pairing requirements, and the classic node each was ported from.
-- `references/custom-modes-and-controllers.md` — Contracts for a custom `IMovementMode`,
-  `IMoverTransition`, and `IMovementInputProducer`, with `MoverPlayerController` as the
-  reference implementation.
-- `references/vehicle-movement.md` — `VehicleMovementNode` vs `VehicleMode` at the
-  pawn/movement-node integration level (which class to extend, chassis/physics requirements,
-  input axis mapping). Wheel/suspension/friction tuning is out of scope — see `genesys-physics`.
-- `references/npc-movement.md` — Driving `NpcMovementNode` once a path or target exists, and
-  the current gap in Mover for path-following AI. Navmesh queries are out of scope — see
-  `genesys-navigation`.
+- `SKILL.md` — Entry point: methodology and Classic vs GSS.
+- `references/gss-mechanics.md` — `GSSNode` simulate pipeline, Input/Sync and its read accessors, the movement target, presentation events, prediction.
+- `references/gss-modes.md` — GSS Walking/Falling/Idle modes plus Dash.
+- `references/custom-modes-and-controllers.md` — `IGSSMovementMode`, `IGSSMovementModeTransition`, `IGSSInputProducer`.
+- `references/mover-to-gss.md` — migration only; Mover is unsupported.
+- `references/vehicle-movement.md` — Classic `VehicleMovementNode` and custom GSS guidance.
+- `references/npc-movement.md` — `NpcMovementNode` and `AIController` + `GSSNode`.
 
 ## Relationship to other skills
 
-- Classic pawn/controller fundamentals (`Pawn`, `MovementPawn`, `CharacterPawn`,
-  `DefaultPlayerController`, possession flow) live in the `genesys-engine` skill's
-  `pawn-player-controller.md` reference — this skill does not duplicate that content, only adds
-  what it left out (the Mover stack).
-- `genesys-physics` owns `IPhysicsVehicle` wheel/suspension/friction tuning in depth.
-- `genesys-navigation` owns navmesh/pathfinding (path calculation, closest-point queries).
+- Classic pawn/controller fundamentals live in the `genesys-engine` skill's
+  `pawn-player-controller.md`. GSS pawns are `GSSCharacterPawn` +
+  `GSSPlayerController`.
+- `genesys-physics` owns `IPhysicsVehicle` wheel/suspension/friction tuning.
+- `genesys-navigation` owns navmesh/pathfinding.

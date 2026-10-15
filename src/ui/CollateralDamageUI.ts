@@ -58,7 +58,9 @@ export class CollateralDamageUI {
       return;
     }
 
-    const resolved = await ENGINE.resolveAssetPathsInText(`url("${MONTserrat_BOLD_URL}")`);
+    const resolved = await ENGINE.resolveAssetPathsInText(
+      'url("@project/assets/UI/Bree_Serif,Montserrat/Montserrat/static/Montserrat-Bold.ttf")',
+    );
     const match = resolved.match(/url\(["']?([^"')]+)["']?\)/);
     const fontSrc = (match?.[1] ?? resolved).trim();
     if (!fontSrc || fontSrc.includes('@project')) {

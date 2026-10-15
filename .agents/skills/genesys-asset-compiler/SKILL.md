@@ -17,7 +17,7 @@ It is **off by default**. All settings live under `assetCompiler` in the project
 | `ktx2-texture-compression` | `.glb` | Embedded textures re-encoded as KTX2 (Basis: ETC1S for colour, UASTC for normal maps). |
 | `meshopt-mesh-compression` | `.glb` | Geometry compressed with Meshopt. Draco-compressed GLBs are skipped. |
 | `ktx2-standalone-texture-compression` | Loose `.png`, `.jpg`/`.jpeg`, `.webp` | `.ktx2` next to it; the raw file is removed from `.dist`. |
-| `mp3-audio-compression` | Loose `.wav`, `.flac`, `.aif`/`.aiff`, `.ogg`, `.aac`, `.m4a` | `.mp3`; the raw file is removed from `.dist`. |
+| `mp3-audio-compression` | Loose `.wav`, `.flac`, `.aif`/`.aiff`, `.ogg`, `.m4a` | `.mp3`; the raw file is removed from `.dist`. |
 
 GLBs are rewritten in place (same path). Loose textures and audio change extension and are remapped through the manifest.
 
@@ -59,7 +59,7 @@ Full shape with defaults. Omitted keys use these defaults; invalid values log a 
     "audioCompression": {
       "enabled": true,
       "quality": "medium",
-      "formats": { "wav": true, "flac": true, "aiff": true, "ogg": true, "aac": true, "m4a": true }
+      "formats": { "wav": true, "flac": true, "aiff": true, "ogg": true, "m4a": true }
     },
     "warnExternalGlbTextures": false,
     "conversionHook": "scripts/asset-conversion-hook.mjs"

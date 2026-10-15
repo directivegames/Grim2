@@ -62,7 +62,7 @@ export class HitNumberUI {
   }
 
   private async _resolveUrl(): Promise<void> {
-    const cssString = `.bg { background-image: url("${HIT_BG_URL}"); }`;
+    const cssString = `.bg { background-image: url("@project/assets/UI/HitNumbersBG.webp"); }`;
     const resolvedCss = await ENGINE.resolveAssetPathsInText(cssString);
     const match = resolvedCss.match(/url\("([^"]+)"\)/);
     if (match) {

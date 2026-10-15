@@ -47,6 +47,7 @@ Dynamic strings (player names, chat, scores, RPC / join data) → text setters o
 | `ENGINE.AbilityIcon` | 64×64 HUD ability slot with icon, hotkey chip, and radial cooldown overlay. | ability, skill, spell, hotbar, ability slot, cooldown | `AbilityIconOptions` |
 | `ENGINE.AmmoCounter` | Displays current/max ammunition with a low-ammo warning. | ammo, ammunition, magazine, bullets, reload | `AmmoCounterOptions` |
 | `ENGINE.CenterMessage` | Full-screen centered hero banner with 48px title and optional subtitle. Fade-in 0.4s. | victory, defeat, round start, round end, announcement, overlay, banner | `CenterMessageOptions` |
+| `ENGINE.ChatPanel` | In-game chat log with a toggleable composer (Enter or Send to send, Escape to close). | multiplayer chat, team chat, session chat, system notices, chat composer | `ChatPanelOptions` |
 | `ENGINE.Crosshair` | Center-screen reticle with configurable size, color, and style. | crosshair, reticle, aim, cursor, shooter | `CrosshairOptions` |
 | `ENGINE.Message` | Compact single-line chat/system message with optional avatar and bold sender name. | chat, message, system message, kill feed, notification line, hud text | `MessageOptions` |
 | `ENGINE.ProgressBar` | Themed progress indicator with header (label + percentage) above a rounded fill track. | health, mana, stamina, experience, xp, boss hp, progress, cooldown, loading | `ProgressBarOptions` |
@@ -94,6 +95,7 @@ Dynamic strings (player names, chat, scores, RPC / join data) → text setters o
 | `ENGINE.Card` | `@engine/assets/ui/templates/card.html` | `@engine/assets/ui/styles/card.css` |
 | `ENGINE.CenterMessage` | `@engine/assets/ui/templates/center-message.html` | `@engine/assets/ui/styles/center-message.css` |
 | `ENGINE.ChatMessage` | `@engine/assets/ui/templates/chat-message.html` | `@engine/assets/ui/styles/chat-message.css` |
+| `ENGINE.ChatPanel` | `@engine/assets/ui/templates/chat-panel.html` | `@engine/assets/ui/styles/chat-panel.css` |
 | `ENGINE.Compass` | `@engine/assets/ui/templates/compass.html` | `@engine/assets/ui/styles/compass.css` |
 | `ENGINE.ControlsPanel` | `@engine/assets/ui/templates/controls-help.html` | `@engine/assets/ui/styles/controls-help.css` |
 | `ENGINE.Crosshair` | `@engine/assets/ui/templates/crosshair.html` | `@engine/assets/ui/styles/crosshair.css` |

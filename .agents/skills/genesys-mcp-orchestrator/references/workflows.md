@@ -4,6 +4,99 @@ Open this reference only when the task matches a recipe below. Follow the orches
 
 Prefer `query_node` / `action_node` for scene and prefab document trees.
 
+## Scenario beyond curated generation
+
+When the Scenario MCP server is connected, generate with it (`model_run` or `workflow_run`). Use Genesys `action_asset_generation` `start` only when that server is not available. To bring a Scenario asset into the project, always use `action_asset_generation` with `action: "import"` and `scenarioAssetIds`. Never download Scenario files by hand (`asset_download` is blocked; do not curl URLs from `asset_get` or `job_get`).
+
+```text
+→ scenario model_run(dry_run=true)            cost estimate, no approval, no job
+→ scenario model_run(wait=false)              one approval, returns job_id
+→ scenario jobs_wait(job_ids=[…])             repeat while unfinished
+→ action_asset_generation(action="import", scenarioAssetIds=["…"], name="futuristic outlaw")
+→ action_asset_generation(action="apply", generationId=…)   only when the user asked to place or use it
+```
+
+- Pass `wait=false` to `model_run`. Its default waits up to 180 s, longer than the client request timeout, so the call fails and a retry asks for approval again.
+- A timed-out `model_run` may still have started a job. Check `jobs_list` before you run it again; never retry a credit-spending call blindly.
+- Read the finished job's output ids from `jobs_wait` or one `job_get`. Do not `asset_get` every output.
+- Import after a successful generation unless the user asked to keep it only in Scenario. `import` spends no credits and is not "the asset generation tool" the user may have ruled out. Outputs of approved Scenario MCP jobs show in Foundry history either way, but only imported assets are in the project.
+- Pass `name`: a few English words for the file name, such as `futuristic outlaw`. Without it the file is named after the Scenario prompt or the asset id.
+- Omit `saveFolder` on `import` and `start` unless the user named a folder. The default is the kind folder under `assets/generated/`, where Foundry saves too.
+- In this and every recipe below, do not `apply` unless the user asked to put the asset in the scene, on a node, or as the sky. "Generate a model" means generate and import; tell the user where the file is and offer to place it.
+
+An image apply also needs `applyAs`: `billboard`, `material`, or `skybox`. Audio apply adds the imported SoundResource to a Sound node (it does not assign the raw audio file). A PBR set is several ids in one import. FBX, OBJ, and glTF are converted to GLB on import.
+
+## Generate a skybox
+
+Ask before spending credits. A dry-run does not start a job.
+
+```text
+→ action_asset_generation(action="start", kind="skybox", prompt="…", dryRun=true)
+→ action_asset_generation(action="start", kind="skybox", prompt="…", waitMs=30000)
+→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
+→ action_asset_generation(action="apply", generationId=…)   only when the user asked to use it as the sky
+```
+
+- Warn the user when the saved record has `isHdr: false` (the file is an LDR panorama).
+- The skybox is converted to an HDRI by default. Pass `options={ "hdr": false }` only when the user wants the LDR panorama; it skips that job and its credits.
+- Do not call `start` again to retry a failure. Another start spends credits.
+- If the user asks to stop, call `action_asset_generation` with `action: "cancel"`. Cancel does not need approval. Scenario may still charge for the job. `getStatus` can return `canceled`, or `failed` with `error: "interrupted"` after the app restarts before the job id was stored.
+
+## Upscale, remove a background, or convert an asset
+
+Pass the Scenario operation as `generationOperation`, not `operation`. `operation` is an alias of `action` on this tool.
+
+```text
+→ action_asset_generation(action="start", kind="image", generationOperation="upscale", sourcePath="assets/…", dryRun=true)
+→ action_asset_generation(action="start", kind="image", generationOperation="upscale", sourcePath="assets/…", waitMs=30000)
+```
+
+- `query_asset_generation(operation="listKinds")` lists each operation and the kinds it supports.
+- Use `sourceGenerationId` instead of `sourcePath` to derive from a saved generation of this project.
+
+## Generate an image
+
+Ask before spending credits. A dry-run does not start a job. Omit `modelId`. The server picks the same public model as the Image tab (featured, then a flux-like name, then the first image model). Do not switch to a base or built-in model when that default is missing.
+
+```text
+→ action_asset_generation(action="start", kind="image", prompt="…", dryRun=true)
+→ action_asset_generation(action="start", kind="image", prompt="…", waitMs=30000)
+→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
+```
+
+- Apply an image with `applyAs`: `billboard`, `material`, or `skybox`. Without `applyAs` the call is `invalid_arguments`.
+- Pass `options.width` and `options.height` when the user asked for a size. The server maps those to `aspectRatio` when the model does not accept pixel size.
+- Do not call `start` again to retry a failure. Another start spends credits.
+
+## Generate a PBR texture
+
+Ask before spending credits. Texture generations default to PBR maps.
+
+```text
+→ action_asset_generation(action="start", kind="texture", prompt="…", dryRun=true)
+→ action_asset_generation(action="start", kind="texture", prompt="…", options={ "pbr": true }, waitMs=30000)
+→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
+→ action_asset_generation(action="apply", generationId=…, targetNodeIds=[…])   only when the user asked to assign it
+```
+
+- `apply` creates a material from the albedo, normal, roughness, metallic, height, and AO maps and assigns it to the target nodes.
+- Pass `referenceImages` when the user attached an image. The chat prompt lists absolute paths. Pass those paths unchanged. The server uploads the image bytes to Scenario.
+
+## Generate a 3D model from an attached image
+
+3D jobs take several minutes. Poll with `waitMs: 45000` and tell the user it is still running.
+
+```text
+→ action_asset_generation(action="start", kind="model3d", prompt="…", referenceImages=["C:/path/to/project/.editor/assistant-attachments/….png"], dryRun=true)
+→ action_asset_generation(action="start", kind="model3d", prompt="…", referenceImages=[…], waitMs=45000)
+→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
+→ action_asset_generation(action="apply", generationId=…, placement="nearSelection")   only when the user asked to place it
+```
+
+- `placement` is `cameraLookAt` (default) or `nearSelection` when something is selected.
+- Omit `modelId`. The server picks a public image-to-3D model (featured, then Hunyuan). Do not pass an image model such as FLUX.
+- If the user attached an image, the prompt includes `Reference images saved on disk` and absolute paths. Pass those paths as `referenceImages`. The server uploads the image bytes to Scenario. Do not rewrite them as `@project/` paths.
+
 ## Find / inspect / select nodes
 
 ```text
@@ -203,9 +296,13 @@ Inline image (preferred in `auto` mode):
 action_editor({ action: "captureScreenshot", includeImage: true })
 ```
 
-`includeImage` defaults to `true`. Response: JSON metadata + inline `image` block (renders in Cursor chat). Explicit `genesys_request_approval` is only for prompt-mode pre-approval/token reuse — not required in `auto`.
+`includeImage` defaults to `true`. Response: JSON metadata + one inline `image` block per surface (renders in Cursor chat). Explicit `genesys_request_approval` is only for prompt-mode pre-approval/token reuse — not required in `auto`.
+
+`target` defaults to `"auto"`. While Play is running, that returns the game. `target: "editor"` is the edit-mode viewport and is blocked during Play. `surface` is `primary` (default), `client-N`, or `all`. `all` captures one surface after another (at most four) and the result lists every live surface. Do not poll; capture when you need to look.
 
 Metadata only: `includeImage: false`, then Read tool on `screenshot.screenshotPath`. Never emit markdown image links to absolute local disk paths.
+
+Do not screenshot to verify a scene: which nodes exist, where they sit, what is selected, or whether an edit landed. Use `query_node` (`find`, `getTree`, `getDetails`) and `query_editor` (`getState`, `getSelection`, `getPlayModeState`). `captureScreenshot` is only for a picture the user asked for.
 
 `run_script` / `batch_execute`: metadata only — image bytes stripped. Use the direct call for inline images.
 
@@ -291,3 +388,61 @@ return { componentId };
 ```
 
 `createFromNode` / `apply` / `resync` / `unlink` are not undoable. Engine `@engine/...` prefabs: place is OK; apply and unlink are blocked.
+
+## Poly Builder mesh
+
+Custom blockout or a modeled mesh in the open scene. Each piece is its own node under a Poly Mesh group. `polyMeshNodeId` is the group. `engineNodeId` is the piece. A box is an editable mesh. Read the `genesys-polybuilder` skill for topology ids and footguns. Do not add a `PolyMeshNode` with `action_node` or write `authoringJson`. Do not screenshot to place, align, or check the result. Verify with `query_polybuilder` and `query_node` on `engineNodeId`.
+
+Compact-hidden: `query_polybuilder` / `action_polybuilder` via `run_script` (`genesys.queryPolybuilder` / `genesys.actionPolybuilder`) or `batch_execute`. Use `groupUndo: true` around a multi-step build.
+
+```js
+const placed = await genesys.actionPolybuilder({
+  action: 'placeBox',
+  name: 'Block',
+  size: { x: 2, y: 2, z: 2 },
+  position: { x: 0, y: 0, z: 0 },
+});
+return {
+  pieceIds: placed.pieceIds,
+  engineNodeId: placed.pieces[0].engineNodeId,
+  polyMeshNodeId: placed.polyMeshNodeId,
+  bounds: placed.pieces[0].bounds,
+};
+```
+
+## Profile a play session
+
+Compact-hidden `query_profiler` / `action_profiler`. Use Insights first. Record a Trace only when timeline detail is needed. Process the report summary or the trace manifest. Never paste the `.json` trace body. Full rules: [genesys-profiler/SKILL.md](../../genesys-profiler/SKILL.md).
+
+**A. Insights report.** Turn collection on, enter play, wait for samples, then save the report. `generateReport` returns `path`, `issues`, `timing` (`topScopes`, and `topGpuScopes` when the capture timed the GPU), and a compact `memory` summary. The report viewer shows the full tables. `setGpuDetail` (`pass`, `stage`, or `draw`) saves GPU timing detail for the next Play; a session that is already running keeps its current detail. Do not call `readReport` in the same turn. `listArtifacts` lists saved reports and traces without returning trace bodies. Heap and VRAM growth use [memory-profiling](../../memory-profiling/SKILL.md) (`compare-heap-captures.mjs`, `compare-gpu-captures.mjs`), not this report.
+
+```js
+await genesys.actionProfiler({ action: 'setInsights', enabled: true });
+await genesys.actionEditor({ action: 'enterPlayMode' });
+let samples = 0;
+for (let i = 0; i < 10 && samples === 0; i++) {
+  const status = await genesys.queryProfiler({ operation: 'status' });
+  samples = status.live?.insights?.samples ?? 0;
+}
+const report = await genesys.actionProfiler({ action: 'generateReport' });
+return { path: report.path, issue: report.issues?.[0]?.id ?? null, samples };
+```
+
+**B. Trace from the first frame.** Arm with a stop limit, then enter play. Arming does not start the file. `nextStep` says to restart play when a session is already running. A limit stop writes the manifest without `stopTrace`.
+
+```js
+const armed = await genesys.actionProfiler({ action: 'armTraceForGameStart', maxDurationMs: 10000, maxBytes: 256 * 1024 * 1024 });
+await genesys.actionEditor({ action: 'enterPlayMode' });
+const capture = await genesys.actionProfiler({ action: 'stopTrace' });
+return { path: capture.tracePath, stopReason: capture.manifest?.stopReason, topScope: capture.manifest?.topScopes?.[0]?.label ?? null, topGpuScope: capture.manifest?.topGpuScopes?.[0]?.label ?? null };
+```
+
+**C. Trace while play is running.** Pass a stop limit so the file cannot grow without a bound.
+
+```js
+const started = await genesys.actionProfiler({ action: 'startTrace', maxDurationMs: 5000, thresholdMs: 0.25 });
+const capture = await genesys.actionProfiler({ action: 'stopTrace' });
+return { path: started.trace?.path ?? capture.tracePath, stopReason: capture.manifest?.stopReason };
+```
+
+Disarm afterwards with `armTraceForGameStart` and `armed: false` when the user only wanted one capture. Stop Insights with `setInsights` and `enabled: false` when collection should not continue. The saved report stays on disk.

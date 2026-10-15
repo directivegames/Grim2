@@ -85,9 +85,9 @@ specific changes:
 - `WorldDescriptionOptions.specifiedActors` becomes `specifiedRoots`, and
   `World.describe()` returns `roots` / `rootsNumber` rather than
   `actors` / `actorsNumber`.
-- `setHidden(hidden)` becomes `setHidden(hidden, propagateToChildren)`. The
-  Object3D default is `false`; old Actor helpers always propagated, so pass
-  `true` to keep the previous subtree behavior.
+- `setHidden(hidden)` is removed. Set `visible` directly (`node.visible = !hidden`);
+  Three.js skips the whole subtree of an invisible object, so no propagation
+  is needed.
 - `setOverrideMaterial(material)` becomes
   `setOverrideMaterial(material, recursive)`. Pass `true` for the old Actor
   recursive override.

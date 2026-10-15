@@ -1,0 +1,72 @@
+<div class="store-backdrop" data-store-backdrop hidden>
+  <section class="store-panel" role="dialog" aria-modal="true" aria-labelledby="store-panel-title">
+    <header class="store-header">
+      <div class="store-header-copy">
+        <h2 class="store-title" id="store-panel-title">Store</h2>
+        <p class="store-subtitle" data-store-subtitle>Items for this game, priced in Silicon. Silicon works in every Sandbox game.</p>
+      </div>
+      <div class="store-balance-chip" title="Your Silicon">
+        <span class="store-coin" data-store-coin-icon aria-hidden="true"></span>
+        <span class="store-balance" data-store-balance>—</span>
+        <span class="store-test-tag" data-store-test-tag hidden title="Test Silicon is fake money for testing drafts in the editor">TEST</span>
+      </div>
+      <div class="store-header-action" data-store-get-coins-slot></div>
+      <div class="store-header-action" data-store-close-slot></div>
+    </header>
+
+    <nav class="store-tabs" role="tablist" aria-label="Store sections">
+      <button class="store-tab" type="button" role="tab" data-store-tab="shop" aria-selected="true">Shop<small class="store-tab-count" data-store-tab-count="shop"></small></button>
+      <button class="store-tab" type="button" role="tab" data-store-tab="inventory" aria-selected="false">Inventory<small class="store-tab-count" data-store-tab-count="inventory"></small></button>
+    </nav>
+
+    <div class="store-body">
+      <p class="store-notice" data-store-notice role="alert" hidden></p>
+      <div class="store-guest-bar" data-store-guest-bar hidden>
+        <span class="store-guest-icon" data-store-guest-icon aria-hidden="true"></span>
+        <p data-store-guest-text>You are browsing as a guest. Sign in with your Sandbox account to buy or claim items; your Silicon and items follow you across games.</p>
+        <div data-store-login-slot></div>
+      </div>
+      <div class="store-topup-bar" data-store-topup-bar hidden>
+        <span class="store-coin" data-store-topup-icon aria-hidden="true"></span>
+        <p data-store-topup-text></p>
+        <div data-store-topup-slot></div>
+      </div>
+      <div class="store-grid" data-store-grid hidden></div>
+
+      <div class="store-inventory-empty" data-store-inventory-empty hidden>
+        <p>Items you buy or claim in the Shop show up here, in this game only.</p>
+        <div data-store-browse-slot></div>
+      </div>
+
+      <div class="store-state store-state-loading" data-store-state="loading" hidden>
+        <div class="store-skeleton"><span></span><i></i><i></i></div>
+        <div class="store-skeleton"><span></span><i></i><i></i></div>
+        <div class="store-skeleton"><span></span><i></i><i></i></div>
+        <div class="store-skeleton"><span></span><i></i><i></i></div>
+      </div>
+
+
+      <div class="store-state" data-store-state="empty" hidden>
+        <span class="store-state-icon" data-store-empty-icon aria-hidden="true"></span>
+        <p>This game does not sell anything yet. Items the creator adds in the editor appear here automatically.</p>
+      </div>
+
+      <div class="store-state store-state-error" data-store-state="error" hidden>
+        <span class="store-state-icon" data-store-error-icon aria-hidden="true"></span>
+        <p data-store-error-message>Could not reach the store. Your Silicon and items are safe — try again in a moment.</p>
+        <div class="store-state-actions">
+          <div data-store-retry-slot></div>
+        </div>
+      </div>
+
+      <div class="store-state" data-store-state="unlinked" hidden>
+        <span class="store-state-icon" data-store-unlinked-icon aria-hidden="true"></span>
+        <p>This project is not linked to a game yet. Ask the assistant to link it, or set gameId in src/store/store-config.ts to the id from your .genesys-project file.</p>
+      </div>
+    </div>
+
+    <footer class="store-footer">
+      <span class="store-session-info" data-store-session-info aria-live="polite"></span>
+    </footer>
+  </section>
+</div>

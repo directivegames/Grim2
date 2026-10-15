@@ -58,7 +58,7 @@ export class InnocentHelpMeUI {
 
     InnocentHelpMeUI._injectStyles(gc);
 
-    const css = `url("${HELPME_URL}")`;
+    const css = 'url("@project/assets/UI/Helpme.webp")';
     const resolved = await ENGINE.resolveAssetPathsInText(css);
     const match = resolved.match(/url\(["']?([^"')]+)["']?\)/);
     this._resolvedUrl = match?.[1] ?? '';

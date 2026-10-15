@@ -9,6 +9,8 @@ alwaysApply: true
 
 For scene-visible or editor-authored changes, use Genesys MCP before editing code or `*.genesys-scene` / `*.prefab.json` files. This includes scene-node hierarchy, materials, colours, meshes, lights, cameras, node properties, prefab overrides, active scene/prefab, and editor state. Viewport capture is MCP: `action_editor(action="captureScreenshot", includeImage=true)` — not a desktop screenshot. Open orchestrator `references/workflows.md` for the recipe.
 
+When `request_user_input` is available, use it for a clarifying question that would change the work, and wait for the answer. Otherwise state the assumption and continue.
+
 Before implementing, decide where the state belongs:
 
 - Scene/editor state: use MCP first.

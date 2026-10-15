@@ -16,6 +16,7 @@ Read the source above for exact signatures — this skill maps what exists and t
 - Baking (runtime/code): `await world.createNavigationMeshFromScene()` scans static geometry in the world and calls `navigationServer.createNavigationMeshFromMeshes(...)`. Use this for procedurally generated levels, after your static geometry is placed and before any NPC needs a path. See the reference doc for exactly which nodes/roles contribute.
 - Persistence: an editor bake exports to a `.navmesh` binary referenced by scene resources; `GameLoop` auto-imports it on level load and only falls back to `createNavigationMeshFromScene()` if `navigationOptions.generateOnStartUp` is `true` and no baked file is found.
 - Readiness: `navigationServer.isReady()` — `true` only once a navmesh has been set (bake+import or `createNavigationMesh*`). Everything below silently no-ops or returns an empty/failed result when not ready.
+- On-demand runtime: the Recast WASM module loads on the first bake (`createNavigationMesh*`) or import (`importNavigationMesh*`), not when the server is created. Always `await` those calls — the navmesh is not set until the returned promise resolves.
 - Point queries:
   - `isPointOnNavigationMesh(point)` — `true` only if the point is directly over a poly.
   - `getClosestPointOnNavigationMesh(point, { halfExtents?, maxSnapDistance? })` — snaps to the nearest poly; returns a clone of `point` unchanged if the query fails or the snap exceeds `maxSnapDistance` (never silently jumps to an unrelated poly).

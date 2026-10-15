@@ -41,26 +41,20 @@ Movement speed/turn tuning: `movementSpeed`/`turnSpeed` options (mapped to the i
 Optional built-in debug visualization (`debugVisualization` options) draws the path line, target
 sphere, and waypoint spheres in the world.
 
-## Mover: no dedicated NPC mode
+## GSS: AIController + GSSNode
 
-No `IMovementMode` in `.engine/src/nodes/movement/mover/modes/` provides path-following. This is
-a genuine gap, not an oversight to route around silently — verify against
-`.engine/src/nodes/movement/mover/modes/` before assuming otherwise, in case a mode is added later.
+`AIController` (`.engine/src/entities/AIController.ts`) implements `IGSSInputProducer` and
+steers a possessed pawn that has a `GSSNode` (for example `GSSCharacterPawn`).
+Navmesh queries still belong to `genesys-navigation`; the controller turns path/look-at state
+into `GSSInputCmd` vectors and down-tags each tick.
 
-Until then, three real options, none of them a shipped built-in:
+Mixing locomotion stacks is fine for pawns that never collide or trace against each other:
+keep some AI on classic `NpcMovementNode` while the player uses GSS. A classic NPC
+that the player can bump, shoot, or dash through is not rewindable, so those interactions
+mis-predict unless the game adds `IRewindable` history and re-simulation — see
+[gss-mechanics](gss-mechanics.md). To drive `GSSWalkingMode` /
+`GSSFallingMode` from custom AI without `AIController`, set your own `IGSSInputProducer`
+on the sim node — see [custom-modes-and-controllers](custom-modes-and-controllers.md).
 
-1. Keep AI pawns on classic `NpcMovementNode` even if the player pawn uses Mover. Nothing in
-   the engine ties movement system choice to a single pawn class across the whole game — mixing
-   is normal (see the decision guide in `SKILL.md`).
-2. Write a custom `IMovementInputProducer` that turns a path/target into `moveInput` toward
-   the next waypoint — mirroring `NpcMovementNode`'s own `moveTowardPoint`/yaw-difference logic
-   — and register it on the AI pawn's `MoverNode` in place of a `PlayerController`-based
-   producer, feeding ordinary `WalkingMode`/`FallingMode` humanoid modes. `IMovementInputProducer`
-   is explicitly meant to support this (its doc comment calls out an `AIController` steering
-   toward a navigation target as a first-class use case, no `PlayerController` required — see
-   [custom-modes-and-controllers](custom-modes-and-controllers.md)).
-3. Reuse `AerialMode`'s target-driven design (`setTargetPosition`/
-   `setLastKnownPlayerPosition`/`setLookAtTarget`) as the closest Mover analog for a flying or
-   hovering enemy that does not need directional `moveInput` at all — it already ignores
-   `MovementInputCmd` and drives movement purely from mode-instance target state, the same shape
-   `NpcMovementNode` uses. This does not cover grounded path-following, only hover/flight.
+There is no shipped GSS path-follow *mode*; path following is an input producer, not a
+locomotion mode.

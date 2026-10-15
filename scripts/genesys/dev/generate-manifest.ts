@@ -76,6 +76,11 @@ function getContentType(fileName: string): string | undefined {
     '.wav': 'audio/wav',
     '.mp3': 'audio/mpeg',
     '.ogg': 'audio/ogg',
+    '.flac': 'audio/flac',
+    '.aac': 'audio/aac',
+    '.m4a': 'audio/mp4',
+    '.aif': 'audio/aiff',
+    '.aiff': 'audio/aiff',
     [ENGINE.SCENE_NAME_EXT]: 'application/json',
     [ENGINE.GAME_PROJECT_FILE_EXT]: 'application/json'
   };

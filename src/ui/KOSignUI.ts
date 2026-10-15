@@ -50,7 +50,7 @@ export class KOSignUI {
   }
 
   private async _resolveUrl(): Promise<void> {
-    const css = `.bg { background-image: url("${KO_BG_URL}"); }`;
+    const css = `.bg { background-image: url("@project/assets/UI/KO-sign.webp"); }`;
     const resolved = await ENGINE.resolveAssetPathsInText(css);
     const match = resolved.match(/url\("([^"]+)"\)/);
     if (match) this._resolvedUrl = match[1];

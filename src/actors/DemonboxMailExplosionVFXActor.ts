@@ -250,13 +250,13 @@ export class DemonboxMailExplosionVFXActor extends GameRootNode {
     }
 
     this.position.copy(position);
-    this.setHidden(false, true);
+    this.visible = true;
   }
 
   private _returnToPool(): void {
     _activeCount = Math.max(0, _activeCount - 1);
     this._isActive = false;
-    this.setHidden(true, true);
+    this.visible = false;
     _pool.push(this);
   }
 
@@ -291,7 +291,7 @@ export class DemonboxMailExplosionVFXActor extends GameRootNode {
       const actor = DemonboxMailExplosionVFXActor.create({ position: new THREE.Vector3(0, -1000, 0) });
       world.add(actor);
       actor._isActive = false;
-      actor.setHidden(true, true);
+      actor.visible = false;
       _pool.push(actor);
       created.push(actor);
     }

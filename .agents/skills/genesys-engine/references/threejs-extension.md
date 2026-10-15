@@ -60,8 +60,7 @@ Standardized methods propagated through the scene graph:
 
 ## Visibility utilities
 
-- isHidden()
-- setHidden(hidden, propagateToChildren?)
+- isHidden() — true when `!visible || selfHidden`. To show/hide an object (and its subtree), set `visible` directly.
 
 ## Local transform setters
 

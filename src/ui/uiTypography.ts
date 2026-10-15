@@ -30,7 +30,9 @@ export const CHROMATIC_TEXT_SHADOW = `
 export async function injectBreeSerifFont(): Promise<void> {
   if (document.querySelector('style[data-font="BreeSerif"]')) return;
 
-  const resolved = await ENGINE.resolveAssetPathsInText(`url("${FONT_URL}")`);
+  const resolved = await ENGINE.resolveAssetPathsInText(
+    'url("@project/assets/UI/Bree_Serif/BreeSerif-Regular.ttf")',
+  );
   const match = resolved.match(/url\(["']?([^"')]+)["']?\)/);
   const fontSrc = (match?.[1] ?? resolved).trim();
   if (!fontSrc || fontSrc.includes('@project')) {

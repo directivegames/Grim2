@@ -101,11 +101,10 @@ PlayerController.unpossess()
 ## CharacterPawn / DefaultCharacterPawn override points
 
 - `createCollision()` — Replace the default capsule collision (returns `SceneNode | null`;
-  `MoverCharacterPawn` requires non-null).
+  `GSSCharacterPawn` requires a collision child).
 - `createMovementNode()` — Swap in a different `BasePawnMovementNode` subclass (CharacterPawn family).
-  `MoverCharacterPawn` uses `createMoverNode()` / `MoverNode` instead — see the `genesys-movement`
-  skill for the full mode-based Mover system (mode transitions, `LayeredMove`, `MovementModifier`,
-  and custom modes/controllers).
+  `GSSCharacterPawn` uses `createGSSNode()` / `GSSNode` instead — see the
+  `genesys-movement` skill (mode transitions, abilities/effects, custom modes/controllers).
 - `getInitialCameraPositions()` — Returns `{ pivotPosition, cameraPosition }`. Equal positions
   produce a first-person camera; different positions produce a third-person spring-arm camera.
 - `setupCamera()` — Override only if the default pivot/spring-arm hierarchy does not fit.
@@ -113,6 +112,9 @@ PlayerController.unpossess()
   or return a custom animation / visual node.
 - `zoomStep(direction)` — CharacterPawn-only, one-shot spring-arm `armLength` nudge for discrete
   input (mouse wheel).
+
+`MoverCharacterPawn` and `MoverPlayerController` remain loadable only for compatibility. Mover is
+unsupported; use the `genesys-movement` migration reference instead of extending it.
 
 ## Related movement nodes
 

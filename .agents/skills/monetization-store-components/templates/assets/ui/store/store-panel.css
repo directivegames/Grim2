@@ -1,0 +1,577 @@
+/* Store panel — kit glass panel (rgba(42,45,68,.6) + blur, 16px radius) over a dimmed game. */
+.store-backdrop,
+.store-backdrop * {
+  box-sizing: border-box;
+}
+
+.store-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(10, 11, 20, 0.6);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #e8eaed;
+  pointer-events: auto;
+  /* Phone layout (Q28) keys off the game view's size, not the window's. */
+  container: store / size;
+}
+
+.store-backdrop[hidden] {
+  display: none;
+}
+
+.store-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(960px, 100%);
+  height: min(600px, 100%);
+  background: rgba(42, 45, 68, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+/* Header */
+.store-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px 12px;
+}
+
+.store-header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.store-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.44px;
+  color: #e8eaed;
+}
+
+.store-subtitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  color: #a8adb8;
+}
+
+.store-balance-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px 0 10px;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  border-radius: 9999px;
+}
+
+.store-coin {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+}
+
+.store-coin svg {
+  width: 18px;
+  height: 18px;
+}
+
+.store-balance {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.31px;
+  color: #fbbf24;
+}
+
+.store-header-action {
+  display: inline-flex;
+}
+
+/* Get Silicon: gold fill, the gold action in the panel (Buy on the tiles stays accent).
+   The slot keeps its pre-rename name so existing overrides still match. */
+.store-header [data-store-get-coins-slot] .ui-button,
+.store-topup-bar [data-store-topup-slot] .ui-button {
+  background: #fbbf24;
+  border-color: transparent;
+  color: #2a1d03;
+}
+
+.store-header [data-store-get-coins-slot] .ui-button:hover:not([disabled]),
+.store-topup-bar [data-store-topup-slot] .ui-button:hover:not([disabled]) {
+  background: #fcd34d;
+  color: #2a1d03;
+}
+
+/* Close: a bare icon, muted until hovered. */
+.store-header [data-store-close-slot] .ui-button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  gap: 0;
+  background: transparent;
+  border-color: transparent;
+  color: #a3a9ba;
+  box-shadow: none;
+}
+
+/* Icon-only: the kit keeps an empty label span that would take the flex gap and shift the icon. */
+.store-header [data-store-close-slot] .ui-button .ui-button-label:empty {
+  display: none;
+}
+
+.store-header [data-store-close-slot] .ui-button:hover:not([disabled]) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+/* Tabs: text with an accent underline; counts stay quiet. */
+.store-tabs {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 8px 24px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.store-tab {
+  position: relative;
+  padding: 8px 2px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  color: #a3a9ba;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.store-tab:hover {
+  color: #e8eaed;
+}
+
+.store-tab:focus-visible {
+  outline: 2px solid rgba(124, 156, 255, 0.8);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.store-tab[aria-selected='true'] {
+  color: #eef0f5;
+}
+
+.store-tab[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--store-accent, #7c9cff);
+}
+
+.store-tab-count {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6f758a;
+}
+
+.store-tab-count:empty {
+  display: none;
+}
+
+/* Body */
+.store-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 24px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.store-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.store-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.store-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.store-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  background-clip: padding-box;
+}
+
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+/* Inline notice for a failed action while the panel itself is fine. */
+.store-notice {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+}
+
+.store-notice[hidden] {
+  display: none;
+}
+
+/* Guest bar: shown above the grid while not signed in */
+.store-guest-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+  padding: 10px 12px 10px 14px;
+  background: rgba(79, 124, 255, 0.08);
+  border: 1px solid rgba(124, 156, 255, 0.22);
+  border-radius: 12px;
+}
+
+.store-guest-bar[hidden] {
+  display: none;
+}
+
+.store-guest-icon {
+  display: inline-flex;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: #7c9cff;
+}
+
+.store-guest-bar p {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  color: #a8adb8;
+}
+
+/* Short on Silicon / waiting for a top-up in the other tab (Q30): the guest bar's shape, in gold. */
+.store-topup-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+  padding: 10px 12px 10px 14px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  border-radius: 12px;
+}
+
+.store-topup-bar[hidden] {
+  display: none;
+}
+
+.store-topup-bar .store-coin {
+  flex: none;
+}
+
+.store-topup-bar p {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  color: #e5d3a1;
+}
+
+.store-grid[hidden],
+.store-inventory-empty[hidden],
+.store-state[hidden] {
+  display: none;
+}
+
+.store-inventory-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.store-inventory-empty p,
+.store-state p {
+  margin: 0;
+  max-width: 360px;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.15px;
+  color: #a8adb8;
+}
+
+/* States */
+.store-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 280px;
+  padding: 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.store-state-error {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.store-state-icon {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+}
+
+.store-state-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.store-state-loading {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+  border: 0;
+  padding: 0;
+  min-height: 0;
+}
+
+.store-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 17px;
+  background: rgba(42, 45, 68, 0.6);
+  border: 1px solid rgba(232, 234, 237, 0.1);
+  border-radius: 16px;
+}
+
+.store-skeleton span {
+  display: block;
+  aspect-ratio: 1 / 1;
+  background: #2d3250;
+  border-radius: 12px;
+}
+
+.store-skeleton i {
+  display: block;
+  height: 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.store-skeleton i:last-child {
+  width: 45%;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Footer: low-opacity session info (who is signed in, which environment). */
+.store-footer {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+  padding: 0 24px 12px;
+}
+
+.store-session-info {
+  font-size: 11px;
+  line-height: 16px;
+  color: #6f758a;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+  user-select: text;
+  /* One line at every size; a long user id or game id ends in an ellipsis. */
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.store-session-info:empty {
+  display: none;
+}
+
+.store-test-tag {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #1a1a1a;
+  background: #f5a524; /* same amber as the Draft chip */
+}
+
+/*
+ * Phones (Q28): sized by the game view, not the window, so a small play
+ * panel in the editor gets this layout too (the "B" hint on the HUD stays,
+ * since that is still a mouse). Full screen, compact header, two-column
+ * tiles; landscape packs more per row and trims vertical space.
+ * Thresholds are the backdrop's content box: a 600 x 480 game view is a
+ * 552 x 432 content box, because the backdrop has 24px padding.
+ */
+@container store (max-width: 552px) or (max-height: 432px) {
+  /*
+   * The backdrop keeps its 24px padding (a container cannot restyle itself
+   * from its own query), so the panel grows past it by the same 24px on
+   * every side to fill the game view edge to edge.
+   */
+  .store-panel {
+    width: calc(100% + 48px);
+    height: calc(100% + 48px);
+    margin: -24px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  }
+
+  .store-header {
+    gap: 8px;
+    padding: 14px 16px 10px;
+  }
+
+  .store-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+  }
+
+  .store-subtitle {
+    display: none;
+  }
+
+  .store-balance-chip {
+    height: 36px;
+    padding: 0 12px 0 9px;
+  }
+
+  .store-balance {
+    font-size: 15px;
+  }
+
+  /* Round gold + : the label stays for screen readers, the icon is what shows. */
+  .store-header [data-store-get-coins-slot] .ui-button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    gap: 0;
+    border-radius: 9999px;
+  }
+
+  .store-header [data-store-get-coins-slot] .ui-button .ui-button-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .store-header [data-store-close-slot] .ui-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .store-tabs {
+    padding: 0 16px;
+  }
+
+  .store-tab {
+    padding: 12px 2px 14px;
+  }
+
+  .store-body {
+    padding: 14px 16px 10px;
+  }
+
+  .store-grid,
+  .store-state-loading {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .store-guest-bar,
+  .store-topup-bar {
+    flex-wrap: wrap;
+  }
+
+  /* Icon and text share the first row; the Sign in button takes the second. */
+  .store-guest-bar [data-store-login-slot] {
+    flex-basis: 100%;
+  }
+
+  .store-footer {
+    padding: 0 16px 10px;
+  }
+}
+
+/* Landscape phones (480px-tall game view = 432px content box): every pixel of height counts. Tabs keep their 40px tap height. */
+@container store (max-height: 432px) {
+  .store-header {
+    padding: 8px 16px 6px;
+  }
+
+  .store-body {
+    padding-top: 10px;
+  }
+
+  .store-grid,
+  .store-state-loading {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+
+  .store-state {
+    min-height: 0;
+  }
+
+  /* Sign in stays on the text row: a second row costs ~56px of height. */
+  .store-guest-bar [data-store-login-slot] {
+    flex-basis: auto;
+  }
+}

@@ -20,6 +20,7 @@ Do not read every reference up front. Open the smallest file that answers the qu
 | Title-bar Menu, Tools, Play, Build, Upload, Help | [menus-and-play.md](references/menus-and-play.md) |
 | Outliner, Inspector, Focus, copy/paste properties, components, prefab chrome | [outliner-and-inspector.md](references/outliner-and-inspector.md) |
 | Viewport gizmos/view/snap, Place bar, Asset Browser, specialised dialogs | [viewport-and-assets.md](references/viewport-and-assets.md) |
+| Viewport Poly Builder (brush, mesh edit) | [viewport-and-assets.md](references/viewport-and-assets.md) (Poly Builder) |
 | Exact hotkey | [hotkeys.md](references/hotkeys.md) |
 
 ## Decision table
@@ -35,7 +36,7 @@ Do not read every reference up front. Open the smallest file that answers the qu
 
 - Editor hide (eye / H) and editor lock (L) are viewport/outliner only — not runtime visibility/selectability.
 - Class registration: MCP `action_build(action="buildProject")` or Menu → Build Project — no separate `compile` MCP action.
-- Animation / VFX / Skeleton / Foundry (Scenario) / project open-create / catalog asset-pack browse-install / Getting Started / Environment Setup / Project Recovery are UI only unless listed in mcp-vs-ui.
+- Animation / VFX / Skeleton / project open-create / catalog asset-pack browse-install / Getting Started / Environment Setup / Project Recovery / Poly Builder are UI only unless listed in mcp-vs-ui. Foundry generation (skybox, image, texture, 3D) is `action_asset_generation`; prompt enhance stays in the Foundry dialog.
 - Genesys MCP for external IDEs is configured once per Sandbox Studio environment (not per game project). See [app-setup-and-recovery.md](references/app-setup-and-recovery.md).
 
 ## Maintenance

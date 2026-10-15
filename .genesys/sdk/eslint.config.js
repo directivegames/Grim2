@@ -4,15 +4,15 @@ export default createGenesysConfig({
   preset: 'game',
   tsConfigPaths: ['./tsconfig.json'],
   ignores: [
-    'dist/**', 
-    '.engine/**', 
-    '.agents/**', 
-    '.genesys/**', 
-    'node_modules/**', 
+    'dist/**',
+    '.engine/**',
+    '.agents/**',
+    '.genesys/**',
+    'node_modules/**',
     '**/*.d.ts'
   ],
   files: [
-    '**/*.ts', 
+    '**/*.ts',
     '**/*.tsx'
   ],
   includeStyleRules: false

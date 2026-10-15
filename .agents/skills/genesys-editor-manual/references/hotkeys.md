@@ -88,7 +88,7 @@ There is no chevron tooltip. Shift+F does **not** scroll the Outliner.
 
 | Hotkey | Action |
 | --- | --- |
-| `1` | Toggle Agent Chat panel (when Assistant UI is enabled; ignored in Play Mode) |
+| `1` | Show or hide Agent Chat (when Assistant UI is enabled; ignored in Play Mode) |
 | Space | Quick Action Overlay when Assistant can start a chat; otherwise **AI Settings** (Connection tab if no usable provider). Ignored in Play Mode |
 
 ## Contextual (not global)
@@ -101,3 +101,4 @@ There is no chevron tooltip. Shift+F does **not** scroll the Outliner.
 | `Ctrl/Cmd+A` | Asset Browser content | Select all items in the current folder |
 | Shift+hold | Instanced-geometry brush | Temporarily eraser |
 | Insert / Del / Esc | Spline point edit | Insert at hover / delete selected point / cancel drag or deselect |
+| Esc | Poly Builder mode | Cancel an in-progress brush drag, or exit the mode. Other tools are toolbar clicks, so camera and editor keys pass through |

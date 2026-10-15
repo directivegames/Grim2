@@ -1,0 +1,21 @@
+---
+description: Reference project assets with a complete @project path string
+alwaysApply: true
+---
+
+# Asset paths
+
+Write each project asset as one complete string literal, for example `'@project/assets/models/tiger.glb'`.
+
+The build copies a file only when that full `@project/...` path appears as text in the bundle and points at a real file. A shared prefix, a template literal, or `+` concatenation is not a file path. Minification keeps the folder prefix, the build cannot see the file, and the file is omitted.
+
+```typescript
+// Wrong — the file is not copied
+const MESH = '@project/assets/generated/mesh/';
+const path = `${MESH}fox.glb`;
+
+// Right
+const path = '@project/assets/generated/mesh/fox.glb';
+```
+
+When the file name is chosen at runtime (level name, generated id, locale), list the file or folder in `.genesys-project` `alwaysCopyAssets` (for example `"@project/assets/generated/mesh"`). That is the only supported way to copy assets the bundle does not name in full. A listed folder copies every file inside it.

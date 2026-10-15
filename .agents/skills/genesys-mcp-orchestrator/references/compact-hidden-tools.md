@@ -8,11 +8,15 @@ These tools are not first-class MCP tools in compact mode (the default). They ar
 | --- | --- | --- |
 | `action_asset` | `action` | `createFolder`, `createMaterial`, `delete`, `import`, `installAssetPack`, `mergeMeshes`, `move`, `rename` |
 | `action_navmesh` | `action` | `clear`, `export`, `generate`, `import`, `setSettings`, `toggleDebug` |
+| `action_polybuilder` | `action` | `delete`, `meshOp`, `placeBox`, `placeShape`, `setMode`, `transform` |
 | `action_prefab` | `action` | `apply`, `close`, `create`, `createFromNode`, `instantiate`, `open`, `resync`, `save`, `setEditableChildren`, `unlink` |
-| `action_store` | `action` | `createItem`, `deleteItem`, `publish`, `setImage`, `takeDown`, `updateItem` |
+| `action_profiler` | `action` | `armTraceForGameStart`, `generateReport`, `setGpuDetail`, `setInsights`, `startTrace`, `stopTrace` |
+| `action_store` | `action` | `createItem`, `deleteItem`, `linkGame`, `publish`, `setImage`, `takeDown`, `updateItem` |
 | `query_asset` | `query` | `find`, `getDetails`, `getAssetPackInfo`, `getReferences` |
 | `query_diagnostics` | `query` | `getBuildErrors`, `getConsole` |
 | `query_navmesh` | `query` | `getInfo`, `getSettings` |
+| `query_polybuilder` | `query` | `getDocument` |
+| `query_profiler` | `query` | `status`, `readReport`, `readTraceManifest`, `listArtifacts` |
 | `query_store` | `query` | `getState`, `listItems` |
 
 ### `action_asset`
@@ -55,6 +59,26 @@ Dispatch via `batch_execute`:
 { tool: "action_navmesh", args: { action: "clear", ... } }
 ```
 
+### `action_polybuilder`
+
+Action Poly Builder · kind: `action`
+
+Build Poly Builder pieces as separate scene nodes under a Poly Mesh group: place boxes and shapes, transform, mesh-edit, or delete pieces. A box is an editable mesh. Align and verify from the returned pivot, bounds, and frame.highEnd.worldCenter, then query_polybuilder and query_node on engineNodeId. polyMeshNodeId is the group. engineNodeId is the piece node. Do not use captureScreenshot to place or check the scene. Requires `action`. Turns Poly Builder mode on when geometry changes. Compact-hidden — call via run_script (genesys.actionPolybuilder) or batch_execute. Read the genesys-polybuilder skill first.
+
+Operations: `delete` *(destructive, undoable)*, `meshOp` *(undoable)*, `placeBox` *(undoable)*, `placeShape` *(undoable)*, `setMode`, `transform` *(undoable)*
+
+Dispatch via `run_script`:
+
+```js
+genesys.actionPolybuilder({ action: 'delete', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "action_polybuilder", args: { action: "delete", ... } }
+```
+
 ### `action_prefab`
 
 Action Prefab · kind: `action`
@@ -75,13 +99,33 @@ Dispatch via `batch_execute`:
 { tool: "action_prefab", args: { action: "apply", ... } }
 ```
 
+### `action_profiler`
+
+Action Profiler · kind: `action`
+
+Start or stop Insights collection, save an Insights report, set GPU timing detail for the next Play, or control a desktop-streamed Trace. Compact-hidden — call via run_script (genesys.actionProfiler) or batch_execute. Ops: setInsights, setGpuDetail, generateReport, startTrace, stopTrace, armTraceForGameStart. Returns artifact paths. Trace bodies are never returned.
+
+Operations: `armTraceForGameStart`, `generateReport`, `setGpuDetail`, `setInsights`, `startTrace`, `stopTrace`
+
+Dispatch via `run_script`:
+
+```js
+genesys.actionProfiler({ action: 'armTraceForGameStart', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "action_profiler", args: { action: "armTraceForGameStart", ... } }
+```
+
 ### `action_store`
 
 Action Store · kind: `action`
 
-Create and manage the game's store items on the creator's behalf (the editor holds the Studio login; no token is needed). Compact-hidden — call via run_script (genesys.actionStore) or batch_execute. Requires `action`. Ops: createItem (name, description, coins or free, consumable, optional https imageUrl; new items are drafts — only the creator sees them in the editor), updateItem (sku plus any of name, description, coins / free, imageUrl or null), publish (players can buy), takeDown (back to draft), deleteItem (destructive; owners keep it), setImage (sku + filePath: a PNG, JPEG or WebP anywhere on this computer or @project/..., uploaded to the game's assets). Returns the item's sku.
+Create and manage the game's store items on the creator's behalf (the editor holds the Studio login; no token is needed). Compact-hidden — call via run_script (genesys.actionStore) or batch_execute. Requires `action`. Ops: linkGame (registers the project as a game and writes gameId into <project>.genesys-project, exactly as opening Store Manager does; returns the existing id when already linked; no approval; result gameCreated is true when it created the game), createItem (name, description, coins or free, consumable, optional https imageUrl; new items are drafts — only the creator sees them in the editor), updateItem (sku plus any of name, description, coins / free, imageUrl or null), publish (players can buy), takeDown (back to draft), deleteItem (destructive; owners keep it), setImage (sku + filePath: a PNG, JPEG or WebP anywhere on this computer or @project/..., uploaded to the game's assets). Every op except linkGame returns the item's sku; applied writes link the game first when the project has none (gameCreated: true).
 
-Operations: `createItem`, `deleteItem` *(destructive)*, `publish`, `setImage`, `takeDown`, `updateItem`
+Operations: `createItem`, `deleteItem` *(destructive)*, `linkGame`, `publish`, `setImage`, `takeDown`, `updateItem`
 
 Dispatch via `run_script`:
 
@@ -155,11 +199,51 @@ Dispatch via `batch_execute`:
 { tool: "query_navmesh", args: { operation: "getInfo", ... } }
 ```
 
+### `query_polybuilder`
+
+Query Poly Builder · kind: `query`
+
+Read Poly Builder pieces: world bounds, pivot, localBounds, engineNodeId, and a stair/ramp frame (highEnd.worldCenter, lowEnd). Topology faces include worldCenter and worldNormal. Place, align, and verify the scene from this data, query_node on engineNodeId, and query_editor. Do not use captureScreenshot to check the scene. Requires `operation` getDocument. Compact-hidden — call via run_script / batch_execute. Read the genesys-polybuilder skill before editing.
+
+Operations: `getDocument`
+
+Dispatch via `run_script`:
+
+```js
+genesys.queryPolybuilder({ operation: 'getDocument', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "query_polybuilder", args: { operation: "getDocument", ... } }
+```
+
+### `query_profiler`
+
+Query Profiler · kind: `query`
+
+Read independent Insights and Trace state. Compact-hidden — call via run_script (genesys.queryProfiler) or batch_execute. Ops: status, readReport (compact optimization report), readTraceManifest (trace metadata and top scopes), listArtifacts (names, sizes, and sidecar status). Never returns the Chrome trace JSON.
+
+Operations: `status`, `readReport`, `readTraceManifest`, `listArtifacts`
+
+Dispatch via `run_script`:
+
+```js
+genesys.queryProfiler({ operation: 'status', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "query_profiler", args: { operation: "status", ... } }
+```
+
 ### `query_store`
 
 Query Store · kind: `query`
 
-Read the game's in-game store (Sandbox Coins items sold to players). Compact-hidden — call via run_script (genesys.queryStore) or batch_execute. Ops: getState (game id, whether src/store is installed, who the store API recognises, environment, payment mode), listItems (every item including drafts: sku, name, description, price, consumable, imageUrl, draft). Runs in the editor with the creator's Studio login; a project must be open.
+Read the game's in-game store (Sandbox Silicon items sold to players). Compact-hidden — call via run_script (genesys.queryStore) or batch_execute. Ops: getState (game id or null when not linked yet, whether src/store is installed, who the store API recognises, environment, payment mode), listItems (every item including drafts: sku, name, description, price, consumable, imageUrl, draft). Runs in the editor with the creator's Studio login; a project must be open.
 
 Operations: `getState`, `listItems`
 

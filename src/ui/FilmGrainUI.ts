@@ -127,7 +127,7 @@ export class FilmGrainUI {
     }
 
     FilmGrainUI._spriteLoadPromise = (async () => {
-      const resolved = await ENGINE.resolveAssetPathsInText(`url("${NOISE_SPRITE_URL}")`);
+      const resolved = await ENGINE.resolveAssetPathsInText('url("@project/assets/UI/noise.webp")');
       const match = resolved.match(/url\("([^"]+)"\)/);
       const url = match?.[1] ?? '';
       if (!url) {

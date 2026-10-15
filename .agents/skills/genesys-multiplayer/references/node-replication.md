@@ -98,7 +98,8 @@ Quantization converts a float to a compact integer representation on the wire. C
 
 | Mode | Description | Best for |
 |---|---|---|
-| `range` | Fixed-bit index in `[min, max]`; always `bits` bits per value | Bounded values with predictable cost (rotation, bounded position) |
+| `range` | Fixed-bit index in `[min, max]`; clamps outside the range | Bounded values that should stick at a limit (limited pitch, bounded position) |
+| `angle` | `2^bits` steps around one turn; wraps with modulo, short deltas across the branch cut | Free rotations (euler components, yaw) |
 | `scale` | Multiply by `scale`, round, zigzag varint; cheap near zero | Unbounded floats with a fixed decimal precision (velocity, health fraction) |
 | `float16` | IEEE 754 half-precision delta; ~3 sig. figs | General floats where ~0.001 error is acceptable |
 | `float32` | 32-bit monotone delta varint; full precision | High-precision floats where delta compression still helps |
@@ -112,10 +113,10 @@ Quantization converts a float to a compact integer representation on the wire. C
 }})
 public position: THREE.Vector3 = new THREE.Vector3();
 
-// Euler rotation — 16 bits per axis over full [-π, π] range
+// Free euler rotation — 16 bits per axis, wraps past ±π instead of clamping
 @ENGINE.property({ replicate: true, net: {
   netType: 'euler',
-  quantization: { mode: 'range', min: -Math.PI, max: Math.PI, bits: 16 }
+  quantization: { mode: 'angle', bits: 16 }
 }})
 public rotation: THREE.Euler = new THREE.Euler();
 

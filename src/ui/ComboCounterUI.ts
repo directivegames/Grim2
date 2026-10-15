@@ -47,7 +47,7 @@ export class ComboCounterUI {
     await injectBreeSerifFont();
 
     // Resolve background URL
-    const css = `.bg { background-image: url("${BG_URL}"); }`;
+    const css = `.bg { background-image: url("@project/assets/UI/ComboBG.webp"); }`;
     const resolved = await ENGINE.resolveAssetPathsInText(css);
     const match = resolved.match(/url\("([^"]+)"\)/);
     const bgUrl = match ? match[1] : '';

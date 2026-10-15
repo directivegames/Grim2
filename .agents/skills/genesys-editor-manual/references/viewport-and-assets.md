@@ -51,6 +51,21 @@ Viewport stays a short subset: no Add, Rename, Copy, Paste, or Save Branch as Pr
 
 Contextual: instanced paint/erase · CSG Export Geometry · camera preview pin/close
 
+## Poly Builder
+
+Viewport blockout. A **Poly Mesh** group parents one node per piece. Toggle **Poly Builder** on the viewport toolbar, or drive the same pieces with MCP `query_polybuilder` / `action_polybuilder` (compact-hidden; see the `genesys-polybuilder` skill). While the toolbar is open, each piece draws a wireframe. With no tool armed, scene pick, the transform gizmo, and the viewport context menu work on those nodes. Brush and Mesh Edit take the left button until you click the armed tool again.
+
+Hotkeys: [hotkeys.md](hotkeys.md) (Poly Builder mode). Brush, Mesh Edit, and Export are toolbar clicks.
+
+| Tool | How | What to do |
+| --- | --- | --- |
+| Brush | Toolbar | Choose a shape, then click and drag. Polygon marks the first point; with 3 or more points, click that mark or double-click to close, then set the height. A cube is a mesh, same as the other shapes. Stairs and ramps climb from the first click towards the second, so the second click is the high end |
+| Mesh Edit | Toolbar | Vertex / Edge / Face on any piece, including a cube. Move, Rotate, and Scale move the selection, not the node. Select a face and move the gizmo to pull it. Toolbar **Extrude** applies a mesh op |
+| Snap | Viewport Snap | Brush placement uses the viewport translate snap. Mesh Edit uses the viewport Move, Rotate, and Scale snaps |
+| Export | Toolbar | Writes `poly_mesh.glb` of the group next to the current scene, one object per piece |
+| Exit | **Esc** | Cancels an in-progress brush drag first; otherwise leaves Poly Builder |
+| Delete | **Del** / **Backspace** | The usual scene delete. It removes the selected piece node |
+
 ## Asset Browser (Assets panel)
 
 | Feature | Path |
@@ -76,7 +91,7 @@ Contextual: instanced paint/erase · CSG Export Geometry · camera preview pin/c
 | Skeleton Profile | Model → Create Skeleton Profile |
 | Extract Model Material | Model context |
 | Model Viewer | Model context — GLTF tree chevron Shift-click expands or collapses the whole branch |
-| Foundry / Scenario | Title bar Foundry |
+| Foundry / Scenario | Title bar Foundry. Skybox generation is `action_asset_generation`. Bring an existing Scenario asset in with `import`; `apply` (`applyAs` for images) only when the user asked to place it. Other Foundry controls stay in the dialog |
 | Find Asset References | Find References |
 | Save Branch as Prefab | Outliner (MCP `action_prefab.createFromNode`) |
 | Merge Meshes to Model | Outliner — writes Model GLB under `@project/assets/models`; optional Merge Into Single Mesh |

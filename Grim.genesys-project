@@ -1,8 +1,9 @@
 {
   "defaultScene": "./assets/default.genesys-scene",
-  "engineVersion": "16.0.1-dev",
+  "engineVersion": "19.0.0-alpha.377",
   "rendererType": "webgpu",
   "gameId": "5fa10acb-a7ba-42ff-b0a1-32a8a26e2929",
+  "alwaysCopyAssets": ["@project/assets/UI", "@project/assets/models"],
   "assetCompiler": {
     "enabled": true,
     "compileOnPlay": true,

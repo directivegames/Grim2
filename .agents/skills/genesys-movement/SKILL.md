@@ -1,76 +1,50 @@
 ---
 name: genesys-movement
-description: Choose and implement pawn or character locomotion in Genesys — walking, falling, flying, swimming, driving, top-down, and NPC movement. Use when the user asks to make something move, mentions MoverNode, movement modes, or mode transitions, or needs a character controller. Not for navmesh pathfinding (genesys-navigation) or wheel/suspension tuning (genesys-physics).
+description: Choose and implement pawn or character locomotion in Genesys — walking, falling, flying, swimming, driving, top-down, and NPC movement. Use when the user asks to make something move, mentions the Gameplay Simulation System (GSS), GSSNode, GSSCharacterPawn, movement modes, or mode transitions, or needs a character controller. Not for navmesh pathfinding (genesys-navigation) or wheel/suspension tuning (genesys-physics).
 ---
 
 # Methodology
 
-1. Read the Classic vs Mover decision guide below before writing any movement code.
-2. If Classic: read [pawn-player-controller](../genesys-engine/references/pawn-player-controller.md) in the `genesys-engine` skill — it documents `BasePawnMovementNode` subclasses, `MovementPawn`, and `CharacterPawn`/`DefaultCharacterPawn`. This skill does not duplicate that content.
-3. If Mover: read [mover-mechanics](references/mover-mechanics.md) for the tick cycle and core types, then [mover-modes](references/mover-modes.md) for the built-in mode catalog.
-4. Writing a custom mode, transition, or input producer: read [custom-modes-and-controllers](references/custom-modes-and-controllers.md).
-5. Vehicles (either system): read [vehicle-movement](references/vehicle-movement.md). Wheel/suspension/friction tuning is owned by the `genesys-physics` skill — do not duplicate it here.
-6. NPC locomotion: read [npc-movement](references/npc-movement.md). Navmesh queries and path calculation are owned by the `genesys-navigation` skill — do not duplicate it here.
+1. Read the Classic vs GSS decision guide below before writing any movement code.
+2. If Classic: read [pawn-player-controller](../genesys-engine/references/pawn-player-controller.md) in the `genesys-engine` skill — it documents `BasePawnMovementNode` subclasses, `MovementPawn`, and `CharacterPawn`/`DefaultCharacterPawn`.
+3. If GSS: use `GSSNode` + `GSSCharacterPawn` + `GSSPlayerController`. Register modes/abilities/effects on the pawn, in `createGSSNode()`. Input is vectors plus currently-down tags; the sim node derives press/release edges.
+4. NPC locomotion: `AIController` implements `IGSSInputProducer` against `GSSNode`. Navmesh queries belong to `genesys-navigation`.
+5. If existing code uses `MoverNode`, do not extend it. Read [Mover to GSS migration](references/mover-to-gss.md).
 
-# Classic vs Mover: which one to use
+# Classic vs GSS
 
-Two parallel movement systems exist in the engine. Both are real, current, and neither is deprecated.
+GSS (Gameplay Simulation System) is the networked simulation: replication, prediction, rollback, and reconciliation.
 
-| | Classic (`BasePawnMovementNode` subclasses) | Mover (`MoverNode` + `IMovementMode`) |
+| | Classic (`BasePawnMovementNode`) | GSS (`GSSNode`) |
 |---|---|---|
-| Shape | One node = one fixed locomotion behavior for the pawn's lifetime (`CharacterMovementNode`, `AerialMovementNode`, `AirplaneMovementNode`, `VehicleMovementNode`, `TopDownMovementNode`, `SpectatorMovementNode`, `NpcMovementNode`, `DirectionalCharacterMovementNode`) | One `MoverNode` holds multiple named modes (`WalkingMode`, `FallingMode`, `FlyingMode`, `AerialMode`, `AirplaneMode`, `TopDownMode`, `VehicleMode`) and switches between them at runtime |
-| Mode switching | Not supported — swapping locomotion means replacing `MovementPawn.movementNode` with a different node instance | First-class: `IMovementMode.transitions` (`IMoverTransition[]`) are evaluated every tick for automatic switches (e.g. walking → falling when ground contact is lost); `MoverNode.queueNextMode(name)` forces one explicitly |
-| Stacking/composable effects | Not composable beyond the single `speedModifier` scalar on `BasePawnMovementNode` — crouch, knockback, buffs have to be hand-built into the node subclass | `LayeredMove` (temporary velocity override/additive — knockback, launch, root motion) and `MovementModifier` (persistent per-tick mutation — crouch, speed buffs, gravity change) stack on top of whichever mode is active, mode-agnostic |
-| Multiplayer prediction | Built into `BasePawnMovementNode` itself: a `SavedMove` queue, `@ServerRPC`/`@ClientRPC` reconciliation, `positionCorrectionThreshold` — works out of the box for every classic node | Depends on the backend. Check which `IMoverBackend` implementations exist in `.engine/src/nodes/movement/mover/` before relying on prediction: `StandaloneMoverBackend` is synchronous with no networking, and `IMoverBackend`'s doc comment describes a networked backend that may or may not be implemented |
-| Pawn base | `Pawn` → `MovementPawn` (`movementNode` property, action methods `moveForward`/`moveRight`/`jump`/etc. for a Controller to call) → `CharacterPawn`/`GameplayPawn`/`DefaultCharacterPawn` | `Pawn` → `MoverCharacterPawn` directly (skips `MovementPawn` — no `movementNode`, no action methods). Exposes `getMoverNode()` instead |
-| Input wiring | `PlayerController` calls pawn action methods each tick (`pawn.moveForward(value)`, `pawn.jump()`, ...) | `PlayerController` (or an AI controller) implements `IMovementInputProducer` and registers directly on the `MoverNode` via `addInputProducer(this)` — no pawn action methods involved at all |
-| Path following | `NpcMovementNode` follows navmesh paths — see [npc-movement](references/npc-movement.md) | No path-following mode ships; pair a Mover pawn with classic `NpcMovementNode` or drive the mover from your own path logic |
+| Shape | One node, one locomotion for the pawn's lifetime | Named modes (`GSSWalkingMode`, `GSSFallingMode`) switch at runtime |
+| Mode switching | Replace `MovementPawn.movementNode` | `IGSSMovementModeTransition` and `queueMovementMode` |
+| Prediction | Built into `BasePawnMovementNode` | `useNetworkPrediction` plus `NetPredictionManager` |
+| Pawn | `MovementPawn` → `CharacterPawn` | `GSSCharacterPawn` (`getGSSNode()`) |
+| Input | Controller action methods | `IGSSInputProducer` (down-tags only) |
 
-Pick Mover when the pawn genuinely needs runtime mode switching (walk → fall → fly,
-or drive in and out of a vehicle) or stacked layered/modifier effects, and the game
-does not need client-side movement prediction from the Mover stack itself.
+Mover remains loadable only for compatibility with existing games. It is unsupported: do not
+use it for new code or add features to it. Migrate existing Mover games to GSS.
 
-Pick Classic when the pawn's locomotion is fixed for its lifetime, the game is
-multiplayer and needs the built-in prediction/reconciliation for a human-controlled
-pawn, or NPC path-following is required (`NpcMovementNode`).
-
-Nothing prevents mixing both systems in one game — e.g. a Mover-based player character alongside classic `NpcMovementNode` AI, or a classic `VehicleMovementNode` car alongside a Mover-based on-foot player.
-
-# Core guidelines (Mover)
-
-- Import the engine with `import * as ENGINE from '@gnsx/genesys.js'`. Decorate custom classes with `@ENGINE.GameClass()`, never `@EngineClass`.
-- `MoverNode` attaches to any pawn via `pawn.add(mover)` — it is not a typed pawn slot like classic `movementNode`. `MoverCharacterPawn` stores it as `this.moverNode` and exposes `getMoverNode()`.
-- Register modes with `mover.addMovementMode(name, modeInstance)` and set `mover.startingModeName` before `beginPlay`.
-- A custom `PlayerController` for Mover implements `IMovementInputProducer` and calls `moverNode.addInputProducer(this)` in `onPossess` / `removeInputProducer(this)` in `onUnpossess` — mirror `MoverPlayerController` (`.engine/src/entities/MoverPlayerController.ts`).
-- `MoverPlayerController` only drives biped Walking/Falling axis layout. Its own doc comment says other locomotion styles (vehicle, airplane, top-down) need dedicated controllers that write the axis layout those modes expect — do not try to reuse it for a vehicle or airplane pawn.
-- Stance/buff changes go through `MovementModifier`, never ad-hoc `MovementInputCmd` flags.
+A game may mix classic movement nodes on some pawns and GSS on others. Do not treat
+that as a free mix for colliding or tracing actors: GSS rewinds nearby `IRewindable`
+nodes during movement and prediction-aware queries, and classic pawns are not rewindable.
+Interactions (collision, traces, knockback, enter/exit) mis-predict unless the game adds
+history, rewind/restore, and re-simulation on the non-sim pawn — see
+[gss-mechanics](references/gss-mechanics.md).
 
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
 
 @ENGINE.GameClass()
-class HoverCarPawn extends ENGINE.MoverCharacterPawn {
-  protected override createMoverNode(): ENGINE.MoverNode {
-    const mover = ENGINE.MoverNode.create({ name: 'MoverNode' });
-    mover.addMovementMode('walking', new ENGINE.WalkingMode({ maxSpeed: 6, jumpSpeed: 7 }));
-    mover.addMovementMode('falling', new ENGINE.FallingMode({ maxMidAirJumps: 1 }));
-    mover.addMovementMode('flying', new ENGINE.FlyingMode({ maxSpeed: 20 }));
-    mover.startingModeName = 'walking';
-    return mover;
-  }
-}
+class MyPawn extends ENGINE.GSSCharacterPawn {}
+
+@ENGINE.GameClass()
+class MyController extends ENGINE.GSSPlayerController {}
 ```
 
-# References
+Override `GSSCharacterPawn.createGSSNode()` to add custom modes, abilities, and effects — do not subclass `GSSNode`. Content carries its own `id`; re-registering an id replaces that entry in place, and applying an unregistered id warns and does nothing.
 
-- [Mover mechanics](references/mover-mechanics.md): `MoverNode` tick cycle, core data types, `IMoverTransition`, `LayeredMove`, `MovementModifier`, sync tags, and the current single backend.
-- [Mover modes catalog](references/mover-modes.md): every built-in `IMovementMode` — options, tags, pairing requirements, and which classic node each was ported from.
-- [Custom modes and controllers](references/custom-modes-and-controllers.md): the `IMovementMode` contract, writing an `IMoverTransition`, and the `IMovementInputProducer` contract a custom controller must implement (`MoverPlayerController` as reference).
-- [Vehicle movement](references/vehicle-movement.md): `VehicleMovementNode` (classic) vs `VehicleMode` (Mover) at the pawn/movement integration level. Wheel/suspension/friction tuning lives in `genesys-physics`.
-- [NPC movement](references/npc-movement.md): driving `NpcMovementNode` once a path/target exists. Navmesh queries and path calculation live in `genesys-navigation`.
+An actor that acts but does not walk (turret, prop, spawner) is still a GSS pawn: register `GSSIdleMode` instead of walking/falling. Registering no modes at all is legal but drops effect-proposed movement silently — see [gss-modes](references/gss-modes.md).
 
-# Tips
-
-- Consult `.engine/src/nodes/movement/mover/` and `.engine/src/entities/MoverCharacterPawn.ts` / `MoverPlayerController.ts` for exact signatures before writing mode or controller code — this skill is a map, not a full API reference.
-- `mover.hasSyncTag('mover.onGround')` prefix-matches by default (`hasSyncTag('mover', false)` also matches `mover.onGround`); pass `exactMatch: true` for an exact tag check.
-- `mover.getActiveMode(YourModeClass)` / `mover.findMode(YourModeClass)` let a controller or ability query mode state without hardcoding the active mode name.
+The sim node drives one **target** node (the entity root unless you pass `target`), fixed at creation. Its `Sync` state is private: modes, abilities, effects, and cues write through the context they are handed, everyone else reads copies (`getPosition()`, `getAttribute()`, `hasGSSTag()`, …), and nothing outside the simulation can move a sim-driven actor. Presentation reacts through `onMovementModeChanged` and `onVisualOffsetChanged` rather than reading the sim node; see [gss-mechanics](references/gss-mechanics.md).

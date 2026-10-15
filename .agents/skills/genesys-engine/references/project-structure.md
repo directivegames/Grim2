@@ -79,3 +79,4 @@ Fields:
 - defaultScene — Default scene path for play / runtime.
 - defaultServerScene — Optional dedicated-server scene override.
 - engineVersion — Compatible engine version.
+- alwaysCopyAssets — Optional file or folder paths (`@project/...` or project-relative) that the build copies even when game code does not mention each file as its own string literal. Use this when a path is chosen at runtime (`@project/assets/levels/${name}.json`). A listed folder copies every file under it. Do not use it as a substitute for writing full asset path literals.

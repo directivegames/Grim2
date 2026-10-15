@@ -55,6 +55,23 @@ Canonical player list: [player-list-safe](references/player-list-safe.md).
 General HUD rules: Safe UI in the `genesys-ui-kit` skill and
 [safe-ui](../genesys-ui-kit/references/safe-ui.md).
 
+# Built-in session chat
+
+Every multiplayer client gets an in-game text chat (bottom-left). Enter or the Chat button opens
+it; Enter or Send sends; Escape cancels. Lines reach only the players connected to the same
+server. Do not build a second chat on top of RPCs; configure the built-in one instead:
+
+- Disable it: set `chatEnabled = false` on the GameMode (property in the Multiplayer category).
+- Join/leave notices: set `chatJoinLeaveNotices = false` on the GameMode to silence them.
+- Moderate it: override `protected filterChatMessage(senderClientId, text)` on the GameMode
+  (server-only); return rewritten text or `null` to drop the line.
+- React to lines (sounds, notifications): listen to `world.chatSystem.onServiceChanged` and
+  subscribe to the service's `onMessage` (`ENGINE.IChatService`). Entry text is untrusted;
+  render it with `textContent`.
+- The sender name comes from `PlayerInfo.playerName` on the server; clients cannot spoof it.
+- Closing with Escape releases the mouse; the player clicks the game to capture it again
+  (browsers do not let Escape re-lock the pointer).
+
 # References
 
 Read the reference that matches your current task:

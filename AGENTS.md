@@ -22,7 +22,22 @@
   Then the corresponding URL should be:  
   `@project/assets/models/tiger.glb`
 
-  **Important:** Always use the complete path with `@project/assets/` prefix rather than relative paths. This ensures compatibility with publishing tools and build processes. You should **never** construct a project path programmatically.
+  **Important:** Write the complete path as one string literal (`'@project/assets/models/tiger.glb'`). The build copies only `@project/...` paths that appear in the bundle as a real file. Do **not** build that path with a shared prefix, a template literal, or `+`.
+
+  ```typescript
+  // Wrong — minification keeps the folder prefix, and the file is left out of the build
+  const MESH = '@project/assets/generated/mesh/';
+  const path = `${MESH}fox.glb`;
+
+  // Right
+  const path = '@project/assets/generated/mesh/fox.glb';
+  ```
+
+  The only exception is a path chosen at runtime (a level name, a generated id, a locale). List that file or folder in the `.genesys-project` file so the build copies it even though the full path is not a literal:
+
+  ```json
+  "alwaysCopyAssets": ["@project/assets/generated/mesh"]
+  ```
 
 ## Resolve Asset Paths
 - Using asset paths containing `@engine` or `@project` in raw html will not work out of the box as the browser doesn't know how to resolve them.
@@ -101,6 +116,13 @@ Do **not** use `beginPlay`, constructors, or one-off runtime hacks to patch a sp
 - For every shell command (`pnpm`, `git`, TypeScript tools, etc.), set `workingDirectory` to this game project root — the folder that contains `package.json` and the `.genesys-project` file. Do not rely on the default shell cwd; it may be the Genesys desktop app process directory.
 - To register newly added game classes in the running editor, use MCP `action_build(action="buildProject")`.
 - Do **not** run `pnpm test`, `pnpm dev`, or `pnpm start` — these commands are **not supported**.
+- To see the game while Play is already running in the editor and MCP is off, read pixels from the Play listener. Do not start a dev server.
+  1. Play must already be running in the editor.
+  2. Read `.genesys/play-server.json` (from the project root).
+  3. `curl.exe -sf -H "Authorization: Bearer <token>" <baseUrl>/surfaces`
+  4. `curl.exe -sf -H "Authorization: Bearer <token>" -o .genesys/play-capture-<id>.jpg "<baseUrl>/screenshot?surface=<id>"`
+  5. Read the image. On Windows use `curl.exe`; PowerShell `curl` is a different command.
+  6. A missing file, refused connection, or 503 means Play is not running; ask the user. 429 means wait. Do not retry in a loop.
 - All testing is the responsibility of the user.  
   You are encouraged to:
   - Recommend suitable testing approaches.
@@ -113,12 +135,15 @@ Before implementing any user request, you **must** interpret the prompt, identif
 - State clear assumptions **before** coding, or
 - Ask the user targeted clarification questions.
 
+When `request_user_input` is in your tool list, call it instead of asking those questions in chat, then wait for the answer. Use it only when a wrong assumption would change the work. Otherwise state the assumption and continue. Prefer one question (three at most). Put the recommended option first and suffix its label with "(Recommended)". Do not add an Other option.
+
 ### Required Steps
 1. **Understand intent** — Restate what the user is asking in your own words.
 2. **Identify ambiguities** — Look for vague or overloaded terms.
 3. **Clarify or assume** —
-   - If unclear, ask specific, short questions to confirm meaning.
-   - If the user cannot clarify, proceed with explicit, written assumptions.
+   - If unclear and `request_user_input` is available, call it with specific, short questions and wait.
+   - If the tool is not available, ask specific, short questions in chat.
+   - If the user skips or cannot clarify, proceed with explicit, written assumptions.
 4. **Confirm scope** — Specify what systems, assets, or files you will change.
 
 This process **prevents incorrect implementations** when user wording is incomplete or ambiguous.
@@ -133,6 +158,10 @@ When planning mixed work, tag each step by state owner so scene edits are not mi
 - `[Verify]` — build, lint, diagnostics, or editor re-query
 
 Example: `[MCP] Set MeshNode material on Floor root` → `[Verify] Re-query node and confirm scene saved`.
+
+## Keeping SDK Files From Updating
+
+When the project is opened, the SDK refreshes the files and skills it manages (for example `scripts/genesys/**`, `.vscode/**`, `.agents/skills/<name>`). To keep your own edits to one of them, list its project-relative path in a `.genesysignore` file at the project root, using `.gitignore` syntax (globs, `#` comments, `!` negation, trailing `/` for directories). Matching files are not added, updated, or deleted. `package.json` and the SDK sections of marker-based files (such as this one) always update.
 # GENESYS-SDK-END
 
 # Add your custom AI instructions below.

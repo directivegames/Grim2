@@ -133,8 +133,8 @@ export class HealthBarUI {
 
     // Build CSS with @project paths and resolve them
     const cssString = `
-      .bg { background-image: url("${HEALTH_BG_URL}"); }
-      .fill { background-image: url("${HEALTH_FILL_URL}"); }
+      .bg { background-image: url("@project/assets/UI/HealthBG.webp"); }
+      .fill { background-image: url("@project/assets/UI/HealthBar.webp"); }
     `;
 
     const resolvedCss = await ENGINE.resolveAssetPathsInText(cssString);

@@ -94,7 +94,7 @@ export class SoulCounterUI {
     if (!this._container) return;
 
     // Resolve background image path
-    const cssString = `.bg { background-image: url("${SOULS_BG_URL}"); }`;
+    const cssString = `.bg { background-image: url("@project/assets/UI/SoulsBG.webp"); }`;
     const resolvedCss = await ENGINE.resolveAssetPathsInText(cssString);
     const bgMatch = resolvedCss.match(/\.bg\s*\{\s*background-image:\s*url\("([^"]+)"\);/);
 
@@ -105,7 +105,9 @@ export class SoulCounterUI {
     // Resolve font path and update stylesheet
     const fontStyle = document.querySelector('style');
     if (fontStyle && fontStyle.textContent?.includes(FONT_URL)) {
-      const resolvedFont = await ENGINE.resolveAssetPathsInText(`url("${FONT_URL}")`);
+      const resolvedFont = await ENGINE.resolveAssetPathsInText(
+        'url("@project/assets/UI/Bree_Serif/BreeSerif-Regular.ttf")',
+      );
       const fontMatch = resolvedFont.match(/url\("([^"]+)"\)/);
       if (fontMatch) {
         fontStyle.textContent = fontStyle.textContent.replace(FONT_URL, fontMatch[1]);
