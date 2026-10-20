@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import * as ENGINE from '@gnsx/genesys.js';
 
 const SLASH_SPRITESHEET_PATH =
-  '@project/assets/VFX/SlashFX Combos/SlashFX Combo3 sheet.webp';
+  '@project/assets/VFX/SlashFX-Combos/SlashFX-Combo3-sheet.webp';
 
 const FRAME_COUNT = 4;
 /** Matches SpinningWeaponActor — keeps sprite aligned with the blade model. */
@@ -159,20 +159,17 @@ export class WeaponSlashSpriteComponent extends ENGINE.SceneNode {
     }
 
     try {
-      const resolvedPath = await ENGINE.resolveAssetPathsInText(SLASH_SPRITESHEET_PATH);
-      this._texture = await new Promise<THREE.Texture>((resolve, reject) => {
-        new THREE.TextureLoader().load(
-          resolvedPath,
-          (texture) => {
-            texture.wrapS = THREE.ClampToEdgeWrapping;
-            texture.wrapT = THREE.ClampToEdgeWrapping;
-            texture.colorSpace = THREE.SRGBColorSpace;
-            resolve(texture);
-          },
-          undefined,
-          (err) => reject(err),
-        );
-      });
+      const texture = await ENGINE.resourceManager.loadTexture(
+        ENGINE.AssetPath.fromString(SLASH_SPRITESHEET_PATH),
+      );
+      if (!texture) {
+        console.warn('[WeaponSlashSpriteComponent] Slash spritesheet load returned null');
+        return;
+      }
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.colorSpace = THREE.SRGBColorSpace;
+      this._texture = texture;
 
       const image = this._texture.image as { width?: number; height?: number } | undefined;
       if (image?.width && image?.height) {
