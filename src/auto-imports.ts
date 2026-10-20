@@ -1,4 +1,3 @@
-import './game-data.js';
 import './actors/BackgroundMusicActor.js';
 import './actors/BigUndeadActor.js';
 import './actors/ComboMeterTracker.js';
@@ -97,6 +96,7 @@ import './game/player-profile-types.js';
 import './game/PlayerProfile.js';
 import './game/postman-road-waypoints.js';
 import './game/risk5-plus.js';
+import './game-data.js';
 import './horde/horde-spawn-utils.js';
 import './horde/HordeEnemyRegistry.js';
 import './mission/enemy-spawn-points.js';

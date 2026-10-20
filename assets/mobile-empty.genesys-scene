@@ -38,9 +38,6 @@
       {
         "$bc": "ENGINE.PlayerStart",
         "$initOptions": {},
-        "children": {
-          "$length": 1
-        },
         "name": "Player Start",
         "nodeId": 9508,
         "position": {

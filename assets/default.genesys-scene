@@ -680,6 +680,22 @@
           1.6
         ]
       }
+    },
+    {
+      "$bc": "THREE.MeshStandardMaterial",
+      "$id": 37,
+      "$value": {
+        "uuid": "b9cb185c-ab2f-4496-846e-c1889e0bc3d1",
+        "visible": false
+      }
+    },
+    {
+      "$bc": "THREE.MeshStandardMaterial",
+      "$id": 38,
+      "$value": {
+        "uuid": "2829e7cd-6889-45a8-b5d6-965fa9392522",
+        "visible": false
+      }
     }
   ],
   "$root": {
@@ -732,9 +748,6 @@
       {
         "$bc": "ENGINE.PlayerStart",
         "$initOptions": {},
-        "children": {
-          "$length": 1
-        },
         "name": "Player Start",
         "nodeId": 12454,
         "position": {
@@ -10111,9 +10124,6 @@
         "children": [
           {
             "$bc": "ENGINE.VFXNode",
-            "children": {
-              "$length": 1
-            },
             "name": "VFX",
             "nodeId": 4600,
             "position": {
@@ -10137,9 +10147,6 @@
           },
           {
             "$bc": "ENGINE.VFXNode",
-            "children": {
-              "$length": 1
-            },
             "name": "VFX 02",
             "nodeId": 51927,
             "position": {
@@ -40079,9 +40086,6 @@
           ]
         },
         "cardModelUrl": "@project/assets/models/SM_FogCard_02.glb",
-        "children": {
-          "$length": 1
-        },
         "emissiveIntensity": 0.49,
         "flowMapDirection": 0.28,
         "flowMapSpeed": 0.18,
@@ -40123,9 +40127,6 @@
       },
       {
         "$bc": "ENGINE.VFXNode",
-        "children": {
-          "$length": 1
-        },
         "name": "Smokevfx",
         "nodeId": 38614,
         "position": {
@@ -44742,9 +44743,6 @@
         "children": [
           {
             "$bc": "ENGINE.VFXNode",
-            "children": {
-              "$length": 1
-            },
             "name": "VFX",
             "nodeId": 45758,
             "position": {
@@ -46354,9 +46352,6 @@
           ]
         },
         "cardModelUrl": "@project/assets/models/SM_FogCard_02.glb",
-        "children": {
-          "$length": 1
-        },
         "emissiveIntensity": 0.49,
         "flowMapDirection": 0.28,
         "flowMapSpeed": 0.18,
@@ -46418,9 +46413,6 @@
           ]
         },
         "cardModelUrl": "@project/assets/models/SM_FogCard_02.glb",
-        "children": {
-          "$length": 1
-        },
         "emissiveIntensity": 0.49,
         "flowMapDirection": 0.28,
         "flowMapSpeed": 0.18,
@@ -46568,20 +46560,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "7b0ab1cf-3412-4f5b-81eb-c4c5a9330965"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 32181,
@@ -46642,20 +46621,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "d97aad65-b417-4c76-8889-a49f8b9b4d0c"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 64250,
@@ -46716,20 +46682,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "f617b6dd-8559-400e-9aea-793a239f1fed"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 32685,
@@ -46790,20 +46743,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "cfb5e8f1-0567-4cbf-8717-c3e6005694a8"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 52726,
@@ -46864,20 +46804,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "e77d40cf-2c10-4923-86ce-ed6849dcdb7a"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 56466,
@@ -46938,20 +46865,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "bf6f6a67-79c5-4211-b921-008a8808f9bb"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 18503,
@@ -47012,20 +46926,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "ff3f7e44-dca8-4f9b-ac0f-055520f92128"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 1015,
@@ -47087,20 +46988,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  0.090842,
-                  1,
-                  0.246201
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "589b3e0d-2c64-4a54-a57a-93034f4f3b98"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47148,20 +47036,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  0.090842,
-                  1,
-                  0.246201
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "5d236d6f-d20d-458d-8311-278da15b6b31"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47209,20 +47084,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  0.090842,
-                  1,
-                  0.246201
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "8d79ee55-3712-4abf-974b-0f215fd39e85"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47270,20 +47132,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  0.090842,
-                  1,
-                  0.246201
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "c42168b0-50bd-4e9b-ae97-4cd0e2a2398c"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47331,20 +47180,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  0.090842,
-                  1,
-                  0.246201
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "28328f44-c688-4d6d-8f66-d82c501408a2"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47392,20 +47228,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  0.090842,
-                  1,
-                  0.246201
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "0a6a3f4d-4f81-4ff2-b5fe-2bab0fde0460"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47453,20 +47276,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "a9d4ba79-b1c5-4521-a264-ed523fff79ea"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47514,20 +47324,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "2c7b1d49-f199-4a3b-bf6f-760c84124bef"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47575,20 +47372,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "75332922-4c22-4775-ba46-56ad23b7afcd"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47636,20 +47420,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "acd6107f-1203-4722-a35c-44119306ca49"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47697,20 +47468,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "1b9835aa-9475-432a-b5a3-c175fc07d5a4"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47758,20 +47516,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "9a99c63b-0b57-4d95-8c08-1ab083b4d3b4"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47819,20 +47564,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "d83b8e16-9f17-4123-9334-ecf7e3c70924"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47880,20 +47612,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "c2b169b9-92b1-48af-880a-8713e890aa31"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -47941,20 +47660,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "22af289a-dcf8-4fe4-8878-3b70e196f9fc"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -48002,20 +47708,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "5a065470-4002-4324-8325-19bdf6a60479"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "navigationGeometryRole": "exclude",
@@ -48062,20 +47755,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "d2d5f21d-5ae4-4e28-8f8e-7a12fd605f9d"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 40491,
@@ -48121,20 +47801,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "93347e32-a741-401a-b8a8-963149fc43a3"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 46776,
@@ -48180,20 +47847,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "638591ad-b07a-4369-a028-8749bb8d9d18"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 29844,
@@ -48239,20 +47893,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "4e3ca51f-6984-4de8-9e09-f571fa3aca2f"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 131,
@@ -48298,20 +47939,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "d6c66cad-a4f3-4b0a-9496-27e153e1aec4"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 53410,
@@ -48357,20 +47985,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "90a64b50-3bc9-4f61-aa19-3d4a6dfc3e87"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 54615,
@@ -48416,20 +48031,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "13278231-8f0d-4ce4-8a0a-7b387d474cfc"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 46081,
@@ -48475,20 +48077,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "9ba7158f-2914-48d3-9ca9-481b8f80ec25"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 47923,
@@ -48534,20 +48123,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "3e6032fc-904c-499d-82c3-11c27c84404f"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 55437,
@@ -48593,20 +48169,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "861207e7-36a9-4257-afd8-f0dbf8620ca1"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 42974,
@@ -48652,20 +48215,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "f080faac-9e67-4837-88cf-17a32255641a"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 16115,
@@ -48711,20 +48261,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "8d1ec91d-8aa2-45ad-b8eb-3be58db9f39c"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 18477,
@@ -48770,20 +48307,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.401978,
-                  0.057805
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.28,
-              "side": 2,
-              "transparent": true,
-              "uuid": "c908ed94-0e15-48be-b0ce-f642d1e5f3fa"
+              "$ref": 38
             },
             "name": "MarkerRoot",
             "nodeId": 29383,
@@ -52621,9 +52145,6 @@
           ]
         },
         "cardModelUrl": "@project/assets/models/SM_FogCard_02.glb",
-        "children": {
-          "$length": 1
-        },
         "emissiveIntensity": 0.49,
         "flowMapDirection": 0.28,
         "flowMapSpeed": 0.18,
@@ -52685,9 +52206,6 @@
           ]
         },
         "cardModelUrl": "@project/assets/models/SM_FogCard_02.glb",
-        "children": {
-          "$length": 1
-        },
         "emissiveIntensity": 0.49,
         "flowMapDirection": 0.28,
         "flowMapSpeed": 0.18,
@@ -52972,20 +52490,7 @@
               ]
             },
             "material": {
-              "$bc": "THREE.MeshBasicMaterial",
-              "color": {
-                "$bc": "c",
-                "_": [
-                  1,
-                  0.090842,
-                  0.090842
-                ]
-              },
-              "depthWrite": false,
-              "opacity": 0.22,
-              "side": 2,
-              "transparent": true,
-              "uuid": "5489d060-3b06-480f-bf6b-12e54eef8cf7"
+              "$ref": 37
             },
             "name": "BlockerRoot",
             "nodeId": 13286,
@@ -53124,9 +52629,6 @@
           ]
         },
         "cardModelUrl": "@project/assets/models/SM_FogCard_02.glb",
-        "children": {
-          "$length": 1
-        },
         "emissiveIntensity": 0.49,
         "flowMapDirection": 0.28,
         "flowMapSpeed": 0.18,
