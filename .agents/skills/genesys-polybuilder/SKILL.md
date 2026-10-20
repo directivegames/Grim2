@@ -1,6 +1,6 @@
 ---
 name: genesys-polybuilder
-description: Build a scene Poly Mesh with Genesys MCP Poly Builder tools — boxes, planes, cylinders, spheres, cones, stairs, ramps, polygons, and mesh edit. Use when the user asks to block out, model, or sculpt a mesh in the open scene. Not for a plain MeshNode primitive (action_node) or baking meshes to a GLB (action_asset.mergeMeshes).
+description: Build a scene Poly Mesh with Genesys MCP Poly Builder tools — boxes, planes, cylinders, spheres, cones, stairs, ramps, polygons, and mesh edit. Use when the user asks to block out, model, or sculpt a mesh in the open scene. Not for terrain, islands or landscapes (genesys-world-building), a plain MeshNode primitive (action_node), or baking meshes to a GLB (action_asset.mergeMeshes).
 ---
 
 # Poly Builder
@@ -8,6 +8,8 @@ description: Build a scene Poly Mesh with Genesys MCP Poly Builder tools — box
 A **Poly Mesh** group in the open scene parents one node per piece. Play and the Outliner select those nodes. Every piece is an editable mesh, including a box. Piece `position` is local to that group. The group starts at the world origin, so a new blockout matches world coordinates. `polyMeshNodeId` is the group. `engineNodeId` on each piece is the Outliner node.
 
 **Do not screenshot to verify the scene.** `captureScreenshot` is not a check that a piece exists, sits in the right place, meets another face, or that a mesh op landed. An image has no piece id, bounds, or face centre.
+
+Not Poly Builder work: terrain, islands, hills, oceans and other landscapes. Use `TerrainMeshNode`, `WaterNode` and `ScatterNode` from [genesys-world-building](../genesys-world-building/SKILL.md). Poly Builder cones are not islands.
 
 Read the scene with MCP instead:
 

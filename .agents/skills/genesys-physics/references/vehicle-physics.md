@@ -50,7 +50,7 @@ Tuning heuristics:
 - `setBrakeForce(force)` — applies to all `canBrake` wheels.
 - `setWheelBrake(wheelIndex, force)` — single-wheel brake (e.g. handbrake on rear only).
 - `setSteering(angle)` (radians) — applies to all `canSteer` wheels equally; there is no per-wheel Ackermann steering built in.
-- `setWheelFrictionSlip(wheelIndex, value)` / `setWheelSideFrictionStiffness(wheelIndex, value)` — retune an individual wheel's grip at runtime (e.g. a flat tire, a surface-dependent grip system).
+- `setWheelFrictionSlip(wheelIndex, value)` / `setWheelSideFrictionStiffness(wheelIndex, value)` — retune an individual wheel's grip at runtime (e.g. a flat tire, a surface-dependent grip system). The value stays until the next call. Wheel config supplies only the initial value.
 
 ## State queries
 

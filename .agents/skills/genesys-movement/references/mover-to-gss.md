@@ -101,8 +101,11 @@ component getters, `getAttribute()`, or `hasGSSTag()`. Vector and Euler getters 
 Prediction sends a digest upstream, corrections downstream, `proxyState` to non-owners, and an
 acknowledgement to the owner.
 
-Initialize `NetPredictionManager` for worlds that use `useNetworkPrediction`. Preserve the same
-registration order for tags, modes, abilities, effects, and cues on every peer.
+Initialize `NetPredictionManager` from `GameMode.onBeforeBeginPlay` and shut it down from
+`onAfterEndPlay`. `useNetworkPrediction` defaults to true and stays local-only until that
+manager exists. Preserve the same registration order for tags, modes, abilities, effects,
+and cues on every peer. Snapshot time is `NetPredictionManager.getGameTimeMs` — see
+`genesys-multiplayer` `references/network-prediction.md`.
 
 ## Unsupported modes
 

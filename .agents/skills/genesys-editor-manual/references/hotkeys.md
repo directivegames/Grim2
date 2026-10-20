@@ -14,6 +14,7 @@ Keyboard shortcuts for the editor, viewport, Outliner, and Asset Browser.
 | `Ctrl/Cmd+S` | Save Scene |
 | `Ctrl/Cmd+B` | Build Project |
 | `Ctrl/Cmd+R` | Reload |
+| `Ctrl/Cmd+K` | Open Command Palette |
 | `Ctrl/Cmd+Z` | Undo |
 | `Ctrl/Cmd+Shift+Z` or `Ctrl/Cmd+Y` | Redo |
 | F11 | Toggle Full Screen (desktop View menu) |
@@ -34,6 +35,7 @@ Keyboard shortcuts for the editor, viewport, Outliner, and Asset Browser.
 | Hotkey | Action |
 | --- | --- |
 | Q / W / E / R | Select / Move / Rotate / Scale |
+| Space | Cycle transform tool: Move → Rotate → Scale (switches to Move from Select). Ignored in Play Mode |
 | X | Toggle World / Local (Scale always uses local) |
 | F | Focus / frame selection. Prefab Editor document root (or nothing selected): Reset Camera |
 | End | Drop selection to surface |
@@ -68,7 +70,7 @@ Ignored in Play Mode and while typing in a field. Unmodified keys only (`Ctrl/Cm
 | H | Toggle editor visibility (editor-only, not runtime) |
 | L | Toggle editor lock (editor-only) |
 | `/` | Edit selected prefab instance |
-| Esc | Close Quick Action Overlay (overlay handles nested popups first); else close Prefab Editor when a return scene exists; else Back from asset / Scene Settings; else clear selection. Does **not** switch to the Select tool |
+| Esc | Close Prefab Editor when a return scene exists; else Back from asset / Scene Settings; else clear selection. Does **not** switch to the Select tool |
 
 ## Trees (Outliner, Asset Browser folders, Model Viewer GLTF)
 
@@ -88,8 +90,11 @@ There is no chevron tooltip. Shift+F does **not** scroll the Outliner.
 
 | Hotkey | Action |
 | --- | --- |
-| `1` | Show or hide Agent Chat (when Assistant UI is enabled; ignored in Play Mode) |
-| Space | Quick Action Overlay when Assistant can start a chat; otherwise **AI Settings** (Connection tab if no usable provider). Ignored in Play Mode |
+| `1` | Toggle Assistant panel (when Assistant UI is enabled; ignored in Play Mode) |
+| `2` | Toggle Outliner panel (ignored in Play Mode) |
+| `3` | Toggle Inspector panel (ignored in Play Mode) |
+| `4` | Toggle Assets panel (ignored in Play Mode) |
+| `5` | Show / hide the Viewport so panels take its space (ignored in Play Mode) |
 
 ## Contextual (not global)
 

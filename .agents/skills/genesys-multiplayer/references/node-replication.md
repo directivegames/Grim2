@@ -20,9 +20,6 @@ export class PickupRoot extends ENGINE.PrimitiveNode {
 Call `this.ensureReplicationInfo()` when you need the info object before play (for example to call `setAutonomousProxy`). `PlayerController` and `Pawn` already do this internally.
 
 When the server adds a replicated entity root to the world, the engine assigns a global `NetId` to its `ReplicationInfo` and spawns a copy on all relevant clients. When the server destroys the root, the copies are removed. The info also carries `netLocalRole` / `netRemoteRole` — Authority on the server, `SimulatedProxy` on clients by default (`AutonomousProxy` for the owning client's controller/pawn — see [player-ownership](player-ownership.md)).
-
-> Deprecated `Actor` compatibility: `ENGINE.Actor` (a deprecated `PrimitiveNode` shell) also auto-creates `ReplicationInfo` from `replicated = true`. Prefer a semantic `SceneNode`/`PrimitiveNode` root instead of `Actor`.
-
 ## Replicating Properties
 
 Mark individual properties with `replicate: true` inside the `@ENGINE.property` decorator. The enclosing class must be `@ENGINE.GameClass()`.
@@ -51,7 +48,7 @@ Rules:
 - A property only participates in replication when its node is inside a replicated entity's member map (the entity root, or a `replicated` descendant under it that isn't itself a nested entity root). A `replicated` node with no surrounding entity root replicates nothing — the flag is a no-op.
 - Replicated properties are also persisted when the property metadata instructs it. Add `transient: true` if the property should travel over the network but not be saved to a scene file.
 - Properties are transmitted in a compact binary format. See Net Type and Quantization below for how to control wire encoding.
-- A replicated property that holds a reference to another node is only reconciled on the client once both nodes have replicated. If the referenced node is not itself replicated (inside a group), the reference will never resolve on the client.
+- A replicated property that holds a reference to another node is only reconciled on the client once both nodes have replicated. If the referenced node is not inside a replicated entity, the reference will never resolve on the client.
 
 ## Reparenting
 
@@ -161,21 +158,19 @@ public blendWeight: number = 0;
 
 ## Transform Replication
 
-There is no generic `replicateTransform` flag for `SceneNode`/`PrimitiveNode` roots (that flag is an `Actor`-only compatibility property — see the deprecated footnote below). For a plain `Pawn`, transform replication is not automatic: creating a `ReplicationInfo` does not by itself move the node on remote clients.
+There is no generic `replicateTransform` flag for `SceneNode`/`PrimitiveNode` roots. For a plain `Pawn`, transform replication is not automatic: creating a `ReplicationInfo` does not by itself move the node on remote clients.
 
 - For player/AI-controlled movement, use a `MovementPawn` subclass (e.g. `CharacterPawn`) whose movement node consumes `NetMovementPredictor` — client-side prediction and server reconciliation are built in.
-- For simple non-player roots that move (projectiles, pickups, moving platforms), implement an explicit replicated `NetTransform`-style property (position/rotation as replicated properties with quantization, see above) with authority-side writes and an `onRep*` callback that applies the value on remote clients. Merely adding replicated position/rotation properties is sufficient — you do not need `replicateTransform`.
-
-> Deprecated `Actor` compatibility: `Actor.replicateTransform = true` (set alongside `replicated = true` in the constructor) enables snap-to-position transform sync automatically. This is an Actor-only compat property with no `SceneNode`/`PrimitiveNode` equivalent — new code should use `MovementPawn`/`CharacterPawn` or explicit replicated transform properties instead.
+- For simple non-player roots that move (projectiles, pickups, moving platforms), implement an explicit replicated `NetTransform`-style property (position/rotation as replicated properties with quantization, see above) with authority-side writes and an `onRep*` callback that applies the value on remote clients. Merely adding replicated position/rotation properties is sufficient.
 
 ## Relevance and Ownership Scoping
 
 By default, once a replicated root's `ReplicationInfo` channel is established with a client, that client keeps receiving its updates for as long as both are connected — there is no per-tick distance/relevance culling hook on `SceneNode`/`PrimitiveNode` roots. To scope *who* sees what:
 
 - Use `replicateTo: 'owner'` / `'non-owner'` (above) to control which clients receive a given property, not the whole entity.
-- Use `MultiplayerSpawner.spawnOwnerOnly(clientId, ...)` (see Scene-Placed vs Dynamically Spawned Roots below) to spawn a whole subtree that only materializes for one client — the right tool for a player's private inventory, hand-UI, or other per-player-only entity.
+- Use `@SpawnMethod({ audience: 'owner' })` or `spawnPrefab(path, [clientId])` (see Scene-Placed vs Dynamically Spawned Roots below) to spawn a subtree that only materializes for one client — a player's private inventory, hand UI, or other per-player entity.
 
-> Deprecated `Actor` compatibility: `Actor.isNetRelevantFor(clientId)` (override for distance-based culling), `Actor.onlyRelevantToOwner = true` (whole-actor owner-only visibility), and `Actor.setNetRelevant(false)` have no `ReplicationInfo`/`SceneNode` equivalent. Prefer `replicateTo` filters and `MultiplayerSpawner.spawnOwnerOnly` for new node-based code.
+There is no distance-culling hook and no `setNetRelevant` / `onlyRelevantToOwner` API. Owner-only entities go through the spawner audience above.
 
 ## Replication Send Rate
 

@@ -47,7 +47,7 @@ Dynamic strings (player names, chat, scores, RPC / join data) → text setters o
 | `ENGINE.AbilityIcon` | 64×64 HUD ability slot with icon, hotkey chip, and radial cooldown overlay. | ability, skill, spell, hotbar, ability slot, cooldown | `AbilityIconOptions` |
 | `ENGINE.AmmoCounter` | Displays current/max ammunition with a low-ammo warning. | ammo, ammunition, magazine, bullets, reload | `AmmoCounterOptions` |
 | `ENGINE.CenterMessage` | Full-screen centered hero banner with 48px title and optional subtitle. Fade-in 0.4s. | victory, defeat, round start, round end, announcement, overlay, banner | `CenterMessageOptions` |
-| `ENGINE.ChatPanel` | In-game chat log with a toggleable composer (Enter or Send to send, Escape to close). | multiplayer chat, team chat, session chat, system notices, chat composer | `ChatPanelOptions` |
+| `ENGINE.ChatPanel` | In-game chat log that fades while idle, with a key hint, :emoji: suggestions, and a composer (Enter or Send to send, Escape to close). | multiplayer chat, team chat, session chat, system notices, chat composer, emoji shortcodes | `ChatPanelOptions` |
 | `ENGINE.Crosshair` | Center-screen reticle with configurable size, color, and style. | crosshair, reticle, aim, cursor, shooter | `CrosshairOptions` |
 | `ENGINE.Message` | Compact single-line chat/system message with optional avatar and bold sender name. | chat, message, system message, kill feed, notification line, hud text | `MessageOptions` |
 | `ENGINE.ProgressBar` | Themed progress indicator with header (label + percentage) above a rounded fill track. | health, mana, stamina, experience, xp, boss hp, progress, cooldown, loading | `ProgressBarOptions` |

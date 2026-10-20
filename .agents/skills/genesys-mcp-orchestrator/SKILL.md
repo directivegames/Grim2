@@ -1,6 +1,6 @@
 ---
 name: genesys-mcp-orchestrator
-description: Live Genesys editor MCP orchestration (availability gate, readiness probe, run_script/batch_execute dispatch, result reliability, viewport screenshot). Not for UI how-tos or pure TypeScript edits.
+description: Live Genesys editor MCP orchestration (availability gate, readiness probe and recovery, run_script/batch_execute dispatch, result reliability, framing and viewport/play capture with metrics). Not for UI how-tos or pure TypeScript edits.
 ---
 
 # Genesys MCP Orchestrator
@@ -46,6 +46,8 @@ After a Scenario MCP generation succeeds, import it by default unless the user a
 
 Bulk find→mutate: first MCP call should be one `run_script(apply, groupUndo=true)` that probes, finds, mutates, saves, and returns a compact summary — do not pre-query nodes through the model or grep `*.genesys-scene` while ready.
 
+Every tool call is a model turn that re-reads the conversation, so merge steps whose inputs you already know into one script: survey, post-apply finds, look and material edits, audit. Return counts next to lists so an empty result shows as `0`, not as a silent miss. Keep each script under about 45 s: the MCP client gives up at 60 s while the script keeps running. A world build inside a script returns `operation_still_running` after 50 s. Screenshots lose their image inside a script, so call `captureScreenshot` directly.
+
 Prefer `query_node` / `action_node` for world/prefab scene-node trees.
 
 ## Attached node context
@@ -66,6 +68,8 @@ Prefer `query_node` / `action_node` for world/prefab scene-node trees.
 - Wrong: `query: { name: ['A', 'B'] }` or any object/array. Right: `query: 'A'` or one `getTree` + `names.includes(n.name)` in script.
 - Subtree size: walk `childIds` in one `run_script(readOnly)`, or use `childIds.length` when depth is known shallow. Do not chain exploratory `getDetails` after a successful `find` that already has `childIds`.
 - Do not call both `find` and `getTree` for the same discovery question.
+- `getTree` returns at most `limit` nodes (default 200, max 500); `find` defaults to 50. Both report `matchedNodes` and `truncated`. When `truncated` is true, a script filtering `nodes[]` misses nodes: narrow `query` (a class name such as `"DamageObjectActor"` matches) instead.
+- `getDetails` returns `components[]`; `transform.position` is a string such as `"(21.2, 14, 51.1)"`, not `properties.position`.
 
 ## Clarifying Questions
 
@@ -91,7 +95,22 @@ Do not trust wrapper `isError` or `status: "success"`. Parse the JSON body.
 
 Treat as failed when: `ok === false`, `error.code` present, `status === "blocked"`, content starts with `MCP error`, or `batch_execute` has `ok === false` / entries in `errors[]`.
 
-On failure: read `error.code` / `message`; if `recoverable`, fix and retry once; apply "Did you mean …" suggestions exactly; on `editor_not_ready` / `editor_busy` report blockers and stop. Never report success after `ok: false`.
+On failure: read `error.code` / `message` / `recovery`; if `recoverable`, fix and retry once; apply "Did you mean …" suggestions exactly. Never report success after `ok: false`.
+
+Readiness errors carry `error.recovery: { action, hint, retryAfterMs? }` (also on `query_editor(getState)` as `recovery` when not ready):
+
+| Code | Do |
+|------|----|
+| `editor_loading` | Wait `retryAfterMs`, retry (chunk/asset load) |
+| `editor_not_ready` / `editor_busy` | Retry after `retryAfterMs`; if it persists, report blockers |
+| `operation_still_running` | A world build is still running: poll `query_editor(getBusyState)` until `isBusy` is false, then read `lastWorldBuild` (`ok`, `focusNodeId` = the new terrain); never re-issue the action |
+| `scene_not_open` | `action_scene(open)` a scene, then retry |
+| `play_mode_active` | `action_editor(exitPlayMode)`, or capture with `target: "play"` |
+| `editor_hidden` | Ask the user to restore the Sandbox Studio window. `getState.viewportVisible: false` predicts it: check before a capture |
+| `editor_disconnected` | Ask the user to reload the editor window; stop |
+| `play_capture_unavailable` | Capture in edit mode with `cameraNodeId` |
+
+When MCP is not ready, recover or stop and report. Never edit runtime game code (for example `beginPlay` scenery) to stand in for a scene edit — that patches the wrong target.
 
 User-facing replies: state the outcome (counts, names, blockers). Do not quote `script_threw`, Zod text, or “query shape was wrong” unless the user asked for debugging. On `expected string, received object` for `query`: pass a string or use `getTree` + in-script filter; one silent retry max.
 
@@ -113,7 +132,9 @@ User-facing replies: state the outcome (counts, names, blockers). Do not quote `
 
 ## Discovery
 
-Viewport capture: `action_editor(action="captureScreenshot", includeImage=true)`. `target` defaults to `"auto"`: while Play is running this returns the game, otherwise the editor viewport. `surface: "all"` captures extra multiplayer windows one after another. Not an OS/desktop screenshot, and only when the user asks for a picture. Do not poll. Recipe: [workflows.md](references/workflows.md#screenshot). Do not use it to verify a scene (what exists, where it is, what is selected, or whether an edit landed). Read that with `query_node` and `query_editor`.
+Verification rule: **state is verified by query; look is verified by capture.** What exists, where it is, what is selected and whether an edit landed → `query_node` / `query_editor`. How a world looks (sky, lighting, water, terrain, camera) → frame, capture, read `metrics`, and look at the image.
+
+Capture: `action_editor(action="captureScreenshot", focusNodeIds=[…], views=["hero","overview"], maxEdge=1280)` returns one record per view with `metrics` (exposure, clipping, colourfulness, detail, `flatFrame`, per-node `nodeCoverage`, `warnings[].code`). Read metrics first; set `includeImage: false` when only checking framing. `camera` / `cameraNodeId` render from another pose without moving the editor camera; `target: "play"` (or `auto` during play) captures the running game; `surface: "all"` (or `"client-2"`) captures extra multiplayer windows, one after another, without metrics. Frame first with `action_editor(action="frameNodes", nodeIds=[…], view="iso")`; a node with no mesh (player start, trigger) is framed around its position. Recipe: [workflows.md](references/workflows.md#screenshot).
 
 Before saying a capability is unavailable, do not stop at Cursor tool-name search (catalog names and truncated descriptions miss router ops). Check:
 
@@ -124,11 +145,11 @@ Before saying a capability is unavailable, do not stop at Cursor tool-name searc
 4. Use `search_tools` / `describe_tool` only for exploration, unknown tools, or after a schema/validation failure — never both for the same tool in one task.
 5. Prefer `query_node` / `action_node` for scene trees.
 
-Skip `select` / `focus` / `frameSelection` unless the user asks or the next step needs selection.
+Skip `select` / `focus` / `frameSelection` unless the user asks or the next step needs selection. For captures use `frameNodes` (no selection needed).
 
 ## MCP Vs Code
 
-- MCP: live scene/editor state, nodes, prefabs, per-instance properties, transforms, builds, diagnostics.
+- MCP: live scene/editor state, nodes, prefabs, per-instance properties, transforms, builds, diagnostics, environment and look presets (`action_scene(applyEnvironmentPreset)`, `action_scene(applyLookPreset)`, outdoor worlds from a recipe (`action_scene(applyWorld)`, `auditWorld`); see [genesys-world-building](../genesys-world-building/SKILL.md)).
 - Code: TypeScript, reusable behaviour, class defaults, runtime construction.
 - Both: code first to register capability, then MCP to place/configure.
 

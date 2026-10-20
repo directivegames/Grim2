@@ -164,7 +164,7 @@ abilities, effects, movement `tick`, rewind-radius hooks, and cues. `onPostPhysi
 
 ## Prediction
 
-When `useNetworkPrediction` is true and `NetPredictionManager` is initialized:
+`useNetworkPrediction` defaults to true. Prediction RPCs start only when `NetPredictionManager` was initialized from `GameMode.onBeforeBeginPlay`, before this node registers. Canonical time, history, and rewind registration are the `genesys-multiplayer` skill's [network-prediction](../../genesys-multiplayer/references/network-prediction.md) reference (`docs/multiplayer/prediction.md` in `@gnsx/genesys.js`). When both are active:
 
 - Autonomous proxies predict and save moves in pre-physics. The digest is built after the post-physics mode switch and sent as `serverReceiveGameplayInput`.
 - The server flushes every caught-up input except the last during the drain, then hashes at the same post-physics point and sends `clientCorrectGameplayState` on divergence or possession.
@@ -178,8 +178,9 @@ For several queries against one rewind, open a disposable session with
 `GSSAbilityContext.world.beginQueries(rewindVolume)` and close it with `using` or `end()`. Trace time
 accounts for the authored interpolation delay.
 
-Movement ticks also rewind nearby `IRewindable` nodes (`rewindInRadius` around the sim pose)
-before `tick`, then restore them. `GSSNode` registers as rewindable;
+Correction resimulation (`timeStep.isResim`) rewinds nearby `IRewindable` nodes
+(`rewindInRadius` around the sim pose) before that replayed `tick`, then restores them.
+A normal predicted tick and a normal authority tick do not. `GSSNode` registers as rewindable;
 `NetRewindablePhysicsProp` is the shipped pattern for barrels, crates, and similar props.
 Classic `BasePawnMovementNode` pawns do not implement `IRewindable`. Mixing classic locomotion
 on some pawns and GSS on others is therefore safe only when they do not interact

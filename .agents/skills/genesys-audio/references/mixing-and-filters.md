@@ -28,7 +28,7 @@ const reverbBus = audio.addBus('Reverb', 'SFX'); // get-or-create, parented unde
 
 - `getBus(name)` / `addBus(name, parentBusName?)` both lazily initialize the bus graph first, so they're safe to call as soon as a world exists — no need to wait for a specific lifecycle hook.
 - `createBus(name, parentBusName?)` is the lower-level primitive `addBus` calls; it throws if there's no `AudioContext` yet (headless world, or called before the listener exists). Prefer `addBus`.
-- The object returned by `getBus`/`addBus` wraps a WebAudio `GainNode`: `connect(destination)`, `disconnect(destination?)`, `setVolume(value, time?)` (pass `time` for a linear ramp via `linearRampToValueAtTime`), `getVolume()`, `getInput()` (the raw `GainNode`, for connecting your own WebAudio sources).
+- The object returned by `getBus`/`addBus` wraps a WebAudio `GainNode`: `connect(destination)`, `disconnect(destination?)`, `setVolume(value, duration?)` (`duration` is seconds from now, not an `AudioContext` timestamp), `getVolume()`, `getInput()` (the raw `GainNode`, for connecting your own WebAudio sources).
 
 Both `SoundNode` clips and `GlobalAudioManager` one-shots are routed onto their
 bus at playback time. Muting or ducking a bus (e.g. `getBus('Music')?.setVolume(0.1)`

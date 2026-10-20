@@ -109,7 +109,7 @@ const mesh = root.getNode(ENGINE.MeshNode);
 const allMeshes = root.getNodes(ENGINE.MeshNode);
 ```
 
-Use `getRoot()` to find the placeable root from a descendant. Deprecated `getActor()` returns null when the root is not an `Actor`.
+Use `getRoot()` to find the placeable root from a descendant.
 
 ### Transform operations
 
@@ -137,6 +137,6 @@ const description = node.describe({
 - [Building Node Trees](building-node-trees.md)
 - [Property and Serialization System](property-serialization-system.md)
 
-## Deprecated
+## Removed
 
-`ENGINE.Actor` is a deprecated compatibility root. Prefer SceneNode/PrimitiveNode. See `engine-upgrades` → `13-14`.
+`ENGINE.Actor` is removed. Use a SceneNode/PrimitiveNode with `isRoot`. See `engine-upgrades` → `18-19`.

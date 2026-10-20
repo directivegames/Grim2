@@ -20,14 +20,14 @@ Snap button → translate/rotate/scale snap toggles + values · Reset to default
 
 Toggle Place (**+** on the viewport left edge). **⋯** beside **+**: Add to Place Bar, Icons Only / Show Labels, Presets (built-in / user / team), Restore Default Place Bar.
 
-Default items: Ground / Cube / Sphere / Cone / Cylinder · Lights flyout (Point / Spot / Rect Area / Ambient / Directional / Hemisphere) · Empty Actor.
+Default items: Ground / Cube / Sphere / Cone / Cylinder · Lights flyout (Point / Spot / Rect Area / Ambient / Directional / Hemisphere) · Empty (a `PrimitiveNode` root).
 
 | Action | How |
 | --- | --- |
 | Place with preview | Drag a Place item onto the viewport |
 | Place at look-at | Click a spawn item (Cube, Empty, pinned Prefab, …) |
 | Pin an asset | Drag a Prefab, Model, VFX, or JS Class from the Asset Browser onto the Place bar |
-| Add a node class | Add to Place Bar (⋯, empty bar, or right-click the bar chrome) → Nodes (e.g. Player Start). Empty Actor is already on the bar |
+| Add a node class | Add to Place Bar (⋯, empty bar, or right-click the bar chrome) → Nodes (e.g. Player Start). Empty is already on the bar |
 | Rearrange | Drag a Place item along the bar. Right-click → Move Up / Move Down. Arrow keys while a Place item is focused |
 | Hide an item | Right-click → Hide from Place Bar |
 | Insert a separator | Right-click a Place item → Insert Separator Below |
@@ -74,6 +74,7 @@ Hotkeys: [hotkeys.md](hotkeys.md) (Poly Builder mode). Brush, Mesh Edit, and Exp
 | Filter / Search / Thumb size | Toolbar / More options |
 | Folder tree | Sidebar chevron — Shift-click expands or collapses the whole branch (same as Outliner) |
 | Navigate | Back / Forward / Breadcrumbs |
+| Favorites | Add to Favorites on a folder. Favorites is the top folder in the tree, next to @project and @engine |
 | Empty-area context | New Asset/Resource/Folder · Delete Folder · Import Files… · Show in Finder/Explorer · Refresh · Refresh thumbnails |
 | Open | Double-click (scene/prefab/material/resource/…) |
 | Prefab | Open Prefab (`.prefab.json`; MCP `action_prefab.open`) |

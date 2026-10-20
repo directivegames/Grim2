@@ -53,7 +53,7 @@ authored hierarchy should be Prefabs (`genesys-prefabs`), not copy-pasted node t
 - Pickup filter — default `canPickup` allows any `Pawn`. Override for player-only or inventory checks.
 - Trigger filter — default `TriggerFilter.All`. Use `PlayerOnly` / `PawnsOnly` / `Custom`, or NPCs and debris fire the zone.
 - Pickup trigger mesh — without a trigger `PrimitiveNode` (`generateCollisionEvents` plus `isTrigger`), overlap never fires.
-- `PickupSpawnerNode.spawnPickup` may be unimplemented — read the method body in `PickupNode.ts` before using the spawner. If it only logs a warning, spawn pickups yourself rather than presenting the spawner as working.
+- `PickupSpawnerNode` spawns `spawnPrefabPath` at `spawnOffset`, listens for that pickup's `onPickup`, and spawns again after `spawnInterval` seconds. A negative `spawnInterval` spawns once. The spawned prefab still needs its own trigger `PickupNode`; the spawner does not collect by itself.
 
 ## Source index
 

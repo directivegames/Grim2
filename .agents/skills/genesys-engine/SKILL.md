@@ -1,6 +1,6 @@
 ---
 name: genesys-engine
-description: Core Genesys engine reference and the entry point for any game feature — SceneNode/PrimitiveNode/MeshNode placeables, World APIs, pawns and controllers, input, cameras, serialization, and project structure. Use when implementing game logic, exploring a Genesys project, or working with engine classes. Routes to the sibling skill that owns each subsystem (movement, physics, UI, audio, VFX, AI, navigation, multiplayer).
+description: Core Genesys engine reference and the entry point for any game feature — SceneNode/PrimitiveNode/MeshNode placeables, World APIs, pawns and controllers, input, cameras, serialization, and project structure. Use when implementing game logic, exploring a Genesys project, or working with engine classes. Routes to the sibling skill that owns each subsystem (world building and look, movement, physics, UI, audio, VFX, AI, navigation, multiplayer).
 ---
 
 # Methodology
@@ -42,6 +42,7 @@ description: Core Genesys engine reference and the entry point for any game feat
 
 Load the skill that owns the area rather than deriving it from engine source:
 
+- `genesys-world-building` — outdoor environments and look: sky, sun, fog, time of day, lens flare, tone mapping, lens effect and anti-aliasing modes, terrain, islands, water, mirrors, fat lines, batched props, foliage scatter, orbit/showcase camera, environment presets, and wrapping a three.js addon as a node. Use before reaching for primitives or Poly Builder.
 - `genesys-movement` — pawn locomotion, movement modes, MoverNode, vehicles, NPC movement.
 - `genesys-physics` — raycasts, joints, impulses, collision-ignore pairs, vehicle physics.
 - `genesys-navigation` — navmesh baking, pathfinding, path queries.
@@ -51,12 +52,12 @@ Load the skill that owns the area rather than deriving it from engine source:
 - `genesys-vfx` — particles, explosions, trails, VFX definitions.
 - `pickups-interactions-and-doors` — collectibles, usable objects, doors, switches, trigger volumes.
 - `genesys-prefabs` — when to use Prefabs vs classes / Models / scene nodes; editor isolation and MCP `action_prefab`.
-- `genesys-multiplayer` — replication, RPCs, server authority, GameMode.
+- `genesys-multiplayer` — which gameplay system to use (classic movement, GSS, network prediction, or custom replication and RPCs), plus server authority and GameMode.
 - `webgpu-tsl-node-material-assets` — custom TSL node materials and `.material.json` assets.
 - `asset-pack-authoring` — packaging classes, prefabs, and assets into a distributable pack.
 - `genesys-asset-compiler` — build-time KTX2 / Meshopt / MP3 compression, texture excludes, and the conversion hook.
 - `engine-upgrades` — migrating game code across engine versions.
-- `engine-search` / `engine-reference` — find an engine class by keyword, then read its source.
+- `engine-search` — find an engine class by keyword when you cannot name it yet.
 - `genesys-mcp-orchestrator` / `genesys-editor-manual` — driving the live editor via MCP, or teaching its UI.
 
 ## References
@@ -81,11 +82,11 @@ Load the skill that owns the area rather than deriving it from engine source:
 # Tips
 
 - The property decorator is `ENGINE.property` (lowercase).
-- Look up an unknown class with the `engine-search` skill, then read it with `engine-reference`. Prefer both over grepping `node_modules/@gnsx/genesys.js/dist`, which holds declarations without implementations.
+- Look up an unknown class with the `engine-search` skill, then read its source under `.engine/src/`: search for `class <Name>` and read only the members you need, not the whole file. Do not grep `node_modules/@gnsx/genesys.js/dist`; it holds declarations without implementations.
 
 # Deprecated (compat only)
 
 Existing projects may still mention `Actor`, `SceneComponent`, `world.addActor`,
 `getActors*`, `rootComponent`, `sceneComponents`, or `getActor()`. `ENGINE.Actor`
-is a deprecated compatibility root only. Prefer the node APIs above; for migration
-steps open the `engine-upgrades` skill, reference `13-14`.
+and the old forwarding methods are removed. Use the node APIs above; for migration
+steps open the `engine-upgrades` skill, reference `13-14` and `18-19`.

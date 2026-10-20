@@ -16,17 +16,21 @@ Clients and the server run in separate processes, possibly on different machines
 
 Each RPC type encodes a specific direction and execution contract, so the right code runs in the right place without writing low-level networking code by hand.
 
-## Why Is GameMode Server-Only?
+## Why are match rules server-only?
 
-GameMode owns the canonical rules of the match: scoring, win conditions, player spawning, and session lifecycle. Letting clients hold a copy would require keeping all those copies in sync, opening the door to authoritative conflicts and exploits. Because only the server ever runs GameMode, there is a single source of truth for match state.
-
-Clients interact with match state through replicated properties on other nodes (`PlayerInfo`, `GameSessionInfo`, etc.) rather than through GameMode directly.
+GameMode owns the canonical rules of the match: scoring, win conditions, player spawning, and session lifecycle. The world constructs a GameMode on clients as well as on the server. Only the server may run those rules. Clients read replicated nodes (`PlayerInfo`, `GameSessionInfo`, and so on) instead of calling GameMode to decide outcomes.
 
 ## Node Architecture
 
 Genesys multiplayer is built on `SceneNode` / `PrimitiveNode` roots, not the deprecated `Actor` shell. A networked root becomes a replicated entity by setting `isRoot` and `replicated` (auto-creates `ReplicationInfo`). Nested `replicated` children join that entity; a nested root is its own entity. `PlayerController`, `Pawn`, `PlayerInfo`, and `GameSessionInfo` already do this internally. See [node-replication](references/node-replication.md).
 
+## Setup rules
+
+- Place one `PlayerSpawner` in every multiplayer scene.
+- A shipped multiplayer game runs on Genesys servers and connects only through matchmaking.
+- Use `connectToServer` only to test a local server in the editor. The editor play session does not use matchmaking.
+
 ## Contents
 
 - `SKILL.md` - Entry point, methodology, coding guidelines, and Safe UI for replicated strings.
-- `references/` - Deep dives into each multiplayer subsystem (includes `ui-security.md`, `player-list-safe.md`).
+- `references/` - Deep dives into each multiplayer subsystem (includes `gameplay-systems.md`, `matchmaking.md`, `network-prediction.md`, `ui-security.md`, `player-list-safe.md`).

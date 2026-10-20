@@ -228,7 +228,7 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementNode {
       delta.copy(this.teleportPosition).sub(IsometricMovementComponent._worldPosScratch);
     }
 
-    const { isGrounded } = physics.computeCharacterMovement(
+    const { isGrounded, hitGround, hitCeiling } = physics.computeCharacterMovement(
       this, root, delta.toArray(), !!this.teleportPosition, dt,
     );
     this.teleportPosition = null;
@@ -239,8 +239,12 @@ export class IsometricMovementComponent extends ENGINE.CharacterMovementNode {
       this.jumpsUsed = 0;
     }
 
-    this.jumpFrames += 1;
-    if (this.isGrounded && this.jumpFrames >= 10) {
+    // Floor and ceiling contacts clear the velocity that caused them. An upward jump can still
+    // report a floor contact on the takeoff step, so only a downward velocity is cleared there.
+    if (hitGround && this.verticalVelocity < 0) {
+      this.verticalVelocity = 0;
+    }
+    if (hitCeiling && this.verticalVelocity > 0) {
       this.verticalVelocity = 0;
     }
   }

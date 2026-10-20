@@ -63,7 +63,7 @@ Dispatch via `batch_execute`:
 
 Action Poly Builder · kind: `action`
 
-Build Poly Builder pieces as separate scene nodes under a Poly Mesh group: place boxes and shapes, transform, mesh-edit, or delete pieces. A box is an editable mesh. Align and verify from the returned pivot, bounds, and frame.highEnd.worldCenter, then query_polybuilder and query_node on engineNodeId. polyMeshNodeId is the group. engineNodeId is the piece node. Do not use captureScreenshot to place or check the scene. Requires `action`. Turns Poly Builder mode on when geometry changes. Compact-hidden — call via run_script (genesys.actionPolybuilder) or batch_execute. Read the genesys-polybuilder skill first.
+Build Poly Builder pieces as separate scene nodes under a Poly Mesh group: place boxes and shapes, transform, mesh-edit, or delete pieces. A box is an editable mesh. Align and verify from the returned pivot, bounds, and frame.highEnd.worldCenter, then query_polybuilder and query_node on engineNodeId. polyMeshNodeId is the group. engineNodeId is the piece node. Place and check geometry by query; use captureScreenshot (after frameNodes) only to judge the look. Requires `action`. Turns Poly Builder mode on when geometry changes. Compact-hidden — call via run_script (genesys.actionPolybuilder) or batch_execute. Read the genesys-polybuilder skill first.
 
 Operations: `delete` *(destructive, undoable)*, `meshOp` *(undoable)*, `placeBox` *(undoable)*, `placeShape` *(undoable)*, `setMode`, `transform` *(undoable)*
 
@@ -203,7 +203,7 @@ Dispatch via `batch_execute`:
 
 Query Poly Builder · kind: `query`
 
-Read Poly Builder pieces: world bounds, pivot, localBounds, engineNodeId, and a stair/ramp frame (highEnd.worldCenter, lowEnd). Topology faces include worldCenter and worldNormal. Place, align, and verify the scene from this data, query_node on engineNodeId, and query_editor. Do not use captureScreenshot to check the scene. Requires `operation` getDocument. Compact-hidden — call via run_script / batch_execute. Read the genesys-polybuilder skill before editing.
+Read Poly Builder pieces: world bounds, pivot, localBounds, engineNodeId, and a stair/ramp frame (highEnd.worldCenter, lowEnd). Topology faces include worldCenter and worldNormal. Place, align, and verify the scene from this data, query_node on engineNodeId, and query_editor: state is verified by query. Use captureScreenshot only to judge the look, after framing. Requires `operation` getDocument. Compact-hidden — call via run_script / batch_execute. Read the genesys-polybuilder skill before editing.
 
 Operations: `getDocument`
 

@@ -15,7 +15,7 @@ Reference: See SceneNode.getCamera() in engine source.
 CharacterPawn builds its camera in setupCamera() and chooses one of two layouts based on getInitialCameraPositions():
 
 - First-person (pivot and camera positions are equal): root -> CameraPivot -> camera. The pivot provides pitch (looking up/down); yaw comes from the root driven by the movement node.
-- Third-person (positions differ): root -> CameraPivot -> CameraSpringArm -> camera. The SpringArmNode maintains camera distance, collides with world geometry, and supports zoom via the cameraMinDistance / cameraMaxDistance / cameraZoomSensitivity properties on CharacterPawn.
+- Third-person (positions differ): root -> CameraPivot -> CameraSpringArm -> camera. The SpringArmNode maintains camera distance, collides with world geometry while that camera is the rendered view, and supports zoom via the cameraMinDistance / cameraMaxDistance / cameraZoomSensitivity properties on CharacterPawn. An enemy pawn's spring arm stays at its rest length and does not raycast.
 
 Override setupCamera() only when the default pivot/spring-arm hierarchy does not fit; otherwise override getInitialCameraPositions() to position the camera.
 

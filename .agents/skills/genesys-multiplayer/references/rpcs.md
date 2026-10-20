@@ -1,6 +1,8 @@
 # RPCs (Remote Procedure Calls)
 
-RPCs let code on one machine call a method that executes on a different machine. Import them from `@gnsx/genesys.js`. They may only be used on methods of nodes that are inside a replicated entity (`this.isRoot = true` plus `this.replicated = true` — see [node-replication](node-replication.md)).
+RPCs let code on one machine call a method that executes on a different machine. Import them from `@gnsx/genesys.js`. The method must live on a node inside a replicated entity (the `isRoot && replicated` root, or a replicated member). Member RPCs travel with `netSubId`, the member's relative `NodePath`. See [node-replication](node-replication.md).
+
+`NetWorld.dispatchRPCCall` drops an incoming call unless the method is decorated and the decorator matches the direction it travelled. A dedicated server accepts `@ServerRPC` and `@RemoteRPC` from the entity owner (or from any client when the entity has no owner). A client accepts `@ClientRPC`, `@MulticastRPC`, and `@RemoteRPC` from the server.
 
 ## Decorator Types
 
@@ -40,9 +42,9 @@ The node must have `netOwningClientId` set. If it is not set, the RPC is not del
 
 ### @ENGINE.MulticastRPC
 
-Server calls → executes on the server and all clients.
+Call it on the server. The server runs the method and sends it to every client. Each client runs it again when the RPC arrives.
 
-Use for events that every player must see: an explosion, a door opening, a match-start countdown.
+A direct call on a client also runs the method, on that client only, and sends nothing, this decorator is not an authority guard. Invoke it from server code when every peer must see the event: an explosion, a door opening, a match-start countdown.
 
 ```typescript
 @ENGINE.MulticastRPC()
@@ -57,12 +59,12 @@ Do not use multicast for state changes — modify replicated properties for stat
 
 ### @ENGINE.RemoteRPC
 
-Does not execute locally on the caller. Sends to the other side.
+Does not execute on the caller. Sends to the other side.
 
-- Client calls → server executes (does not run on client).
-- Server calls → clients execute (does not run on server).
+- Owning autonomous client calls → server executes.
+- Server calls → the owning client executes (does not run on the server, and does not fan out to other clients).
 
-Use when the call must never run locally regardless of which side initiates it.
+Use when the call must not run on the caller. For an event every client must run, use `@MulticastRPC` from the server.
 
 ### @ENGINE.ServerOnly / @ENGINE.ClientOnly
 

@@ -50,8 +50,6 @@ Standardized methods propagated through the scene graph:
 ## Root association
 
 - getRoot() — Traverse up the parent hierarchy to find the placeable root SceneNode.
-- getActor() — Deprecated; returns an Actor root only, otherwise null. Prefer getRoot().
-
 ## Serialization support
 
 - asExportedObject() — Serialize to JSON format.
@@ -70,3 +68,9 @@ Fluent API for setting local transforms:
 - setLocalRotation(rot)
 - setLocalScale(scale)
 - addLocalPosition(delta)
+
+## Addons and the escape hatch
+
+The engine already wraps several three.js addons as nodes: `SkyNode` (Sky / SkyMesh with clouds and an environment map), `WaterNode` (realistic, stylized, simple and liquid techniques with presets, quality tiers, refraction, caustics, underwater view and an optional planar mirror), `TerrainMeshNode`, `ScatterNode`, `ProceduralPropNode` (seeded props), cascaded shadows on `DirectionalLightNode`, and the post-processing stack. Check [genesys-world-building](../../genesys-world-building/SKILL.md) before writing your own.
+
+When no node exists, extend `ENGINE.ThreeObjectNode` (`nodes/visual/ThreeObjectNode.ts`) in a `@ENGINE.GameClass()`: implement `buildObject(ctx)` from `@property` fields and the base handles the transient child, rebuilds on edits (`markDirty()` from code), per-frame `updateObject`, disposal and error containment. Never add objects to `world.scene` directly. Rules and skeleton: [escape-hatch.md](../../genesys-world-building/references/escape-hatch.md).

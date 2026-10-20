@@ -40,9 +40,7 @@ If you must build HTML strings, escape with `ENGINE.escapeHtml(...)` — prefer
 
 ## Server validation (recommended, not sufficient alone)
 
-If `GameMode` accepts a display name from `joinParams`, validate length and
-character set on the server before assigning `PlayerInfo.playerName`.
-Validation reduces abuse; it does not replace safe client rendering.
+`GameMode.generatePlayerName(clientId)` supplies `PlayerInfo.playerName`. `joinParams` are not copied in. If you accept a display name from `joinParams`, validate length and character set on the server before assigning `playerName`. Validation reduces abuse; it does not replace safe client rendering.
 
 ## Checklist
 

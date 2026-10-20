@@ -19,6 +19,7 @@ MCP node era: use `query_node` / `action_node`. MCP schemas name node UUIDs `com
 | Node copy / paste | — | UI only | Outliner Copy / Paste — recreate via MCP `action_node.add` if needed |
 | Scene open / save / set active | `action_scene` | Available | Menu Save Scene (`Ctrl/Cmd+S`); Asset Browser open scene |
 | Scene create / duplicate | `action_scene.create` / `duplicate` | Available | Menu New Scene; Asset Browser New Asset → Scene |
+| Outdoor world from a recipe | `action_scene.listWorldRecipes` / `applyWorld` / `auditWorld` (one undo step; `dryRun` previews the resolved recipe) | Available | Menu New Scene outdoor templates; otherwise add terrain, water, sky and scatter nodes by hand in the Outliner and Inspector |
 | Prefab create / place / isolate | Compact-hidden `action_prefab` (`create`, `instantiate`, `open`, `close`, `save`) via `run_script` / `batch_execute` | Available | Asset Browser New → Prefab; double-click `.prefab.json`; drag from Asset Browser or Place bar Prefab picker to place; pin a prefab onto the Place bar; Outliner Save Branch as Prefab |
 | Prefab Apply / Resync / Unlink | `action_prefab.apply` / `resync` / `unlink` on a placed instance root | Available | Inspector PrefabActions; Outliner/viewport Prefab submenu |
 | Prefab createFromNode | `action_prefab.createFromNode` | Available | Outliner Save Branch as Prefab |

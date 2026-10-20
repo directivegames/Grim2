@@ -2,7 +2,7 @@
 
 ## How the system fits together
 
-`BehaviorTreeNode` sits on an NPC placeable and runs a behavior tree each `tickInterval` seconds (prefer `tickInterval`; `updateInterval` is a deprecated alias only). Before each run it calls `blackboard.updateGameState()` so nodes can read fresh owner and player data.
+`BehaviorTreeNode` sits on an NPC placeable and runs a behavior tree each `tickInterval` seconds. Before each run it calls `blackboard.updateGameState()` so nodes can read fresh owner and player data.
 
 The tree is a hierarchy of nodes. Composite nodes (`Sequence`, `Selector`) have children and delegate execution. Leaf nodes are actions — they perform gameplay (pathfinding, combat, waiting). Conditions gate whether a node may run; they attach to a node via `conditions: [...]` and are checked before that node's logic.
 

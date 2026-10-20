@@ -11,16 +11,18 @@ to `MovementPawn.movementNode`.
 
 `GSSNode` (Gameplay Simulation System) is the composable alternative: one node holds named movement modes
 (`GSSWalkingMode`, `GSSFallingMode`), abilities, effects, tags, and attributes. Modes switch at runtime
-via `IGSSMovementModeTransition` / `queueMovementMode`. Network prediction is opt-in (`useNetworkPrediction`
-plus `NetPredictionManager`).
+via `IGSSMovementModeTransition` / `queueMovementMode`. Networked GSS prediction needs
+`NetPredictionManager.initialize` in `GameMode.onBeforeBeginPlay` (see the `genesys-multiplayer`
+skill's `network-prediction.md`). `useNetworkPrediction` defaults to true and is not enough on its own.
 
 The Mover stack remains loadable only so existing games do not break. It is unsupported and must
 not be selected for new work. Use `references/mover-to-gss.md` to migrate it.
 
 A game can mix classic nodes on some pawns and GSS on others. That split is only
 safe when those pawns do not interact through collision, traces, or effects. GSS
-rewinds and re-simulates nearby `IRewindable` actors during movement and prediction-aware
-queries; classic pawns are not rewindable. Interactions with them will mis-predict unless
+rewinds nearby `IRewindable` actors during correction resimulation, and rewinds for
+prediction-aware queries on a dedicated server. A normal movement tick does not rewind them.
+Classic pawns are not rewindable. Interactions with them will mis-predict unless
 the game adds equivalent history, rewind/restore, and re-simulation — the work GSS
 is meant to take off the game. Static geometry is fine. Independent locomotion that never
 contacts a sim pawn is also fine.

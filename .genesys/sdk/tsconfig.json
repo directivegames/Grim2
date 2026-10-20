@@ -29,7 +29,9 @@
       "node"
     ],
     "paths": {},
-    "preserveSymlinks": true
+    "preserveSymlinks": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../../.intermediate/tsconfig.tsbuildinfo"
   },
   "include": [
     "../../src/**/*",

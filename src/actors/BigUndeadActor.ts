@@ -241,9 +241,9 @@ export class BigUndeadActor extends GameRootNode {
       pathFollowingAccuracy: 0.3,
       actorFollowingDistance: 1.0,
       stopDistance: 1.0,
-      movementSpeed: this.moveSpeed,
+      maxSpeed: this.moveSpeed,
       useNavigationServer: true,
-      turnSpeed: 2.0,
+      lookRightSpeed: 2.0,
       characterControllerOptions: {
         ...ENGINE.CharacterMovementNode.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
         simulatedGravityScale: 1.0,

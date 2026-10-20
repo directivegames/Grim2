@@ -254,9 +254,9 @@ export class DemonboxActor extends GameRootNode {
       pathFollowingAccuracy: 0.25,
       actorFollowingDistance: this.blastStopRange,
       stopDistance: this.blastStopRange,
-      movementSpeed: this.moveSpeed,
+      maxSpeed: this.moveSpeed,
       useNavigationServer: true,
-      turnSpeed: 3.0,
+      lookRightSpeed: 3.0,
       characterControllerOptions: {
         ...ENGINE.CharacterMovementNode.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
         simulatedGravityScale: 1.0,

@@ -42,7 +42,7 @@ Read the source above for exact signatures — this skill maps what exists and t
 - No live dynamic obstacles. Recast builds one solo `NavMesh` from a single mesh snapshot; there's no runtime obstacle add/remove or tile-rebuild API. Moving hazards, closing doors, etc. are never carved out automatically — handle avoidance at the gameplay layer (behavior-tree conditions, custom target selection), not the navmesh.
 - `clearNavigationMesh()` flips `isReady()` false immediately, destroying the underlying WASM `NavMesh`/`NavMeshQuery`. Any NPC mid-path falls back to a direct line to its last target until the mesh is rebuilt — don't clear the navmesh while NPCs are actively pathing unless you intend that.
 - Only static geometry contributes. `createNavigationMeshFromScene()` only gathers meshes on nodes whose physics `motionType` is `Static`; `Dynamic`/`Kinematic` geometry never contributes, even if its `navigationGeometryRole` is set.
-- Default role is `Walkable`. Every `PrimitiveNode` defaults `navigationGeometryRole` to `NavigationRole.Walkable` when unset. Walls/props you want to block pathing through need `NavigationRole.Obstacle`; geometry you don't want in the bake at all (e.g. decorative overlays) needs `NavigationRole.Exclude` (the legacy `excludeFromNavigation = true` maps to `Exclude`).
+- Default role is `Walkable`. Every `PrimitiveNode` defaults `navigationGeometryRole` to `NavigationRole.Walkable` when unset. Walls/props you want to block pathing through need `NavigationRole.Obstacle`; geometry you don't want in the bake at all (e.g. decorative overlays) needs `NavigationRole.Exclude`.
 
 ## Minimal example
 

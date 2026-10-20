@@ -1,15 +1,19 @@
 # GameMode
 
-GameMode is the server-only class that owns the canonical rules of the match. It runs only on the server and in standalone (single-player) mode. It does not exist on clients; clients must not call GameMode methods directly.
+GameMode owns the canonical rules of the match. The world constructs it on the server, in standalone, and on clients when a game-mode class is configured. Call join policy, spawning, and `restartPlayer` only on the server. Clients read replicated `PlayerInfo` and `GameSessionInfo` instead.
 
 `GameMode` itself is an unreplicated `InfoNode` — the framework classes it spawns (`PlayerController`, `Pawn`, `PlayerInfo`, `GameSessionInfo`) are the replicated `SceneNode`/`PrimitiveNode` roots; each already sets `replicated` and creates `ReplicationInfo` internally, so subclassing them "just works" without extra replication plumbing (see [node-replication](node-replication.md)).
 
+## Scene prerequisite
+
+Every multiplayer scene needs one scene-placed `PlayerSpawner`. `getPlayerSpawner()` throws when it is missing. Standalone spawning does not use it. Do not hand-spawn `PlayerController`, `Pawn`, `PlayerInfo`, or `GameSessionInfo` from your own `MultiplayerSpawner`.
+
 ## What GameMode Does
 
-- Decides whether a connecting player is allowed to join (`canPlayerJoin`).
-- Spawns PlayerController, Pawn, and PlayerInfo after the client finishes loading the level (`onPlayerJoined`).
-- Responds to player disconnects and handles cleanup or respawn logic (`onPlayerDisconnected`).
-- Provides factory hooks for customising which classes are instantiated for each player.
+- Decides whether a connecting player is allowed to join (`canPlayerJoin`) or rejoin (`canPlayerRejoin`).
+- After `LEVEL_LOADED`, spawns `PlayerInfo`, then `PlayerController` and `Pawn`.
+- Responds to player disconnects (`onPlayerDisconnected`) once a controller or pawn exists. A disconnect during level load does not call it.
+- Provides factory hooks for which classes are instantiated for each player.
 
 ## Lifecycle Hooks
 
@@ -28,9 +32,9 @@ override canPlayerJoin(_clientId: ClientId, joinParams: JoinParams): PlayerJoinR
 
 ### onPlayerJoined
 
-Called when player entities are spawned. In multiplayer that is after the client finishes loading the level, not at handshake. The default implementation spawns a PlayerController, assigns ownership, and calls `handleNewPlayer` to spawn the pawn. The engine also spawns and links `PlayerInfo` at that point. Override to add custom logic after spawn — `super.onPlayerJoined` must be called to preserve the standard flow.
+Called when the controller and pawn are spawned. In multiplayer that is after the client finishes loading the level, not at handshake. `PlayerInfo` already exists. The default implementation spawns a PlayerController, assigns ownership, and calls `handleNewPlayer` to spawn the pawn. Override to add custom logic after spawn — `super.onPlayerJoined` must be called to preserve the standard flow.
 
-A connected client has no controller, pawn, or `PlayerInfo` until this runs. Do not treat `getPlayerControllerForClient` returning `null` during load as an error.
+A connected client has no controller or pawn until this runs. `PlayerInfo` is already spawned. Do not treat `getPlayerControllerForClient` returning `null` during load as an error.
 
 ```typescript
 override async onPlayerJoined(clientId: ClientId): Promise<PlayerController | null> {
@@ -66,6 +70,14 @@ override onPlayerDisconnected(clientId: ClientId, pawn: Pawn | null, reason: Dis
 
 `DisconnectReason` is either `Voluntary` (player quit) or `Timeout` (connection lost).
 
+### canPlayerRejoin
+
+Called at handshake when `joinParams.identityToken` matches a snapshot in `inactivePlayerInfos`. The default allows the rejoin. The server stores that snapshot only when `PlayerInfo.identityToken` was set before disconnect. The engine does not save the token on the client: persist it in game code and send the same `joinParams` on the next connect. A new `ClientId` is assigned every connection.
+
+### Display names
+
+`spawnPlayerInfoForClient` sets `playerName` from `generatePlayerName(clientId)`. `joinParams` are not applied automatically. Override `generatePlayerName`, or assign a name you already validated in `canPlayerJoin`. Still render the string as text ([ui-security](ui-security.md)).
+
 To trigger a respawn from server code, call `restartPlayer(controller)`. Override `handleNewPlayer` or `restartPlayer` to insert custom respawn logic such as resetting health or applying spawn protection.
 
 ## Factory Methods
@@ -81,6 +93,7 @@ class MyGameMode extends ENGINE.GameMode {
       pawnFactory: async () => MyCustomPawn.create(),
       playerControllerFactory: async () => MyPlayerController.create(),
       playerInfoFactory: async () => MyPlayerInfo.create(),
+      gameSessionInfoFactory: () => MySessionInfo.create(),
     });
   }
 }
@@ -118,7 +131,7 @@ itself, `GameSessionInfo` is replicated and is visible to all clients. Use it as
 canonical place to store match state that clients need to read.
 
 Built-in replicated properties on `GameSessionInfo`:
-- `sessionState` — current lifecycle state (`WaitingForPlayers`, `InProgress`, `Ending`, etc.).
+- `sessionState` — `Initializing`, `WaitingForPlayers`, `Starting`, `InProgress`, `Ending`, or `Shutdown`.
 - `playerCount` — number of connected players.
 - `maxPlayers` — maximum players allowed.
 - `countdown` — countdown timer value, or `undefined` when not counting down.
@@ -181,7 +194,8 @@ override getPlayerInfoFactory(): () => Promise<ENGINE.PlayerInfo> {
 
 ## What Not to Do
 
-- Do not call GameMode methods from a client. They only exist on the server; calling them on a client throws or silently does nothing.
+- Do not ship a multiplayer scene without a scene-placed `PlayerSpawner`.
+- Do not call spawning, `restartPlayer`, or join policy from a client. Those methods are ordinary TypeScript: a client call is not rejected for you, and it will not update the server.
 - Do not store match state that clients need to see directly on GameMode. GameMode is not replicated — put shared state on `GameSessionInfo` or another replicated node instead.
 - Do not spawn nodes from `canPlayerJoin`. Only spawn from `onPlayerJoined` or later. A client that is still loading the level has not entered the game yet.
 

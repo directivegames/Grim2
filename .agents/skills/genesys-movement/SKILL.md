@@ -13,13 +13,15 @@ description: Choose and implement pawn or character locomotion in Genesys — wa
 
 # Classic vs GSS
 
+If the task is which multiplayer system owns gameplay, read [gameplay systems](../genesys-multiplayer/references/gameplay-systems.md) in the `genesys-multiplayer` skill first. The table below chooses locomotion only: classic movement or GSS.
+
 GSS (Gameplay Simulation System) is the networked simulation: replication, prediction, rollback, and reconciliation.
 
 | | Classic (`BasePawnMovementNode`) | GSS (`GSSNode`) |
 |---|---|---|
 | Shape | One node, one locomotion for the pawn's lifetime | Named modes (`GSSWalkingMode`, `GSSFallingMode`) switch at runtime |
 | Mode switching | Replace `MovementPawn.movementNode` | `IGSSMovementModeTransition` and `queueMovementMode` |
-| Prediction | Built into `BasePawnMovementNode` | `useNetworkPrediction` plus `NetPredictionManager` |
+| Prediction | Built into `BasePawnMovementNode` | `NetPredictionManager` initialized in `GameMode.onBeforeBeginPlay`. `useNetworkPrediction` defaults to true and does nothing without that manager |
 | Pawn | `MovementPawn` → `CharacterPawn` | `GSSCharacterPawn` (`getGSSNode()`) |
 | Input | Controller action methods | `IGSSInputProducer` (down-tags only) |
 
@@ -28,7 +30,8 @@ use it for new code or add features to it. Migrate existing Mover games to GSS.
 
 A game may mix classic movement nodes on some pawns and GSS on others. Do not treat
 that as a free mix for colliding or tracing actors: GSS rewinds nearby `IRewindable`
-nodes during movement and prediction-aware queries, and classic pawns are not rewindable.
+nodes during correction resimulation and, on a dedicated server, during prediction-aware
+queries. A normal movement tick does not rewind them. Classic pawns are not rewindable.
 Interactions (collision, traces, knockback, enter/exit) mis-predict unless the game adds
 history, rewind/restore, and re-simulation on the non-sim pawn — see
 [gss-mechanics](references/gss-mechanics.md).

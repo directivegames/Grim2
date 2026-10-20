@@ -18,7 +18,7 @@ Specialized nodes — MeshNode, ModelMeshNode, lights, cameras, movement, intera
 
 ## Ownership
 
-Walk to the placeable with `getRoot()`. Prefer `getRoot()` over deprecated `getActor()` (null when the root is not an Actor).
+Walk to the placeable with `getRoot()`.
 
 ## Usage patterns
 

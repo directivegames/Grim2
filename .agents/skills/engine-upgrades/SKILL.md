@@ -40,3 +40,4 @@ Major-bump files are named `references/<oldMajor>-<newMajor>.md`. In-major files
 - [15 → 16](references/15-16.md)
 - [16 → 17](references/16-17.md)
 - [17 → 18](references/17-18.md)
+- [18 → 19](references/18-19.md)

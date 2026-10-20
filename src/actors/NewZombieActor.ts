@@ -394,9 +394,9 @@ export class NewZombieActor extends GameRootNode {
       pathFollowingAccuracy: NEW_ZOMBIE_PATH_FOLLOWING_ACCURACY,
       actorFollowingDistance: NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE,
       stopDistance: NEW_ZOMBIE_FOLLOW_HOLD_DISTANCE,
-      movementSpeed: this.moveSpeed,
+      maxSpeed: this.moveSpeed,
       useNavigationServer: true,
-      turnSpeed: 2.5,
+      lookRightSpeed: 2.5,
       characterControllerOptions: {
         ...ENGINE.CharacterMovementNode.DEFAULT_CHARACTER_CONTROLLER_OPTIONS,
         simulatedGravityScale: 1.0,

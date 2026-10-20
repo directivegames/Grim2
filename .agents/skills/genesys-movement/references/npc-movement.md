@@ -35,8 +35,8 @@ line — this is the extent of `NpcMovementNode`'s own navmesh integration; the 
 `calculatePath`/`getClosestPointOnNavigationMesh`/`isPointOnNavigationMesh` calls belong to
 `genesys-navigation`.
 
-Movement speed/turn tuning: `movementSpeed`/`turnSpeed` options (mapped to the inherited
-`maxSpeed`/`lookRightSpeed`), `pathFollowingAccuracy` (waypoint arrival radius),
+Movement speed/turn tuning: inherited `maxSpeed` (default 20 m/s) and `lookRightSpeed`
+(default 10 rad/s), `pathFollowingAccuracy` (waypoint arrival radius),
 `actorFollowingDistance` (how far a followed actor may drift before repathing), `stopDistance`.
 Optional built-in debug visualization (`debugVisualization` options) draws the path line, target
 sphere, and waypoint spheres in the world.

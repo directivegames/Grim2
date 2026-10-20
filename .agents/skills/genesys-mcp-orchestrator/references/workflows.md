@@ -302,11 +302,56 @@ action_editor({ action: "captureScreenshot", includeImage: true })
 
 Metadata only: `includeImage: false`, then Read tool on `screenshot.screenshotPath`. Never emit markdown image links to absolute local disk paths.
 
-Do not screenshot to verify a scene: which nodes exist, where they sit, what is selected, or whether an edit landed. Use `query_node` (`find`, `getTree`, `getDetails`) and `query_editor` (`getState`, `getSelection`, `getPlayModeState`). `captureScreenshot` is only for a picture the user asked for.
+State versus look: which nodes exist, where they sit, what is selected and whether an edit landed are verified with `query_node` (`find`, `getTree`, `getDetails`) and `query_editor` (`getState`, `getSelection`, `getPlayModeState`) — an image has no ids or bounds. How the result looks is verified with a framed capture plus `metrics`. A world is not done without at least one framed capture.
+
+Framed look check (edit mode):
+
+```text
+action_editor({ action: "frameNodes", nodeIds: [terrainId, waterId], view: "iso", padding: 0.15 })
+action_editor({ action: "captureScreenshot", focusNodeIds: [terrainId], views: ["hero", "overview"], maxEdge: 1280 })
+```
+
+- `views` (≤4): `current`, `overview` (high three-quarter), `hero` (low three-quarter), `ground` (eye height). Bounds come from `focusNodeIds`, else the whole scene; sky domes and oceans are skipped.
+- `camera: { position: [x,y,z], target: [x,y,z], fov? }` or `cameraNodeId` renders one frame from that pose without moving the editor camera. Use the scene's `OrbitCameraNode` id to see what players will see.
+- `maxEdge` defaults to 1280 (re-rendered, aspect kept). `imageQuality` defaults to 0.8.
+- Each record has `metrics`: read `warnings[].code` first (`flat_frame`, `subject_off_screen`, `subject_too_small`, `exposure_low`, `exposure_high`, `blown_highlights`, `crushed_blacks`, `single_hue`, `low_colourfulness`, `low_detail`, `sky_dominant`), then `nodeCoverage`. 
+- Play mode: `captureScreenshot` with `target: "play"` (or `auto` while playing) captures the running game window. `camera`, `cameraNodeId` and `views` are edit-mode only. On `play_capture_unavailable`, capture in edit mode with `cameraNodeId`.
+- Metrics-only pass: `includeImage: false` (cheaper); look at the image when the change is look-defining or a warning fires.
+
+Motion, time and cost (edit mode):
+
+```text
+action_editor({ action: "captureScreenshot", focusNodeIds: [waterId], frames: 4, intervalMs: 250 })   contact sheet + motion
+action_editor({ action: "captureScreenshot", views: ["hero", "overview"], freezeTime: true })        same instant in every view
+action_editor({ action: "captureScreenshot", timeSeconds: 3, includeRenderStats: true })             step 3 s, then capture with renderStats
+query_editor({ operation: "getRenderStats" })                                                         draw calls, triangles, budget warnings
+action_editor({ action: "enterPlayMode", seed: 1234 })                                                seeded world.random
+```
+
+- `frames > 1` cannot take `views` or `freezeTime`; during play it fails with `motion_capture_unavailable` (exit play, capture with target `editor`). Read `motion.value` and the `no_motion` warning.
+- `timeSeconds` steps the editor world forward and does not rewind it. `freezeTime` and `timeSeconds` are edit-mode only.
+- `getRenderStats` target `auto` reads the running game during play. `play_stats_unavailable`: call it with target `editor`. Act on `render_budget_high` (desktop 1500 draws or 3 M triangles; phone 300 or 500 k).
 
 `run_script` / `batch_execute`: metadata only — image bytes stripped. Use the direct call for inline images.
 
 Optional: `dryRun: true` to inspect the planned save path without writing.
+
+## Outdoor world (recipe)
+
+Build an outdoor scene from a declarative recipe, then audit and capture it. See [genesys-world-building](../../genesys-world-building/SKILL.md) for the recipe fields.
+
+```text
+action_scene({ action: "listWorldRecipes" })                                                   built-in and registered recipe ids
+action_scene({ action: "applyWorld", world: "<recipe id>", dryRun: true })                    resolved recipe + validation warnings
+action_scene({ action: "applyWorld", world: { extends: "<recipe id>", landform: { shape: "island" }, water: { role: "ocean" } }, seed: 7 })
+action_scene({ action: "auditWorld" })                                                         errors/warnings with fixes
+action_editor({ action: "captureScreenshot", views: ["hero", "overview"] })                    then check the image
+```
+
+- `world` is a recipe id or an object (`extends`, `landform`, `water`, `style`, `vegetation`, `sky`, `camera`, `look`). `replace` is `world` (default; removes sky, lights, fog, a root mesh named exactly `Ground`, terrain, water, orbit camera), `environment` (only the sky, lights, fog and `Ground`) or `none`.
+- Scene with gameplay props: `applyWorld` never moves them onto the new ground and MCP cannot sample terrain height. Follow [existing-scene.md](../../genesys-world-building/references/existing-scene.md) before applying.
+- A blocked result starting `Invalid world:` comes back as `invalid_arguments`: fix the recipe from the message and dry-run again.
+- `applyWorld` needs approval and is one undo step. `auditWorld` and `listWorldRecipes` are read-only and need none. Fix every audit error, rerun `auditWorld`, and only then capture.
 
 ## Node materials
 
@@ -391,7 +436,7 @@ return { componentId };
 
 ## Poly Builder mesh
 
-Custom blockout or a modeled mesh in the open scene. Each piece is its own node under a Poly Mesh group. `polyMeshNodeId` is the group. `engineNodeId` is the piece. A box is an editable mesh. Read the `genesys-polybuilder` skill for topology ids and footguns. Do not add a `PolyMeshNode` with `action_node` or write `authoringJson`. Do not screenshot to place, align, or check the result. Verify with `query_polybuilder` and `query_node` on `engineNodeId`.
+Custom blockout or a modeled mesh in the open scene. Each piece is its own node under a Poly Mesh group. `polyMeshNodeId` is the group. `engineNodeId` is the piece. A box is an editable mesh. Read the `genesys-polybuilder` skill for topology ids and footguns. Do not add a `PolyMeshNode` with `action_node` or write `authoringJson`. Place, align and check joins with `query_polybuilder` and `query_node` on `engineNodeId` (bounds, face `worldCenter`), not a screenshot. Capture only to judge the look. Terrain, islands and landscapes are not Poly Builder work: use [genesys-world-building](../../genesys-world-building/SKILL.md).
 
 Compact-hidden: `query_polybuilder` / `action_polybuilder` via `run_script` (`genesys.queryPolybuilder` / `genesys.actionPolybuilder`) or `batch_execute`. Use `groupUndo: true` around a multi-step build.
 

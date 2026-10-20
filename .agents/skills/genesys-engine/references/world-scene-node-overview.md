@@ -76,6 +76,6 @@ Extends SceneNode for geometry and physics. Provides:
 
 Reference: See World.tick() in World.ts.
 
-## Deprecated
+## Removed
 
-`ENGINE.Actor` remains a deprecated PrimitiveNode compatibility class. Prefer SceneNode/PrimitiveNode subclasses. Compat World APIs (`addActor`, `getActors*`) only return remaining Actor instances — use `world.add` / `getNodes*` instead. See `engine-upgrades` → `13-14`.
+`ENGINE.Actor` is removed. Use SceneNode/PrimitiveNode subclasses with `isRoot`, `world.add`, and `getNodes*`. See `engine-upgrades` → `18-19`.

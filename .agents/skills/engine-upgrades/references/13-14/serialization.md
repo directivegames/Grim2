@@ -50,8 +50,9 @@ inspect hierarchy/transforms/prefab overrides, then save. There is no 13→14
 disk codemod — persistence is open → inspect → save.
 
 New World saves dump authored roots under `children` (Object3D children). Load
-still accepts legacy `sceneComponents` and `actors` lists. Do not hand-edit
-JSON expecting the old write keys.
+still accepted legacy `sceneComponents` and `actors` lists in 14. Engine 19
+removed that fallback (see `18-19.md` section 13). Do not hand-edit JSON
+expecting the old write keys.
 
 Do not hand-edit `.genesys-scene` / `.prefab.json` for this migration. Engine
 loaders redirect many registered `ENGINE.*` names (not only `*Component` →
@@ -69,9 +70,9 @@ ENGINE.ClassRegistry.addClassesToRedirect({
 
 If game code feeds raw JSON to a bare Loader (bypassing
 `WorldSerializer`/`PrefabManager`), call `prepareSerializedDataForLoad()` first.
-For legacy Actor-rooted `.prefab.json`, pass
-`{ convertPrefabDocument: true }` (what `PrefabManager` does). Pre-V1 data is
-rejected.
+Engine 14 to 18 also accepted
+`{ convertPrefabDocument: true }` for legacy Actor-rooted `.prefab.json`. Engine
+19 removed that option (see `18-19.md` section 13). Pre-V1 data is rejected.
 
 Reference implementations: `systems/WorldSerialization.ts`, `game/Prefab.ts`,
 `game/World.ts`, `utils/serialization/prefab.ts` in `.engine/src/`.
