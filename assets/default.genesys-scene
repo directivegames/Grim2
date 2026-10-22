@@ -706,7 +706,6 @@
         "children": {
           "$length": 1
         },
-        "excludeFromNavigation": true,
         "geometry": {
           "$bc": "THREE.BoxGeometry",
           "_": [
@@ -4002,7 +4001,6 @@
             "uuid": "eec73fa13b076683"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Lampost.glb",
         "name": "Lampost_03",
         "navigationGeometryRole": "exclude",
@@ -4096,7 +4094,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block",
         "navigationGeometryRole": "exclude",
@@ -4124,7 +4121,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block_02",
         "navigationGeometryRole": "exclude",
@@ -4152,7 +4148,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block_03",
         "navigationGeometryRole": "exclude",
@@ -4238,7 +4233,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block_04",
         "navigationGeometryRole": "exclude",
@@ -4266,7 +4260,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block_05",
         "navigationGeometryRole": "exclude",
@@ -4294,7 +4287,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block_06",
         "navigationGeometryRole": "exclude",
@@ -4918,7 +4910,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_002_material_02.material.json",
         "modelUrl": "@project/assets/models/tombs.glb",
         "name": "tombs",
@@ -4947,7 +4938,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_002_material_02.material.json",
         "modelUrl": "@project/assets/models/tombs.glb",
         "name": "tombs_04",
@@ -5082,7 +5072,6 @@
       {
         "$bc": "ENGINE.ModelMeshNode",
         "castShadow": true,
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 07",
         "navigationGeometryRole": "exclude",
@@ -5110,7 +5099,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 07",
         "navigationGeometryRole": "exclude",
@@ -9038,7 +9026,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 10",
         "navigationGeometryRole": "exclude",
@@ -9066,7 +9053,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 11",
         "navigationGeometryRole": "exclude",
@@ -9094,7 +9080,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 12",
         "navigationGeometryRole": "exclude",
@@ -9122,7 +9107,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 13",
         "navigationGeometryRole": "exclude",
@@ -9174,7 +9158,6 @@
             "uuid": "d5bc3e6ad28f2e06"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/lamp for chrcu.glb",
         "name": "lamp for chrcu 06",
         "navigationGeometryRole": "exclude",
@@ -9194,7 +9177,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone",
         "navigationGeometryRole": "exclude",
@@ -9246,7 +9228,6 @@
             "uuid": "d17acfc9bf2b87ad"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/tunnelredone.glb",
         "name": "Tunnelredone",
         "navigationGeometryRole": "exclude",
@@ -9356,7 +9337,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/tunnelredone.glb",
         "name": "Tunnelredone 02",
         "navigationGeometryRole": "exclude",
@@ -9384,7 +9364,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone 02",
         "navigationGeometryRole": "exclude",
@@ -9412,7 +9391,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone 03",
         "navigationGeometryRole": "exclude",
@@ -9440,7 +9418,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone 04",
         "navigationGeometryRole": "exclude",
@@ -9916,7 +9893,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Car1redon.glb",
         "name": "Car 1 Redon 02",
         "navigationGeometryRole": "exclude",
@@ -10213,7 +10189,6 @@
             "uuid": "39467eb81e9bcf70"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/car.material.json",
         "modelUrl": "@project/assets/models/Car1redon.glb",
         "name": "Car 1 Redon 03",
@@ -10250,7 +10225,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 02",
@@ -10287,7 +10261,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelMaterials": [],
         "modelUrl": "@project/assets/models/Grave.glb",
@@ -10325,7 +10298,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 04",
@@ -10362,7 +10334,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 05",
@@ -10399,7 +10370,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 06",
@@ -10436,7 +10406,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 07",
@@ -10473,7 +10442,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 08",
@@ -10510,7 +10478,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 09",
@@ -10547,7 +10514,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 10",
@@ -10584,7 +10550,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 11",
@@ -10621,7 +10586,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 13",
@@ -10658,7 +10622,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 14",
@@ -10695,7 +10658,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 15",
@@ -10732,7 +10694,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Grave.material.json",
         "modelUrl": "@project/assets/models/Grave.glb",
         "name": "Grave 16",
@@ -10793,7 +10754,6 @@
             "uuid": "da5c2e91cba3d776"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/lamp for chrcu.glb",
         "name": "lamp for chrcu 07",
         "navigationGeometryRole": "exclude",
@@ -10837,7 +10797,6 @@
             "uuid": "dc44ae86543a9269"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/lamp for chrcu.glb",
         "name": "lamp for chrcu 08",
         "navigationGeometryRole": "exclude",
@@ -10881,7 +10840,6 @@
             "uuid": "0bdf54c301dd11b1"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/lamp for chrcu.glb",
         "name": "lamp for chrcu 09",
         "navigationGeometryRole": "exclude",
@@ -11012,7 +10970,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone 05",
         "navigationGeometryRole": "exclude",
@@ -11456,7 +11413,6 @@
             "uuid": "3cb18374a463fa58"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/car.material.json",
         "modelUrl": "@project/assets/models/Car1redon.glb",
         "name": "Car 1 Redon 04",
@@ -14661,7 +14617,6 @@
             "uuid": "dd09636ae334f89e"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Police.material.json",
         "modelUrl": "@project/assets/models/policerdone.glb",
         "name": "Policerdone 02",
@@ -26354,7 +26309,6 @@
             "uuid": "e3ed5f3814921914"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Lampost.glb",
         "name": "Lampost 05",
         "navigationGeometryRole": "exclude",
@@ -26720,7 +26674,6 @@
             "uuid": "e36688afc2c99f0d"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/car.material.json",
         "modelUrl": "@project/assets/models/Car1redon.glb",
         "name": "Car 1 Redon 05",
@@ -26803,7 +26756,6 @@
             "uuid": "7f72df4ba5876501"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Police.material.json",
         "modelUrl": "@project/assets/models/policerdone.glb",
         "name": "Policerdone 03",
@@ -26888,7 +26840,6 @@
             "uuid": "5fb49d7a15d0003d"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Police.material.json",
         "modelUrl": "@project/assets/models/policerdone.glb",
         "name": "Policerdone 04",
@@ -27154,7 +27105,6 @@
       {
         "$bc": "ENGINE.ModelMeshNode",
         "castShadow": true,
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Wall.glb",
         "name": "Wall 04",
         "navigationGeometryRole": "exclude",
@@ -27216,7 +27166,6 @@
       {
         "$bc": "ENGINE.ModelMeshNode",
         "castShadow": true,
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Wall.glb",
         "name": "Wall 06",
         "navigationGeometryRole": "exclude",
@@ -27276,7 +27225,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Wall.glb",
         "name": "Wall 08",
         "navigationGeometryRole": "exclude",
@@ -27308,7 +27256,6 @@
       {
         "$bc": "ENGINE.ModelMeshNode",
         "castShadow": true,
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Wall.glb",
         "name": "Wall 09",
         "navigationGeometryRole": "exclude",
@@ -27414,7 +27361,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newhouse.glb",
         "name": "Newhouse",
         "navigationGeometryRole": "exclude",
@@ -27442,7 +27388,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 02",
@@ -28918,7 +28863,6 @@
       {
         "$bc": "ENGINE.ModelMeshNode",
         "castShadow": true,
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 03",
@@ -28955,7 +28899,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 04",
@@ -28992,7 +28935,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 05",
@@ -29325,7 +29267,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newhouse.glb",
         "name": "Newhouse 02",
         "navigationGeometryRole": "exclude",
@@ -29469,7 +29410,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 06",
@@ -29506,7 +29446,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 07",
@@ -29543,7 +29482,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 08",
@@ -29853,7 +29791,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 09",
@@ -29890,7 +29827,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 10",
@@ -29927,7 +29863,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 11",
@@ -29964,7 +29899,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 12",
@@ -30001,7 +29935,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 13",
@@ -30038,7 +29971,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 14",
@@ -30075,7 +30007,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 15",
@@ -30112,7 +30043,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 16",
@@ -30149,7 +30079,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 17",
@@ -30186,7 +30115,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 18",
@@ -30223,7 +30151,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 19",
@@ -30285,7 +30212,6 @@
             "uuid": "6a97044009f5eb2d"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newspookyhouse.glb",
         "name": "Newspookyhouse",
         "navigationGeometryRole": "exclude",
@@ -30305,7 +30231,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newhouse.glb",
         "name": "Newhouse 03",
         "navigationGeometryRole": "exclude",
@@ -30542,7 +30467,6 @@
             "uuid": "bc185b62774bf80e"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newstore.glb",
         "name": "Newstore",
         "navigationGeometryRole": "exclude",
@@ -30837,7 +30761,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 20",
@@ -30874,7 +30797,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 21",
@@ -30911,7 +30833,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 22",
@@ -30948,7 +30869,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Car1redon.glb",
         "name": "Car 1 Redon 06",
         "navigationGeometryRole": "exclude",
@@ -31045,7 +30965,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 03",
         "navigationGeometryRole": "exclude",
@@ -31081,7 +31000,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 04",
         "navigationGeometryRole": "exclude",
@@ -31117,7 +31035,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 05",
         "navigationGeometryRole": "exclude",
@@ -31153,7 +31070,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 06",
         "navigationGeometryRole": "exclude",
@@ -31189,7 +31105,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 07",
         "navigationGeometryRole": "exclude",
@@ -31225,7 +31140,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 23",
@@ -31262,7 +31176,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 24",
@@ -31299,7 +31212,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 25",
@@ -34125,7 +34037,6 @@
             "uuid": "ac8674b0c0415b6d"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Lampost.glb",
         "name": "Lampost 04",
         "navigationGeometryRole": "exclude",
@@ -36917,7 +36828,6 @@
             "uuid": "04908281a012f2f5"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Lampost.glb",
         "name": "Lampost 07",
         "navigationGeometryRole": "exclude",
@@ -39709,7 +39619,6 @@
             "uuid": "cbfe0b0d498a50c7"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Lampost.glb",
         "name": "Lampost 06",
         "navigationGeometryRole": "exclude",
@@ -40046,7 +39955,6 @@
             "uuid": "875e366e4ae39356"
           }
         ],
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/lamp for chrcu.glb",
         "name": "lamp for chrcu 11",
         "navigationGeometryRole": "exclude",
@@ -40536,7 +40444,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 26",
@@ -40573,7 +40480,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 27",
@@ -40610,7 +40516,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 28",
@@ -40758,7 +40663,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newhouse.glb",
         "name": "Newhouse 04",
         "navigationGeometryRole": "exclude",
@@ -40971,7 +40875,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/2ndnewhouse.glb",
         "name": "2 Ndnewhouse",
         "navigationGeometryRole": "exclude",
@@ -41415,7 +41318,6 @@
             "uuid": "af3d6bee6ed2a0cc"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/Police.material.json",
         "modelUrl": "@project/assets/models/policerdone.glb",
         "name": "Policerdone 05",
@@ -41453,7 +41355,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 14",
         "navigationGeometryRole": "exclude",
@@ -41481,7 +41382,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 15",
         "navigationGeometryRole": "exclude",
@@ -41509,7 +41409,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 29",
@@ -41614,7 +41513,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 30",
@@ -41651,7 +41549,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 31",
@@ -41688,7 +41585,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 32",
@@ -41725,7 +41621,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 33",
@@ -41762,7 +41657,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 34",
@@ -41799,7 +41693,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 35",
@@ -41836,7 +41729,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 36",
@@ -42021,7 +41913,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone 06",
         "navigationGeometryRole": "exclude",
@@ -42157,7 +42048,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 37",
@@ -42194,7 +42084,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 38",
@@ -42749,7 +42638,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/tunnelredone.glb",
         "name": "Tunnelredone 03",
         "navigationGeometryRole": "exclude",
@@ -43049,7 +42937,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newhouse.glb",
         "name": "Newhouse 05",
         "navigationGeometryRole": "exclude",
@@ -43077,7 +42964,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newhouse.glb",
         "name": "Newhouse 06",
         "navigationGeometryRole": "exclude",
@@ -43113,7 +42999,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/2ndnewhouse.glb",
         "name": "2 Ndnewhouse 02",
         "navigationGeometryRole": "exclude",
@@ -43999,7 +43884,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone 08",
         "navigationGeometryRole": "exclude",
@@ -44167,7 +44051,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/rocksredone.glb",
         "name": "Rocksredone 09",
         "navigationGeometryRole": "exclude",
@@ -44306,7 +44189,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/2ndnewhouse.glb",
         "name": "2 Ndnewhouse 03",
         "navigationGeometryRole": "exclude",
@@ -44757,7 +44639,6 @@
             "vfxPath": "@project/assets/VFX/fire.vfx.json"
           }
         ],
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/car.material.json",
         "modelUrl": "@project/assets/models/Car1redon.glb",
         "name": "Car 1 Redon 07",
@@ -44794,7 +44675,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/textures/car.material.json",
         "modelUrl": "@project/assets/models/Car1redon.glb",
         "name": "Car 1 Redon 08",
@@ -44979,7 +44859,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 39",
@@ -45016,7 +44895,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 40",
@@ -45053,7 +44931,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 41",
@@ -45090,7 +44967,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 42",
@@ -45272,7 +45148,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/tombs.glb",
         "name": "tombs 04",
         "navigationGeometryRole": "exclude",
@@ -45300,7 +45175,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/tombs.glb",
         "name": "tombs 05",
         "navigationGeometryRole": "exclude",
@@ -45328,7 +45202,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/tombs.glb",
         "name": "tombs 06",
         "navigationGeometryRole": "exclude",
@@ -45356,7 +45229,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 10",
         "navigationGeometryRole": "exclude",
@@ -45676,7 +45548,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/newhouse.glb",
         "name": "Newhouse 07",
         "navigationGeometryRole": "exclude",
@@ -46008,7 +45879,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 43",
@@ -46045,7 +45915,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 44",
@@ -46082,7 +45951,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 45",
@@ -46119,7 +45987,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 46",
@@ -46157,7 +46024,6 @@
       {
         "$bc": "ENGINE.ModelMeshNode",
         "castShadow": true,
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Wall.glb",
         "name": "Wall 25",
         "navigationGeometryRole": "exclude",
@@ -46188,7 +46054,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 11",
         "navigationGeometryRole": "exclude",
@@ -46224,7 +46089,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 12",
         "navigationGeometryRole": "exclude",
@@ -46260,7 +46124,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 13",
         "navigationGeometryRole": "exclude",
@@ -46296,7 +46159,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/spookytree.glb",
         "name": "Spookytree 14",
         "navigationGeometryRole": "exclude",
@@ -46488,7 +46350,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 16",
         "navigationGeometryRole": "exclude",
@@ -46516,7 +46377,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelUrl": "@project/assets/models/Police block.glb",
         "name": "Police block 17",
         "navigationGeometryRole": "exclude",
@@ -46978,7 +46838,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47026,7 +46885,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47074,7 +46932,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47122,7 +46979,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47170,7 +47026,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47218,7 +47073,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47266,7 +47120,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47314,7 +47167,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47362,7 +47214,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47410,7 +47261,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47458,7 +47308,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47506,7 +47355,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47554,7 +47402,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47602,7 +47449,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47650,7 +47496,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -47698,7 +47543,6 @@
             "children": {
               "$length": 1
             },
-            "excludeFromNavigation": true,
             "geometry": {
               "$bc": "THREE.BoxGeometry",
               "_": [
@@ -52535,7 +52379,6 @@
       },
       {
         "$bc": "ENGINE.ModelMeshNode",
-        "excludeFromNavigation": true,
         "modelMaterial": "@project/assets/models/material_0_001_material.material.json",
         "modelUrl": "@project/assets/models/Newtree.glb",
         "name": "Newtree 47",

@@ -124,7 +124,7 @@ Dispatch via `batch_execute`:
 
 Action Store · kind: `action`
 
-Create and manage the game's store items on the creator's behalf (the editor holds the Studio login; no token is needed). Compact-hidden — call via run_script (genesys.actionStore) or batch_execute. Requires `action`. Ops: linkGame (registers the project as a game and writes gameId into <project>.genesys-project, exactly as opening Store Manager does; returns the existing id when already linked; no approval; result gameCreated is true when it created the game), createItem (name, description, coins or free, consumable, optional https imageUrl; new items are drafts — only the creator sees them in the editor), updateItem (sku plus any of name, description, coins / free, imageUrl or null), publish (players can buy), takeDown (back to draft), deleteItem (destructive; owners keep it), setImage (sku + filePath: a PNG, JPEG or WebP anywhere on this computer or @project/..., uploaded to the game's assets). Every op except linkGame returns the item's sku; applied writes link the game first when the project has none (gameCreated: true).
+Create and manage the game's store items on the creator's behalf (the editor holds the Studio login; no token is needed). Compact-hidden — call via run_script (genesys.actionStore) or batch_execute. Requires `action`. Ops: linkGame (registers the project as a game and writes gameId into <project>.genesys-project, exactly as opening Store Manager does; returns the existing id when already linked; no approval; result gameCreated is true when it created the game), createItem (name, description, coins or free, consumable, optional https imageUrl; new items are drafts — only the creator sees them in the editor), updateItem (itemId plus any of name, description, coins / free, imageUrl or null), publish (players can buy), takeDown (back to draft), deleteItem (destructive; owners keep it), setImage (itemId + filePath: a PNG, JPEG or WebP anywhere on this computer or @project/..., uploaded to the game's assets). Items live in core and are named by their id (listItems `id`; game code uses the same id). Every op except linkGame returns the item's itemId; applied writes link the game first when the project has none (gameCreated: true).
 
 Operations: `createItem`, `deleteItem` *(destructive)*, `linkGame`, `publish`, `setImage`, `takeDown`, `updateItem`
 
@@ -264,7 +264,7 @@ Dispatch via `batch_execute`:
 
 Query Store · kind: `query`
 
-Read the game's in-game store (Sandbox Silicon items sold to players). Compact-hidden — call via run_script (genesys.queryStore) or batch_execute. Ops: getState (game id or null when not linked yet, whether src/store is installed, who the store API recognises, environment, payment mode), listItems (every item including drafts: sku, name, description, price, consumable, imageUrl, draft). Runs in the editor with the creator's Studio login; a project must be open.
+Read the game's in-game store (Sandbox Silicon items sold to players). Compact-hidden — call via run_script (genesys.queryStore) or batch_execute. Ops: getState (game id or null when not linked yet, whether src/store is installed, who the store API recognises, environment, payment mode), listItems (every item including drafts and items off sale, from core: id, name, description, price in Silicon with 0 = free, consumable, imageUrl, draft, onSale). Runs in the editor with the creator's Studio login; a project must be open.
 
 Operations: `getState`, `listItems`
 

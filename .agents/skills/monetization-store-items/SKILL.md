@@ -1,16 +1,18 @@
 ---
 name: monetization-store-items
-description: Use when a creator wants to add, price, edit, publish, take down, or delete an item in their game's store, give an item a gameplay effect, or test buying without spending money — item SKUs, drafts, free items, consumables, Silicon prices, item images. Start from `monetization-store` for what the store is.
+description: Use when a creator wants to add, price, edit, publish, take down, or delete an item in their game's store, give an item a gameplay effect, or test buying without spending money — item ids, drafts, free items, consumables, Silicon prices, item images. Start from `monetization-store` for what the store is.
 metadata:
-  tokens: 1886
+  tokens: 2032
 ---
 
 # Monetization Store Items
 
-Items belong to one game. Each has an immutable SKU (`gi-<uuid>`), a name, a
-description, a price in Silicon or Free, a type (permanent: bought once and
-kept; consumable: used up and bought again, stacks in the inventory), and an
-optional https image. The type cannot change after creation.
+Items belong to one game and live in core (tsb-core-api). Each has an
+immutable item id (core's id), a name (up to 100 characters), a description
+(up to 500), a price in whole Silicon (1 to 1,000,000) or Free, a type
+(permanent: bought once and kept; consumable: used up and bought again,
+stacks in the inventory), and an optional https image. The type cannot
+change after creation.
 
 ## Before creating anything
 
@@ -33,7 +35,7 @@ things the templates decide.
 ## Creating and managing items
 
 Store Manager, in the editor's main menu, is where the creator can review
-and edit the store themselves: it lists the items with their Draft or Live state and SKU (copy button),
+and edit the store themselves: it lists the items with their Draft or Live state and item id (copy button),
 and offers New Item, Edit, Publish, Take Down and Delete. The image is an
 https URL or a file uploaded to the game's assets. Every new item starts as
 a draft.
@@ -48,43 +50,44 @@ skill. A project must be open in the editor.
 `genesys.queryStore({ operation })`:
 
 - `getState` — game id (`null` until linked), whether `src/store` is installed, the store session (who the API recognises, environment, payment mode).
-- `listItems` — every item including drafts: `sku`, `name`, `description`, `price`, `consumable`, `imageUrl`, `draft`.
+- `listItems` — every item including drafts and items off sale: `id`, `name`, `description`, `price` (whole Silicon, `0` is free), `consumable`, `imageUrl`, `draft`, `onSale`.
 
 `genesys.actionStore({ action, ... })`:
 
 - `linkGame` — no arguments, no approval. Registers the project as a game and writes `gameId` into `<project>.genesys-project`, as opening Store Manager does; returns `gameId` and `gameCreated` (false when it was already linked).
 
-The item actions return the item's `sku`. When the project is not linked yet they link it first and add `gameCreated: true`; mention the new game id to the creator.
+The item actions return the item's `itemId` (applied creates and edits also return the saved `item`). When the project is not linked yet they link it first and add `gameCreated: true`; mention the new game id to the creator.
 
 - `createItem` — `name`, `description` (defaults to the name), `coins` or `free: true`, `consumable` (default false), optional https `imageUrl`. New items are drafts.
-- `updateItem` — `sku` plus any of `name`, `description`, `coins` / `free`, `imageUrl` (`null` removes the image).
-- `publish` / `takeDown` — `sku`.
-- `deleteItem` — `sku`; destructive.
-- `setImage` — `sku` and `filePath`: a PNG, JPEG or WebP anywhere on the computer (a file the creator dropped into the chat, or `@project/assets/...`), uploaded to the game's assets.
+- `updateItem` — `itemId` plus any of `name`, `description`, `coins` / `free`, `imageUrl` (`null` removes the image).
+- `publish` / `takeDown` — `itemId`.
+- `deleteItem` — `itemId`; destructive.
+- `setImage` — `itemId` and `filePath`: a PNG, JPEG or WebP anywhere on the computer (a file the creator dropped into the chat, or `@project/assets/...`), uploaded to the game's assets.
 
 ```js
 // run_script(apply)
 const created = await genesys.actionStore({ action: 'createItem', name: 'Storm Cloak', description: 'Walk through rain.', coins: 750, consumable: false });
-await genesys.actionStore({ action: 'setImage', sku: created.sku, filePath: '/Users/me/Downloads/cloak.png' });
-await genesys.actionStore({ action: 'publish', sku: created.sku });
+await genesys.actionStore({ action: 'setImage', itemId: created.itemId, filePath: '/Users/me/Downloads/cloak.png' });
+await genesys.actionStore({ action: 'publish', itemId: created.itemId });
 ```
 
 When MCP is off, the agent cannot reach the editor: ask the creator to open
 Store Manager (it links the game on open), create the item there and copy
-its SKU (each row shows it); do not ask for a token and do not propose
+its item id (each row shows it); do not ask for a token and do not propose
 pasting scripts into the browser.
 
 ## After creating
 
-Report every item with its SKU, price, type and state. Say that new items
+Report every item with its item id, price, type and state. Say that new items
 are drafts: only the creator sees them, in the editor, until they are
 published, and that each can be changed or published later in the editor's
 Store Manager or by asking here (publish, take down, change the price, set
 an image, delete).
 
-SKUs of published items are readable by anyone:
-`GET /api/games/<gameId>/items` (no token). Drafts are listed only with the
-owner's session.
+Published items on sale are readable by anyone from core:
+`GET https://api-v2.sandbox.game/v2/games/<gameId>/items` (no token;
+`api-v2-dev` for games on the dev editor). Drafts are listed only to the
+game's owner.
 
 Drafts: visible and buyable only for the game's owner playing in the editor,
 where they show a Draft chip, a dashed frame and a watermark, and cost Test
@@ -92,45 +95,47 @@ Silicon. A published game never lists or sells a draft. Publish with Take Down
 reversed: a taken down item disappears from the store; players who bought it
 keep it.
 
-Delete removes the item from the catalog for everyone; owners keep it in
-their inventory. A deleted SKU never comes back; create a new item instead.
+Delete removes the item from the game for everyone; owners keep it in
+their inventory. A deleted item never comes back; create a new item instead.
 
 ## Giving an item an effect
 
-The store delivers items and keeps the inventory; the game decides what an
-item does. Keep SKUs in one file:
+Core delivers items and keeps the inventory; the game decides what an item
+does. Keep item ids in one file:
 
 ```ts
-// src/store-items.ts
+// src/store-items.ts: ids from the Store Manager or listItems
 export const STORE_ITEMS = {
-  lantern: 'gi-…',
-  healingHerb: 'gi-…',
+  lantern: '<item id>',
+  healingHerb: '<item id>',
 } as const;
 ```
 
 Permanent items: apply the effect when the store is ready and after each
-purchase or claim.
+purchase or claim. `purchased` and `claimed` fire only once the item is in
+the inventory; a slow purchase first fires `purchase-pending` (show nothing
+yet) and the store shows it as processing.
 
 ```ts
 store.controller.on('ready', () => {
   if (store.controller.owns(STORE_ITEMS.lantern)) enableLantern();
 });
-store.controller.on('purchased', ({ sku }) => { if (sku === STORE_ITEMS.lantern) enableLantern(); });
-store.controller.on('claimed', ({ sku }) => { if (sku === STORE_ITEMS.lantern) enableLantern(); });
+store.controller.on('purchased', ({ itemId }) => { if (itemId === STORE_ITEMS.lantern) enableLantern(); });
+store.controller.on('claimed', ({ itemId }) => { if (itemId === STORE_ITEMS.lantern) enableLantern(); });
 ```
 
 Consumables: the player uses one from the Inventory tab, or the game consumes
 one itself.
 
 ```ts
-store.controller.on('consumed', ({ sku, remainingQuantity }) => {
-  if (sku === STORE_ITEMS.healingHerb) heal(50);
+store.controller.on('consumed', ({ itemId, remainingQuantity }) => {
+  if (itemId === STORE_ITEMS.healingHerb) heal(50);
 });
 // from gameplay, e.g. a hotkey:
 if (store.controller.quantityOf(STORE_ITEMS.healingHerb) > 0) void store.controller.consume(STORE_ITEMS.healingHerb);
 ```
 
-`owns(sku)` and `quantityOf(sku)` read the loaded inventory; they are
+`owns(itemId)` and `quantityOf(itemId)` read the loaded inventory; they are
 synchronous and cheap.
 
 ## Testing an item
@@ -146,8 +151,8 @@ synchronous and cheap.
 - Permanent items can be bought once per account; test repeated purchases
   with a consumable.
 - To test what players see, publish the game as a draft and open it on
-  studio outside the editor, signed in on sandbox.game: drafts are absent,
-  live items are buyable with real Silicon.
+  studio outside the editor, signed in to Studio: drafts are absent, live
+  items are buyable with real Silicon.
 - The panel footer shows `test silicon` when the balance is Test Silicon,
   `drafts visible` when drafts are listed, and `sandbox payments` when the
   API reports a sandbox payment mode. That last one is informational: games

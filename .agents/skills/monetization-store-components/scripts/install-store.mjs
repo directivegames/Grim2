@@ -10,6 +10,7 @@
  * On an existing install it overwrites every file except store-config.ts when the shipped
  * STORE_VERSION is newer, and deletes template files that newer versions dropped
  * (OBSOLETE_FILES), so a stale module cannot break the build. Plain Node, no dependencies.
+ * Updates across a breaking version print what game code must change (BREAKING_CHANGES).
  */
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -37,6 +38,16 @@ const OBSOLETE_FILES = [
   path.join('assets', 'ui', 'store', 'get-coins-modal.css'),
 ];
 const REQUIRED_WIDGETS = ['BaseUIComponent', 'Button', 'Keystroke', 'Achievement'];
+/** What game code must change when an update crosses `version`. */
+const BREAKING_CHANGES = [
+  {
+    version: '2.0.0',
+    note: 'items now live in core and are named by their item id (Store Manager shows it), not by SKU. In your game code: '
+      + "purchased / claimed / consumed / needs-coins events carry { itemId } instead of { sku }; owns(), quantityOf(), "
+      + 'acquire() and consume() take the item id; ItemView and InventoryItem have itemId instead of sku; state.busySku is '
+      + 'state.busyItemId. Buying needs the Studio login on the page (core knows players only by it).',
+  },
+];
 
 function fail(message) {
   console.error(`store install: ${message}`);
@@ -176,6 +187,14 @@ async function main() {
     console.log(`  ${CONFIG_REL} kept (STORE_VERSION set to ${shippedVersion})`);
   } else {
     console.log(`  gameId ${gameId} from ${projectFile} written into ${CONFIG_REL}`);
+  }
+  if (installed) {
+    const from = installedVersion ?? '0.0.0';
+    for (const change of BREAKING_CHANGES) {
+      if (compareVersions(from, change.version) < 0 && compareVersions(shippedVersion, change.version) >= 0) {
+        console.log(`\nstore install: v${change.version} changes the game-facing API: ${change.note}`);
+      }
+    }
   }
   await printWiring(gameId);
 }

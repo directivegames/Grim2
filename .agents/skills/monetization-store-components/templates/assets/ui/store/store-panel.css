@@ -248,6 +248,12 @@
   border-radius: 12px;
 }
 
+.store-notice[data-tone='info'] {
+  color: #c7d4ff;
+  background: rgba(79, 124, 255, 0.08);
+  border-color: rgba(79, 124, 255, 0.3);
+}
+
 .store-notice[hidden] {
   display: none;
 }

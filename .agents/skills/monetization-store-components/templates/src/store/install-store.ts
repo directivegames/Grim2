@@ -1,5 +1,6 @@
 import * as ENGINE from '@gnsx/genesys.js';
 
+import { resolveCoreApiUrl, studioSignInUrl } from './core-api.js';
 import { StoreClient } from './store-client.js';
 import { PLACEHOLDER_GAME_IDS, storeConfig, type StoreConfig, STORE_VERSION } from './store-config.js';
 import { StoreController } from './store-controller.js';
@@ -46,7 +47,12 @@ function isTypingTarget(element: Element | null): boolean {
   return tag === 'input' || tag === 'textarea' || tag === 'select' || (element as HTMLElement).isContentEditable;
 }
 
-/** The creator's Keycloak token, present on the studio origin while editing. */
+/**
+ * The Studio (Keycloak) access token the Studio web app keeps for this origin:
+ * there for creators in the editor and for players signed in to Studio. Core
+ * knows the player only by it. Studio never refreshes or clears it, so the
+ * client drops it once expired (usableToken in store-client.ts).
+ */
 function readGenesysToken(): string | null {
   try {
     return window.localStorage.getItem('keycloak_access_token');
@@ -56,14 +62,15 @@ function readGenesysToken(): string | null {
 }
 
 /**
- * Developer override for the API base URL, e.g. to test an API build that is
- * not deployed yet. In the browser console:
+ * Developer overrides for the API origins, e.g. to test a build that is not
+ * deployed yet. In the browser console:
  *   localStorage.setItem('store.apiBaseUrl', '<another store API origin>')
+ *   localStorage.setItem('store.coreApiUrl', '<another core API origin>')
  *   localStorage.removeItem('store.apiBaseUrl')   // back to the configured API
  */
-function readApiBaseUrlOverride(): string | null {
+function readUrlOverride(key: 'store.apiBaseUrl' | 'store.coreApiUrl'): string | null {
   try {
-    const value = window.localStorage.getItem('store.apiBaseUrl')?.trim();
+    const value = window.localStorage.getItem(key)?.trim();
     return value && /^https?:\/\//.test(value) ? value : null;
   } catch {
     return null;
@@ -83,13 +90,16 @@ export async function installStore(
   const uiManager = world.uiManager;
   const inputManager = world.inputManager;
 
-  const apiBaseUrlOverride = readApiBaseUrlOverride();
+  const apiBaseUrlOverride = readUrlOverride('store.apiBaseUrl');
   if (apiBaseUrlOverride) console.warn(`[Store] API override from localStorage: ${apiBaseUrlOverride}`);
+  const coreApiUrlOverride = readUrlOverride('store.coreApiUrl');
+  if (coreApiUrlOverride) console.warn(`[Store] core API override from localStorage: ${coreApiUrlOverride}`);
   // A placeholder runtime id ("editor", "dev-game") means we are not a published game.
   const runtimeGameId = world.netWorld.gameId;
   const inEditor = PLACEHOLDER_GAME_IDS.has(runtimeGameId?.trim() ?? '');
   const client = new StoreClient({
     baseUrl: apiBaseUrlOverride ?? config.apiBaseUrl,
+    coreBaseUrl: coreApiUrlOverride ?? resolveCoreApiUrl(window.location.hostname),
     genesysToken: readGenesysToken,
     context: () => (inEditor ? 'editor' : 'game'),
   });
@@ -99,6 +109,7 @@ export async function installStore(
     configuredGameId: config.gameId,
     runtimeGameId,
     topUpUrls: SILICON_TOP_UP_URLS,
+    studioSignInUrl: () => studioSignInUrl(window.location),
     // Not 'noopener': with it window.open always returns null, and a blocked tab could not be told apart.
     openTopUpWindow: (url) => {
       const tab = window.open(url, '_blank');
@@ -124,9 +135,9 @@ export async function installStore(
     onRetry: () => void controller.refresh(),
     onLogin: () => void controller.logIn(),
     onCancelLogin: () => controller.cancelLogIn(),
-    onAction: (sku, action) => {
-      if (action === 'use') void controller.consume(sku);
-      else if (action !== 'owned') void controller.acquire(sku);
+    onAction: (itemId, action) => {
+      if (action === 'use') void controller.consume(itemId);
+      else if (action !== 'owned') void controller.acquire(itemId);
     },
   });
 
@@ -143,9 +154,9 @@ export async function installStore(
 
   await Promise.all([panel.initialize(), toast.initialize(uiManager), hud?.initialize()]);
 
-  const nameOf = (sku: string): string => controller.state.items.find((item) => item.sku === sku)?.name ?? 'Item';
-  const priceOf = (sku: string): number | null => {
-    const price = controller.state.items.find((item) => item.sku === sku)?.price;
+  const nameOf = (itemId: string): string => controller.state.items.find((item) => item.itemId === itemId)?.name ?? 'Item';
+  const priceOf = (itemId: string): number | null => {
+    const price = controller.state.items.find((item) => item.itemId === itemId)?.price;
     return price && 'coins' in price ? price.coins : null;
   };
 
@@ -160,20 +171,24 @@ export async function installStore(
       if (pointerWasLocked) inputManager.requestPointerLock({ unadjustedMovement: true });
       pointerWasLocked = false;
     }),
-    controller.on('purchased', ({ sku, orderId }) => {
-      console.info(`[Store] purchased ${sku} (order ${orderId ?? 'n/a'})`);
-      toast.showPurchased(nameOf(sku), priceOf(sku));
+    controller.on('purchased', ({ itemId, orderId }) => {
+      console.info(`[Store] purchased ${itemId} (order ${orderId ?? 'n/a'})`);
+      toast.showPurchased(nameOf(itemId), priceOf(itemId));
     }),
-    controller.on('claimed', ({ sku }) => {
-      console.info(`[Store] claimed ${sku}`);
-      toast.showClaimed(nameOf(sku));
+    controller.on('purchase-pending', ({ itemId, reason }) => {
+      console.info(`[Store] purchase of ${itemId} is being processed (${reason === 'pending' ? 'core answered pending' : 'no answer in time'})`);
+      toast.showProcessing(nameOf(itemId));
     }),
-    controller.on('consumed', ({ sku, remainingQuantity }) => {
-      console.info(`[Store] consumed ${sku}, ${remainingQuantity} left`);
-      toast.showConsumed(nameOf(sku), remainingQuantity);
+    controller.on('claimed', ({ itemId }) => {
+      console.info(`[Store] claimed ${itemId}`);
+      toast.showClaimed(nameOf(itemId));
     }),
-    controller.on('needs-coins', ({ sku, shortfall }) =>
-      console.info(`[Store] ${sku} needs ${shortfall ?? '?'} more Silicon`),
+    controller.on('consumed', ({ itemId, remainingQuantity }) => {
+      console.info(`[Store] consumed ${itemId}, ${remainingQuantity} left`);
+      toast.showConsumed(nameOf(itemId), remainingQuantity);
+    }),
+    controller.on('needs-coins', ({ itemId, shortfall }) =>
+      console.info(`[Store] ${itemId} needs ${shortfall ?? '?'} more Silicon`),
     ),
     controller.on('signed-in', ({ username }) => console.info(`[Store] signed in as ${username ?? 'player'}`)),
     controller.on('error', ({ code, message }) => console.warn(`[Store] ${code}: ${message}`)),
@@ -197,7 +212,7 @@ export async function installStore(
 
   await controller.init();
   const { gameId, gameIdSource, gameIdMismatch } = controller.state;
-  console.info(`[Store] v${STORE_VERSION}, game ${gameId ?? '(unlinked)'} via ${gameIdSource}`);
+  console.info(`[Store] v${STORE_VERSION}, game ${gameId ?? '(unlinked)'} via ${gameIdSource}, items from ${client.coreBaseUrl}`);
   if (gameIdMismatch) {
     console.warn(`[Store] store-config.ts gameId "${config.gameId}" differs from the running game "${gameId}"; using the running game.`);
   }

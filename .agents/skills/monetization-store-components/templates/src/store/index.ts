@@ -1,12 +1,13 @@
 /**
  * In-game store for Sandbox games (monetization-store skills).
  *
- *   const store = await installStore(world);          // in GameMode.beginPlay
- *   store.controller.on('purchased', ({ sku }) => …); // react in gameplay
- *   store.destroy();                                   // in GameMode.endPlay
+ *   const store = await installStore(world);              // in GameMode.beginPlay
+ *   store.controller.on('purchased', ({ itemId }) => …);  // react in gameplay
+ *   store.destroy();                                       // in GameMode.endPlay
  */
 export { installStore, type InstalledStore } from './install-store.js';
 export { storeConfig, resolveGameId, type StoreConfig } from './store-config.js';
+export { CORE_API_URLS, resolveCoreApiUrl, type CoreEnvironment } from './core-api.js';
 export {
   StoreClient,
   StoreApiError,

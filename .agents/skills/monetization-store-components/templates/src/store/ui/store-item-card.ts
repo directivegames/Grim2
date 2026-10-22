@@ -8,8 +8,8 @@ export type CardAction = 'buy' | 'buy-again' | 'claim' | 'use' | 'owned';
 
 export interface StoreItemCardOptions extends ENGINE.BaseUIComponentOptions {
   accent?: string | null;
-  /** Called with the sku and the action the button represented. */
-  onAction?: (sku: string, action: CardAction) => void;
+  /** Called with the item id and the action the button represented. */
+  onAction?: (itemId: string, action: CardAction) => void;
 }
 
 interface ButtonSpec {
@@ -47,6 +47,8 @@ export function buttonSpecFor(view: ItemView, mode: CardMode, guest = false): Bu
       return { label: isFree(view) ? 'Claimed' : 'Owned', variant: 'secondary', disabled: true, action: 'owned' };
     case 'published':
       return { label: 'Published', variant: 'secondary', disabled: true, action: 'owned' };
+    case 'processing':
+      return { label: 'Processing…', variant: 'secondary', disabled: true, action: 'owned' };
     default:
       return { label: 'Buy', variant: 'primary', disabled: false, action: 'buy' };
   }
@@ -127,7 +129,7 @@ export class StoreItemCard extends ENGINE.BaseUIComponent<StoreItemCardOptions> 
         variant: 'primary',
         size: 'medium',
         onClick: () => {
-          if (this.view) this.options.onAction(this.view.sku, this.currentAction);
+          if (this.view) this.options.onAction(this.view.itemId, this.currentAction);
         },
       },
       this.actionSlot,
@@ -135,8 +137,8 @@ export class StoreItemCard extends ENGINE.BaseUIComponent<StoreItemCardOptions> 
     if (this.view) this.applyView();
   }
 
-  public getSku(): string | null {
-    return this.view?.sku ?? null;
+  public getItemId(): string | null {
+    return this.view?.itemId ?? null;
   }
 
   /** Renders an item; safe to call before initialize() and on every state change. */

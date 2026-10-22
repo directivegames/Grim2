@@ -29,7 +29,7 @@ export interface StorePanelOptions extends ENGINE.BaseUIComponentOptions {
   onRetry?: () => void;
   onLogin?: () => void;
   onCancelLogin?: () => void;
-  onAction?: (sku: string, action: CardAction) => void;
+  onAction?: (itemId: string, action: CardAction) => void;
 }
 
 /**
@@ -265,7 +265,9 @@ export class StorePanel extends ENGINE.BaseUIComponent<StorePanelOptions> {
       if (this.guestText) {
         this.guestText.textContent = state.loginPending
           ? 'Finish signing in in the window that just opened. The store updates by itself once you are in.'
-          : 'You are browsing as a guest. Sign in with your Sandbox account to buy or claim items; your Silicon and items follow you across games.';
+          : state.needsStudioLogin
+            ? 'Buying and claiming items needs a current Sandbox Studio login on this page. Sign in to Studio; your Silicon and items follow you across games.'
+            : 'You are browsing as a guest. Sign in with your Sandbox account to buy or claim items; your Silicon and items follow you across games.';
       }
       this.loginButton?.setLabel(state.loginPending ? 'Cancel sign-in' : 'Sign in');
       this.loginButton?.setVariant(state.loginPending ? 'secondary' : 'primary');
@@ -279,11 +281,14 @@ export class StorePanel extends ENGINE.BaseUIComponent<StorePanelOptions> {
     if (this.errorMessage && state.lastError) {
       this.errorMessage.textContent = `${state.lastError.message} (${state.lastError.code})`;
     }
-    // An action failed while the catalog itself is fine: say so inline.
+    // An action failed while the catalog itself is fine, or a purchase is still being processed: say so inline.
     if (this.notice) {
       const actionError = state.phase !== 'error' && state.phase !== 'loading' ? state.lastError : null;
-      this.notice.hidden = !actionError;
+      const processing = actionError ? null : processingText(state);
+      this.notice.hidden = !actionError && !processing;
+      this.notice.dataset.tone = actionError ? 'error' : 'info';
       if (actionError) this.notice.textContent = `${actionError.message} (${actionError.code})`;
+      else if (processing) this.notice.textContent = processing;
     }
     if (this.sessionInfo) {
       this.sessionInfo.textContent = this.options.showSessionInfo ? sessionInfoText(state) : '';
@@ -298,10 +303,10 @@ export class StorePanel extends ENGINE.BaseUIComponent<StorePanelOptions> {
       this.inventoryEmpty.hidden = !(showGrid && state.activeTab === 'inventory' && views.length === 0);
     }
     if (!gridVisible) return;
-    await this.renderCards(views, mode, state.busySku, state.phase === 'guest');
+    await this.renderCards(views, mode, state.busyItemId, state.phase === 'guest');
   }
 
-  private async renderCards(views: ItemView[], mode: CardMode, busySku: string | null, guest: boolean): Promise<void> {
+  private async renderCards(views: ItemView[], mode: CardMode, busyItemId: string | null, guest: boolean): Promise<void> {
     if (!this.gridElement) return;
     if (mode !== this.cardMode) {
       // Cards keep per-mode button semantics; rebuild when switching tabs.
@@ -312,26 +317,26 @@ export class StorePanel extends ENGINE.BaseUIComponent<StorePanelOptions> {
     }
     const seen = new Set<string>();
     for (const view of views) {
-      seen.add(view.sku);
-      let card = this.cards.get(view.sku);
+      seen.add(view.itemId);
+      let card = this.cards.get(view.itemId);
       if (!card) {
         const holder = document.createElement('div');
-        holder.dataset.storeCardHolder = view.sku;
+        holder.dataset.storeCardHolder = view.itemId;
         this.gridElement.appendChild(holder);
         card = await this.mountChild(
           StoreItemCard,
-          { accent: this.options.accent, onAction: (sku: string, action: CardAction) => this.options.onAction(sku, action) },
+          { accent: this.options.accent, onAction: (itemId: string, action: CardAction) => this.options.onAction(itemId, action) },
           holder,
         );
-        this.cards.set(view.sku, card);
+        this.cards.set(view.itemId, card);
       }
-      card.setView(view, mode, busySku === view.sku, guest);
+      card.setView(view, mode, busyItemId === view.itemId, guest);
     }
-    for (const [sku, card] of this.cards) {
-      if (seen.has(sku)) continue;
+    for (const [itemId, card] of this.cards) {
+      if (seen.has(itemId)) continue;
       card.destroy();
-      this.cards.delete(sku);
-      this.gridElement.querySelector(`[data-store-card-holder="${sku}"]`)?.remove();
+      this.cards.delete(itemId);
+      this.gridElement.querySelector(`[data-store-card-holder="${CSS.escape(itemId)}"]`)?.remove();
     }
   }
 
@@ -371,6 +376,13 @@ export function sessionInfoText(state: StoreState): string {
   parts.push(state.gameId ? `game ${state.gameId}` : 'game not linked');
   if (state.items.some((item) => item.draft)) parts.push('drafts visible');
   return parts.join(' · ');
+}
+
+/** The line for purchases still being processed, or null when there are none. */
+export function processingText(state: Pick<StoreState, 'pendingItemIds' | 'items'>): string | null {
+  if (state.pendingItemIds.length === 0) return null;
+  const names = state.pendingItemIds.map((id) => state.items.find((item) => item.itemId === id)?.name ?? 'your item');
+  return `Your purchase of ${names.join(', ')} is being processed. It appears in your inventory once it goes through; there is no need to buy again.`;
 }
 
 /** The top-up bar's line, or null to hide it. */

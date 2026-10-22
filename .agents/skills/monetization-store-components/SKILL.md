@@ -2,7 +2,7 @@
 name: monetization-store-components
 description: Use when installing, updating, wiring, re-skinning, or replacing the in-game store's code — the `src/store/` controller and client, the `assets/ui/store/` UI components (HUD chip, Shop and Inventory panel, item tiles, Get Silicon, purchase toast) — or when the store's options, events, or state are needed. Start from `monetization-store` for what the store is.
 metadata:
-  tokens: 1417
+  tokens: 1736
 ---
 
 # Monetization Store Components
@@ -11,7 +11,8 @@ metadata:
 `scripts/install-store.mjs`:
 
 - `src/store/store-config.ts` — `STORE_VERSION`, `StoreConfig`, `resolveGameId`.
-- `src/store/store-client.ts` — typed API wrapper, engine-free.
+- `src/store/store-client.ts` — typed wrapper of core and the store API, engine-free.
+- `src/store/core-api.ts` — the core URL per host and Studio's sign-in page; platform-owned.
 - `src/store/store-controller.ts` — state machine and events, engine-free.
 - `src/store/install-store.ts` — `installStore(world, overrides?)`.
 - `src/store/ui/*.ts` — components built on `ENGINE.BaseUIComponent`.
@@ -49,9 +50,9 @@ class MyGameMode extends ENGINE.GameMode {
       void installStore(world)
         .then((store) => {
           this.store = store;
-          store.controller.on('purchased', ({ sku }) => { /* grant the effect */ });
-          store.controller.on('claimed', ({ sku }) => { /* same as purchased for free items */ });
-          store.controller.on('consumed', ({ sku }) => { /* apply the consumable */ });
+          store.controller.on('purchased', ({ itemId }) => { /* grant the effect */ });
+          store.controller.on('claimed', ({ itemId }) => { /* same as purchased for free items */ });
+          store.controller.on('consumed', ({ itemId }) => { /* apply the consumable */ });
         })
         .catch((error: unknown) => console.error('[Store] install failed', error));
     }
@@ -72,9 +73,19 @@ The `overrides` argument is a `Partial<StoreConfig>`.
 
 ## Where things happen
 
-- Identity, environment, payment mode: decided by the API from the request;
-  the client only sends `credentials: "include"`, and in the editor the
-  Studio token plus `X-Store-Context: editor`.
+- Items and inventory: core, at the URL `core-api.ts` picks for the host
+  (dev on genesys-preprod and `localhost`, staging on genesys-staging,
+  production elsewhere). Core calls carry the Studio token as
+  `Authorization: Bearer` and no cookies; `acquire` adds
+  `X-Store-Context: editor` in the editor. `core-api.ts` is platform-owned
+  and overwritten by updates; leave it alone.
+- Identity, environment, payment mode: decided by the APIs from the request.
+  Store API calls send `credentials: "include"`, the Studio token as
+  `X-Genesys-Token`, and in the editor `X-Store-Context: editor`. Core needs
+  the Studio login: a player with only the platform cookie, an expired
+  token, or a token core answers 401 to browses as a guest
+  (`state.needsStudioLogin`), and Sign in sends them to Studio's sign-in on
+  Studio hosts. The client never sends a token that expires within 30 s.
 - Currency: `state.currency` follows the balance the API returns. In the
   editor it is `test-coins`: the panel shows a TEST tag, "Refill Test Silicon"
   (`controller.refillTestCoins()`) replaces Get Silicon, and published items
@@ -102,6 +113,11 @@ The `overrides` argument is a `Partial<StoreConfig>`.
   modal (`ui/get-coins-modal.ts`, `package-value.ts` and its assets). Game
   code that called `openGetCoins()` or `buyCoins()` switches to
   `getSilicon()`.
+- Updating from before v2.0.0: items live in core and are named by item id.
+  Events carry `{ itemId }` instead of `{ sku }`; `owns`, `quantityOf`,
+  `acquire` and `consume` take the item id; `state.busySku` is
+  `state.busyItemId`. Replace the SKUs in `src/store-items.ts` with the item
+  ids from the Store Manager. The install script prints this when it updates.
 
 ## Phones
 

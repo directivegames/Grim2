@@ -3,7 +3,7 @@
  * start, so a build can be told apart from an older one. The install script
  * compares it with the shipped templates.
  */
-export const STORE_VERSION = '1.0.2';
+export const STORE_VERSION = '2.0.2';
 
 /**
  * Store configuration for this game. `gameId` is filled from
@@ -17,7 +17,10 @@ export interface StoreConfig {
    * "dev-game"); a published game always receives its real id at runtime.
    */
   gameId: string;
-  /** Store API base URL. One deployment serves dev and production. */
+  /**
+   * Store API base URL (session, balance, Test Silicon). One deployment serves
+   * dev and production. Items come from core, picked by host in core-api.ts.
+   */
   apiBaseUrl: string;
   /** Keyboard key that toggles the store (lower-case). null disables the hotkey. */
   hotkey: string | null;

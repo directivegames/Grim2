@@ -15,6 +15,11 @@ export class PurchaseToast {
     this.show(`${itemName} is yours`, coins === null ? 'Added to your inventory for this game.' : `−${formatCoins(coins)} Silicon · added to your inventory.`);
   }
 
+  /** The purchase is still being processed: no charge confirmation yet, and no need to buy again. */
+  public showProcessing(itemName: string): void {
+    this.show(`${itemName}: purchase processing`, 'It appears in your inventory once it goes through.');
+  }
+
   public showClaimed(itemName: string): void {
     this.show(`${itemName} claimed`, 'Added to your inventory for this game.');
   }

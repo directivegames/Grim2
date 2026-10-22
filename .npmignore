@@ -8,6 +8,7 @@
 **/.engine/**
 **/**dist/**
 **/**editor/**
+**/.editor/**
 **/.DS_Store
 **/*.tgz
 **/*.mcp-port
