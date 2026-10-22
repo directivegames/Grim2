@@ -1,6 +1,8 @@
 ---
 name: genesys-vfx
 description: VFX, particle effects, particles, explosion, trail effect, hit effect, magic effect, muzzle flash, visual effects system — VFXNode, GlobalParticleManager.spawnVFX, and VFX JSON definitions for one-shot and looping GPU particle emitters. Use when implementing explosions, hit sparks, trails, fire, smoke, magic, or other particle-based effects.
+metadata:
+  tokens: 2715
 ---
 
 # VFX / Particles

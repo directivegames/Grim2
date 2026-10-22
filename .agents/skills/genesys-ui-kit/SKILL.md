@@ -1,6 +1,8 @@
 ---
 name: genesys-ui-kit
 description: Build in-game screen-space UI in a Genesys project from the engine's shipped BaseUIComponent widgets. Use for any HUD, menu, button, health or progress bar, inventory, crosshair, minimap, scoreboard, chat, or counter — before writing raw HTML or CSS. Also use when rendering player names or other dynamic text safely (textContent and label setters vs innerHTML / setHTML / iconHtml).
+metadata:
+  tokens: 2303
 ---
 
 # Genesys UI Kit

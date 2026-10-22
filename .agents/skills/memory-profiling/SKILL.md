@@ -1,6 +1,8 @@
 ---
 name: memory-profiling
 description: Profile and optimize memory use in Genesys games, for users with no profiling experience. Covers two pools. JavaScript heap - records Chrome heap captures (automated over the DevTools Protocol, or guided DevTools steps) and analyzes them (.heaptimeline allocation timelines and .heapsnapshot files) to show who retains and who allocated live memory, with a DevTools-equivalent dominator tree and minified-name mapping. GPU memory (VRAM) - tracks every WebGPU texture and buffer with its size, format and creation site, samples the driver's real GPU memory, and cross-checks the engine's perf.snapshot. Use when the user asks about memory usage, heap size, VRAM, GPU memory, textures, leaks, "what is using memory", or shares a heap capture or .gpumem.json.
+metadata:
+  tokens: 2648
 ---
 
 # Memory profiling and optimization

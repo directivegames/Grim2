@@ -5,10 +5,10 @@ Use this when the scene already holds gameplay or authored props (player start, 
 ## Facts to work from
 
 - `replace: "world"` removes only root sky, environment, directional / ambient / hemisphere lights, fog, `TerrainMeshNode`, `WaterNode`, orbit cameras (when the recipe brings one), and any root `MeshNode` named exactly `Ground`. A gameplay floor named `Ground` is deleted. `Mesh_Floor`, plane stand-ins and mesh-based oceans are **not** removed.
-- MCP has no terrain-height query and no snap-to-ground operation. `TerrainMeshNode.getHeightAt(x, z)` exists in engine code only; `query_node`, `action_node` and `run_script` cannot call it.
+- MCP has no terrain-height query for arbitrary points and no snap-to-ground operation for props. `TerrainMeshNode.getHeightAt(x, z)` exists in engine code only; `query_node`, `action_node` and `run_script` cannot call it. For a PlayerStart, `checkSpawnPoints` returns `floorY`. During Play, `query_play` `raycast` returns the floor point below a position.
 - A constant Y lift is not placement: the terrain height varies across the footprint.
 - The editor's **End** key (Drop To Surface) casts down from just above each selected node's bottom. It cannot rescue a buried prop (the ray starts inside the terrain), and it rests the bounds' bottom on the surface, so a hovering pickup loses its clearance.
-- Play mode does not expose a height API. Do not enter it to look for one.
+- Do not enter Play only to measure height. Use `checkSpawnPoints` in edit mode. Use `query_play` `raycast` only inside a Play session you already need.
 
 ## Steps
 
@@ -56,4 +56,17 @@ Use this when the scene already holds gameplay or authored props (player start, 
 
 Scene look still goes through MCP: never `beginPlay` scenery, never hand edits of `*.genesys-scene`.
 
-Later: an MCP operation that samples terrain height at points, or snaps selected roots while keeping their old clearance, would make option b) automatic. It does not exist yet; do not call it.
+Terrain height sampling at arbitrary points, and a snap that keeps old clearance for props, do not exist; do not call them. After `applyWorld`, run `checkSpawnPoints` to find PlayerStarts that are now buried or floating.
+
+## PlayerStart recipe
+
+The pawn root is the capsule centre. The root must sit at floor + 0.9 (`CHARACTER_HEIGHT / 2`). A PlayerStart has capsule-sized bounds, so End and drag-drop place it there.
+
+1. Validate with `query_node(operation="checkSpawnPoints")`. It raycasts below every PlayerStart and returns `{ id, name, position, floorY, feetGap, penetrating, noFloor }`. Run it first for any spawn problem. Do not enter Play to find out.
+2. Read the result. `noFloor: true`: no floor below the marker; move it over a floor. `penetrating: true`: the capsule is inside geometry; raise it. A large `feetGap`: the pawn drops from that height; lower it.
+3. Place with the editor **End** key (Drop To Surface), or drag-drop onto the floor. Both put the root at floor + 0.9. Do not add a manual Y offset.
+4. For forgiving placement, set `snapToGround: true` on the PlayerStart. It is off on older markers, on in new editor scenes and new projects, and set in the Inspector under Spawn. When on, GameMode drops the spawned pawn onto the first walkable floor below the marker. With no floor below it, the pawn spawns at the marker position.
+   `checkSpawnPoints` checks render meshes; the runtime snap uses physics colliders, so invisible colliders or render-only meshes can differ.
+5. Keep the PlayerStart outside checkpoint triggers, so spawning does not fire one.
+6. Make sure the floor Y is above the game's fall-kill Y. Check the game code for the kill threshold.
+7. After any move, run `checkSpawnPoints` again. Enter Play once only to confirm, and read the pawn with `query_play` `getPlayerPawns`.

@@ -1,6 +1,8 @@
 ---
 name: genesys-polybuilder
 description: Build a scene Poly Mesh with Genesys MCP Poly Builder tools — boxes, planes, cylinders, spheres, cones, stairs, ramps, polygons, and mesh edit. Use when the user asks to block out, model, or sculpt a mesh in the open scene. Not for terrain, islands or landscapes (genesys-world-building), a plain MeshNode primitive (action_node), or baking meshes to a GLB (action_asset.mergeMeshes).
+metadata:
+  tokens: 1897
 ---
 
 # Poly Builder

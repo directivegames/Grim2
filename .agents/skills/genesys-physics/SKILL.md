@@ -1,6 +1,8 @@
 ---
 name: genesys-physics
 description: Genesys physics beyond basic PrimitiveNode setup - raycasts/hit tests, joints/constraints, impulses, raw physics bodies, collision-ignore pairs, character-controller internals, and vehicle physics (wheels, suspension, friction, steering). Use for shooting, ragdolls, hinges, or drivable vehicles. Basic PrimitiveNode options live in genesys-engine; vehicle pawn integration lives in genesys-movement.
+metadata:
+  tokens: 2565
 ---
 
 # Genesys Physics (Advanced)
@@ -152,7 +154,7 @@ const jointId = physicsEngine.createJoint({
 
 ## Vehicle physics
 
-`createVehicle(movementNode, chassisNode): IPhysicsVehicle | null` turns an existing Dynamic `PrimitiveNode` chassis (already registered with physics) into a wheeled vehicle. Wheel tuning (`addWheel`, suspension/friction parameters, engine/brake/steering, state queries) is substantial enough to have its own reference: [vehicle-physics](references/vehicle-physics.md). Pawn-level driving integration (`VehicleMovementNode`, `VehicleMode`, input wiring) is owned by the `genesys-movement` skill — this reference covers only the underlying `IPhysicsVehicle` API those classes call into.
+`createVehicle(movementNode, chassisNode): IPhysicsVehicle | null` turns an existing Dynamic `PrimitiveNode` chassis (already registered with physics) into a wheeled vehicle. Wheel tuning (`addWheel`, suspension/friction parameters, engine/brake/steering, state queries) is substantial enough to have its own reference: [vehicle-physics](references/vehicle-physics.md). Pawn-level driving integration (`VehicleMovementNode`, input wiring) is owned by the `genesys-movement` skill — this reference covers only the underlying `IPhysicsVehicle` API those classes call into.
 
 ## Footguns
 

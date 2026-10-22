@@ -1,6 +1,8 @@
 ---
 name: genesys-navigation
 description: Genesys navmesh, pathfinding, and NPC path queries — NavigationServer, RecastNavigationServer, navmesh baking, calculatePath. Use for navigation, pathfinding, navmesh, NPC pathing, AI navigation, or path-following setup. Not for movement-node/pawn mechanics (see genesys-movement) or behavior-tree AI logic (see behavior-tree).
+metadata:
+  tokens: 2177
 ---
 
 # Navigation & Pathfinding

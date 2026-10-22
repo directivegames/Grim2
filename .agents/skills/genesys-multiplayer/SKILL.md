@@ -1,6 +1,8 @@
 ---
 name: genesys-multiplayer
 description: Write multiplayer game code in Genesys — choose classic movement, the network prediction framework, GSS, or replicated properties and RPCs, then apply server authority, GameMode lifecycle, player spawning, and matchmaking. Use when the user mentions multiplayer, networking, server, client, replication, RPC, authority, prediction, rewind, resimulation, lag compensation, gameplay simulation, GSS, NetPredictionManager, matchmaking, findMatch, queues, or parties, or when a feature must decide where it runs. Also use when a HUD shows player names, teams, chat, or scoreboards, since replicated strings are untrusted.
+metadata:
+  tokens: 2400
 ---
 
 # Methodology

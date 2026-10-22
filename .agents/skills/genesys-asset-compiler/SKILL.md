@@ -1,6 +1,8 @@
 ---
 name: genesys-asset-compiler
 description: Configure the Genesys build-time asset compiler — KTX2 texture compression, Meshopt GLB compression, MP3 audio transcoding, texture exclude patterns, and the shouldConvertAsset conversion hook — via the assetCompiler section of .genesys-project or Project Settings. Includes a scanner that finds textures used by UI or read as pixels on the CPU and writes exclude patterns for them. Use when setting up or verifying asset compilation, the user asks to compress, bake, or optimise textures, meshes, or audio, shrink build/download size, mentions KTX2, Basis, Meshopt, MP3, assetCompiler, baked-assets.json, or asks why an asset was (or was not) converted, why an HTML/CSS image broke, or why a heightmap/mask/getImageData read fails after a build.
+metadata:
+  tokens: 4053
 ---
 
 # Asset Compiler

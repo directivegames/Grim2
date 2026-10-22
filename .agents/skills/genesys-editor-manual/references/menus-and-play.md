@@ -17,6 +17,7 @@ For Getting Started, Environment Setup, Genesys AI / MCP settings, Project Recov
 | Build Project | `Ctrl/Cmd+B` — rebuild `.dist/game.js`, register `@GameClass()` |
 | Play Game Default Scene | F5 |
 | Play Current Scene | F6 |
+| Play in Editor | Launch mode |
 | Play in New Window | Launch mode |
 | Play in Mobile Preview | Launch mode |
 | Project Settings | Renderer, asset compiler, defaults |
@@ -67,13 +68,15 @@ Menu shows View / Help / Quit, plus the same App Settings and Editor Settings en
 | Network | Multiplayer clients 1–4; server/client lag simulation |
 | Exit Play / Play Dev Console | While playing; Exit is `Esc` when the game does not use it, or `F8` always; Dev Console is F12 |
 
+Agent Play queries: `query_node` returns `play_mode_active` during Play; use compact-hidden `query_play` (`getPlayerPawns`, `getNodeTransform`, `raycast`). Before Play, `query_node` `checkSpawnPoints` validates PlayerStart floors.
+
 ## Play mode options (Play ▾)
 
 | Item | Notes |
 | --- | --- |
 | Play in Editor / New Window / Mobile Preview | Launch mode |
 | Game Default Scene / Current Scene | F5 / F6 |
-| Play Mode Settings | Size, DPR, orientation, touch emulation, device frame |
+| Play Mode Settings | Size, pixel ratio (Native or device preset unless Override is on), orientation, touch emulation, device frame |
 
 ## Profiler
 

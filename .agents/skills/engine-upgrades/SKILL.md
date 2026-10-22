@@ -1,6 +1,8 @@
 ---
 name: engine-upgrades
 description: Migrate a Genesys project's game code across `@gnsx/genesys.js` versions — both major-version bumps and breaking changes introduced within a major version line. Use when the project's engine version changes, when the user mentions upgrading the engine, or when build errors reference removed or renamed engine APIs after an engine version bump.
+metadata:
+  tokens: 851
 ---
 
 # Methodology

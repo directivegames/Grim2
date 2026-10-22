@@ -1,6 +1,8 @@
 ---
 name: asset-pack-authoring
 description: 'Move an existing class, prefab, or set of assets into a self-contained asset pack under `<project>/packs/<name>/`. Use when the user asks to extract, package, migrate, or isolate project content into an asset pack.'
+metadata:
+  tokens: 1134
 ---
 
 # Asset Pack Authoring

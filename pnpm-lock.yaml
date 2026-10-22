@@ -167,8 +167,8 @@ importers:
   .:
     dependencies:
       '@gnsx/genesys.js':
-        specifier: 19.0.0-alpha.505
-        version: 19.0.0-alpha.505(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)
+        specifier: 19.0.0-alpha.571
+        version: 19.0.0-alpha.571(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)
       three:
         specifier: npm:@gnsx/three@0.186.24
         version: '@gnsx/three@0.186.24'
@@ -535,8 +535,8 @@ packages:
   '@gltf-transform/functions@4.5.1':
     resolution: {integrity: sha512-rfm4nQY2DJ+ip1e15xp7YfQwhRno3kPLcGw4EZiRk1dVwMV3cdFMcF08glYcO/+oLyYkUEs3xXMJYXa0cPgcTg==}
 
-  '@gnsx/genesys.js@19.0.0-alpha.505':
-    resolution: {integrity: sha512-H4ysLQ9f1coCm+5J6Pyb6FfD6T1MeGQwP+eI3SnK2J+KbTeLk6/+/s62Cn5NNgIEkVKZI2kphfxkAmCKUNb3eg==}
+  '@gnsx/genesys.js@19.0.0-alpha.571':
+    resolution: {integrity: sha512-wVeMdzV3Y1aNvFx9vPIXQsiQLwtfN4nn1VfrePjlBs7jmMFXhtf6CbNKdEZzeVZcXVeVQ8BW8Vpv8kmITTXpSA==}
     hasBin: true
     peerDependencies:
       commander: '>=12'
@@ -3643,7 +3643,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@gnsx/genesys.js@19.0.0-alpha.505(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)':
+  '@gnsx/genesys.js@19.0.0-alpha.571(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@recast-navigation/core': 0.43.1
@@ -3665,7 +3665,6 @@ snapshots:
       ts-morph: 27.0.2
       tweakpane: 4.0.5
       ws: 8.22.0
-      yaml: 2.9.0
       zod: 4.6.7
       zustand: 5.0.15
     optionalDependencies:
@@ -6764,7 +6763,8 @@ snapshots:
   yallist@5.0.0:
     optional: true
 
-  yaml@2.9.0: {}
+  yaml@2.9.0:
+    optional: true
 
   yargs-parser@21.1.1:
     optional: true

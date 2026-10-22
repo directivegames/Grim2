@@ -1,6 +1,8 @@
 ---
 name: genesys-audio
 description: Sound, audio, music, SFX, ambient sound, and spatial (3D positional) audio in Genesys. Covers SoundNode playback, SoundResource clip properties, looping/autoplay, volume and pitch control, audio buses (Music/SFX/Voice/Ambience), one-shot procedural sounds, and loading sound assets. Use when adding, playing, mixing, or debugging any sound effect, music track, or ambient audio.
+metadata:
+  tokens: 2401
 ---
 
 # Audio

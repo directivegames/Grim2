@@ -1,6 +1,8 @@
 ---
 name: genesys-world-building
 description: Build outdoor worlds and their look in Genesys — world recipes (applyWorld), environment presets, world styles (realistic, anime, low-poly, volcanic, snow, desert, alien), sky, sun, fog, tone mapping, textured terrain and islands, grass, trees and plants, water (ocean, lake, river), landmarks, floating objects, and orbit/showcase cameras. Use for any "make a scene / ocean / islands / forest / valley / landscape / city at night" prompt, before primitives or Poly Builder, when adding terrain or water to a scene that already has gameplay props, and when wrapping a three.js addon as a node.
+metadata:
+  tokens: 2341
 ---
 
 # World Building

@@ -1,6 +1,8 @@
 ---
 name: genesys-profiler
 description: Diagnose a Genesys play session through bounded Insights reports or desktop-streamed traces, and add profiler scopes in game code. Use when asked to optimize, profile, capture a trace, find hitches, profile startup, inspect profiler output, or instrument user code.
+metadata:
+  tokens: 2575
 ---
 
 # Genesys profiler

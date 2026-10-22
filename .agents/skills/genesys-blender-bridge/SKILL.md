@@ -6,6 +6,8 @@ description: >-
   Genesys MCP. Use when the user mentions Blender sync, Blender bridge,
   Genesys↔Blender, Sandbox→Blender, Blender→Sandbox, library grid at Z=-100,
   or editing a Genesys level in Blender without a custom exporter add-on.
+metadata:
+  tokens: 762
 ---
 
 # Genesys Blender Bridge

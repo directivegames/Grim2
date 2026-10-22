@@ -1,8 +1,8 @@
 # Mover to GSS migration
 
-Mover remains loadable for compatibility with existing projects, but it is unsupported. Do not
-add new Mover modes, modifiers, layered moves, pawns, or controllers. Migrate each Mover pawn to
-GSS or to a classic movement node.
+Mover was removed in engine 19. Code that still references `MoverNode`, its modes, modifiers,
+layered moves, `MoverCharacterPawn`, or `MoverPlayerController` no longer builds. Migrate each
+Mover pawn to GSS or to a classic movement node.
 
 ## API mapping
 
@@ -27,7 +27,7 @@ The `GS` prefix distinguishes GSS movement types from compatibility-only Mover e
 ## Pawn and controller
 
 ```ts
-// Before: unsupported Mover
+// Before: Mover (removed in 19)
 class MyPawn extends ENGINE.MoverCharacterPawn {
   protected override createMoverNode(): ENGINE.MoverNode {
     const mover = ENGINE.MoverNode.create({ name: 'MoverNode' });
@@ -107,11 +107,10 @@ manager exists. Preserve the same registration order for tags, modes, abilities,
 and cues on every peer. Snapshot time is `NetPredictionManager.getGameTimeMs` — see
 `genesys-multiplayer` `references/network-prediction.md`.
 
-## Unsupported modes
+## Modes without a GSS equivalent
 
-If the Mover pawn uses flying, airplane, top-down, vehicle, or aerial modes, choose one:
+If the Mover pawn used flying, airplane, top-down, vehicle, or aerial modes, choose one:
 
-1. Use the corresponding classic movement node.
+1. Use the corresponding classic movement node: `SpectatorMovementNode` (flying),
+   `AirplaneMovementNode`, `TopDownMovementNode`, `VehicleMovementNode`, or `AerialMovementNode`.
 2. Port the behaviour to a custom `IGSSMovementMode`.
-
-Do not keep extending the unsupported Mover implementation.

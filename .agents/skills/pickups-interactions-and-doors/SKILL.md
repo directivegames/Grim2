@@ -1,6 +1,8 @@
 ---
 name: pickups-interactions-and-doors
 description: Genesys player–world interaction nodes — pickups, collectibles, coins, health packs, usable objects, press-to-interact prompts, doors, levers, switches, buttons, terminals, and area/trigger volumes. Use when the player must collect, use, open, activate, or walk into something, or when the user mentions interact, pickup, door, switch, or trigger zone.
+metadata:
+  tokens: 1027
 ---
 
 # World Interaction

@@ -1,6 +1,8 @@
 ---
 name: genesys-engine
 description: Core Genesys engine reference and the entry point for any game feature — SceneNode/PrimitiveNode/MeshNode placeables, World APIs, pawns and controllers, input, cameras, serialization, and project structure. Use when implementing game logic, exploring a Genesys project, or working with engine classes. Routes to the sibling skill that owns each subsystem (world building and look, movement, physics, UI, audio, VFX, AI, navigation, multiplayer).
+metadata:
+  tokens: 1719
 ---
 
 # Methodology
@@ -43,7 +45,7 @@ description: Core Genesys engine reference and the entry point for any game feat
 Load the skill that owns the area rather than deriving it from engine source:
 
 - `genesys-world-building` — outdoor environments and look: sky, sun, fog, time of day, lens flare, tone mapping, lens effect and anti-aliasing modes, terrain, islands, water, mirrors, fat lines, batched props, foliage scatter, orbit/showcase camera, environment presets, and wrapping a three.js addon as a node. Use before reaching for primitives or Poly Builder.
-- `genesys-movement` — pawn locomotion, movement modes, MoverNode, vehicles, NPC movement.
+- `genesys-movement` — pawn locomotion, movement modes, GSSNode, vehicles, NPC movement.
 - `genesys-physics` — raycasts, joints, impulses, collision-ignore pairs, vehicle physics.
 - `genesys-navigation` — navmesh baking, pathfinding, path queries.
 - `behavior-tree` — NPC AI, blackboards, custom actions and conditions.

@@ -113,8 +113,8 @@ PlayerController.unpossess()
 - `zoomStep(direction)` — CharacterPawn-only, one-shot spring-arm `armLength` nudge for discrete
   input (mouse wheel).
 
-`MoverCharacterPawn` and `MoverPlayerController` remain loadable only for compatibility. Mover is
-unsupported; use the `genesys-movement` migration reference instead of extending it.
+`MoverCharacterPawn` and `MoverPlayerController` were removed in engine 19. To port an existing
+Mover pawn, read the `genesys-movement` migration reference.
 
 ## Related movement nodes
 

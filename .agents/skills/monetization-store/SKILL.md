@@ -1,6 +1,8 @@
 ---
 name: monetization-store
 description: Use when a Genesys game should sell items to players — an in-game store, shop, Silicon (formerly Coins), buying, top-up, Get Silicon, inventory of bought items, permanent or consumable items — or when an existing store shows guest, unlinked, insufficient Silicon, or top-up problems. Games never sell Silicon themselves; Get Silicon opens the Sandbox top-up page. Entry point; `monetization-store-components` holds the code, `monetization-store-items` covers creating and testing items.
+metadata:
+  tokens: 1472
 ---
 
 # Monetization Store

@@ -36,6 +36,7 @@ MCP node era: use `query_node` / `action_node`. MCP schemas name node UUIDs `com
 | Lightmap | `action_build(buildLightmap)` | Available | Title bar Build Lightmap |
 | Play / exit | `enterPlayMode` / `exitPlayMode` | Available | Play ▾ / F5 / F6; Exit (Esc or title-bar Exit) |
 | Diagnose performance | Compact-hidden `query_profiler` / `action_profiler`: `setInsights` then `generateReport` (returns `path`, `issues`, timing, and a compact memory summary), `listArtifacts` for saved files, or start/stop/arm a streamed Trace with `maxDurationMs` / `maxBytes` and read its manifest. `setGpuDetail` saves Passes, Stages, or Draws for the next Play. Trace bodies are never returned. Heap and VRAM captures stay in the memory-profiling skill | Available | Tools → Profiler; Insights in Edit/Play; Trace controls only in desktop Play |
+| Check PlayerStart spawn / read live Play state | `query_node` op `checkSpawnPoints` (edit mode; raycasts render meshes below each PlayerStart: `floorY`, `feetGap`, `suggestedY`, `penetrating`, `noFloor`). Compact-hidden read-only `query_play` (Play only; `getPlayerPawns`, `getNodeTransform`, `raycast`; outside Play returns `play_not_active`). `query_node` returns `play_mode_active` during Play | Available | Inspector (PlayerStart, Spawn); no UI for live queries |
 | Play window/mobile/multiplayer prefs | — | UI only | Play ▾ options; Network menu |
 | Screenshot | `action_editor.captureScreenshot` only when the user asks for a picture. `target: "auto"` returns the running game during Play (`surface: "all"` for extra multiplayer windows) and the editor viewport otherwise. Do not use it to verify the scene — use `query_node` and `query_editor` | Available | Assistant/viewport affordances |
 | NavMesh | `query_navmesh` / `action_navmesh` | Available | Tools → Generate NavMesh |
@@ -51,7 +52,7 @@ MCP node era: use `query_node` / `action_node`. MCP schemas name node UUIDs `com
 | Play Local Project | — | UI only | Dashboard *(dev SDK)* |
 | Diagnostics | `query_diagnostics` | Available | Title bar Errors; console |
 
-Compact-hidden (still callable via `run_script` / `batch_execute` / `search_tools`): `action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`, `query_polybuilder`, `action_polybuilder`, `query_profiler`, `action_profiler`.
+Compact-hidden (still callable via `run_script` / `batch_execute` / `search_tools`): `action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`, `query_polybuilder`, `action_polybuilder`, `query_profiler`, `action_profiler`, `query_play`.
 
 installAssetPack: scaffolds an empty `packs/<name>/` only — not catalog / cloud packs (use Browse Asset Packs).
 

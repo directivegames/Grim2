@@ -1,6 +1,8 @@
 ---
 name: genesys-prefabs
 description: When to use Genesys Prefabs versus scene nodes, GAME classes, or baked Models; editor Prefab isolation; place/apply/resync/unlink. Use for repeated assemblies, .prefab.json, Prefab Editor, Save Branch as Prefab, or instance apply/resync/unlink.
+metadata:
+  tokens: 1215
 ---
 
 # Genesys Prefabs

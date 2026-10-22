@@ -1,6 +1,8 @@
 ---
 name: monetization-store-components
 description: Use when installing, updating, wiring, re-skinning, or replacing the in-game store's code — the `src/store/` controller and client, the `assets/ui/store/` UI components (HUD chip, Shop and Inventory panel, item tiles, Get Silicon, purchase toast) — or when the store's options, events, or state are needed. Start from `monetization-store` for what the store is.
+metadata:
+  tokens: 1417
 ---
 
 # Monetization Store Components

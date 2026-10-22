@@ -54,7 +54,9 @@ Read-only engine source is in `.engine/` at the project root. `pnpm install` rec
 - Run every shell command (`pnpm`, `git`, TypeScript tools, etc.) from this game project root — the folder that contains `package.json` and the `.genesys-project` file. If your shell tool has a working-directory option, set it; otherwise `cd` there first. Do not rely on the default shell cwd; it may be the Genesys desktop app process directory.
 - To check that code compiles, run `pnpm build`. Do not run `tsc` directly: `pnpm build` also regenerates the property metadata the editor reads.
 - You **must** use `pnpm lint` to detect and auto-fix linting issues.
-- When MCP is available, `query_diagnostics` and editor re-queries are also valid checks, and `action_build(action="buildProject")` registers newly added game classes in the running editor.
+- When MCP is available, `query_diagnostics` and editor re-queries are also valid checks, and `action_build(action="buildProject")` registers newly added game classes in the running editor (not needed before Play).
+- Entering Play already saves the scene and rebuilds the project. Do not run `action_build` before `enterPlayMode`; use it only to register new game classes.
+- Verify with one Play session: enter once, capture, exit once. Diagnose with edit-mode queries first.
 - Do not start a dev server (`pnpm dev` or similar).
 
 ### Viewing Play Without MCP

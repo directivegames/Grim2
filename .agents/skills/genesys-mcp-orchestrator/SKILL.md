@@ -1,6 +1,8 @@
 ---
 name: genesys-mcp-orchestrator
 description: Live Genesys editor MCP orchestration (availability gate, readiness probe and recovery, run_script/batch_execute dispatch, result reliability, framing and viewport/play capture with metrics). Not for UI how-tos or pure TypeScript edits.
+metadata:
+  tokens: 3978
 ---
 
 # Genesys MCP Orchestrator
@@ -11,7 +13,7 @@ Use this skill for live Genesys editor/project work through MCP. For editor UI h
 
 ## Availability Gate
 
-The default surface is compact. Missing descriptors for hidden tools (`action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, navmesh tools, `query_profiler`, `action_profiler`) is expected. Frame cost: [genesys-profiler](../genesys-profiler/SKILL.md). JavaScript heap and VRAM: [memory-profiling](../memory-profiling/SKILL.md).
+The default surface is compact. Missing descriptors for hidden tools (`action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, navmesh tools, `query_profiler`, `action_profiler`, `query_play`) is expected. Frame cost: [genesys-profiler](../genesys-profiler/SKILL.md). JavaScript heap and VRAM: [memory-profiling](../memory-profiling/SKILL.md).
 
 | State | Signal | Action |
 |-------|--------|--------|
@@ -40,7 +42,7 @@ Before the first mutation: `query_editor(operation="getState")` or `genesys.quer
 
 ## Scenario
 
-When the Scenario MCP server is connected, generate with it. Use `action_asset_generation` `start` only when that server is not available. Credit-spending calls ask for approval in the Assistant panel and the card shows the estimated credits; a `dry_run` cost estimate does not. To bring a Scenario asset into the project, always use `action_asset_generation` with `action: "import"`, `scenarioAssetIds`, and a short English `name` for the file. Omit `saveFolder` unless the user named a folder. Call `apply` only when the user asked to put the asset in the scene. Never download Scenario files by hand.
+When the Scenario MCP server is connected, generate with it. Use `action_asset_generation` `start` only when that server is not available. Credit-spending calls ask for approval in the Assistant panel and the card shows the estimated credits; a `dry_run` cost estimate does not. When a Scenario tool result contains an asset id, the Genesys editor shows the Scenario viewer on that result. Do not call `asset_display` only to preview it in the editor. Other clients show the asset by calling `asset_display` with that id. To bring a Scenario asset into the project, always use `action_asset_generation` with `action: "import"`, `scenarioAssetIds`, and a short English `name` for the file. Omit `saveFolder` unless the user named a folder. Call `apply` only when the user asked to put the asset in the scene. Never download Scenario files by hand.
 
 After a Scenario MCP generation succeeds, import it by default unless the user asked to keep it only in Scenario. `import` is not a generation: it spends no credits and is allowed even when the user said not to use the asset generation tool. The recipe is in [references/workflows.md](references/workflows.md).
 
@@ -75,6 +77,19 @@ Prefer `query_node` / `action_node` for world/prefab scene-node trees.
 
 When `request_user_input` is listed, call it instead of asking a clarifying question in chat, then wait. Use it only when a wrong assumption would change the work. Otherwise state the assumption and continue. One question is enough; do not exceed three. Recommended option first, with "(Recommended)" on its label. Do not add Other.
 
+## Play-test loop
+
+Play is slow and costly. Diagnose first, then confirm once.
+
+1. Diagnose in edit mode with queries (`query_node`, `query_editor`). Do not enter Play to test a hypothesis that a query can answer. For a spawn problem, call `query_node(operation="checkSpawnPoints")` first.
+2. `enterPlayMode` already saves the scene and rebuilds the project. Never run `action_build` before it. Use `action_build` only to register new game classes in the editor.
+3. Enter Play once, take all the captures you need, then exit once. Do not cycle enter/exit per capture.
+4. Captures: start with `includeImage: false`. When you need the image, set `maxEdge` to 800 or less. Captures land in `.editor/captures/<day>/` by default (not project assets), so debug captures need no flag. Pass `saveLocation: 'none'` to skip the file write entirely. Pass `saveLocation: 'assets'` only when the user asks to keep the image in the game's assets.
+5. `query_node` cannot see the Play world: it returns `play_mode_active`. During Play, read state with `query_play` (compact-hidden: `genesys.queryPlay` in `run_script`, or `batch_execute`): `getPlayerPawns`, `getNodeTransform` (`{ nodeId | name }`), `raycast` (`{ origin, direction, maxDistance }`).
+6. Run `pnpm build` and `pnpm lint` once at the end, not after every iteration.
+
+Spawn and PlayerStart placement: [existing-scene.md](../genesys-world-building/references/existing-scene.md#playerstart-recipe). Full recipe: [workflows.md](references/workflows.md#play-test-loop).
+
 ## Approval and Build
 
 | Path | Approval |
@@ -87,7 +102,7 @@ Use `genesys_request_approval` / `approvalId` only for prompt-mode pre-approval 
 
 `readOnly` scripts cannot call any `action_*` tool. Use direct `dryRun: true` or `run_script(mode="dryRun")` for previews.
 
-Build boundary: `action_build(action="buildProject")` is a direct tool after TypeScript edits. Do not batch it with node/scene/prefab/asset mutations. Details: [workflows.md](references/workflows.md#register-a-code-class).
+Build boundary: `action_build(action="buildProject")` is a direct tool after TypeScript edits that add or rename game classes. Do not call it before `enterPlayMode`: Play rebuilds on enter. Do not batch it with node/scene/prefab/asset mutations. Details: [workflows.md](references/workflows.md#register-a-code-class).
 
 ## Reading MCP Results
 
@@ -105,7 +120,7 @@ Readiness errors carry `error.recovery: { action, hint, retryAfterMs? }` (also o
 | `editor_not_ready` / `editor_busy` | Retry after `retryAfterMs`; if it persists, report blockers |
 | `operation_still_running` | A world build is still running: poll `query_editor(getBusyState)` until `isBusy` is false, then read `lastWorldBuild` (`ok`, `focusNodeId` = the new terrain); never re-issue the action |
 | `scene_not_open` | `action_scene(open)` a scene, then retry |
-| `play_mode_active` | `action_editor(exitPlayMode)`, or capture with `target: "play"` |
+| `play_mode_active` | `action_editor(exitPlayMode)`, or capture with `target: "play"`. For `query_node` during Play, use `query_play` instead |
 | `editor_hidden` | Ask the user to restore the Sandbox Studio window. `getState.viewportVisible: false` predicts it: check before a capture |
 | `editor_disconnected` | Ask the user to reload the editor window; stop |
 | `play_capture_unavailable` | Capture in edit mode with `cameraNodeId` |
@@ -134,7 +149,7 @@ User-facing replies: state the outcome (counts, names, blockers). Do not quote `
 
 Verification rule: **state is verified by query; look is verified by capture.** What exists, where it is, what is selected and whether an edit landed → `query_node` / `query_editor`. How a world looks (sky, lighting, water, terrain, camera) → frame, capture, read `metrics`, and look at the image.
 
-Capture: `action_editor(action="captureScreenshot", focusNodeIds=[…], views=["hero","overview"], maxEdge=1280)` returns one record per view with `metrics` (exposure, clipping, colourfulness, detail, `flatFrame`, per-node `nodeCoverage`, `warnings[].code`). Read metrics first; set `includeImage: false` when only checking framing. `camera` / `cameraNodeId` render from another pose without moving the editor camera; `target: "play"` (or `auto` during play) captures the running game; `surface: "all"` (or `"client-2"`) captures extra multiplayer windows, one after another, without metrics. Frame first with `action_editor(action="frameNodes", nodeIds=[…], view="iso")`; a node with no mesh (player start, trigger) is framed around its position. Recipe: [workflows.md](references/workflows.md#screenshot).
+Capture: `action_editor(action="captureScreenshot", focusNodeIds=[…], views=["hero","overview"], maxEdge=1280)` returns one record per view with `metrics` (exposure, clipping, colourfulness, detail, `flatFrame`, per-node `nodeCoverage`, `warnings[].code`). Read metrics first; set `includeImage: false` when only checking framing. `camera` / `cameraNodeId` render from another pose without moving the editor camera; `target: "play"` (or `auto` during play) captures the running game; `surface: "all"` (or `"client-2"`) captures extra multiplayer windows, one after another, without metrics. Frame first with `action_editor(action="frameNodes", nodeIds=[…], view="iso")`; a node with no mesh (trigger) is framed around its position; a PlayerStart is framed around its capsule. Recipe: [workflows.md](references/workflows.md#screenshot).
 
 Before saying a capability is unavailable, do not stop at Cursor tool-name search (catalog names and truncated descriptions miss router ops). Check:
 

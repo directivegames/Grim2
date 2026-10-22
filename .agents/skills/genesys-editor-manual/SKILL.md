@@ -1,6 +1,8 @@
 ---
 name: genesys-editor-manual
 description: Explain how to perform Genesys editor tasks manually in the UI (menus, outliner, dialogs, hotkeys) and when to prefer Genesys MCP instead. Use when the user asks where a button is, how to do something in the editor by hand, or whether an action is available via MCP.
+metadata:
+  tokens: 732
 ---
 
 # Genesys Editor Manual
@@ -20,6 +22,7 @@ Do not read every reference up front. Open the smallest file that answers the qu
 | Title-bar Menu, Tools, Play, Build, Upload, Help | [menus-and-play.md](references/menus-and-play.md) |
 | Outliner, Inspector, Focus, copy/paste properties, components, prefab chrome | [outliner-and-inspector.md](references/outliner-and-inspector.md) |
 | Viewport gizmos/view/snap, Place bar, Asset Browser, specialised dialogs | [viewport-and-assets.md](references/viewport-and-assets.md) |
+| Editor viewport is slow, soft, or Editor Pixel Ratio / Screen Percentage | [viewport-and-assets.md](references/viewport-and-assets.md) (Editor Pixel Ratio) |
 | Viewport Poly Builder (brush, mesh edit) | [viewport-and-assets.md](references/viewport-and-assets.md) (Poly Builder) |
 | Exact hotkey | [hotkeys.md](references/hotkeys.md) |
 

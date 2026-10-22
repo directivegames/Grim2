@@ -15,6 +15,7 @@ These tools are not first-class MCP tools in compact mode (the default). They ar
 | `query_asset` | `query` | `find`, `getDetails`, `getAssetPackInfo`, `getReferences` |
 | `query_diagnostics` | `query` | `getBuildErrors`, `getConsole` |
 | `query_navmesh` | `query` | `getInfo`, `getSettings` |
+| `query_play` | `query` | `getPlayerPawns`, `getNodeTransform`, `raycast` |
 | `query_polybuilder` | `query` | `getDocument` |
 | `query_profiler` | `query` | `status`, `readReport`, `readTraceManifest`, `listArtifacts` |
 | `query_store` | `query` | `getState`, `listItems` |
@@ -197,6 +198,26 @@ Dispatch via `batch_execute`:
 
 ```text
 { tool: "query_navmesh", args: { operation: "getInfo", ... } }
+```
+
+### `query_play`
+
+Query Play · kind: `query`
+
+Read the running game world during Play (query_node cannot: the editor scene is unloaded). Read-only. Compact-hidden — call via run_script (genesys.queryPlay) or batch_execute. Fails with play_not_active outside Play. Ops: getPlayerPawns (class, world position and rotation, grounded and linearVelocity when the movement node has them), getNodeTransform (nodeId or exact name; world position, rotation, scale), raycast (origin, direction, maxDistance default 100, max 1000; physics hit point, normal, distance and node, or hit null). Rotations are Euler XYZ radians.
+
+Operations: `getPlayerPawns`, `getNodeTransform`, `raycast`
+
+Dispatch via `run_script`:
+
+```js
+genesys.queryPlay({ operation: 'getPlayerPawns', ... })
+```
+
+Dispatch via `batch_execute`:
+
+```text
+{ tool: "query_play", args: { operation: "getPlayerPawns", ... } }
 ```
 
 ### `query_polybuilder`

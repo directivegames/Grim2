@@ -1,6 +1,8 @@
 ---
 name: genesys-movement
 description: Choose and implement pawn or character locomotion in Genesys — walking, falling, flying, swimming, driving, top-down, and NPC movement. Use when the user asks to make something move, mentions the Gameplay Simulation System (GSS), GSSNode, GSSCharacterPawn, movement modes, or mode transitions, or needs a character controller. Not for navmesh pathfinding (genesys-navigation) or wheel/suspension tuning (genesys-physics).
+metadata:
+  tokens: 1031
 ---
 
 # Methodology
@@ -9,7 +11,7 @@ description: Choose and implement pawn or character locomotion in Genesys — wa
 2. If Classic: read [pawn-player-controller](../genesys-engine/references/pawn-player-controller.md) in the `genesys-engine` skill — it documents `BasePawnMovementNode` subclasses, `MovementPawn`, and `CharacterPawn`/`DefaultCharacterPawn`.
 3. If GSS: use `GSSNode` + `GSSCharacterPawn` + `GSSPlayerController`. Register modes/abilities/effects on the pawn, in `createGSSNode()`. Input is vectors plus currently-down tags; the sim node derives press/release edges.
 4. NPC locomotion: `AIController` implements `IGSSInputProducer` against `GSSNode`. Navmesh queries belong to `genesys-navigation`.
-5. If existing code uses `MoverNode`, do not extend it. Read [Mover to GSS migration](references/mover-to-gss.md).
+5. If existing code uses `MoverNode` (removed in engine 19), read [Mover to GSS migration](references/mover-to-gss.md).
 
 # Classic vs GSS
 
@@ -25,8 +27,8 @@ GSS (Gameplay Simulation System) is the networked simulation: replication, predi
 | Pawn | `MovementPawn` → `CharacterPawn` | `GSSCharacterPawn` (`getGSSNode()`) |
 | Input | Controller action methods | `IGSSInputProducer` (down-tags only) |
 
-Mover remains loadable only for compatibility with existing games. It is unsupported: do not
-use it for new code or add features to it. Migrate existing Mover games to GSS.
+Mover (`MoverNode` and its modes) was removed in engine 19. Migrate existing Mover games to GSS
+or to a classic movement node.
 
 A game may mix classic movement nodes on some pawns and GSS on others. Do not treat
 that as a free mix for colliding or tracing actors: GSS rewinds nearby `IRewindable`

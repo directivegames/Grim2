@@ -1,6 +1,8 @@
 ---
 name: webgpu-tsl-node-material-assets
 description: Build custom WebGPU TSL NodeMaterialAsset classes in a Genesys game project, register them in the editor, create `.material.json` assets via MCP or the New Material dialog, and assign materials to meshes. Use when implementing TSL shaders, game-side node materials, material save/load, NewMaterialDialog integration, or mesh material assignment.
+metadata:
+  tokens: 1516
 ---
 
 # WebGPU TSL Node Material Assets

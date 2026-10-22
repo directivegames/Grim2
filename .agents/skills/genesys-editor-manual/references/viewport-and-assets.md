@@ -10,7 +10,15 @@
 
 ## View menu (viewport)
 
-Perspective / Top / Bottom / Front / Back / Left / Right · Show Wireframe / Skybox / Grid / VFX / Object Icons · On-Demand Rendering · Show Collisions (Editor / Game) · Show NavMesh (+ colour) · FOV / Focus Zoom / Far plane · Selection Outline options · Reset Camera
+Perspective / Top / Bottom / Front / Back / Left / Right · Show Wireframe / Skybox / Grid / VFX / Object Icons · On-Demand Rendering · Editor Pixel Ratio · Show Collisions (Editor / Game) · Show NavMesh (+ colour) · FOV / Focus Zoom / Far plane · Selection Outline options · Reset Camera
+
+## Editor Pixel Ratio (viewport performance)
+
+Viewport toolbar → **View** → **Editor Pixel Ratio**. This is the editor viewport Screen Percentage: 100% is Native (the display pixel ratio, clamped to 1–2). The slider runs 25–100 in steps of 5. The canvas uses that percentage of Native, and never goes below ×0.25. The menu shows `percentage% · ×ratio`. Reset returns to Native (100%).
+
+Lower it when the editor viewport is the bottleneck (heavy scenes, shadows, post-processing, high-DPI displays). A lower value shrinks the drawing buffer, so the viewport costs less GPU time and looks softer. **On-Demand Rendering** in the same menu stops redrawing while the scene is idle; use both when the editor feels heavy.
+
+This setting is the editor canvas only. Play in New Window and Mobile Preview have their own **Pixel Ratio** under Play ▾ → Play Mode Settings. Override off uses this display, or the device preset in Mobile Preview. The running game uses the engine `r.ScreenPercentage` cvar.
 
 ## Snap
 

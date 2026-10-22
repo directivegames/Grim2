@@ -6,12 +6,12 @@ Prefer `query_node` / `action_node` for scene and prefab document trees.
 
 ## Scenario beyond curated generation
 
-When the Scenario MCP server is connected, generate with it (`model_run` or `workflow_run`). Use Genesys `action_asset_generation` `start` only when that server is not available. To bring a Scenario asset into the project, always use `action_asset_generation` with `action: "import"` and `scenarioAssetIds`. Never download Scenario files by hand (`asset_download` is blocked; do not curl URLs from `asset_get` or `job_get`).
+When the Scenario MCP server is connected, generate with it (`model_run` or `workflow_run`). Use Genesys `action_asset_generation` `start` only when that server is not available. When a Scenario tool result contains an asset id, the Genesys editor shows the Scenario viewer on that result. A `model_run` that only returns a job id does not. Do not call `asset_display` only to preview it in the editor. Other clients show the asset by calling `asset_display` with that id. To bring a Scenario asset into the project, always use `action_asset_generation` with `action: "import"` and `scenarioAssetIds`. Never download Scenario files by hand (`asset_download` is blocked; do not curl URLs from `asset_get` or `job_get`).
 
 ```text
 → scenario model_run(dry_run=true)            cost estimate, no approval, no job
 → scenario model_run(wait=false)              one approval, returns job_id
-→ scenario jobs_wait(job_ids=[…])             repeat while unfinished
+→ scenario jobs_wait(job_ids=[…])             repeat while unfinished; the editor shows the viewer when this result contains an asset id
 → action_asset_generation(action="import", scenarioAssetIds=["…"], name="futuristic outlaw")
 → action_asset_generation(action="apply", generationId=…)   only when the user asked to place or use it
 ```
@@ -271,6 +271,35 @@ query_editor(getState)
 
 On `MeshNode`, the editable property is typically `material` (confirm with `getEditableProperties`). Hidden asset/diagnostics tools: dispatch via `run_script` / `batch_execute` — see [compact-hidden-tools.md](compact-hidden-tools.md).
 
+## Play-test loop
+
+Confirm a fix in one Play session. Do not use Play to explore.
+
+```text
+query_node(checkSpawnPoints)                       edit mode: spawn problem? run this first
+query_node(getDetails | find, …)                   edit mode: state is verified by query
+action_editor(enterPlayMode)                       once; it saves the scene and rebuilds the project
+action_editor(captureScreenshot, includeImage:false, saveLocation:'none')  metrics only
+action_editor(captureScreenshot, maxEdge:800)                              image only when needed (default saveLocation)
+run_script → genesys.queryPlay({ operation: "getPlayerPawns" })             play-world state
+action_editor(exitPlayMode)                        once
+pnpm build ; pnpm lint                             once, at the end
+```
+
+- `enterPlayMode` already saves and rebuilds (`forPlay`). Do not call `action_build` first. It repeats the build and adds nothing. `action_build` is for registering new game classes in the editor only ([Register a code class](#register-a-code-class)).
+- Do not re-enter Play to test a hypothesis that an edit-mode query answers (spawn height, node position, node count).
+- `query_node` returns `play_mode_active` during Play, because the editor world is unloaded. Use `query_play`. It is compact-hidden and read-only, and works during Play only. Call it with `genesys.queryPlay` in `run_script` or with `tool: "query_play"` in `batch_execute`:
+
+```js
+const pawns = await genesys.queryPlay({ operation: 'getPlayerPawns' });  // class, world position and rotation, grounded, velocity
+const node  = await genesys.queryPlay({ operation: 'getNodeTransform', name: 'Checkpoint_1' }); // or nodeId
+const hit   = await genesys.queryPlay({ operation: 'raycast', origin: [x, 10, z], direction: [0, -1, 0], maxDistance: 20 });
+return { pawns, node, hit };
+```
+
+- Estimate heights with `raycast` or `checkSpawnPoints`. Do not estimate them from screenshot pixels.
+- If a fix needs a code edit, make all code and scene edits, then enter Play once. Do not run `pnpm build`, `pnpm lint` and `action_build` back to back between iterations.
+
 ## Register a code class
 
 ```text
@@ -282,6 +311,7 @@ edit TypeScript (@GameClass / @ENGINE.GameClass)
 → action_scene(save)
 ```
 
+- Use this only for a new or renamed class. Do not run it before `enterPlayMode`: Play rebuilds on enter.
 - `run_script(readOnly)` cannot call apply actions such as `actionBuild`.
 - Empty `classes: []` with `ok: true` means not loaded yet — rebuild and query again.
 - `buildLightmap` needs `scenePath`.
@@ -296,7 +326,7 @@ Inline image (preferred in `auto` mode):
 action_editor({ action: "captureScreenshot", includeImage: true })
 ```
 
-`includeImage` defaults to `true`. Response: JSON metadata + one inline `image` block per surface (renders in Cursor chat). Explicit `genesys_request_approval` is only for prompt-mode pre-approval/token reuse — not required in `auto`.
+`includeImage` defaults to `true`. Captures are written by default to `@project/.editor/captures/<YYYY-MM-DD>/` (hidden, git-ignored, never shipped), not to project assets, so debug captures need no flag. Pass `saveLocation: 'none'` to skip the file write (`screenshotPath` is null; the image is still returned inline). Pass `saveLocation: 'assets'` only when the user asks to keep the image in the game's assets (`assets/screenshots/`). Legacy `saveToProject: false` still means `none`, but prefer `saveLocation`. Response: JSON metadata + one inline `image` block per surface (renders in Cursor chat). Explicit `genesys_request_approval` is only for prompt-mode pre-approval/token reuse — not required in `auto`.
 
 `target` defaults to `"auto"`. While Play is running, that returns the game. `target: "editor"` is the edit-mode viewport and is blocked during Play. `surface` is `primary` (default), `client-N`, or `all`. `all` captures one surface after another (at most four) and the result lists every live surface. Do not poll; capture when you need to look.
 

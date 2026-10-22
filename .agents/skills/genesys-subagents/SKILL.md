@@ -1,6 +1,8 @@
 ---
 name: genesys-subagents
 description: When and how to delegate work to subagents (the Task tool in Cursor, the subagent tool in Sandbox Studio) - parallel independent workstreams, writing briefs, keeping editor changes in the parent, verifying worker results. Use for subagent, parallel, delegate, or Task tool requests.
+metadata:
+  tokens: 683
 ---
 
 # Genesys Subagents

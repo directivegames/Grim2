@@ -2,7 +2,7 @@
 
 Source of truth: `.engine/src/physics/IPhysicsVehicle.ts` (interface + doc-commented defaults), `.engine/src/physics/implementations/RapierVehicle.ts` (how each parameter is actually applied — a thin wrapper around Rapier's `DynamicRayCastVehicleController`). Verify defaults there before relying on this file if the engine has changed since.
 
-This covers the `IPhysicsVehicle` tuning API itself. Pawn-level driving integration — `VehicleMovementNode`, `VehicleMode`, input-to-force wiring — is owned by the `genesys-movement` skill; read that for how a drivable car/pawn is actually assembled. This reference is for anyone hand-tuning wheels or building a custom vehicle controller directly on top of `IPhysicsVehicle`.
+This covers the `IPhysicsVehicle` tuning API itself. Pawn-level driving integration — `VehicleMovementNode`, input-to-force wiring — is owned by the `genesys-movement` skill; read that for how a drivable car/pawn is actually assembled. This reference is for anyone hand-tuning wheels or building a custom vehicle controller directly on top of `IPhysicsVehicle`.
 
 ## Creating a vehicle
 

@@ -1,6 +1,8 @@
 ---
 name: monetization-store-items
 description: Use when a creator wants to add, price, edit, publish, take down, or delete an item in their game's store, give an item a gameplay effect, or test buying without spending money — item SKUs, drafts, free items, consumables, Silicon prices, item images. Start from `monetization-store` for what the store is.
+metadata:
+  tokens: 1886
 ---
 
 # Monetization Store Items

@@ -1,6 +1,8 @@
 ---
 name: behavior-tree
 description: Genesys behavior tree AI — BehaviorTreeNode, blackboard, nodes, custom actions/conditions. Use for NPC AI, behavior trees, patrol/combat/aerial setups, or mentions of BT, blackboard, Selector, Sequence, BehaviorTreeNode.
+metadata:
+  tokens: 454
 ---
 
 # What It Is
