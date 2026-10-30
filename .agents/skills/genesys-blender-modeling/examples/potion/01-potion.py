@@ -1,0 +1,11 @@
+# Health potion pickup, 0.35 m tall: round flask, neck, cork, glowing liquid.
+glass = mat('potion_glass', '#cfe8ff', rough=0.05, alpha=0.3)
+liquid = mat('potion_liquid', '#ff3046', rough=0.2, emit='#ff3046', emit_strength=1.5)
+cork = mat('potion_cork', '#a87a4a')
+f = sphere('potion_flask', 0.12, at=(0, 0, 0.12), m=glass, seg=16, rings=10)
+smooth(f)
+l = sphere('potion_liquid', 0.105, at=(0, 0, 0.115), m=liquid, seg=16, rings=10, scale=(1, 1, 0.85))
+smooth(l)
+cyl('potion_neck', 0.04, 0.1, at=(0, 0, 0.22), m=glass, seg=12)
+cyl('potion_cork', 0.045, 0.05, at=(0, 0, 0.31), m=cork, seg=10, r2=0.05)
+torus('potion_lip', 0.045, 0.012, at=(0, 0, 0.315), m=glass, seg=16, minor_seg=6)

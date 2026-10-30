@@ -3,7 +3,7 @@
  * start, so a build can be told apart from an older one. The install script
  * compares it with the shipped templates.
  */
-export const STORE_VERSION = '2.0.2';
+export const STORE_VERSION = '2.1.0';
 
 /**
  * Store configuration for this game. `gameId` is filled from
@@ -44,7 +44,17 @@ export const storeConfig: StoreConfig = {
 };
 
 /** Runtime game ids that do not identify a real game. */
-export const PLACEHOLDER_GAME_IDS: ReadonlySet<string> = new Set(['editor', 'dev-game', 'default', '']);
+export const PLACEHOLDER_GAME_IDS: ReadonlySet<string> = new Set(['editor', 'dev-game', 'default', 'local', '']);
+
+/**
+ * The page says where the game runs: the published play page sets
+ * `_genesys_is_published_game_` before the game starts. Without it (editor
+ * play, local folder, dev server) the store is in the editor: Test Silicon,
+ * drafts visible.
+ */
+export function storeContextOf(page: { _genesys_is_published_game_?: unknown } = globalThis as { _genesys_is_published_game_?: unknown }): 'editor' | 'game' {
+  return page._genesys_is_published_game_ === true ? 'game' : 'editor';
+}
 
 export type GameIdSource = 'runtime' | 'config' | 'none';
 

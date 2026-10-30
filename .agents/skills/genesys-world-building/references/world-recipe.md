@@ -123,7 +123,7 @@ Sky sub-fields and ranges (colours are CSS strings such as `"#rrggbb"`):
 
 | Field | Keys and ranges |
 |---|---|
-| `sun` | `name`, `elevation` -10 to 90, `azimuth` 0-360, `color`, `intensity` 0-20, `shadowDistance` 50-4000 m, `cascades` bool, `drivesSky` bool |
+| `sun` | `name`, `elevation` -10 to 90, `azimuth` 0-360, `color`, `intensity` 0-20, `shadowDistance` 50-4000 m, `cascades` bool (default false; leave it off, also for large terrain: `genesys-lighting` → *Cascaded shadows: default off*), `drivesSky` bool |
 | `physical` | `turbidity` 0-20, `rayleigh` 0-4, `mieCoefficient` 0-0.1, `mieDirectionalG` 0-1, `cloudCoverage` 0-1, `cloudDensity` 0-1, `brightness` 0-4 |
 | `gradient` | `bottom`, `middle`, `top` colours, `intensity` 0-4 |
 | `fill` | `sky`, `ground` colours, `intensity` 0-4 |

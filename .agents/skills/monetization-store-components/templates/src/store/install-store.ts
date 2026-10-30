@@ -2,7 +2,7 @@ import * as ENGINE from '@gnsx/genesys.js';
 
 import { resolveCoreApiUrl, studioSignInUrl } from './core-api.js';
 import { StoreClient } from './store-client.js';
-import { PLACEHOLDER_GAME_IDS, storeConfig, type StoreConfig, STORE_VERSION } from './store-config.js';
+import { storeConfig, storeContextOf, type StoreConfig, STORE_VERSION } from './store-config.js';
 import { StoreController } from './store-controller.js';
 import { SILICON_TOP_UP_URLS } from './top-up.js';
 import { PurchaseToast } from './ui/purchase-toast.js';
@@ -94,14 +94,14 @@ export async function installStore(
   if (apiBaseUrlOverride) console.warn(`[Store] API override from localStorage: ${apiBaseUrlOverride}`);
   const coreApiUrlOverride = readUrlOverride('store.coreApiUrl');
   if (coreApiUrlOverride) console.warn(`[Store] core API override from localStorage: ${coreApiUrlOverride}`);
-  // A placeholder runtime id ("editor", "dev-game") means we are not a published game.
   const runtimeGameId = world.netWorld.gameId;
-  const inEditor = PLACEHOLDER_GAME_IDS.has(runtimeGameId?.trim() ?? '');
+  // The play page sets a flag on published games; without it we are in the editor.
+  const context = storeContextOf();
   const client = new StoreClient({
     baseUrl: apiBaseUrlOverride ?? config.apiBaseUrl,
     coreBaseUrl: coreApiUrlOverride ?? resolveCoreApiUrl(window.location.hostname),
     genesysToken: readGenesysToken,
-    context: () => (inEditor ? 'editor' : 'game'),
+    context: () => context,
   });
 
   const controller = new StoreController({

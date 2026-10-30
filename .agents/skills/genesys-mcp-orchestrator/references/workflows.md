@@ -1,101 +1,8 @@
 # Genesys MCP Workflows
 
-Open this reference only when the task matches a recipe below. Follow the orchestrator skill gate, readiness probe, and result-reliability rules first.
+Open this reference only when the task matches a recipe below. Follow the `genesys-mcp-orchestrator` gate, channel probe, readiness check, and result-reliability rules first.
 
 Prefer `query_node` / `action_node` for scene and prefab document trees.
-
-## Scenario beyond curated generation
-
-When the Scenario MCP server is connected, generate with it (`model_run` or `workflow_run`). Use Genesys `action_asset_generation` `start` only when that server is not available. When a Scenario tool result contains an asset id, the Genesys editor shows the Scenario viewer on that result. A `model_run` that only returns a job id does not. Do not call `asset_display` only to preview it in the editor. Other clients show the asset by calling `asset_display` with that id. To bring a Scenario asset into the project, always use `action_asset_generation` with `action: "import"` and `scenarioAssetIds`. Never download Scenario files by hand (`asset_download` is blocked; do not curl URLs from `asset_get` or `job_get`).
-
-```text
-→ scenario model_run(dry_run=true)            cost estimate, no approval, no job
-→ scenario model_run(wait=false)              one approval, returns job_id
-→ scenario jobs_wait(job_ids=[…])             repeat while unfinished; the editor shows the viewer when this result contains an asset id
-→ action_asset_generation(action="import", scenarioAssetIds=["…"], name="futuristic outlaw")
-→ action_asset_generation(action="apply", generationId=…)   only when the user asked to place or use it
-```
-
-- Pass `wait=false` to `model_run`. Its default waits up to 180 s, longer than the client request timeout, so the call fails and a retry asks for approval again.
-- A timed-out `model_run` may still have started a job. Check `jobs_list` before you run it again; never retry a credit-spending call blindly.
-- Read the finished job's output ids from `jobs_wait` or one `job_get`. Do not `asset_get` every output.
-- Import after a successful generation unless the user asked to keep it only in Scenario. `import` spends no credits and is not "the asset generation tool" the user may have ruled out. Outputs of approved Scenario MCP jobs show in Foundry history either way, but only imported assets are in the project.
-- Pass `name`: a few English words for the file name, such as `futuristic outlaw`. Without it the file is named after the Scenario prompt or the asset id.
-- Omit `saveFolder` on `import` and `start` unless the user named a folder. The default is the kind folder under `assets/generated/`, where Foundry saves too.
-- In this and every recipe below, do not `apply` unless the user asked to put the asset in the scene, on a node, or as the sky. "Generate a model" means generate and import; tell the user where the file is and offer to place it.
-
-An image apply also needs `applyAs`: `billboard`, `material`, or `skybox`. Audio apply adds the imported SoundResource to a Sound node (it does not assign the raw audio file). A PBR set is several ids in one import. FBX, OBJ, and glTF are converted to GLB on import.
-
-## Generate a skybox
-
-Ask before spending credits. A dry-run does not start a job.
-
-```text
-→ action_asset_generation(action="start", kind="skybox", prompt="…", dryRun=true)
-→ action_asset_generation(action="start", kind="skybox", prompt="…", waitMs=30000)
-→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
-→ action_asset_generation(action="apply", generationId=…)   only when the user asked to use it as the sky
-```
-
-- Warn the user when the saved record has `isHdr: false` (the file is an LDR panorama).
-- The skybox is converted to an HDRI by default. Pass `options={ "hdr": false }` only when the user wants the LDR panorama; it skips that job and its credits.
-- Do not call `start` again to retry a failure. Another start spends credits.
-- If the user asks to stop, call `action_asset_generation` with `action: "cancel"`. Cancel does not need approval. Scenario may still charge for the job. `getStatus` can return `canceled`, or `failed` with `error: "interrupted"` after the app restarts before the job id was stored.
-
-## Upscale, remove a background, or convert an asset
-
-Pass the Scenario operation as `generationOperation`, not `operation`. `operation` is an alias of `action` on this tool.
-
-```text
-→ action_asset_generation(action="start", kind="image", generationOperation="upscale", sourcePath="assets/…", dryRun=true)
-→ action_asset_generation(action="start", kind="image", generationOperation="upscale", sourcePath="assets/…", waitMs=30000)
-```
-
-- `query_asset_generation(operation="listKinds")` lists each operation and the kinds it supports.
-- Use `sourceGenerationId` instead of `sourcePath` to derive from a saved generation of this project.
-
-## Generate an image
-
-Ask before spending credits. A dry-run does not start a job. Omit `modelId`. The server picks the same public model as the Image tab (featured, then a flux-like name, then the first image model). Do not switch to a base or built-in model when that default is missing.
-
-```text
-→ action_asset_generation(action="start", kind="image", prompt="…", dryRun=true)
-→ action_asset_generation(action="start", kind="image", prompt="…", waitMs=30000)
-→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
-```
-
-- Apply an image with `applyAs`: `billboard`, `material`, or `skybox`. Without `applyAs` the call is `invalid_arguments`.
-- Pass `options.width` and `options.height` when the user asked for a size. The server maps those to `aspectRatio` when the model does not accept pixel size.
-- Do not call `start` again to retry a failure. Another start spends credits.
-
-## Generate a PBR texture
-
-Ask before spending credits. Texture generations default to PBR maps.
-
-```text
-→ action_asset_generation(action="start", kind="texture", prompt="…", dryRun=true)
-→ action_asset_generation(action="start", kind="texture", prompt="…", options={ "pbr": true }, waitMs=30000)
-→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
-→ action_asset_generation(action="apply", generationId=…, targetNodeIds=[…])   only when the user asked to assign it
-```
-
-- `apply` creates a material from the albedo, normal, roughness, metallic, height, and AO maps and assigns it to the target nodes.
-- Pass `referenceImages` when the user attached an image. The chat prompt lists absolute paths. Pass those paths unchanged. The server uploads the image bytes to Scenario.
-
-## Generate a 3D model from an attached image
-
-3D jobs take several minutes. Poll with `waitMs: 45000` and tell the user it is still running.
-
-```text
-→ action_asset_generation(action="start", kind="model3d", prompt="…", referenceImages=["C:/path/to/project/.editor/assistant-attachments/….png"], dryRun=true)
-→ action_asset_generation(action="start", kind="model3d", prompt="…", referenceImages=[…], waitMs=45000)
-→ query_asset_generation(operation="getStatus", generationId=…, waitMs=45000) until status is saved or failed
-→ action_asset_generation(action="apply", generationId=…, placement="nearSelection")   only when the user asked to place it
-```
-
-- `placement` is `cameraLookAt` (default) or `nearSelection` when something is selected.
-- Omit `modelId`. The server picks a public image-to-3D model (featured, then Hunyuan). Do not pass an image model such as FLUX.
-- If the user attached an image, the prompt includes `Reference images saved on disk` and absolute paths. Pass those paths as `referenceImages`. The server uploads the image bytes to Scenario. Do not rewrite them as `@project/` paths.
 
 ## Find / inspect / select nodes
 
@@ -112,6 +19,8 @@ Before first mutation:
 → action_node(select, componentIds=[…])   // optional
 ```
 
+Current selection: `query_editor(operation="getSelection")` (canonical; `query_node` also accepts `getSelection`).
+
 - Known ids (from `@scene/Name [nodeUuid=…]`, selection, or a prior find): call `getDetails(componentIds=[…])` first — skip name `find`.
 - One name substring: `find` with `query: '<string>'` (plain string only — never `{ name: [...] }`).
 - Several exact names or subtree count: one `getTree(limit)` then filter/walk in script — never call both `find` and `getTree` for the same question.
@@ -120,6 +29,13 @@ Before first mutation:
 - Trust `childIds` on the first find hit; do not re-probe with `getTree` for the same name.
 - Use `getEditableProperties` only before `action_node.setProperties` — never alongside bare `getDetails` on the same node.
 - Compact summary: `query_node(getDocument)` or `genesysmcp://scene/summary`.
+
+### Tree shape
+
+- `query` is a plain string: a case-insensitive substring on name, className, id, or prefabPath. An object or array (`query: { name: ['A', 'B'] }`) fails Zod with `expected string, received object`, often surfacing as `script_threw`. Pass `query: 'A'`, or one `getTree(limit ≤ 500)` + `names.includes(n.name)` in script.
+- `getTree` returns at most `limit` nodes (default 200, max 500); `find` defaults to 50. Both report `matchedNodes` and `truncated`. When `truncated` is true, a script filtering `nodes[]` misses nodes: narrow `query` (a class name such as `"DamageObjectActor"` matches) instead.
+- Subtree size: walk `childIds` in one `run_script(readOnly)`, or use `childIds.length` when depth is known shallow. Do not chain exploratory `getDetails` after a `find` that already returned `childIds`.
+- `getDetails` returns `components[]`; `transform.position` is a string such as `"(21.2, 14, 51.1)"`, not `properties.position`.
 
 ### Count descendants (attached roots)
 
@@ -263,32 +179,53 @@ Per-instance materials, colours, lights, enabled state — MCP, not `beginPlay` 
 
 ```text
 query_editor(getState)
-→ query_node(getSelection | find)
+→ query_editor(getSelection) | query_node(find)
 → query_node(getEditableProperties, componentIds=[…])
 → action_node(setProperties, componentId, properties={ material: "@project/assets/materials/Foo.material.json" })
 → action_scene(save)
+→ query_node(getDetails, componentIds=[…])   // re-query: the path is set
 ```
 
-On `MeshNode`, the editable property is typically `material` (confirm with `getEditableProperties`). Hidden asset/diagnostics tools: dispatch via `run_script` / `batch_execute` — see [compact-hidden-tools.md](compact-hidden-tools.md).
+On `MeshNode`, the editable property is `material`; on `ModelMeshNode` it is `modelMaterial` (one override) or `modelMaterials` (per slot). Confirm with `getEditableProperties`. The property is typed `string | THREE.Material`: a string is a `.material.json` asset path, which saves as a path and always persists. Hidden asset/diagnostics tools: dispatch via `run_script` / `batch_execute` — see [compact-hidden-tools.md](compact-hidden-tools.md).
+
+Reuse first: an engine or project material file (`@engine/assets/materials/M_Floor.material.json`, `query_asset(find, assetType="material")`). Make a new one only for a new look (below). Colour properties, fog included, take `{ r, g, b }` or a hex string and persist (`genesys-lighting`).
+
+### Material with a new colour
+
+Set a material **path**, never an inline material or colour object (the object reads back fine and does not persist). One `run_script(apply)`:
+
+Source: Composed — MCP shapes checked against the Sandbox Studio 18.1 MCP registry (dev build); syntax-checked (`action_asset.createMaterial` returns `assetPath`)
+```js
+const made = await genesys.actionAsset({
+  action: 'createMaterial',
+  materialClassName: 'ENGINE.MeshStandardNodeMaterialAsset',
+  name: 'M_Ground',
+  parentPath: 'assets/materials',
+});
+return { assetPath: made.assetPath };
+```
+
+List material classes with `query_editor(getNodeMaterialClasses)`. MCP has no op for a material file's fields, so edit the new file on disk (a file you created this session; format: `M_Floor.material.json`): `"color": { "$bc": "c", "_": [0.32, 0.45, 0.18] }` (linear 0–1), `"roughness": 0.8`, `"mapPath": "@project/assets/textures/ground.png"`. Then, in a second `run_script(apply)`: `setProperties({ material: '<assetPath>' })` on each target → `actionScene({ action: 'save' })` → `getDetails` to confirm. Emissive glow on standard materials: `genesys-lighting`.
 
 ## Play-test loop
 
-Confirm a fix in one Play session. Do not use Play to explore.
+Play is slow and costly. Diagnose in edit mode, then confirm once. Do not use Play to explore.
+
+1. Answer hypotheses with queries (`query_node`, `query_editor`) before entering Play. For a spawn problem, run `query_node(operation="checkSpawnPoints")` first. Estimate heights with `checkSpawnPoints` or `raycast`, not screenshot pixels.
+2. Make all code and scene edits, enter Play once, take every capture you need, exit once. Run `pnpm build` and `pnpm lint` once at the end, not between iterations.
+3. Captures: start with `includeImage: false`; when you need the image, set `maxEdge` to 800 or less. Captures land in `.editor/captures/<day>/` by default (not project assets). Pass `saveLocation: 'none'` to skip the file, `'assets'` only when the user asks to keep the image in the game.
+4. `query_node` returns `play_mode_active` during Play. Read the running world with `query_play` (compact-hidden: `genesys.queryPlay` in `run_script`, or `batch_execute`): `getPlayerPawns`, `getNodeTransform` (`{ nodeId | name }`), `raycast` (`{ origin, direction, maxDistance }`).
 
 ```text
 query_node(checkSpawnPoints)                       edit mode: spawn problem? run this first
 query_node(getDetails | find, …)                   edit mode: state is verified by query
 action_editor(enterPlayMode)                       once; it saves the scene and rebuilds the project
 action_editor(captureScreenshot, includeImage:false, saveLocation:'none')  metrics only
-action_editor(captureScreenshot, maxEdge:800)                              image only when needed (default saveLocation)
+action_editor(captureScreenshot, maxEdge:800)                              image only when needed
 run_script → genesys.queryPlay({ operation: "getPlayerPawns" })             play-world state
 action_editor(exitPlayMode)                        once
 pnpm build ; pnpm lint                             once, at the end
 ```
-
-- `enterPlayMode` already saves and rebuilds (`forPlay`). Do not call `action_build` first. It repeats the build and adds nothing. `action_build` is for registering new game classes in the editor only ([Register a code class](#register-a-code-class)).
-- Do not re-enter Play to test a hypothesis that an edit-mode query answers (spawn height, node position, node count).
-- `query_node` returns `play_mode_active` during Play, because the editor world is unloaded. Use `query_play`. It is compact-hidden and read-only, and works during Play only. Call it with `genesys.queryPlay` in `run_script` or with `tool: "query_play"` in `batch_execute`:
 
 ```js
 const pawns = await genesys.queryPlay({ operation: 'getPlayerPawns' });  // class, world position and rotation, grounded, velocity
@@ -296,9 +233,6 @@ const node  = await genesys.queryPlay({ operation: 'getNodeTransform', name: 'Ch
 const hit   = await genesys.queryPlay({ operation: 'raycast', origin: [x, 10, z], direction: [0, -1, 0], maxDistance: 20 });
 return { pawns, node, hit };
 ```
-
-- Estimate heights with `raycast` or `checkSpawnPoints`. Do not estimate them from screenshot pixels.
-- If a fix needs a code edit, make all code and scene edits, then enter Play once. Do not run `pnpm build`, `pnpm lint` and `action_build` back to back between iterations.
 
 ## Register a code class
 
@@ -315,6 +249,32 @@ edit TypeScript (@GameClass / @ENGINE.GameClass)
 - `run_script(readOnly)` cannot call apply actions such as `actionBuild`.
 - Empty `classes: []` with `ok: true` means not loaded yet — rebuild and query again.
 - `buildLightmap` needs `scenePath`.
+- Bundle proof (`.dist/game.js` contains the GameMode class) is owned by `genesys-game-boot`.
+
+## Build, play, console, exit
+
+`enterPlayMode` saves the scene and rebuilds the project, so a code change needs no `buildProject` first. The build order itself is owned by `genesys-game-boot`.
+
+1. Only after adding or renaming a game class (a new GameMode): direct call `action_build(action="buildProject")`, wait for the result, then the bundle grep, `getRegisteredClasses`, and `query_diagnostics(operation="getBuildErrors")` per `genesys-game-boot`. Never in the same message as `enterPlayMode`.
+2. One `run_script(mode="apply", approval={ summary: "Play the build, read the console, exit", operations: ["action_editor.enterPlayMode", "action_editor.exitPlayMode"] }, timeoutMs=120000)`. Smoke-test runs add the smoke flag step from `genesys-verification` before `enterPlayMode`.
+
+Source: Composed — MCP shapes checked against the Sandbox Studio 18.1 MCP registry (dev build); syntax-checked (`getPlayModeState` → `{ isActive, isStarting }`; `getConsole` → `{ errors, warnings, resultIsAuthoritative }`)
+```js
+const before = await genesys.queryEditor({ operation: 'getPlayModeState' });
+if (before.isActive || before.isStarting) return { skipped: 'Play already running (not started by this agent)' };
+await genesys.actionEditor({ action: 'enterPlayMode' });
+await new Promise((resolve) => setTimeout(resolve, 8000)); // let the game run; smoke runs need their own length
+const consoleState = await genesys.queryDiagnostics({ operation: 'getConsole' });
+const after = await genesys.queryEditor({ operation: 'getPlayModeState' });
+if (after.isActive) await genesys.actionEditor({ action: 'exitPlayMode' });
+return {
+  authoritative: consoleState.resultIsAuthoritative !== false,
+  errors: (consoleState.errors ?? []).slice(0, 40),
+  warnings: (consoleState.warnings ?? []).length,
+};
+```
+
+`run_script` runs in a worker with `setTimeout` but no `window` or `localStorage`; it reaches the editor only through `genesys.*`. `getConsole` returns errors and warnings only. `resultIsAuthoritative: false` means unknown, not clean.
 
 ## Screenshot
 
@@ -328,34 +288,36 @@ action_editor({ action: "captureScreenshot", includeImage: true })
 
 `includeImage` defaults to `true`. Captures are written by default to `@project/.editor/captures/<YYYY-MM-DD>/` (hidden, git-ignored, never shipped), not to project assets, so debug captures need no flag. Pass `saveLocation: 'none'` to skip the file write (`screenshotPath` is null; the image is still returned inline). Pass `saveLocation: 'assets'` only when the user asks to keep the image in the game's assets (`assets/screenshots/`). Legacy `saveToProject: false` still means `none`, but prefer `saveLocation`. Response: JSON metadata + one inline `image` block per surface (renders in Cursor chat). Explicit `genesys_request_approval` is only for prompt-mode pre-approval/token reuse — not required in `auto`.
 
-`target` defaults to `"auto"`. While Play is running, that returns the game. `target: "editor"` is the edit-mode viewport and is blocked during Play. `surface` is `primary` (default), `client-N`, or `all`. `all` captures one surface after another (at most four) and the result lists every live surface. Do not poll; capture when you need to look.
+`target` defaults to `"auto"`. While Play is running, that returns the game. `target: "editor"` is the edit-mode viewport and is blocked during Play. `surface` is `primary` (default), `client-N`, or `all`. `all` captures one surface after another (at most four; extra multiplayer surfaces come without metrics) and the result lists every live surface. Do not poll; capture when you need to look.
 
 Metadata only: `includeImage: false`, then Read tool on `screenshot.screenshotPath`. Never emit markdown image links to absolute local disk paths.
 
-State versus look: which nodes exist, where they sit, what is selected and whether an edit landed are verified with `query_node` (`find`, `getTree`, `getDetails`) and `query_editor` (`getState`, `getSelection`, `getPlayModeState`) — an image has no ids or bounds. How the result looks is verified with a framed capture plus `metrics`. A world is not done without at least one framed capture.
+State versus look: which nodes exist, where they sit, what is selected, and whether an edit landed are verified with `query_node` (`find`, `getTree`, `getDetails`) and `query_editor` (`getState`, `getSelection`, `getPlayModeState`); an image has no ids or bounds. How the result looks is verified with a framed capture plus `metrics`. Use it for a picture the user asked for, or a look check that `genesys-verification` requires.
 
 Framed look check (edit mode):
 
 ```text
-action_editor({ action: "frameNodes", nodeIds: [terrainId, waterId], view: "iso", padding: 0.15 })
-action_editor({ action: "captureScreenshot", focusNodeIds: [terrainId], views: ["hero", "overview"], maxEdge: 1280 })
+action_editor({ action: "frameNodes", nodeIds: [nodeA, nodeB], view: "iso", padding: 0.15 })
+action_editor({ action: "captureScreenshot", focusNodeIds: [nodeA], views: ["hero", "overview"], maxEdge: 1280 })
 ```
 
-- `views` (≤4): `current`, `overview` (high three-quarter), `hero` (low three-quarter), `ground` (eye height). Bounds come from `focusNodeIds`, else the whole scene; sky domes and oceans are skipped.
-- `camera: { position: [x,y,z], target: [x,y,z], fov? }` or `cameraNodeId` renders one frame from that pose without moving the editor camera. Use the scene's `OrbitCameraNode` id to see what players will see.
-- `maxEdge` defaults to 1280 (re-rendered, aspect kept). `imageQuality` defaults to 0.8.
-- Each record has `metrics`: read `warnings[].code` first (`flat_frame`, `subject_off_screen`, `subject_too_small`, `exposure_low`, `exposure_high`, `blown_highlights`, `crushed_blacks`, `single_hue`, `low_colourfulness`, `low_detail`, `sky_dominant`), then `nodeCoverage`. 
-- Play mode: `captureScreenshot` with `target: "play"` (or `auto` while playing) captures the running game window. `camera`, `cameraNodeId` and `views` are edit-mode only. On `play_capture_unavailable`, capture in edit mode with `cameraNodeId`.
+- `frameNodes` frames a node with no mesh around its position, a PlayerStart around its capsule. A capture does not prove a node exists; query for that.
+- `getState.viewportVisible: false` predicts `editor_hidden`: check it before a capture and ask the user to restore the Sandbox Studio window.
+- `views` (<=4): `current`, `overview` (high three-quarter), `hero` (low three-quarter), `ground` (eye height). Bounds come from `focusNodeIds`, else the whole scene; sky domes and oceans are skipped.
+- `camera: { position: [x,y,z], target: [x,y,z], fov? }` or `cameraNodeId` renders one frame from that pose without moving the editor camera. Use the scene's camera node id to see what players will see.
+- `maxEdge` defaults to 1280 (aspect kept). `imageQuality` defaults to 0.8.
+- Each record has `metrics`: read `warnings[].code` first (`flat_frame`, `subject_off_screen`, `subject_too_small`, `exposure_low`, `exposure_high`, `blown_highlights`, `crushed_blacks`, `single_hue`, `low_colourfulness`, `low_detail`, `sky_dominant`), then `nodeCoverage`.
+- Play mode: `target: "play"` (or `auto` while playing) captures the running game. `camera`, `cameraNodeId` and `views` are edit-mode only. On `play_capture_unavailable`, capture in edit mode with `cameraNodeId`.
 - Metrics-only pass: `includeImage: false` (cheaper); look at the image when the change is look-defining or a warning fires.
 
 Motion, time and cost (edit mode):
 
 ```text
-action_editor({ action: "captureScreenshot", focusNodeIds: [waterId], frames: 4, intervalMs: 250 })   contact sheet + motion
-action_editor({ action: "captureScreenshot", views: ["hero", "overview"], freezeTime: true })        same instant in every view
-action_editor({ action: "captureScreenshot", timeSeconds: 3, includeRenderStats: true })             step 3 s, then capture with renderStats
-query_editor({ operation: "getRenderStats" })                                                         draw calls, triangles, budget warnings
-action_editor({ action: "enterPlayMode", seed: 1234 })                                                seeded world.random
+action_editor({ action: "captureScreenshot", focusNodeIds: [nodeA], frames: 4, intervalMs: 250 })   contact sheet + motion
+action_editor({ action: "captureScreenshot", views: ["hero", "overview"], freezeTime: true })       same instant in every view
+action_editor({ action: "captureScreenshot", timeSeconds: 3, includeRenderStats: true })            step 3 s, then capture with renderStats
+query_editor({ operation: "getRenderStats" })                                                        draw calls, triangles, budget warnings
+action_editor({ action: "enterPlayMode", seed: 1234 })                                               seeded world.random
 ```
 
 - `frames > 1` cannot take `views` or `freezeTime`; during play it fails with `motion_capture_unavailable` (exit play, capture with target `editor`). Read `motion.value` and the `no_motion` warning.
@@ -398,6 +360,23 @@ Full class pattern: [webgpu-tsl-node-material-assets/SKILL.md](../../webgpu-tsl-
 - Scene slice: `run_script(readOnly)` — filter `queryNode(find|getTree)` in-script; return a small summary only.
 - Assets: `query_asset(find)` → `getDetails` (project/packs; `@engine/...` via `getDetails` only).
 - After TS edits: `buildProject` → optional `getBusyState` after a long build → `query_diagnostics(getBuildErrors)` when authoritative. Unavailable diagnostics = unknown, not success.
+- After a prefab or layout rebuild: wait for busy to clear (below) **before** `buildProject`.
+
+### Wait for busy to clear
+
+A prefab save, apply or resync, a bulk layout, a scene load and a large `batch_execute` each trigger a `Scene world reset`. Until it ends, `buildProject` and `enterPlayMode` wait for it, for up to 30 s, then return `editor_busy`. `getBusyState` returns `{ isBusy, reasons }`, for example `{ "isBusy": true, "reasons": ["Scene world reset is in progress."] }`. Poll it from one `run_script`, then send `buildProject` as its own call:
+
+```js
+let s = {};
+for (let i = 0; i < 28; i++) {                          // ~42 s cap: the MCP client can give up at 60 s
+  s = await genesys.queryEditor({ operation: 'getBusyState' });
+  if (!s.isBusy) break;
+  await new Promise(r => setTimeout(r, 1500));
+}
+return s;
+```
+
+Still busy after 90 s → stop and report the reasons (`genesys-verification` → *Budget*, stuck editor). Never loop `buildProject` on `editor_busy`.
 
 ## Prefabs
 
@@ -406,7 +385,7 @@ Decision table and gotchas: [genesys-prefabs](../../genesys-prefabs/SKILL.md). C
 ### Extract a branch
 
 ```js
-const { componentId } = /* selected branch root, not a placed instance */;
+const componentId = 'branch-root-uuid'; // selected branch root, not a placed instance
 const created = await genesys.actionPrefab({ action: 'createFromNode', componentId });
 return { prefabPath: created.prefabPath, status: created.status };
 ```
@@ -491,33 +470,46 @@ Compact-hidden `query_profiler` / `action_profiler`. Use Insights first. Record 
 
 **A. Insights report.** Turn collection on, enter play, wait for samples, then save the report. `generateReport` returns `path`, `issues`, `timing` (`topScopes`, and `topGpuScopes` when the capture timed the GPU), and a compact `memory` summary. The report viewer shows the full tables. `setGpuDetail` (`pass`, `stage`, or `draw`) saves GPU timing detail for the next Play; a session that is already running keeps its current detail. Do not call `readReport` in the same turn. `listArtifacts` lists saved reports and traces without returning trace bodies. Heap and VRAM growth use [memory-profiling](../../memory-profiling/SKILL.md) (`compare-heap-captures.mjs`, `compare-gpu-captures.mjs`), not this report.
 
+Check `getPlayModeState` first, as in "Build, play, console, exit". Each poll waits 1 s; without the wait the loop finishes before the first sample. `generateReport` also returns `timing.samples` (frame count).
+
+Source: Composed — MCP shapes checked against the Sandbox Studio 18.1 MCP registry (dev build); syntax-checked
 ```js
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 await genesys.actionProfiler({ action: 'setInsights', enabled: true });
 await genesys.actionEditor({ action: 'enterPlayMode' });
 let samples = 0;
-for (let i = 0; i < 10 && samples === 0; i++) {
+for (let i = 0; i < 20 && samples === 0; i++) {
+  await sleep(1000);
   const status = await genesys.queryProfiler({ operation: 'status' });
-  samples = status.live?.insights?.samples ?? 0;
+  samples = status.live?.insights?.samples ?? 0; // field path: verify on first use
 }
+await sleep(5000); // gather a few seconds of play
 const report = await genesys.actionProfiler({ action: 'generateReport' });
-return { path: report.path, issue: report.issues?.[0]?.id ?? null, samples };
+return { path: report.path, issue: report.issues?.[0]?.id ?? null, samples: report.timing?.samples ?? samples };
 ```
 
-**B. Trace from the first frame.** Arm with a stop limit, then enter play. Arming does not start the file. `nextStep` says to restart play when a session is already running. A limit stop writes the manifest without `stopTrace`.
+**B. Trace from the first frame.** Arm with a stop limit, then enter play. Arming does not start the file; recording starts before the first frame of the next Play. If a session is already running, `nextStep` says to exit and enter Play again. Let the game run for the window you want **before** `stopTrace`; calling it straight after `enterPlayMode` stops the trace at ~0 s. When the limit fires first, the trace is already closed: `stopTrace` (still in Play) or `readTraceManifest` returns the manifest (verify on first use which one carries `stopReason`).
 
+Source: Composed — MCP shapes checked against the Sandbox Studio 18.1 MCP registry (dev build); syntax-checked
 ```js
-const armed = await genesys.actionProfiler({ action: 'armTraceForGameStart', maxDurationMs: 10000, maxBytes: 256 * 1024 * 1024 });
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+await genesys.actionProfiler({ action: 'armTraceForGameStart', maxDurationMs: 10000, maxBytes: 256 * 1024 * 1024 });
 await genesys.actionEditor({ action: 'enterPlayMode' });
+await sleep(11000); // past the 10 s limit
 const capture = await genesys.actionProfiler({ action: 'stopTrace' });
-return { path: capture.tracePath, stopReason: capture.manifest?.stopReason, topScope: capture.manifest?.topScopes?.[0]?.label ?? null, topGpuScope: capture.manifest?.topGpuScopes?.[0]?.label ?? null };
+const listing = await genesys.queryProfiler({ operation: 'readTraceManifest' });
+await genesys.actionProfiler({ action: 'armTraceForGameStart', armed: false });
+return { path: capture.tracePath ?? listing.tracePath, stopReason: capture.manifest?.stopReason ?? listing.sidecar?.stopReason ?? null, topScope: capture.manifest?.topScopes?.[0]?.label ?? null };
 ```
 
-**C. Trace while play is running.** Pass a stop limit so the file cannot grow without a bound.
+**C. Trace while play is running.** Pass a stop limit so the file cannot grow without a bound, and let it run before stopping.
 
+Source: Composed — MCP shapes checked against the Sandbox Studio 18.1 MCP registry (dev build); syntax-checked
 ```js
 const started = await genesys.actionProfiler({ action: 'startTrace', maxDurationMs: 5000, thresholdMs: 0.25 });
+await new Promise((resolve) => setTimeout(resolve, 5500));
 const capture = await genesys.actionProfiler({ action: 'stopTrace' });
 return { path: started.trace?.path ?? capture.tracePath, stopReason: capture.manifest?.stopReason };
 ```
 
-Disarm afterwards with `armTraceForGameStart` and `armed: false` when the user only wanted one capture. Stop Insights with `setInsights` and `enabled: false` when collection should not continue. The saved report stays on disk.
+Recipe B disarms itself; otherwise disarm with `armTraceForGameStart` and `armed: false` when the user only wanted one capture. Stop Insights with `setInsights` and `enabled: false` when collection should not continue. The saved report stays on disk.

@@ -2,7 +2,7 @@
 name: monetization-store-items
 description: Use when a creator wants to add, price, edit, publish, take down, or delete an item in their game's store, give an item a gameplay effect, or test buying without spending money — item ids, drafts, free items, consumables, Silicon prices, item images. Start from `monetization-store` for what the store is.
 metadata:
-  tokens: 2032
+  tokens: 2042
 ---
 
 # Monetization Store Items
@@ -154,9 +154,9 @@ synchronous and cheap.
   studio outside the editor, signed in to Studio: drafts are absent, live
   items are buyable with real Silicon.
 - The panel footer shows `test silicon` when the balance is Test Silicon,
-  `drafts visible` when drafts are listed, and `sandbox payments` when the
-  API reports a sandbox payment mode. That last one is informational: games
-  never sell Silicon (Get Silicon opens the Sandbox top-up page), and there
+  `drafts visible` when drafts are listed, and `editor play (test money)`
+  when the store reports the editor context. That last one is informational:
+  it does not change what Pay Station charges, and games never sell Silicon (Get Silicon opens the Sandbox top-up page), and there
   is no top-up in the editor.
 
 ## Images

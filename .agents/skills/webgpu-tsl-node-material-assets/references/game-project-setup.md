@@ -2,6 +2,31 @@
 
 This reference shows a safe pattern for creating a custom game-side TSL node material shader asset that is editor-visible, serialization-safe, and resource-safe.
 
+## Work tags, conventions and mandatory practices
+
+The short version is in [SKILL.md → Custom class](../SKILL.md#custom-class).
+
+| Tag | When |
+| --- | --- |
+| `[Code]` | Define or update the `@ENGINE.GameClass({ isNodeMaterialAsset: true, ... })` material class |
+| `[Verify]` | Lint/build the game project; confirm class registration |
+| `[MCP]` | Create `.material.json`, assign `material`, save scene |
+
+Conventions:
+- Import engine APIs as `import * as ENGINE from '@gnsx/genesys.js';`
+- Use `@ENGINE.GameClass(...)` for game-defined asset classes (never `EngineClass` in game code).
+- Mark authored fields with `@ENGINE.property({ type, description, ... })`.
+- Build the TSL shader node graph in a dedicated `rebuild()` method.
+- Colocate `ENGINE.registerSpecialization(...)` in the same module as the class.
+
+Best practices (mandatory):
+- Texture ownership: cache owned textures on the instance; reuse when the URL is unchanged.
+- Disposal: dispose owned textures when replaced or in `dispose()`; never leak rebuild-allocated textures.
+- Failure containment: on `rebuild()` failure, assign a safe fallback graph and set `needsUpdate = true`.
+- Property changes: after runtime or editor mutations to authored fields, call `rebuild()` and set `needsUpdate = true`.
+- Loop safety: clamp and sanitize loop-driving values before feeding TSL logic.
+- TSL naming: use prefixed `toVar('prefixName')` names; avoid shadowing authored property names.
+
 ## Property metadata guidance (editor exposure)
 
 - Always use explicit property metadata: `@ENGINE.property({ type, description, ... })`.
@@ -14,6 +39,7 @@ This reference shows a safe pattern for creating a custom game-side TSL node mat
 
 Keep the class and `ENGINE.registerSpecialization(...)` in the same module. Execute registration once via a module side effect at the bottom of the file.
 
+Source: pattern of `.engine/src/runtime/materials/nodeMaterialAssets/` (for example `FresnelRimNodeMaterialAsset.ts`); `ENGINE.registerSpecialization` from `.engine/src/utils/serialization/specializationUtils.ts`
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
 import * as TSL from 'three/tsl';
@@ -133,6 +159,7 @@ ENGINE.registerSpecialization({
 
 With MCP (preferred when connected):
 
+Source: MCP `action_build`, `query_editor`, `action_asset.createMaterial`
 ```text
 action_build(action="buildProject")
 → query_editor(operation="getNodeMaterialClasses", filter="PulseStripe")
@@ -152,6 +179,7 @@ Do not hand-author `.material.json`. The editor serialises materials with `ENGIN
 
 Runtime:
 
+Source: `.engine/src/nodes/visual/MeshNode.ts` (`MeshNode.create` options)
 ```typescript
 const material = new PulseStripeNodeMaterialAsset();
 const mesh = ENGINE.MeshNode.create({ geometry: new THREE.SphereGeometry(1, 32, 32), material });
@@ -159,6 +187,7 @@ const mesh = ENGINE.MeshNode.create({ geometry: new THREE.SphereGeometry(1, 32, 
 
 Scene/editor (MCP):
 
+Source: MCP `action_node.setProperties`, `action_scene.save`
 ```text
 action_node(action="setProperties", componentId=…, properties={ material: "@project/assets/materials/M_PulseStripe.material.json" })
 → action_scene(action="save")

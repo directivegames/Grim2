@@ -1,0 +1,6 @@
+{
+  "role": "creature",
+  "export": "assets/models/creatures/SKM_Skeleton.glb",
+  "rig": "mannequin",
+  "expect": { "size": [2.0, 1.8, 0.34], "tris": [2000, 7000], "materials": 5, "bottom": 0, "tolerance": 0.15 }
+}

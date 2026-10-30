@@ -5,7 +5,6 @@
 - To ask, call `request_user_input` when it is in your tool list; otherwise ask in chat. Prefer one question (three at most). Put the recommended option first with a "(Recommended)" suffix, and do not add an Other option.
 - Inspect the project before you make changes, whether you build a new feature, fix a bug, or continue earlier work. For work that spans several systems or files, name what you will change before you start.
 - Skills hold Genesys-specific workflows, APIs, and pitfalls that general Three.js or game-engine knowledge gets wrong. Before you start a task, check the available skills for any that cover it, read each matching `SKILL.md`, and follow it. When a task touches several areas, read every matching skill. If a skill and your own knowledge disagree, follow the skill.
-- Do not create documentation, tests, or example code unless the user asks for them. Testing is the user's responsibility: recommend approaches and help evaluate results, but do not run test runners.
 - Keep status and progress updates brief.
 
 ## How a Genesys Project Is Organised
@@ -41,14 +40,14 @@ Read-only engine source is in `.engine/` at the project root. `pnpm install` rec
 ## Conventions
 - Register custom node classes with `@GameClass`, never `@EngineClass`.
 - Split logic, definitions, and configuration into separate, focused modules. Do not put everything in one file.
-- Build in-game UI with the `genesys-ui-kit` skill. It covers the `BaseUIComponent` widget catalog, the `world.gameContainer` mounting rule, and Safe UI (XSS) handling for dynamic strings.
+- Build in-game UI with the `genesys-ui` skill. It covers the `BaseUIComponent` widget catalog, the `world.gameContainer` mounting rule, and Safe UI (XSS) handling for dynamic strings. Style every screen to the game's UI direction: use the widgets where they fit, and a custom HUD layer (HTML, CSS, SVG) inside `world.gameContainer` is allowed.
 - The build copies a project asset only when its full `@project` path appears in one string literal. Do not join a folder prefix to a file name:
   ```typescript
   const good = '@project/assets/generated/mesh/fox.glb';
   const bad = `${MESH_DIR}fox.glb`; // file name is not in the literal
   ```
   When the path is chosen at runtime, list the asset or its folder in `.genesys-project` under `alwaysCopyAssets`, for example `"alwaysCopyAssets": ["@project/assets/generated/mesh"]`.
-- The browser cannot load `@engine` or `@project` paths. Before you put them in an HTML string, resolve them with `await ENGINE.resolveAssetPathsInText(html)`. If the HTML also contains dynamic strings, follow the Safe UI rules in the UI kit skill.
+- The browser cannot load `@engine` or `@project` paths. Before you put them in an HTML string, resolve them with `await ENGINE.resolveAssetPathsInText(html)`. If the HTML also contains dynamic strings, follow the Safe UI rules in the `genesys-ui` skill.
 
 ## Environment & Verification
 - Run every shell command (`pnpm`, `git`, TypeScript tools, etc.) from this game project root — the folder that contains `package.json` and the `.genesys-project` file. If your shell tool has a working-directory option, set it; otherwise `cd` there first. Do not rely on the default shell cwd; it may be the Genesys desktop app process directory.
@@ -63,6 +62,29 @@ Read-only engine source is in `.engine/` at the project root. `pnpm install` rec
 When Play is already running in the editor and MCP is off, you can capture frames from the Play listener. It is a separate service from MCP: the ban on shell calls to MCP applies only to `/mcp` and `/scenario/mcp` and does not apply to `.genesys/play-server.json`.
 - Read the `baseUrl` and token from `.genesys/play-server.json`. List surfaces with `curl.exe -sf -H "Authorization: Bearer <token>" <baseUrl>/surfaces`, save a frame with `curl.exe -sf -H "Authorization: Bearer <token>" -o .genesys/play-capture-<id>.jpg "<baseUrl>/screenshot?surface=<id>"`, then read the image. On Windows use `curl.exe`; PowerShell `curl` is a different command.
 - A missing file, refused connection, or 503 means Play is not running; ask the user. 429 means wait. Do not retry in a loop.
+
+## Working agreements (always in effect)
+
+- **Making a game.** Any request to make a game ("make a…", "let's build…", a genre name, an empty or starter template, or a resumed game in `GAME.md`) starts with `genesys-game-director`. Treat it as a whole build unless the creator limits scope; the director's first-delivery bar is the definition of done. A focused fix (one bug, one widget, one node) changes only that surface and uses the owning skill.
+- **Resume.** After a context compaction or in a new session, re-read this file, `BRIEF.md`, `GAME.md` and `TECH.md` if present, then continue from **Now** in `GAME.md` (`genesys-game-director` → *Resume*), never from memory alone.
+- **Never park work behind a question.** The director's concept check is the one planned pause. Otherwise, if an answer is missing, decide, say it in one line, record it in `GAME.md` → Decisions as *assumed*, and keep building. Spending and permissions are the exception: silence means no.
+- **End a turn on a question or a handoff.** A handoff says what changed, how to play it, and what is still open. Never end on a promise ("next I'll…"): while work remains and nothing needs an answer, keep going.
+- **Talk in game language.** Describe each change as the player will experience it, and suggest what to try first. Mention files, build output or tools only if asked.
+- **Never delete, move or overwrite what you did not create** (files, folders, scene nodes). Ask first and name exactly what. Starter templates follow `genesys-game-director` → *Starter templates*.
+- **Subagents.** This line is standing permission to run subagents on independent work (`genesys-subagents`). A working mode the creator asks for (parallel, critic, step by step) applies immediately.
+
+## Questions and Play
+
+- "Call `request_user_input` when it is in your tool list" applies when you are the editor's built-in assistant. When the creator talks to you in another chat client with the editor connected over MCP, ask in that chat: its own question tool first (for example `AskUserQuestion`), plain chat otherwise. The editor dialog can time out unseen; a timed-out question is asked once in chat, never retried.
+- Never start or take over Play while the creator is playing (`query_editor(getPlayModeState)` first).
+- "One Play session" in the SDK rules above is for a focused change. A whole build gets four Play entries and one critic round (`genesys-verification` → *Budget*).
+
+## Before you build
+
+- A new system: check `genesys-engine` → *Engine already has it* first.
+- Anything the player sees or hears: `genesys-assets` owns the Assets table, routes, wiring and `asset-check`.
+
+**Art routes for this project: reuse (engine, packs, project), code. Blender only when the creator asks. Scenario is off.** Edit this line to change the routes; `genesys-assets` reads it. The creator's words in the prompt override this line: "don't use Blender" turns Blender off, "use Blender" turns it on.
 
 # GENESYS-SDK-END
 

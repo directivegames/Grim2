@@ -1,6 +1,6 @@
-# Genesys Project Structure
+# Genesys project structure
 
-## Folder Layout
+## Folder layout
 
 ```
 my-game/
@@ -8,31 +8,33 @@ my-game/
 │   └── default.genesys-scene    # Default level file (more assets are added as you create them)
 ├── src/                         # TypeScript source code
 │   ├── game.ts                  # Entry point - GameMode + GameLoop + main()
-│   ├── auto-imports.ts          # Auto-generated: imports all source (DO NOT MODIFY)
-│   └── game-data.ts             # Auto-generated when using @property (DO NOT MODIFY)
-├── .engine/                     # Read-only engine source mirror — use as the primary API reference
-├── .agents/                     # Skill files (including this one) consumed by AI tooling
+│   ├── auto-imports.ts          # Generated: imports all source (DO NOT MODIFY)
+│   └── game-data.ts             # Generated when using @ENGINE.property (DO NOT MODIFY)
+├── .engine/                     # Read-only engine source mirror — the primary API reference
+├── .agents/                     # Skill files consumed by AI tooling
 ├── .genesys/                    # SDK base files (configs, scripts) — do not modify
+├── .dist/                       # Built bundle that Play runs (game.js)
 ├── scripts/genesys/             # Build, manifest, prefab-validation, and MCP helper scripts
 ├── packs/                       # In-project asset packs (optional)
 ├── package.json                 # Dependencies
-├── tsconfig.json                # TS config (extends .genesys/sdk/tsconfig.json)
-├── vite.config.ts               # Vite config (merges with .genesys/sdk/vite.config.js)
-├── eslint.config.js             # ESLint config (extends .genesys/sdk/eslint.config.js)
+├── tsconfig.json                # Extends .genesys/sdk/tsconfig.json
+├── vite.config.ts               # Merges with .genesys/sdk/vite.config.js
+├── eslint.config.js             # Extends .genesys/sdk/eslint.config.js
 ├── AGENTS.md                    # AI-agent rules
-└── my-game.genesys-project      # Project metadata file (extension is the project marker)
+└── my-game.genesys-project      # Project metadata (the extension is the project marker)
 ```
 
-Templates may add more `src/` files (for example a player pawn). The empty template ships only `game.ts` plus generated `auto-imports.ts`.
+Templates may add more `src/` files (for example a player pawn). The empty template ships only `game.ts` plus the generated `auto-imports.ts`.
 
-The engine source under .engine/ is the primary reference for class hierarchies, method signatures, and conventions when extending or composing engine APIs.
+Grow `src/` by concern, one class per file: `src/player/`, `src/enemies/`, `src/combat/`, `src/ui/`, `src/const.ts`. Keep `game.ts` to the GameMode, the loop, and `main()`. Every tunable number (speeds, damage, timers, spawn counts) goes in `src/const.ts` with a one-line comment; the rule and its shape are owned by `genesys-game-boot`. Shared module contracts (events, the GameMode facade) follow [contracts](contracts.md).
 
-## The src/game.ts File
+Run every shell command (`pnpm`, `git`) with the working directory set to the project root — the folder with `package.json` and the `.genesys-project` file.
 
-Every game requires a game.ts file exporting a main() function.
+## The src/game.ts file
 
-### Structure
+Every game exports a `main()` function.
 
+Source: project template `src/game.ts`; .engine/src/game/GameLoop.ts (`BaseGameLoop`, `BaseGameLoopOptions`), .engine/src/game/GameMode.ts
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
 
@@ -57,26 +59,33 @@ export function main(
 }
 ```
 
-### Core Classes
+`BaseGameLoop` is the one class created with `new`; it is not a node.
 
-GameMode — Defines rules, player spawning, and default classes (Pawn, PlayerController). Transient (not saved).
+- **GameMode** — rules, player spawning, default pawn and controller classes. Transient (not saved). The screen state machine and spawn factories live here; see `genesys-game-boot`.
+- **GameLoop** — drives the engine tick and the World/level lifecycle; see [game-loop](game-loop.md).
+- **main()** — the entry point the framework calls.
 
-GameLoop — Drives engine tick, manages World/Level lifecycle and state persistence.
+## Generated files
 
-main() — Entry point function called by the framework.
+- `src/auto-imports.ts` — imports every source file so `@ENGINE.GameClass()` classes register. The build pipeline rewrites it. Never edit it.
+- `src/game-data.ts` — metadata for `@ENGINE.property()` fields. Generated. Never edit it.
 
-## Auto-Generated Files
+## Project configuration
 
-src/auto-imports.ts — Imports all source files for compilation. Do not modify.
+The `.genesys-project` file at the root configures engine settings and default scenes.
 
-src/game-data.ts — Metadata for @ENGINE.property() decorated fields. Do not modify.
+- `defaultScene` — scene path for Play / runtime (for example `./assets/default.genesys-scene`).
+- `defaultServerScene` — optional dedicated-server scene override.
+- `engineVersion` — compatible engine version.
+- `assetCompiler` — build-time compression settings; see `genesys-asset-compiler`.
 
-## Project Configuration
+## Scene files
 
-The .genesys-project file in the root configures engine settings and default scenes.
+Do not read or open `*.genesys-scene` files unless the user asks or MCP is unavailable. They are large, and the editor is the source of truth for scene state. Query the scene through MCP (`genesys-mcp-orchestrator`).
 
-Fields:
-- defaultScene — Default scene path for play / runtime.
-- defaultServerScene — Optional dedicated-server scene override.
-- engineVersion — Compatible engine version.
-- alwaysCopyAssets — Optional file or folder paths (`@project/...` or project-relative) that the build copies even when game code does not mention each file as its own string literal. Use this when a path is chosen at runtime (`@project/assets/levels/${name}.json`). A listed folder copies every file under it. Do not use it as a substitute for writing full asset path literals.
+## Verifying code
+
+- `pnpm build` — typecheck only.
+- `pnpm lint` — detect and auto-fix lint issues.
+- `pnpm test`, `pnpm dev`, and `pnpm start` are not supported.
+- MCP `action_build(action="buildProject")` refreshes registered classes and the Play bundle. Bundle proof is in `genesys-game-boot`.

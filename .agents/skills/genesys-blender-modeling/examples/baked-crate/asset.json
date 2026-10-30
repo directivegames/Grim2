@@ -1,0 +1,2 @@
+{ "role": "prop", "export": "assets/models/props/SM_CrateBaked.glb",
+  "expect": { "size": [0.84, 0.8, 0.84], "tris": [12, 12], "materials": 1, "bottom": 0, "tolerance": 0.05 } }

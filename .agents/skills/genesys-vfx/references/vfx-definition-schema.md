@@ -1,6 +1,6 @@
 # VFX Definition Schema
 
-Source of truth: `.engine/src/vfx/types.ts`. A `VFXDefinition` (and the `.vfx.json` files it serializes to/from) is `{ version, name, particles: VFXParticlesSettings[], emitters: VFXEmitterSettings[] }`. Every field below is optional in the JSON/settings object — defaults are applied by `normalizeVFXParticlesSettings` (particles) or the `VFXEmitterCore` constructor (emitters).
+Source of truth: `.engine/src/vfx/types.ts`. A `VFXDefinition` (and the `.vfx.json` files it serializes to/from) is `{ version, name, particles: VFXParticlesSettings[], emitters: VFXEmitterSettings[] }`. A hand-written file in exactly that plain shape (`version: 1`) loads through `vfxPath` and `spawnVFXFromPath`; check it with `scripts/vfx-check.mjs`, which runs the same validation as below. Every field below is optional in the JSON/settings object — defaults are applied by `normalizeVFXParticlesSettings` (particles) or the `VFXEmitterCore` constructor (emitters).
 
 `VFXEmitterSettings.particlesIndex` links an emitter to one entry in the `particles` array (default `0`). Multiple emitters can share one particle system, or each can have its own — this is how a single VFX definition combines e.g. a burst of sparks (one particle system) with a lingering smoke puff (another).
 
@@ -9,7 +9,7 @@ Source of truth: `.engine/src/vfx/types.ts`. A `VFXDefinition` (and the `.vfx.js
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `name` | `string` | *(unset)* | Editor display name. Does not affect GPU pool identity (`${definition.name}_particles_${index}`). |
-| `nbParticles` | `number` | `1000` | Fixed pool size for this system's `InstancedMesh`. Not a spawn budget — see Footguns in SKILL.md. |
+| `nbParticles` | `number` | `1000` | Fixed pool size for this system's `InstancedMesh`. Not a spawn budget — see Traps in the `genesys-vfx` SKILL.md. |
 | `intensity` | `number` | `1` | Brightness multiplier. |
 | `renderMode` | `'stretchBillboard' \| 'billboard' \| 'zBillboard' \| 'mesh'` | `'mesh'` in `VFXParticlesShared` normalization; `GlobalParticleManager.spawnVFX` defaults to `'billboard'` | `stretchBillboard` stretches along velocity; `zBillboard` faces the camera on XZ only (no pitch); `mesh` renders `geometryPath` (or a default cube via `GlobalParticleManager` when `renderMode: 'mesh'` and no `geometryPath`). |
 | `stretchScale` | `number` | `1.0` | Stretch factor, `stretchBillboard` only. |
@@ -40,7 +40,7 @@ Note: `frustumCulled` is intentionally always forced `false` on VFX meshes by `G
 | --- | --- | --- | --- |
 | `name` | `string` | *(unset)* | Editor display name. Emitters still bind by `particlesIndex`, not by this name. |
 | `particlesIndex` | `number` | `0` | Index into the definition's `particles` array. |
-| `loop` | `boolean` | `false` | Continuous emission in placed / in-game VFX. For `spawnMode: 'time'`, particles keep spawning past `duration`. For `spawnMode: 'burst'`, a new burst fires each `duration` after `delay`. The VFX editor preview ignores this and uses Auto-Replay on the clip instead. See looping footgun in SKILL.md when combined with `spawnVFX`. |
+| `loop` | `boolean` | `false` | Continuous emission in placed / in-game VFX. For `spawnMode: 'time'`, particles keep spawning past `duration`. For `spawnMode: 'burst'`, a new burst fires each `duration` after `delay`. The VFX editor preview ignores this and uses Auto-Replay on the clip instead. A looping `spawnVFX` runs until `despawnVFX` gets its emitters (see `genesys-vfx` Traps). |
 | `duration` | `number` | `1` | Emission window length in seconds (`endTime - delay` when `endTime` is set). |
 | `delay` | `number` | `0` | Clip-time start in seconds. |
 | `endTime` | `number` | `delay + duration` | Clip-time stop. When omitted, stop is `delay + duration`. The editor writes both `duration` and `endTime`. |
@@ -63,7 +63,7 @@ Note: `frustumCulled` is intentionally always forced `false` on VFX meshes by `G
 | `colorEnd` | `string[]` | `[]` | Random per particle; falls back to the same `colorStart` value when empty (no color shift). |
 | `colorRamp` | `{ t: number, color: string }[]` | migrated from the first `colorStart`/`colorEnd` | Colour over particle lifetime (at least two stops, `t` in 0..1). GPU samples up to 8 stops. Emitters that share a particle system share the first matching ramp — use separate particle systems for different ramps. |
 | `useLocalDirection` | `boolean` | inherited from constructor's `localDirection` arg (`false` via `GlobalParticleManager`/`VFXNode`) | Rotates `directionMin`/`directionMax` by the emitter's world rotation instead of treating them as world-space. |
-| `emitLight` | `boolean` | `false` | Attaches a child `THREE.PointLight` (no shadows) at the emitter. Lights the surrounding scene, not unlit particles. Preview intensity follows the clip window; in-game `loop` keeps the light on after `delay`. |
+| `emitLight` | `boolean` | `false` | Attaches a child `THREE.PointLight` (no shadows) at the emitter. Lights the surrounding scene, not unlit particles. Preview intensity follows the clip window; in-game `loop` keeps the light on after `delay`. **Never on a spawned effect** (muzzle, impact, explosion, pickup): a light per spawn recompiles shaders on spawn and on removal (`genesys-profiler` → *Never pay per spawn*). Only a few placed, long-lived ambient effects may use it. |
 | `lightColor` | `string` | `'#ffffff'` | Point light colour (`THREE.Color`-parsable). |
 | `lightIntensity` | `number` | `8` | Point light intensity (candela). |
 | `lightDistance` | `number` | `10` | Distance at which intensity falls to 0. `0` means infinite. |

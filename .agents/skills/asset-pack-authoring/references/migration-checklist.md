@@ -11,17 +11,25 @@
 
 ## Step 1 — Scaffold (or reuse) the pack
 
-If the pack does not exist:
+If the pack does not exist, scaffold it with MCP (compact-hidden; no ready editor needed):
+
+Source: Composed — MCP shapes checked against the Sandbox Studio 18.1 MCP registry (dev build); syntax-checked
+```js
+// run_script(mode="apply")
+return await genesys.actionAsset({ action: 'installAssetPack', packName: '<name>', packId: '<id>' });
+```
+
+CLI fallback, only when the globally installed Genesys SDK CLI is present (`genesys-sdk` is not a project dependency):
 
 ```bash
-pnpm exec genesys-sdk new-asset-pack --name <name> \
+genesys-sdk new-asset-pack --name <name> \
   --description "<one-line summary>" --pack-version 1.0.0 \
   --min-engine-version 0.0.1
 ```
 
 Pack `id` is derived from `--name`. `assets/` and `src/` are created by
 default; pass `--no-assets` / `--no-src` only when you intentionally skip
-them. (Editor users may use the New Asset Pack dialog instead — same result.)
+them. (Editor users may use Menu → Tools → New Asset Pack… instead — same result.)
 
 Confirm the resulting layout:
 
@@ -51,8 +59,10 @@ Scanning rules:
   value. Any value starting with `@project/` is a reference.
 - Material files (`*.material.json`) — same JSON walk as prefabs.
 
-After the migration completes, warn the user that any scenes referencing the
-old asset paths must be re-saved from the editor.
+Reading prefab and material JSON to build the closure is fine; editing it is
+the MCP-off fallback only. When assets move through `action_asset(move)`, the
+editor rewrites scene references too. With the MCP-off fallback, warn the user
+that any scenes referencing the old asset paths must be re-saved from the editor.
 
 Categorise each ref:
 
@@ -78,7 +88,11 @@ Preserve the relative sub-path under `src/` or `assets/<category>/` exactly.
 
 ## Step 4 — Move files
 
-Use `git mv` if the project is in git, otherwise ordinary move. Move all planned files in one batch before rewriting any references.
+- **Assets (MCP ready):** `action_asset(action="move", assetPath, destinationPath)` per file, in one `run_script(apply, groupUndo=true)`. The editor rewrites every reference to the moved file in scenes, prefabs, and materials. Afterwards `query_asset(operation="getReferences", assetPath=<old path>)` returns nothing. Create a missing destination folder with `action_asset(action="createFolder", parentPath, folderName)`.
+- **Code:** `git mv` if the project is in git, otherwise an ordinary move.
+- **Assets (MCP Off only):** move on disk with the code, then apply the Step 5 JSON rewrite.
+
+Move all planned files in one batch before rewriting any code references.
 
 ## Step 5 — Rewrite references inside the pack
 
@@ -86,8 +100,9 @@ See `path-rewrite-rules.md` for concrete patterns. In short:
 
 - In moved `.ts/.tsx` files: replace `@project/assets/<sub>` with
   `@project/packs/<name>/assets/<sub>` for assets that moved with the pack.
-- In moved `.prefab.json` and `.material.json`: same rewrite, applied to every
-  string value found in step 2.
+- In moved `.prefab.json` and `.material.json`: nothing to do when they moved
+  through `action_asset(move)`. MCP Off fallback only: the same rewrite,
+  applied to every string value found in step 2.
 - `@engine/...` — untouched.
 - Relative TS imports between two moved files — untouched.
 
@@ -106,7 +121,7 @@ For each moved class:
 
 Example:
 
-```ts
+```text
 // Before (src/game.ts)
 import { Foo } from './foo';
 
@@ -131,9 +146,19 @@ the build pipeline on ship. Do not author or update it by hand.
 Run both in order. Fix every reported issue before moving on.
 
 ```bash
+pnpm lint
 pnpm build                                         # TypeScript build (includes pack sources; game projects have no compile script)
 pnpm check-pack-isolation --pack <name>            # external-ref / stale-ref scan
 ```
+
+Then, per `genesys-game-boot` ("Play loads the bundle"):
+
+- MCP `action_build(action="buildProject")` as its own call.
+- Bundle proof: `grep -c "<MovedClass>" .dist/game.js` is ≥ 1 for every moved class.
+- `query_editor(operation="getRegisteredClasses", filter="<MovedClass>")` lists it.
+- `query_diagnostics(operation="getBuildErrors")` is empty.
+- `query_asset(operation="getReferences", assetPath=<old path>)` is empty for every moved asset.
+- Play once: a moved prefab or model loads with no console errors.
 
 
 
@@ -143,8 +168,8 @@ Tell the user:
 
 - Where the pack now lives.
 - Whether any project-wide assets remain external dependencies of the pack.
-- That any `.genesys-scene` files referencing moved assets must be opened and
-  re-saved in the editor.
+- MCP Off route only: that any `.genesys-scene` files referencing moved
+  assets must be opened and re-saved in the editor.
 - Suggest running the game once to confirm the pack loads at runtime.
 
 ## Step 10 — Export (only on ship/publish request)

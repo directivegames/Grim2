@@ -371,7 +371,7 @@ export function sessionInfoText(state: StoreState): string {
   else if (!session.authenticated) parts.push('Not signed in');
   else parts.push(session.username ?? session.userId ?? 'player');
   if (session?.environment) parts.push(session.environment);
-  if (session?.paymentMode === 'sandbox') parts.push('sandbox payments');
+  if (session?.paymentMode === 'sandbox') parts.push('editor play (test money)');
   if (state.currency === 'test-coins') parts.push('test silicon');
   parts.push(state.gameId ? `game ${state.gameId}` : 'game not linked');
   if (state.items.some((item) => item.draft)) parts.push('drafts visible');

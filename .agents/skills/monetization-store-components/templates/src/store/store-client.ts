@@ -253,7 +253,7 @@ export class StoreClient {
 
   // ---- store API: session, balance, Test Silicon -------------------------
 
-  /** `gameId` lets the API report sandbox paymentMode for the game's owner in the editor. */
+  /** The store ignores `gameId` for `paymentMode`: `sandbox` only means the call carried the editor context. */
   public async getSession(gameId?: string | null): Promise<SessionInfo> {
     const query = gameId ? `?gameId=${encodeURIComponent(gameId)}` : '';
     const data = await this.storeRequest('GET', `/api/session${query}`);
@@ -290,7 +290,7 @@ export class StoreClient {
 
   /** Editor only, game owner only: adds Test Silicon (fake money for drafts). Re-read the balance after ~1 s. */
   public async refillTestCoins(gameId: string): Promise<{ granted: number }> {
-    const data = await this.storeRequest('POST', `/api/balance/test-coins/refill?gameId=${encodeURIComponent(gameId)}`);
+    const data = await this.coreRequest('POST', `/v2/games/${encodeURIComponent(gameId)}/test-silicon/refill`);
     return { granted: finiteOr(data.granted, 0) };
   }
 

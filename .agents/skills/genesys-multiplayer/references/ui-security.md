@@ -1,5 +1,7 @@
 # Multiplayer UI security
 
+Source: .engine/src/utils/escapeHtml.ts; widget setters in .engine/src/ui/components/ (`ChatMessage.setMessage`, `Card.setTitle`, `NavItem`, `StatBar.setIconHtml`, `ItemCard.setImageHtml`).
+
 The engine replicates strings as opaque data. It does not sanitize
 `playerName`, `team`, chat text, or other `@property({ replicate: true })`
 fields for HTML safety.
@@ -9,7 +11,7 @@ fields for HTML safety.
 | `joinParams` from clients | Untrusted |
 | Other clients' replicated string properties | Untrusted |
 | Server-generated display names | Treat as display text, not HTML |
-| UI kit `label` / mustache slots | Escaped as text |
+| Engine widget `label` / mustache slots | Escaped as text |
 | `*Html` / `setHTML` | Trusted markup only (you author it) |
 
 ## Fields to watch
@@ -32,7 +34,7 @@ statBar.setIconHtml(ENGINE.Icons.shield);
 // ❌ Never
 el.innerHTML = `<span>${playerInfo.playerName}</span>`;
 uiElement.setHTML(`<b>${playerName}</b>`);
-card.setImageHtml(networkOrPlayerMarkup);
+itemCard.setImageHtml(networkOrPlayerMarkup); // ItemCard has setImageHtml; Card does not
 ```
 
 If you must build HTML strings, escape with `ENGINE.escapeHtml(...)` — prefer
@@ -40,16 +42,16 @@ If you must build HTML strings, escape with `ENGINE.escapeHtml(...)` — prefer
 
 ## Server validation (recommended, not sufficient alone)
 
-`GameMode.generatePlayerName(clientId)` supplies `PlayerInfo.playerName`. `joinParams` are not copied in. If you accept a display name from `joinParams`, validate length and character set on the server before assigning `playerName`. Validation reduces abuse; it does not replace safe client rendering.
+`GameMode.generatePlayerName(clientId)` supplies `PlayerInfo.playerName`; `joinParams` are not copied in. If you accept a display name from `joinParams`, validate length and
+character set on the server before assigning `playerName`.
+Validation reduces abuse; it does not replace safe client rendering.
 
 ## Checklist
 
 1. Inventory replicated strings used in UI.
-2. Render with `textContent` or UI kit text setters.
+2. Render with `textContent` or engine widget text setters.
 3. Never pass replicated data to `*Html` / `setHTML` / `innerHTML`.
 4. Validate client-supplied names in `GameMode` when using `joinParams`.
 5. Prefer the copy-paste pattern in [player-list-safe](./player-list-safe.md).
 
-For general HUD rules (non-network), see the Safe UI section in the
-`genesys-ui-kit` skill and
-[safe-ui.md](../../genesys-ui-kit/references/safe-ui.md).
+For general HUD rules (non-network), see Safe UI in the `genesys-ui` skill.

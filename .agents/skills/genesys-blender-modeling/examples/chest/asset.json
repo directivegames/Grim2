@@ -1,0 +1,1 @@
+{ "role": "prop", "export": "assets/models/props/SM_Chest.glb", "expect": { "size": [0.92, 0.72, 0.66], "tris": [150, 2500], "materials": 4, "markers": ["loot_spawn"], "bottom": 0 } }

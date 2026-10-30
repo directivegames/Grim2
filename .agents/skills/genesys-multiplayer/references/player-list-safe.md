@@ -1,5 +1,7 @@
 # Canonical example — safe player list
 
+Source: .engine/demos/examples/client-server-demo/game_loop.ts (`updatePlayerList`).
+
 Copy this pattern for lobbies, scoreboards, and any HUD that shows
 `PlayerInfo.playerName` (or other replicated strings).
 
@@ -46,7 +48,7 @@ function updatePlayerList(
 }
 ```
 
-## Prefer UI kit text APIs when a widget fits
+## Prefer engine widget text APIs when a widget fits
 
 ```ts
 nav.setLabel(playerInfo.playerName);
@@ -63,4 +65,4 @@ uiElement.setHTML(`<b>${playerName}</b>`);
 
 Static icons still use trusted markup: `setIconHtml(ENGINE.Icons.shield)`.
 
-See also: [ui-security](./ui-security.md), genesys-ui-kit [safe-ui](../../genesys-ui-kit/references/safe-ui.md).
+See also: [ui-security](./ui-security.md), and Safe UI in the `genesys-ui` skill.

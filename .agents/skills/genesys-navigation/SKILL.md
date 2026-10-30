@@ -1,58 +1,62 @@
 ---
 name: genesys-navigation
-description: Genesys navmesh, pathfinding, and NPC path queries — NavigationServer, RecastNavigationServer, navmesh baking, calculatePath. Use for navigation, pathfinding, navmesh, NPC pathing, AI navigation, or path-following setup. Not for movement-node/pawn mechanics (see genesys-movement) or behavior-tree AI logic (see behavior-tree).
+description: "Navmesh baking, pathfinding, path queries (RecastNavigationServer, calculatePath), agent size, and click-to-move. Use for navigation, navmesh, AI pathing, pathfinding not working, NPCs walk through walls or need to walk around walls, navmesh missing, click to move, point-and-click movement. Not for pawn movement tuning (use `genesys-movement`) or when to chase or patrol (use `behavior-tree`)."
 metadata:
-  tokens: 2177
+  tokens: 2723
 ---
 
-# Navigation & Pathfinding
+# Navigation and pathfinding
 
-Genesys pathfinding is a single `INavigationServer` interface (`.engine/src/navigation/NavigationServer.ts`) backed by one implementation, `RecastNavigationServer` (`.engine/src/navigation/RecastNavigationServer.ts`), which wraps `recast-navigation` / `@recast-navigation/core`. The server lives on the session game loop, not the world: `world.gameLoop?.navigationServer`. It holds at most one baked navmesh at a time; there is no per-region or multi-tile navmesh API.
+Genesys pathfinding is one `INavigationServer` (`.engine/src/navigation/NavigationServer.ts`) implemented by `RecastNavigationServer` (wrapping `recast-navigation`). The server lives on the game loop, not the world: `world.gameLoop?.navigationServer`. It holds at most one baked navmesh; there is no per-region or multi-tile API. The rule: **guard for `null`, check `isReady()`, and treat an empty path as "no path".**
 
-Read the source above for exact signatures — this skill maps what exists and the pitfalls that aren't obvious from the types.
+## Use another skill when
+- How an NPC follows the path (speed, turning, stop distance, look-at) → `genesys-movement`
+- When to chase, flee, or patrol → `behavior-tree`
+- Which enemies need a navmesh at all → `genesys-creatures`
+- Building the level geometry that gets baked → `genesys-level-authoring`
+- The Generate NavMesh dialog by hand → `genesys-editor-manual`
+- MCP call mechanics (`action_navmesh`, `query_navmesh`) → `genesys-mcp-orchestrator`
+- Cursor visibility, pointer lock and the fixed camera a click-to-move game needs → `genesys-camera`
+- Raycast options and collision profiles beyond the click ray → `genesys-physics`
+
+## Decide
+
+| Situation | Default |
+|---|---|
+| Hand-built level in the editor | Bake in the editor (MCP `action_navmesh` `generate`, then `export`). It ships as a `.navmesh` file and auto-loads. |
+| Procedural or runtime-built level | `await world.createNavigationMeshFromScene()` after static geometry is placed and models have loaded, before any NPC needs a path. |
+| Open arena with no obstacles | No navmesh. `NpcMovementNode` falls back to straight lines. |
+| Shmup, bullet hell, pattern enemies | No navmesh (`genesys-creatures`). |
+| Walls and props NPCs must go around | `NavigationRole.Obstacle` on them, physics `Static`. |
+| Decorative geometry | `NavigationRole.Exclude`. |
+| Floors, ramps, stairs | `NavigationRole.Walkable` (the default). |
+| Agent size (engine mannequin: capsule 1.8 m tall, 0.45 m radius) | Radius 0.45 m (0.3–0.5), height 1.8 m, climb 0.4 m, slope 35–45°. Enter metres in the NavMesh dialog or MCP `setSettings`; raw server options are voxels (below). |
+| Click-to-move hero | Hero on `NpcMovementNode` + a controller that turns a left click into `setTargetPosition` (Build). |
+| Moving doors and hazards | Leave them out of the bake; handle them in gameplay (tree conditions, target choice). |
+
+**Metres vs voxels.** The scene's `NavigationSettings` (NavMesh dialog, MCP `setSettings`, `<scene>.navmsettings.json`) hold the agent sizes in metres and convert them to voxels for every bake, editor or Play. Options handed straight to the server in code (`navigationServer.initialize` / `updateOptions`, `createNavigationMeshFromMeshes(…, overrideOptions)`) are raw Recast voxel counts: `walkableHeight` / `walkableClimb` in `cellHeight` voxels, `walkableRadius` in `cellSize` voxels. After a bake, check that the wall gap in `toggleDebug` equals the radius in metres ([navmesh-baking](references/navmesh-baking.md)).
 
 ## What's available
 
-- Access: `world.gameLoop?.navigationServer` (may be `null` before the session subsystems are created, or after `destroy()`). Always guard for `null` and call `isReady()` before querying — never assume a navmesh exists just because the server does.
-- Baking (editor): Tools → Generate NavMesh dialog, or MCP `action_navmesh` (`generate`, `export`, `import`, `clear`, `setSettings`, `toggleDebug`) / `query_navmesh` (`getInfo`, `getSettings`). Bake parameters are the `NavigationSettings` resource (`.engine/src/navigation/NavigationSettings.ts`). See the `genesys-editor-manual` and `genesys-mcp-orchestrator` skills for dialog/tool mechanics — not duplicated here. Details on the parameters and how source meshes are classified: [references/navmesh-baking.md](references/navmesh-baking.md).
-- Baking (runtime/code): `await world.createNavigationMeshFromScene()` scans static geometry in the world and calls `navigationServer.createNavigationMeshFromMeshes(...)`. Use this for procedurally generated levels, after your static geometry is placed and before any NPC needs a path. See the reference doc for exactly which nodes/roles contribute.
-- Persistence: an editor bake exports to a `.navmesh` binary referenced by scene resources; `GameLoop` auto-imports it on level load and only falls back to `createNavigationMeshFromScene()` if `navigationOptions.generateOnStartUp` is `true` and no baked file is found.
-- Readiness: `navigationServer.isReady()` — `true` only once a navmesh has been set (bake+import or `createNavigationMesh*`). Everything below silently no-ops or returns an empty/failed result when not ready.
-- On-demand runtime: the Recast WASM module loads on the first bake (`createNavigationMesh*`) or import (`importNavigationMesh*`), not when the server is created. Always `await` those calls — the navmesh is not set until the returned promise resolves.
-- Point queries:
-  - `isPointOnNavigationMesh(point)` — `true` only if the point is directly over a poly.
-  - `getClosestPointOnNavigationMesh(point, { halfExtents?, maxSnapDistance? })` — snaps to the nearest poly; returns a clone of `point` unchanged if the query fails or the snap exceeds `maxSnapDistance` (never silently jumps to an unrelated poly).
-  - `getRandomReachablePoint(center, radius)` — random point on the navmesh within `radius` of `center`, or `null` if none found (wander/patrol targets).
-- Path query: `calculatePath(start, end): THREE.Vector3[]` — snaps both points to their nearest poly internally and returns the straight path. Returns `[]` if either point has no nearby poly, or if the underlying query fails.
-- Debug visualization: `createDebugVisualization(): THREE.Group | null` — add the returned group to the scene yourself; already sanitized for WebGPU (no `LineSegments2`/point instancing).
-- Export/import: `exportNavigationMesh(scenePath)` / `importNavigationMesh(scenePath)` / `importNavigationMeshFromData(buffer)` — binary round-trip, used by the editor bake dialog and level load; rarely called directly from gameplay code.
+- **Access**: `world.gameLoop?.navigationServer`, `null` before session subsystems exist and after `destroy()`. A server does not mean a navmesh: call `isReady()` before any query, or it no-ops or returns an empty result.
+- **Bake**: editor (Tools → Generate NavMesh, or MCP `action_navmesh` `generate` / `export` / `setSettings` / `toggleDebug`, `query_navmesh` `getInfo`) exports a `.navmesh` that `GameLoop` auto-imports on load; runtime `await world.createNavigationMeshFromScene()`. Always `await` bakes and imports (the WASM module loads on first use).
+- **Queries**: `calculatePath(start, end)` (snaps both ends; `[]` on failure), `calculatePathResult(start, end)` (`{ path, complete }`; `complete` false when the end is unreachable and the path stops at the closest reachable point), `getClosestPointOnNavigationMesh(point, { maxSnapDistance })`, `isPointOnNavigationMesh`, `getRandomReachablePoint(center, radius)` (or `null`).
+- **Debug**: `createDebugVisualization()` (add the group yourself) or `toggleDebug` in the editor. Also export/import and `clearNavigationMesh()`.
 
-## Feeding a path to an NPC
+Every call and its edge cases: [server-api](references/server-api.md).
 
-`NpcMovementNode` (`.engine/src/nodes/movement/NpcMovementNode.ts`) is the usual consumer. It fetches `world.gameLoop?.navigationServer` itself in `beginPlay`, so you don't need to pass it in. Two ways to drive it:
+## Build
 
-- `mover.setTargetPosition(target)` — the node queries the navigation server itself (snap-to-mesh + `calculatePath`) and follows the result. Simplest option.
-- `mover.setPath(points, looped?)` — feed a path you computed yourself (e.g. `calculatePath` output, or a custom waypoint list). Use this when you need to inspect/modify the path before the NPC follows it.
+### Feeding a path to an NPC
 
-`canUseNavigationServer()` reports whether the node will actually path (requires `useNavigationServer` option, a live server, and `isReady()`); when false it falls back to a straight line to the target. Movement tuning (speed, turning, stop distance, actor-follow, look-at) is `NpcMovementNode`/`AIController` territory — see `genesys-movement`, not this skill.
+`NpcMovementNode` (`.engine/src/nodes/movement/NpcMovementNode.ts`) is the usual consumer. It fetches `world.gameLoop?.navigationServer` itself, so you do not pass it in. Two ways to drive it:
+- `mover.setTargetPosition(target)`: the node snaps to the mesh, calls `calculatePath`, and follows the result. Simplest.
+- `mover.setPath(points, looped?)`: feed a path you computed (for example `calculatePath` output or a waypoint list). Use this to inspect or modify the path first.
 
-## Footguns
+`canUseNavigationServer()` reports whether the node will actually path: it needs a live server and `isReady()`. When false, the node moves in a straight line to the target. `AIController` (`.engine/src/entities/AIController.ts`) is the second consumer of the same server for GSS pawns. Movement tuning belongs to `genesys-movement`.
 
-- No partial-path signal. `calculatePath` returns a bare `THREE.Vector3[]` with no completeness flag, so a non-empty path is not guaranteed to reach your exact `end` — only the nearest reachable point the query found. Compare the last path point's distance to `end` yourself if you need to detect a short or partial route.
-- Empty array is silent failure, not an exception. Querying before `isReady()`, or with points that have no nearby poly, logs a `console.error` and returns `[]` — it never throws. Treat `[]` from `calculatePath` as "no path," not as "engine error."
-- Navmesh is a static snapshot. It reflects geometry at bake/`createNavigationMeshFromScene()` time only. Moving, adding, or removing static geometry afterward does not update it — there is no dynamic re-carve. Re-bake (editor) or re-call `createNavigationMeshFromScene()` (runtime) after layout changes.
-- No live dynamic obstacles. Recast builds one solo `NavMesh` from a single mesh snapshot; there's no runtime obstacle add/remove or tile-rebuild API. Moving hazards, closing doors, etc. are never carved out automatically — handle avoidance at the gameplay layer (behavior-tree conditions, custom target selection), not the navmesh.
-- `clearNavigationMesh()` flips `isReady()` false immediately, destroying the underlying WASM `NavMesh`/`NavMeshQuery`. Any NPC mid-path falls back to a direct line to its last target until the mesh is rebuilt — don't clear the navmesh while NPCs are actively pathing unless you intend that.
-- Only static geometry contributes. `createNavigationMeshFromScene()` only gathers meshes on nodes whose physics `motionType` is `Static`; `Dynamic`/`Kinematic` geometry never contributes, even if its `navigationGeometryRole` is set.
-- Default role is `Walkable`. Every `PrimitiveNode` defaults `navigationGeometryRole` to `NavigationRole.Walkable` when unset. Walls/props you want to block pathing through need `NavigationRole.Obstacle`; geometry you don't want in the bake at all (e.g. decorative overlays) needs `NavigationRole.Exclude`.
-
-## Minimal example
-
-```typescript
-import * as ENGINE from '@gnsx/genesys.js';
-import { NpcMovementNode } from '@gnsx/genesys.js';
-import * as THREE from 'three';
-
+Source: .engine/src/navigation/NavigationServer.ts, .engine/src/nodes/movement/NpcMovementNode.ts
+```ts
 /** Periodically sends the owning NPC to a random reachable point nearby. */
 @ENGINE.GameClass()
 export class WanderNode extends ENGINE.SceneNode {
@@ -61,45 +65,68 @@ export class WanderNode extends ENGINE.SceneNode {
 
   public override tickPrePhysics(deltaTime: number): void {
     super.tickPrePhysics(deltaTime);
-
     this.repathTimer -= deltaTime;
-    if (this.repathTimer > 0) {
-      return;
-    }
+    if (this.repathTimer > 0) return;
     this.repathTimer = 2;
 
     const navigationServer = this.getWorld()?.gameLoop?.navigationServer;
-    const mover = this.getNode(NpcMovementNode);
-    if (!navigationServer?.isReady() || !mover) {
-      return; // no navmesh yet, or this node has no NpcMovementNode sibling
-    }
+    const mover = this.getNode(ENGINE.NpcMovementNode);
+    if (!navigationServer?.isReady() || !mover) return; // no navmesh yet, or no mover sibling
 
-    const origin = this.getWorldPosition();
+    const origin = this.getWorldPosition(new THREE.Vector3());
     const target = navigationServer.getRandomReachablePoint(origin, this.wanderRadius);
-    if (!target) {
-      return; // no reachable point found this attempt, try again next timer tick
-    }
+    if (!target) return;                                 // try again next timer tick
 
     const path = navigationServer.calculatePath(origin, target);
-    if (path.length === 0) {
-      return; // unreachable right now — keep following whatever path is already set
-    }
-
+    if (path.length === 0) return;                       // unreachable right now
     mover.setPath(path);
   }
 }
 ```
 
-## Source index
+### Click-to-move
 
-| File | Contents |
-| --- | --- |
-| `navigation/index.ts` | Barrel export |
-| `navigation/NavigationServer.ts` | `INavigationServer`, `NavigationEngine`, `NavigationOptions`, `createNavigationServer()` |
-| `navigation/RecastNavigationServer.ts` | The only backend: bake, query, debug viz, export/import |
-| `navigation/NavigationSettings.ts` | Persisted per-scene Recast bake parameters (Resource) |
-| `nodes/PrimitiveNode.ts` | `NavigationRole` enum, `navigationGeometryRole` property |
-| `nodes/movement/NpcMovementNode.ts` | Path-following consumer (`setPath`, `setTargetPosition`, `canUseNavigationServer`) |
-| `game/World.ts` | `createNavigationMeshFromScene()`, `exportNavigationMesh`, `importNavigationMeshFromData`, scene navmesh resource getters/setters |
-| `game/GameLoop.ts` | `navigationServer` getter, `ensureNavigationServer`, level-load navmesh import/fallback |
-| `entities/AIController.ts` | Second consumer of the same server (`Controller`-based NPC path following) |
+Ray from the camera through the click, snap the hit to the navmesh (`getClosestPointOnNavigationMesh`, `maxSnapDistance` 2), and call `setTargetPosition` on the hero's `NpcMovementNode`. The hero is a `DefaultCharacterPawn` whose `createMovementNode` returns an `NpcMovementNode` (WASD still works); a `DefaultPlayerController` subclass consumes left click in `handleMouseDown`, so left click no longer fires. Use a fixed top-down or isometric camera with the cursor visible (`genesys-camera`) and a 0.5 s marker at the goal (`genesys-vfx`). A GSS hero cannot use this (`AIController` only drives a pawn it possesses). Snippet and wiring: [click-to-move](references/click-to-move.md).
+
+### Runtime bake for a generated level
+
+Source: .engine/src/game/World.ts (`createNavigationMeshFromScene`)
+```ts
+// After placing static level pieces and awaiting model loads:
+const nav = world.gameLoop?.navigationServer;
+if (nav) {
+  await world.createNavigationMeshFromScene();   // throws if the server does not exist
+  if (!nav.isReady()) console.warn('Navmesh bake produced nothing; check Static motion + roles');
+}
+```
+
+## Limitations
+
+- Level changed and NPCs walk through new walls → the navmesh is a static snapshot from bake time; there is no dynamic re-carve → re-bake in the editor, or call `createNavigationMeshFromScene()` again after layout changes.
+- NPCs walk into a closing door or a moving hazard → Recast builds one solo navmesh; there is no runtime obstacle add/remove or tile rebuild → avoid them at the gameplay layer (tree conditions, target choice).
+- A horde stacks into one blob on the same path → the default `Character` collision profile ignores the Pawn channel, so classic NPCs never block each other or the player → offset each NPC's target 1–2 m (ring around the player, or `getRandomReachablePoint(target, 2)`) and add separation steering; profiles in `genesys-physics` → [collision-profiles](../genesys-physics/references/collision-profiles.md).
+- A click-to-move hero spins the camera (no fixed-angle follow rig): [click-to-move](references/click-to-move.md#limitations).
+
+## Traps
+
+- An NPC walks to a wall edge and stops short of an unreachable target → `calculatePath` returns the partial path to the closest reachable point → check `calculatePathResult(start, end).complete` and pick another target when it is false.
+- Silent failure → querying before `isReady()` logs an error and returns `[]`; points with no nearby poly return `[]` with no log; it never throws → treat `[]` as "no path", not as an engine error.
+- NPCs walk over walls and crates → every `PrimitiveNode` defaults `navigationGeometryRole` to `NavigationRole.Walkable` → set `Obstacle` on things to path around, `Exclude` on things to ignore.
+- NPC paths hug walls or clip corners → the agent radius is smaller than the capsule → set Agent Radius to the capsule radius in metres and re-bake; in raw server options, use the radius ÷ `cellSize`, rounded up.
+
+- Bake traps (cleared navmesh, props missing from the bake, empty runtime bake, metres in code-set server options): [navmesh-baking](references/navmesh-baking.md#traps). Click-to-move traps: [click-to-move](references/click-to-move.md#traps).
+
+## Done
+
+- `query_navmesh` `getInfo` reports a navmesh for the scene (editor bake), or the runtime `isReady()` check logs true (runtime bake).
+- `toggleDebug` (or `createDebugVisualization()`) shows walkable polys on floors and holes around obstacles, with no polys on wall tops or decor.
+- In Play, an NPC sent across the level walks around walls, not through them. A target off the mesh produces no motion and no exception.
+- After a layout change, the bake was redone and the debug view matches the new layout.
+- The debug view leaves a gap of about the agent radius (0.45 m for the mannequin) along walls, and no polys under 1.8 m ceilings.
+- Click-to-move: a click across the level walks the hero around a wall to the spot; a click on a wall top or off the mesh does nothing and logs no error.
+
+## References
+- [navmesh-baking](references/navmesh-baking.md) — bake parameters and both default sets, metres vs voxels, what contributes, editor vs runtime bake, bake traps
+- [server-api](references/server-api.md) — every server call: access, baking, persistence, readiness, point and path queries, debug, export/import
+- [click-to-move](references/click-to-move.md) — the click-to-move hero and controller, wiring, limitations and traps
+- [source-index](references/source-index.md) — which engine file holds what

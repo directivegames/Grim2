@@ -14,7 +14,9 @@ wires pointer lock, the visibility re-check and the balance re-read on
 opens Get Silicon tabs with `window.open` (opener cleared), logs
 `[Store] …` lines for events and errors (the start-up line names the core
 origin), and calls `controller.init()` with `world.netWorld.gameId`. Sends
-`X-Store-Context: editor` when the runtime id is a placeholder. Picks the
+`X-Store-Context: editor` unless the page set `window._genesys_is_published_game_ = true`
+(the published play page does; editor play, local folder play and `pnpm dev` do
+not), so only the page, never the runtime game id, decides editor or player. Picks the
 core origin with `resolveCoreApiUrl(location.hostname)`; reads
 `localStorage['store.apiBaseUrl']` and `localStorage['store.coreApiUrl']`
 once as origin overrides for testing.
@@ -60,7 +62,8 @@ Actions:
 - `returnedToGame()`: install-store calls it when the game tab is visible or
   focused again; within ten minutes of Get Silicon it reads the balance
   fresh, otherwise as usual
-- `refillTestCoins()`: editor, game owner only; adds 10,000 Test Silicon and
+- `refillTestCoins()`: editor, game owner only; calls core
+  `POST /v2/games/{gameId}/test-silicon/refill`; adds 10,000 Test Silicon and
   re-reads the balance once it lands
 - `logIn()`: without a Studio login core accepts, on a Studio host, a
   full-page visit to Studio's sign-in, which returns to the game; with
@@ -127,7 +130,7 @@ Sandbox Studio login); a gold top-up bar ("You need N more Silicon for this item
 or, while `awaitingTopUp`, "Finish your top-up in the Silicon tab…") with its
 own Get Silicon button, never in the editor; grid of `StoreItemCard`;
 loading, empty, error and unlinked views; footer line
-`store v<version> · <username | Not signed in> · <environment> [· sandbox payments] [· test silicon] · game <id> [· drafts visible]`.
+`store v<version> · <username | Not signed in> · <environment> [· editor play (test money)] [· test silicon] · game <id> [· drafts visible]`.
 `render(state)` is serialized; the latest state wins.
 
 ## StoreItemCard — `ui/store-item-card.ts`

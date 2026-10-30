@@ -19,8 +19,8 @@ Keyboard shortcuts for the editor, viewport, Outliner, and Asset Browser.
 | `Ctrl/Cmd+Shift+Z` or `Ctrl/Cmd+Y` | Redo |
 | F11 | Toggle Full Screen (desktop View menu) |
 | F12 | Toggle Dev Console (desktop) |
-
-**Show in Explorer** and **Quit** display `Ctrl/Cmd+E` / `Ctrl/Cmd+Q` in the title-bar menu, but those keys are **not** bound in the editor. Use the menu items. macOS **Quit** still follows the app **Cmd+Q**.
+| `Ctrl/Cmd+E` | Show Project in Explorer / Finder (desktop) |
+| `Ctrl/Cmd+Q` | Quit (desktop) |
 
 ## Play
 
@@ -50,10 +50,12 @@ Q/E while **not** flying are Select / Rotate. They only move the camera while RM
 
 | Hotkey | Action |
 | --- | --- |
-| G | Toggle Grid (View menu Show Grid) |
-| O | Reset Camera to the origin (View menu Reset Camera). Distinct from F, which frames the selection |
+| G | Toggle Grid (Show menu, This View → Grid) |
+| O | Reset Camera to the origin (Camera menu Reset Camera). Distinct from F, which frames the selection |
 | C | Toggle Show Collisions in Editor (no-op when physics debug is unavailable) |
 | Y | Toggle Show Object Icons |
+| `Alt/Option+Shift+1` / `Alt/Option+Shift+2` / `Alt/Option+Shift+3` / `Alt/Option+Shift+4` | Viewport layout: Single / Two Side by Side / Two Stacked / 2 x 2 (when split viewports are enabled) |
+| Shift+Space | Maximize or restore the active viewport pane (split viewports only) |
 
 Ignored in Play Mode and while typing in a field. Unmodified keys only (`Ctrl/Cmd+C` copy and `Ctrl/Cmd+Y` redo are unchanged).
 
@@ -80,7 +82,7 @@ Ignored in Play Mode and while typing in a field. Unmodified keys only (`Ctrl/Cm
 | Arrow Right / Arrow Left | Expand, or collapse / move to parent |
 | `Ctrl/Cmd+Arrow Up` / `Ctrl/Cmd+Arrow Down` | Move the selected nodes up / down among their siblings (Outliner only; needs a contiguous block under one parent) |
 | `Ctrl/Cmd+F` | Focus the Outliner filter (not type-to-filter; ignored while typing in a field or in Play Mode) |
-| `Ctrl/Cmd+Shift+A` | Open the Outliner Add picker for the current selection (Ctrl/Cmd+A stays select-all) |
+| `Ctrl/Cmd+Shift+A` | Open the Add Node dialog for the current selection (Ctrl/Cmd+A stays select-all) |
 | F2 | Rename (Outliner focused row; Asset Browser selected project file — not folders) |
 | Shift+click chevron | Expand or collapse the whole branch |
 
@@ -95,15 +97,27 @@ There is no chevron tooltip. Shift+F does **not** scroll the Outliner.
 | `3` | Toggle Inspector panel (ignored in Play Mode) |
 | `4` | Toggle Assets panel (ignored in Play Mode) |
 | `5` | Show / hide the Viewport so panels take its space (ignored in Play Mode) |
+| Enter | Send. While the agent is running, steer: the message is delivered at its next step |
+| `Alt/Option+Enter` | While the agent is running, queue the message to send after this turn |
+| Shift+Enter | New line |
+| Esc | Stop the running agent (only when the box is empty and no picker is open) |
+| Up | Edit the most recent queued message (only when the box is empty) |
 
 ## Contextual (not global)
 
 | Hotkey | Where | Action |
 | --- | --- | --- |
 | Shift+RMB / Shift+LMB | Inspector property label | Copy Value / Paste Value (in-memory clipboard) |
-| Ctrl+scroll | Asset Browser grid | Change thumbnail size |
+| Ctrl+scroll | Asset Browser content | Change thumbnail size (grid) or row size (list) |
+| Arrow keys / Home / End / Page Up / Page Down | Asset Browser content | Move the selection (Shift extends it) |
+| Enter | Asset Browser content | Open the selected asset or folder |
+| `Alt/Option+Arrow Up` | Asset Browser content | Go to the parent folder (Folders view) |
+| Del or Backspace | Asset Browser content | Delete the selected project assets (asks to confirm) |
 | `Ctrl/Cmd+click` / Shift+click | Asset Browser content | Toggle an item, or select a range |
-| `Ctrl/Cmd+A` | Asset Browser content | Select all items in the current folder |
+| `Ctrl/Cmd+A` | Asset Browser content | Select all items in the current folder or category |
 | Shift+hold | Instanced-geometry brush | Temporarily eraser |
 | Insert / Del / Esc | Spline point edit | Insert at hover / delete selected point / cancel drag or deselect |
 | Esc | Poly Builder mode | Cancel an in-progress brush drag, or exit the mode. Other tools are toolbar clicks, so camera and editor keys pass through |
+| Enter / Shift+Enter | Add Node dialog | Add the highlighted entry / add it and keep the dialog open (Arrow keys and Page Up / Down move, Esc closes) |
+| Tab / Shift+Tab | Add Node dialog | Next / previous category |
+| `Ctrl/Cmd+D` | Add Node dialog | Star or unstar the highlighted entry in Favorites |

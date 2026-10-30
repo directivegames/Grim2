@@ -27,7 +27,7 @@ on), leave the string untouched and flag the external dependency to the user.
 
 Example:
 
-```ts
+```text
 // Before (src/game.ts)
 import { Foo } from './foo';
 import { helper } from './foo/util';
@@ -39,10 +39,12 @@ import { helper } from '@packs/my-pack/foo/util';
 
 Imports inside the moved code stay relative:
 
-```ts
+```text
 // packs/my-pack/src/foo.ts
 import { helper } from './util';   // unchanged — util.ts moved alongside foo.ts
 ```
+
+> **Rules 3 and 4 are the MCP-off fallback.** When MCP is ready, move prefabs, materials, and every other asset with `action_asset(action="move")`; the editor rewrites all references (other prefabs, materials, and scenes) and you edit no JSON. Apply Rules 3–4 by hand only when MCP is Off, and then tell the user to re-save every scene that referenced a moved asset. Rules 1, 2, and 5 (TypeScript and HTML strings in code) always apply.
 
 ## Rule 3 — Prefab JSON string values
 

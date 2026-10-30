@@ -1,0 +1,2 @@
+{ "role": "building", "export": "assets/models/buildings/SM_Cottage.glb",
+  "expect": { "size": [4.8, 4.7, 4.8], "tris": [800, 4000], "materials": 8, "markers": ["entrance"], "bottom": 0, "tolerance": 0.1 } }

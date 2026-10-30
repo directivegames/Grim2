@@ -1,0 +1,6 @@
+{
+  "role": "hero",
+  "export": "assets/models/characters/SKM_Character.glb",
+  "rig": "mannequin",
+  "expect": { "size": [1.83, 1.88, 0.53], "tris": [3000, 12000], "materials": 9, "bottom": 0, "tolerance": 0.12 }
+}

@@ -1,6 +1,8 @@
 # RPCs (Remote Procedure Calls)
 
-RPCs let code on one machine call a method that executes on a different machine. Import them from `@gnsx/genesys.js`. The method must live on a node inside a replicated entity (the `isRoot && replicated` root, or a replicated member). Member RPCs travel with `netSubId`, the member's relative `NodePath`. See [node-replication](node-replication.md).
+Source: .engine/src/multiplayer/Networking.ts (`ServerRPC`, `ClientRPC`, `MulticastRPC`, `RemoteRPC`, `ServerOnly`, `ClientOnly`).
+
+RPCs let code on one machine call a method that executes on a different machine. Import them from `@gnsx/genesys.js`. The method must live on a node inside a replicated entity (the `isRoot && replicated` root, or a replicated member; see [node-replication](node-replication.md)). Member RPCs travel with `netSubId`, the member's relative `NodePath`.
 
 `NetWorld.dispatchRPCCall` drops an incoming call unless the method is decorated and the decorator matches the direction it travelled. A dedicated server accepts `@ServerRPC` and `@RemoteRPC` from the entity owner (or from any client when the entity has no owner). A client accepts `@ClientRPC`, `@MulticastRPC`, and `@RemoteRPC` from the server.
 
@@ -42,9 +44,9 @@ The node must have `netOwningClientId` set. If it is not set, the RPC is not del
 
 ### @ENGINE.MulticastRPC
 
-Call it on the server. The server runs the method and sends it to every client. Each client runs it again when the RPC arrives.
+Call it on the server. The server runs the method and sends it to every client; each client runs it again when the RPC arrives.
 
-A direct call on a client also runs the method, on that client only, and sends nothing, this decorator is not an authority guard. Invoke it from server code when every peer must see the event: an explosion, a door opening, a match-start countdown.
+A direct call on a client also runs the method, on that client only, and sends nothing: this decorator is not an authority guard. Invoke it from server code when every peer must see the event: an explosion, a door opening, a match-start countdown.
 
 ```typescript
 @ENGINE.MulticastRPC()
@@ -125,11 +127,13 @@ Avoid passing complex class instances, closures, or functions as RPC arguments.
 
 ### Client requests server action
 
+Source: .engine/src/entities/Controller.ts (`getPawn(): Pawn | null`, not generic); typechecked against 18.1.0-alpha.317
 ```typescript
 // In PlayerController (client-side input handler):
 onFirePressed(): void {
   const dir = this.getAimDirection();
-  this.getPawn<MyPawn>()?.requestFire(dir);
+  const pawn = this.getPawn();
+  if (pawn instanceof MyPawn) pawn.requestFire(dir);
 }
 
 // In MyPawn:

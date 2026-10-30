@@ -1,168 +1,108 @@
 ---
 name: genesys-profiler
-description: Diagnose a Genesys play session through bounded Insights reports or desktop-streamed traces, and add profiler scopes in game code. Use when asked to optimize, profile, capture a trace, find hitches, profile startup, inspect profiler output, or instrument user code.
+description: "Performance: never pay per spawn (no lights on spawned things, shared geometry and materials, warm-up), Insights reports, traces, hitches, startup, draw calls, render scale, phone pass. Use for slow, laggy, hitching, stutter when firing or spawning, low FPS, optimize, profile, too many draw calls, phone performance. Not for instanced dressing (use `genesys-level-authoring`), compressing files (use `genesys-asset-compiler`), shadow and post settings (use `genesys-lighting`), or heap and VRAM growth (use `memory-profiling`)."
 metadata:
-  tokens: 2575
+  tokens: 2787
 ---
 
 # Genesys profiler
 
-Naming: Genesys in skills/docs/code = Sandbox Studio in the product UI (same app / MCP).
+Naming: Genesys = Sandbox Studio in the product UI.
 
-Use this when measuring a play session or adding scopes in game code. Editor UI how-tos stay in [genesys-editor-manual](../genesys-editor-manual/SKILL.md). MCP dispatch stays in [genesys-mcp-orchestrator](../genesys-mcp-orchestrator/SKILL.md).
+This skill owns cheap spawns, measuring a play session, and deciding what to change. The rules: **never pay per spawn**, and **measure, change one knob, measure again.** The engine has no device-tier governor; never invent Low / Medium / High or device preset tables.
 
-`query_profiler` and `action_profiler` are compact-hidden. Call them with `run_script` (`genesys.queryProfiler` / `genesys.actionProfiler`) or `batch_execute`. A missing tool descriptor on the compact surface is expected.
+## Use another skill when
+- Editor UI how-tos (where the Profiler panel lives) → `genesys-editor-manual`
+- MCP dispatch, `run_script` / `batch_execute`, approvals → `genesys-mcp-orchestrator`
+- Shadow cascades, `castShadow`, bloom, grade, or other post passes after a profile blames them → `genesys-lighting`
+- Particle pools, instance counts that wrap, looping effects that never stop → `genesys-vfx`
+- A per-frame audio decode or clip loading → `genesys-audio`
+- Compressing textures, meshes, or audio for the build → `genesys-asset-compiler`
+- Size budgets for meshes, images and audio before they land → `genesys-assets` (QA table)
+- Proving Play runs the changed code → `genesys-game-boot`
+- Hundreds of separate dressing nodes (draw calls), instancing, colliders on scatter → `genesys-level-authoring` (*Instancing*)
+- Shared node materials and their warm-up → `webgpu-tsl-node-material-assets`
+- Who retains the JavaScript heap, which textures own VRAM, or whether either grew → `memory-profiling` (Insights and Trace measure frame time only)
 
-## Two independent tools
+## Never pay per spawn
 
-- **Insights** keeps a rolling window of recent frames during Play (120 frames by default, about two seconds at 60 fps). It starts off and keeps collecting until you stop it. Advanced settings on the Insights section can change the window length (30–1800 frames) or turn on Fill window and freeze, which stops after one full window and keeps that capture for the report. `action_profiler(action="setInsights", enabled=true)` turns collection on for the running session and for the next Play, using those saved settings. `enabled=false` stops collection and leaves any saved report on disk. `action_profiler(action="generateReport")` writes `{project}/.editor/profiles/gnsx-report-*.json` and returns `path`, `issues`, and a timing summary. Open that JSON when the summary is not enough. `query_profiler(operation="readReport")` is for a later session and rejects files over 5 MB.
-- **Trace** is an explicit detailed recording. `startTrace` and `armTraceForGameStart` stream `{project}/.editor/profiles/gnsx-trace-*.json` and write a sibling `.meta.json` manifest when the recording stops. Both calls accept `maxDurationMs`, `maxBytes`, `maxFrames`, and `thresholdMs`.
+These rules apply to every game, before any profile. Each one prevents a hitch the player feels on the most common action: firing, hitting, killing, picking up.
 
-Use Insights first for optimization guidance. Record a Trace when frame-by-frame ordering or a hitch timeline is required.
+| Never | Why | Instead |
+|---|---|---|
+| A `PointLightNode` / `SpotLightNode` on anything spawned or short-lived (projectiles, pickups, impacts, muzzle flashes, dying enemies) | In three.js, each lit material's shader is compiled for a fixed light count. Adding or removing a light recompiles every shader in view: one hitch on spawn, another on destroy | Emissive material plus bloom for glow. For moving light, a small fixed pool of lights created at boot, moved and dimmed (intensity 0 when idle), never added or removed |
+| New geometry, material or texture per spawn (`new THREE.SphereGeometry()` in a projectile's constructor or options) | Each new material compiles a program; each new geometry uploads buffers | Module-level constants shared by every instance; models through `ModelMeshNode` (cached by path) |
+| A new particle system name per spawn | Each name is its own pool and shader | One `spawnVFX` name per effect kind (`genesys-vfx`) |
+| First use mid-fight of a model, skinned mesh or effect | Its shader compiles the first time it is drawn | Warm up on the title (below) |
 
-## Frame cost or memory
+Fixed lights placed in the scene (lamps, fires, torches) are fine. Their count never changes, and changing their intensity or colour every frame does not recompile anything.
 
-Insights and Trace measure frame time. They do not show who retains the JavaScript heap or which texture owns VRAM. Heap and VRAM captures: [memory-profiling](../memory-profiling/SKILL.md).
+**Warm-up.** On the title screen, draw each gameplay-only model, skinned enemy and particle effect once, inside the camera frustum but hidden under the floor, and remove it after about 1.5 s; the renderer has no occlusion culling, so the hidden copy compiles its shader. Prefabs spawned in bursts: `await ENGINE.spawnAsync` one copy too (`genesys-prefabs` → *Spawn from code*). Snippet (`warmUpGameplay`): [warm-up](references/warm-up.md).
 
-| Question | Use |
-| --- | --- |
-| Which scope makes a frame slow, or where a hitch sits | Insights report or Trace manifest in `{project}/.editor/profiles` |
-| What the game is still holding in JavaScript, or whether that grew | `compare-heap-captures.mjs` on `.genesys/captures` |
-| Which textures and render targets own VRAM, or whether that grew | `compare-gpu-captures.mjs` on `.genesys/captures` |
+**Check it.** The smoke volley step fires the main action 30–50 times in a row (`genesys-verification`): no frame over 2× the median. A spike on the first shot only means the warm-up missed something; on every shot, something is paid per spawn.
 
-## Instrument game code
+## Measure
 
-Scopes added below are no-ops until Insights or a Trace turns the profiler on. Leave `enable`, `disable`, `setProfile`, `reset`, `beginTraceCapture`, and `setGpuDetail` to the editor. `enable`, `disable`, and `reset` clear the session the panel is recording.
+Full calls, fields and recipes: [capture](references/capture.md); scripted runs: `genesys-mcp-orchestrator` → `references/workflows.md` (*Profile a play session*).
 
-```typescript
-import * as THREE from 'three';
-```
+- **Version gate.** `query_profiler` / `action_profiler` exist only in Sandbox Studio 18.1+ and are compact-hidden: call them through `run_script` (`genesys.queryProfiler` / `genesys.actionProfiler`) or `batch_execute`. If `search_tools` finds neither, say the app is older and use the Profiler panel by hand (`genesys-editor-manual`); never substitute timing code in the game.
+- **Insights first.** `action_profiler(action="setInsights", enabled=true)`, wait until `status.live.insights.samples > 0`, then `action_profiler(action="generateReport")`: it returns `path`, `issues` and a timing summary (and GPU scopes on WebGPU). Do not call `readReport` in the same turn. A report with Insights off says `profiler_disabled`.
+- **Trace** only when frame ordering or a hitch timeline is needed: `startTrace` (Play running) or `armTraceForGameStart` (from the first frame), with a short `maxDurationMs` in automated runs (omitted, it stops at 15 min or 2 GB). Let Play run for the window before `stopTrace`; read the returned **manifest** (`topScopes`, `topGpuScopes`, `slowestFrames`), never the trace `.json`, which runs to hundreds of MB. Arming persists: disarm with `armed: false` after a single capture.
+- **Startup.** No signal marks "gameplay started": end a startup trace with a `GENESYS_GAMEPLAY_READY` console marker or a 5–10 s `maxDurationMs`, and ask the user which before starting ([capture](references/capture.md#startup-until-gameplay)).
 
-Game projects compile with `experimentalDecorators`, so `@THREE.profile()` and `@THREE.profileClass` work on that import. The label is the stats key. Keep it stable so samples aggregate into one Insights row and one `topScopes` entry.
+## Spend the frame budget
 
-### One method
+Touch a knob only after a report names its cost.
 
-`@THREE.profile()` labels the scope `ClassName.methodName`. Pass a string to set the label. An async method records the promise on the async trace row.
+| Knob that exists | Where | When to touch it |
+| --- | --- | --- |
+| `r.ScreenPercentage` console variable (drives the renderer pixel ratio) | `.engine/src/render/Renderer.ts` | After a profile says fill-rate is the cost. |
+| CSM on (`useCsmShadows`) | `genesys-lighting` | Shadow passes high and CSM is on → turn it off (standard box around the player; the pawn carries it) or cut to one cascade first, before any other shadow knob. |
+| `castShadow` and shadow-map size | `genesys-lighting` | After a profile says shadows are the cost. |
+| Bloom, grade, and other post passes | `genesys-lighting` | After a profile says post is the cost. |
+| Particle pools | `genesys-vfx` | When instance counts wrap or looping effects never stop. |
+| Draw calls: separate nodes of the same model | `genesys-level-authoring` (*Instancing*) | Any model placed more than ~10 times as separate dressing nodes; a phone target. Budget: dressing as instanced nodes, a few hundred draw calls on a phone (draw calls are not in the report; count nodes with `query_node`). |
+| Collider count | `genesys-level-authoring`, `genesys-physics` | Physics time high in the report, or thousands of static bodies: `physics: false` on dressing the player never touches. |
+| `castShadow` on dressing | `genesys-level-authoring`, `genesys-lighting` | Shadow passes high: off on small scatter (grass, flowers, pebbles, floor tiles); keep it on trees, hedges, buildings, characters. |
 
-```typescript
-export class EnemyAI {
-  @THREE.profile()
-  public updateAI(deltaTime: number): void {
-    this.sense(deltaTime);
-  }
+**Render scale.** Set `r.ScreenPercentage` (play console `r.ScreenPercentage 75`, or `ENGINE.CVarManager.setValue('r.ScreenPercentage', 75)`), never `renderer.native.setPixelRatio()` directly: the variable's change callback overwrites a direct call ([render-scale](references/render-scale.md)).
 
-  @THREE.profile('EnemyAI.sense')
-  public async sense(deltaTime: number): Promise<void> {
-    await this.scan(deltaTime);
-  }
-}
-```
+A hitch that is identical at every visual setting is not automatically a shadow problem. Check for a per-frame audio decode (`genesys-audio`) before stripping the post stack. The profiler report is the decider.
 
-### Every own prototype method
+**Audio-impostor triage.** Stutter only while moving, unchanged at `r.ScreenPercentage` 50 and 100 and with shadows and post off, desktop fine → not rendering. Look for per-frame audio work: a footstep or engine sound created or restarted each tick, many `SoundNode`s with volume or position written per frame (`genesys-audio`).
 
-`@THREE.profileClass` labels each own prototype method `ClassName.methodName`. It skips the constructor, getters, setters, and methods inherited from a base class.
+## Phone performance pass
 
-```typescript
-@THREE.profileClass
-export class EnemyAI {
-  public updateAI(deltaTime: number): void {
-    this.sense(deltaTime);
-  }
+1. Play the game on the target phone, or in the editor at a phone-sized viewport, through the heaviest moment (most enemies, most effects).
+2. Insights on, wait for samples, `generateReport`. Note the top CPU and GPU scopes and the `issues`. If the sun has `useCsmShadows` on, turn it off for a phone-first game (`genesys-lighting` → *Cascaded shadows: default off*); medium-tier phones still render up to 2 cascades.
+3. Change the one knob the report blames (table above). For fill-rate, step `r.ScreenPercentage` down in 25-point steps (100 → 75 → 50) and stop at the first value that clears the issue.
+4. Generate a second report and compare. Keep the change only if the issue list moved.
+5. Record the measured result and the chosen value in the game's design notes.
 
-  public sense(deltaTime: number): void {
-    this.scan(deltaTime);
-  }
-}
-```
+## Asset weight
 
-### A block inside a method
+Load time and download size are separate from frame time. Large generated GLBs (dense meshes, 4K embedded textures) and large PNGs slow the first load, especially on phones. The startup trace shows them as resource waits.
 
-Use `profileBlock` for synchronous work. Nested blocks subtract from the parent's self time. A recursive call with the same label counts only the outermost sample as inclusive time.
+- Compress at build time with KTX2, Meshopt, and MP3 → `genesys-asset-compiler`. It is off by default, and Play-In-Editor does not bake unless `compileOnPlay` is on.
+- Set triangle and texture-size budgets before generating, and rebuild or regenerate rather than ship an oversized source → `genesys-assets`.
 
-```typescript
-public updateAI(deltaTime: number): void {
-  THREE.profileBlock('EnemyAI.sense', () => {
-    this.sense(deltaTime);
-  });
-}
-```
+## Traps
 
-For a per-call trace slice name (stats key stays stable), use `begin` / `end` and build `traceName` only when `THREE.ProfilerService.isTracing()` is true — see Play `recordProfilerFrame` for frame scopes that stay open across ticks.
+- **A hitch on every shot, hit or kill.** Something is created per spawn: a light (shader recompile), a material, a geometry, a new effect name. Apply *Never pay per spawn*.
+- **A hitch on the first shot, first enemy or first effect only.** Its shader compiled on first draw. Warm it up on the title.
+- **Lower pixel ratio without a profile.** It blurs the game and may not touch the real cost. Generate a report first.
+- **Direct `setPixelRatio` reverts.** The `r.ScreenPercentage` change callback overwrites it. Set the variable.
+- **A hand-rolled quality-tier menu or device preset table.** The engine already resolves a tier (`quality: "auto"`, lowered in Play by its watchdog). A settings menu calls `ENGINE.setQualityTierOverride(...)` and shows `ENGINE.getResolvedQualityTier().summary`; otherwise tune the one knob a report blames.
+- **Phone frame rate low in a dressed level, no single hot scope.** Draw calls from hundreds of separate dressing nodes. Instance them (`genesys-level-authoring`), then profile again.
+- **Stutter only during movement, unchanged by quality settings.** Per-frame audio work, not rendering (*Audio-impostor triage*).
+- Capture traps (unlimited trace, pasted trace JSON, `profiler_disabled`, arm left on, 0 s trace, no `action_profiler`): [capture](references/capture.md#traps).
 
-### Work that outlives its caller
+## Done
 
-Use a span when the work finishes after the caller returns, or when two calls with the same label can be in flight together. Pass `{ asyncTimeline: true }` to both `beginSpan` and `endSpan`.
+The report's issue list moved, or the user accepted the current cost. A before and after report (or trace manifest) both exist, and only one knob changed between them. A lower pixel ratio without a profile is not an optimization.
 
-```typescript
-const span = THREE.ProfilerService.beginSpan('Level.load', { asyncTimeline: true });
-try {
-  await this.load();
-} finally {
-  THREE.ProfilerService.endSpan(span, { asyncTimeline: true });
-}
-```
-
-A scope that ends outside the scopes it opened inside is recorded as `label (out of order)` on the async row, with a one-time console warning.
-
-### GPU work the game submits
-
-Engine render passes are already GPU-timed. Use `profileGpuBlock` around GPU work the game submits on a renderer it holds. Pass, stage, and draw detail stays the Profiler panel or the play console command `profiler.gpuDetail`.
-
-```typescript
-THREE.profileGpuBlock('CustomPass', renderer, () => this.submit(renderer));
-```
-
-Or with `beginGpu` / `endGpu` when you need the handle (for example to set `traceName` while the span is open):
-
-```typescript
-const gpuSpan = THREE.ProfilerService.beginGpu('CustomPass', renderer);
-try {
-  this.submit(renderer);
-} finally {
-  THREE.ProfilerService.endGpu(gpuSpan);
-}
-```
-
-Wrap a hot path the report shows as one wide engine scope (`World.tick`, AI, a custom system). One scope per system or method. Nest only to split a scope the report already flags. Capture again afterwards. The new label appears in the report timing scopes and in the trace manifest `topScopes`.
-
-## What to read
-
-`generateReport` already returns the path and the issues. Do not call `readReport` in the same turn.
-
-`startTrace` returns `trace.path` while the file is still streaming. `stopTrace` returns `tracePath` and `manifest` (`topScopes`, `topGpuScopes`, `slowestFrames`, `stopReason`, duration, frame count). `query_profiler(operation="readTraceManifest")` returns the same manifest later. Process the manifest. Do not read, grep, or paste the `.json` trace into the conversation. A capture can be tens or hundreds of megabytes. The Trace Viewer opens that file when recording stops. **Enable live trace** under Advanced opens it when recording starts instead. Use the manifest unless the user is looking at the viewer.
-
-`status` returns `playActive`, live `insights` and `trace` state, `armed` (including `insightsOnPlay`), `latestReport`, `latestTrace`, and `captureError` when Play did not answer.
-
-## How to capture
-
-| Goal | Call |
-| --- | --- |
-| Turn Insights on or off | `action_profiler(action="setInsights", enabled=true\|false)`. |
-| Save optimization guidance | Wait until `status.live.insights.samples > 0`, then `action_profiler(action="generateReport")`. Use `path` and `issues`. |
-| Record the next play session from the first frame | `action_profiler(action="armTraceForGameStart", maxDurationMs, maxBytes)`, then follow `nextStep`. Arming does not start the file. |
-| Record while play is already running | `action_profiler(action="startTrace", maxDurationMs, maxBytes)`. Fails with `play_not_active` when play is stopped. |
-| Finish and inspect | `action_profiler(action="stopTrace")`, or read `status.latestTrace` / `readTraceManifest` after a limit stop. |
-| See if a capture is still writing | `query_profiler(operation="status")`. |
-| List saved reports and traces | `query_profiler(operation="listArtifacts")`. Bodies are not returned. |
-| Save GPU timing detail for the next Play | `action_profiler(action="setGpuDetail", gpuDetail="pass"\|"stage"\|"draw")`. |
-
-Automated runs must pass `maxDurationMs` and/or `maxBytes`. Omitting a limit means that axis never stops the recording. The editor panel defaults to 15 minutes and 2048 MB and treats 0 as unlimited. A limit stop writes the manifest by itself (`stopReason` is `maxDuration`, `maxBytes`, or `maxFrames`). `thresholdMs` drops spans shorter than that duration. `null` on arm clears a stored limit.
-
-Arming persists for the project. When the user wanted a single capture, disarm afterwards with `armTraceForGameStart` and `armed: false`.
-
-Leaving play without Stop can close the file without a manifest. The Trace Viewer can still open the `.json`; `readTraceManifest` then reports that metadata was not written.
-
-## Startup until gameplay
-
-There is no signal for "gameplay has started." `armTraceForGameStart` then `action_editor(enterPlayMode)` records scene startup (`beginPlay`, resource waits, local player). The scene file load just before that is not in the trace, and the file keeps recording into normal frames until Stop or a safety limit.
-
-Do not leave that capture running. If the user did not say how to end it, ask which they prefer before you start:
-
-1. **Marker.** They add one unique line at the gameplay-ready point: `console.error('GENESYS_GAMEPLAY_READY')`. Poll `query_diagnostics(operation="getConsole")` until that exact string is in `errors`, then `action_profiler(action="stopTrace")`.
-2. **Short window.** Arm with `maxDurationMs` of 5000–10000, or stop a few seconds after `status.live.trace.recording` becomes true.
-
-`generateReport` while Insights is off still writes a world and memory snapshot, with a `profiler_disabled` issue and no timing scopes. Start Insights and wait for samples first.
-
-When a WebGPU renderer is collecting, the report includes `timing.gpuScopes` and `generateReport` returns the first 10 as `timing.topGpuScopes` plus a compact `memory` summary (`jsHeapUsedMB`, `gpuTotalBytes`, and the first five textures). The report viewer shows the full tables. A finished trace manifest includes the same GPU totals as `topGpuScopes`, next to the CPU `topScopes`. `action_profiler(action="setGpuDetail", gpuDetail="pass"|"stage"|"draw")` saves Passes, Stages, or Draws for the next Play. A session that is already running keeps its current detail until Play starts again. `query_profiler(operation="listArtifacts")` lists report and trace files in `.editor/profiles` without returning their bodies.
-
-Recipes: [workflows.md](../genesys-mcp-orchestrator/references/workflows.md#profile-a-play-session).
+## References
+- [capture](references/capture.md) — MCP surface, Insights vs Trace, what to read, every capture call and limit, startup capture, GPU detail, capture traps
+- [warm-up](references/warm-up.md) — the `warmUpGameplay` snippet and the volley check
+- [render-scale](references/render-scale.md) — `r.ScreenPercentage` vs `setPixelRatio`
+- `genesys-mcp-orchestrator` → `references/workflows.md` (*Profile a play session*) — scripted Insights and trace recipes; each waits for samples or for the trace window before reading results

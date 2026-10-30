@@ -1,118 +1,121 @@
 ---
 name: genesys-multiplayer
-description: Write multiplayer game code in Genesys — choose classic movement, the network prediction framework, GSS, or replicated properties and RPCs, then apply server authority, GameMode lifecycle, player spawning, and matchmaking. Use when the user mentions multiplayer, networking, server, client, replication, RPC, authority, prediction, rewind, resimulation, lag compensation, gameplay simulation, GSS, NetPredictionManager, matchmaking, findMatch, queues, or parties, or when a feature must decide where it runs. Also use when a HUD shows player names, teams, chat, or scoreboards, since replicated strings are untrusted.
+description: "Online games: session plan, server authority, replication, RPCs, GameMode, spawning, matchmaking, chat, prediction, reconnect, Safe UI for network strings. Use for multiplayer, online, co-op, versus, PvP, lobby, server, RPC, replicate, rewind, GSS, findMatch, queue, party, \"feels laggy\", rubber-banding. Not for solo games or the single-player screen flow (use `genesys-game-boot`)."
 metadata:
-  tokens: 2400
+  tokens: 3079
 ---
 
-# Methodology
+# Multiplayer
 
-Follow these steps when working on multiplayer features:
+This skill owns networked play: who changes state, how it reaches clients, and how it feels online. The rule: the server is the only machine that changes game state. Clients send requests (`@ServerRPC`) and display the replicated result.
 
-1. Determine where the code must run — server, client, or both — before writing anything. Consult [server-authority](references/server-authority.md) to understand NetRuntime and NetRole.
-2. Choose the system that owns predicted gameplay. Read [gameplay systems](references/gameplay-systems.md) before you write movement, combat, or a custom simulation. Then open only the skill or reference for that row:
+## Use another skill when
+- The GameMode screen flow (title → play → pause → result → retry), boot path, and bundle proof → `genesys-game-boot`
+- HUD, scoreboard, lobby, or chat widget layout and general Safe UI → `genesys-ui`
+- Pawn locomotion and movement modes → `genesys-movement`
+- Weapons, damage, health → `genesys-combat`
+- A hit, muzzle, or explosion effect → `genesys-vfx`
+- Two-client evidence and playtest checklists → `genesys-verification`
+- A shop or paid item → `monetization-store` (store ownership is not server-verified; see Limitations)
+- Finding an engine networking class or doc → `genesys-engine` (Find an engine class)
 
-   | Gameplay | System | Read next |
-   | --- | --- | --- |
-   | Pawn locomotion with built-in prediction, and no rewind between actors | `BasePawnMovementNode` | `genesys-movement` |
-   | Predicted gameplay that rewinds, resimulates, and lag-compensates | GSS (`GSSNode`) | `genesys-movement` |
-   | A custom simulation that needs rewind and does not fit GSS | `NetPredictionManager` | [network-prediction](references/network-prediction.md) |
-   | Authoritative state or events with no client prediction | Replicated properties and RPCs | [rpcs](references/rpcs.md) and [node-replication](references/node-replication.md) |
+## Decide
 
-3. If the feature is state or an event outside that system, decide whether it needs an RPC, a replicated property, or both. Consult [rpcs](references/rpcs.md) and [node-replication](references/node-replication.md).
-4. Place one `PlayerSpawner` in every multiplayer scene. Read [game-mode](references/game-mode.md) before you change match rules or player lifecycle. Spawning throws when that node is missing.
-5. Connect a shipped game only through matchmaking. Read [matchmaking](references/matchmaking.md). Use `connectToServer` only to test a local server in the editor.
-6. If the feature involves a player-controlled node (Pawn/PlayerController), read [player-ownership](references/player-ownership.md).
-7. If a moving platform, physics prop, or hit trace must rewind, read [network-prediction](references/network-prediction.md). GSS hit queries are documented in `genesys-movement`.
-8. Guard all authority-only logic with `this.hasAuthority()` or `NetRuntime.isServer()`.
-9. If the feature displays replicated or join strings in the UI (names, teams, chat, scoreboards), read [ui-security](references/ui-security.md) and follow Safe UI for replicated strings below.
+- **Solo or online.** A short pitch is solo; build multiplayer only when the user says online, co-op, versus, PvP, lobby, MMO or "with friends". Solo needs no networking work (standalone counts as server). Scoreboards, teams and rounds add a `GameSessionInfo` and a `PlayerInfo` subclass; an MMO gets the same model and a plain statement that the engine has no player-progress save.
+- **Session plan.** Before any networking code, write one line in `GAME.md` and say it to the creator, decided from the experience, not the genre:
+  `Session: <drop-in world | bounded match> — <why>; start: <when play begins / quorum N>; late join: <spawn in | spectate | refuse>; below quorum / end: <keep playing | end round → result → back to lobby>.`
+  Hang-out, build and co-op roam games are drop-in worlds; rounds, races, versus and teams are bounded matches (quorum 2, late joiners spectate). Defaults: [session](references/session.md#session-plan).
+- **Trust model.** Tell the creator: the server decides every outcome, so a modified client cannot grant itself score, items or hits. It is not anti-cheat and there is no ranked or anti-tamper layer; do not promise ranked-grade fairness. Store ownership is not server-verified ([session](references/session.md#trust-model)).
 
-# Core Multiplayer Guidelines
+**Authority model.** There is one: server authority. Pick the transport per feature:
 
-- Import the engine module with `import * as ENGINE from '@gnsx/genesys.js'`.
-- Import `NetRuntime` from `@gnsx/genesys.js` for runtime environment checks.
-- The server is the only machine that changes game state. Clients send requests (via `@ServerRPC`) and display the result.
-- Guard all state-modifying logic with `this.hasAuthority()` on the replicated node or `NetRuntime.isServer()` for non-node code.
-- Do not read `NetRuntime` in constructors. The runtime type is set before `beginPlay` is called; guard in `beginPlay` or later.
-- Setting `this.isRoot = true` and `this.replicated = true` on a `SceneNode` makes that node a replicated entity root and auto-creates `ReplicationInfo`. Nested `replicated` children join that entity's member map; a nested `isRoot && replicated` node is its own entity. Call `this.ensureReplicationInfo()` when you need the info before the setter runs. Setting `replicated` on a client has no effect; do not flip it after the node is registered with NetWorld. Details: [node-replication](references/node-replication.md).
-- Mark properties for network sync with `@ENGINE.property({ replicate: true })`. Only nodes inside a replicated entity's member map synchronise their replicated properties.
-- Use `@ServerRPC` when a client needs the server to perform an action (e.g., fire a weapon, request a respawn).
-- Use `@ClientRPC` when the server needs to notify the owning client of something (e.g., display a UI prompt).
-- Use `@MulticastRPC` for events that every client must see simultaneously (e.g., an explosion visual).
-- `GameMode` is present on any peer whose world was given a game-mode class. Call match rules, spawning, and `restartPlayer` only on the server (`NetRuntime.isServer()`).
-- Place one `PlayerSpawner` in every multiplayer scene. Multiplayer player and session spawning uses that node. A missing spawner throws. Standalone play does not use it.
-- A shipped multiplayer game runs on Genesys servers. Connect with `gameLoop.findMatch` or `gameLoop.matchmaking`. Do not call `connectToServer` for a shipped game. Call `connectToServer` only to test a local server in the editor. The editor play session does not use matchmaking.
-- All replicated nodes are server-authoritative, including PlayerController and its Pawn. The controlling client has the AutonomousProxy role for its own controller and pawn. Which system predicts that pawn is [gameplay systems](references/gameplay-systems.md). Locomotion details are in the `genesys-movement` skill.
+| Feature | Use |
+|---|---|
+| Own pawn movement | Classic `BasePawnMovementNode` or GSS prediction (`AutonomousProxy`). Built in; pick per [gameplay-systems](references/gameplay-systems.md). |
+| Predicted gameplay that rewinds and lag-compensates | GSS (`GSSNode`), see `genesys-movement` |
+| A custom simulation that needs rewind and does not fit GSS | `NetPredictionManager`, see [network-prediction](references/network-prediction.md) |
+| Connecting a shipped game to a server | Matchmaking (`gameLoop.findMatch`), see [matchmaking](references/matchmaking.md) |
+| An action the server must allow (fire, interact, respawn) | `@ENGINE.ServerRPC()` on a node the client owns |
+| State every client reads (health, score, door open) | `@ENGINE.property({ replicate: true, net: {...} })`, written on the server |
+| A one-off everyone sees (explosion) | `@ENGINE.MulticastRPC()`, never for state |
+| A message for one player (damage flash) | `@ENGINE.ClientRPC()`; node needs `netOwningClientId` |
+| A runtime-spawned networked node | `MultiplayerSpawner` with `@ENGINE.SpawnMethod()` |
+| Private per-player node | `@ENGINE.SpawnMethod({ audience: 'owner' })` |
+| Talking | Built-in session text chat. No voice. |
 
-# Safe UI for replicated strings (mandatory)
+## Build
 
-Replicated strings and `joinParams` are untrusted for HTML. The engine does
-not sanitize them. Render as text; never as markup.
+Order of work:
+1. Decide where the code runs — server, client, or both ([server-authority](references/server-authority.md)).
+2. Choose the system that owns predicted gameplay before movement, combat or a custom simulation ([gameplay-systems](references/gameplay-systems.md)).
+3. State or events outside it: RPC, replicated property, or both ([rpcs](references/rpcs.md), [node-replication](references/node-replication.md)).
+4. Match rules and player lifecycle ([game-mode](references/game-mode.md)); a player-controlled node ([player-ownership](references/player-ownership.md)); connecting a shipped game ([matchmaking](references/matchmaking.md)).
+5. Guard authority-only logic with `this.hasAuthority()` or `NetRuntime.isServer()`; render replicated and join strings safely ([ui-security](references/ui-security.md)).
+6. For a shipped multiplayer game, load `genesys-player-accounts` and turn on **Show Sign-in Bar** in Project Settings, unless the game already has its own account UI. Republish so players can sign in.
 
-| Do | Don't |
-|----|-------|
-| `playerName` / chat / team → `textContent`, `setLabel`, `setMessage`, `setTitle` | `` innerHTML = `<span>${playerName}</span>` `` |
-| Icons → `ENGINE.Icons.*` or static SVG you author | Pass network strings to `iconHtml`, `setHTML`, `imageHtml` |
-| Optional: validate display names in `GameMode` from `joinParams` | Rely on server name checks alone instead of safe rendering |
+Core rules:
+- Import with `import * as ENGINE from '@gnsx/genesys.js'`; `ENGINE.NetRuntime` gives runtime checks. Never read it in constructors or `initialize()`; guard in `beginPlay` or later.
+- `this.isRoot = true` plus `this.replicated = true` makes a replicated entity root (auto-creating `ReplicationInfo`); nested `replicated` children join its member map, a nested `isRoot && replicated` node is its own entity. Setting `replicated` on a client does nothing; do not flip it after registration.
+- Only nodes in a replicated entity's member map sync their `replicate: true` properties. Give every numeric property a `net.netType`.
+- All replicated nodes are server-authoritative, including `PlayerController` and its `Pawn`, whose owning client is `AutonomousProxy`.
+- Place one `PlayerSpawner` in every multiplayer scene; multiplayer spawning throws without it.
+- A shipped game connects with `gameLoop.findMatch` / `gameLoop.matchmaking` and never sets `gameId` or `matchmaking`: the host injects the matchmaking client ([matchmaking](references/matchmaking.md)). `connectToServer` is only for a local editor test.
+- Match rules, spawning and `restartPlayer` run only on the server. Each client also has a local, unreplicated GameMode ([game-mode](references/game-mode.md)).
+- **`onRep<PropName>()`** (`isOpen` → `onRepIsOpen`) runs on clients with no arguments after an update that changed that property. Use it for presentation; it never runs on the server, so call the same code there directly ([node-replication](references/node-replication.md#onreppropname-callbacks)).
 
-```ts
-// ✅
-row.appendChild(document.createElement('span')).textContent = playerInfo.playerName;
-chat.setMessage({ name: playerName, body: messageText });
+### GameMode flow and online feel
 
-// ❌
-el.innerHTML = `<span>${playerInfo.playerName}</span>`;
-uiElement.setHTML(`<b>${playerName}</b>`);
-```
+Match rules, spawning, scoring and win checks stay in server-guarded GameMode code and write to `GameSessionInfo` / `PlayerInfo`; each client shows its screens from that replicated state. Get the local player with `await world.gameMode?.waitForLocalPlayerController()`.
 
-Details and `joinParams` validation: [ui-security](references/ui-security.md).
-Canonical player list: [player-list-safe](references/player-list-safe.md).
-General HUD rules: Safe UI in the `genesys-ui-kit` skill and
-[safe-ui](../genesys-ui-kit/references/safe-ui.md).
+Online, the owner's move shows the same frame and accepts corrections; score, inventory, damage and door state only display replicated values; one-off effects play from `@MulticastRPC`. A client that applies damage or grants items locally is a defect even when it looks fine in solo play. For "it feels laggy" (rubber-banding, stutter, late reactions, flicker), ask the creator to play two windows for a minute and match the symptom table in [session](references/session.md#it-feels-laggy-reports).
 
-# Built-in session chat
+### Safe UI for network strings (mandatory)
 
-Every multiplayer client gets an in-game text chat (bottom-left). While idle, new lines fade
-out; Enter (or the key hint) opens the composer, and touch gets a Chat button. Enter or Send
-sends and closes; Escape closes and discards the draft; leaving the field keeps the draft.
-Arrow Up/Down recalls sent lines. Typing `:fi` suggests emojis (Enter, Tab, or click
-inserts one; a finished `:fire:` converts on its own). Lines reach only the players
-connected to the same server.
-Do not build a second chat on top of RPCs; configure the built-in one instead:
+Replicated strings and `joinParams` are untrusted for HTML; the engine does not sanitize them. Render names, chat and team text with `textContent` or text setters (`setLabel`, `setMessage`, `setTitle`), never `innerHTML`, `iconHtml`, `setHTML` or `imageHtml`; icons come from `ENGINE.Icons.*` or static SVG you author. Validating names from `joinParams` in `GameMode` helps but does not replace safe rendering. Patterns: [ui-security](references/ui-security.md), [player-list-safe](references/player-list-safe.md).
 
-- Disable it: set `chatEnabled = false` on the GameMode (Chat category).
-- Fade, idle lines, scrollback, and the key hint: `chatFadeDelaySeconds` (`0` keeps lines),
-  `chatVisibleLines`, `chatHistoryLines`, and `chatShowKeyHint` on the GameMode (Chat category).
-- Emoji shortcodes: `chatEmojiShortcodes` on the GameMode. `false` leaves `:fire:` as text.
-  Visual tokens (`--chat-width`, `--chat-font-size`, and the rest) live on `.ui-chat-panel`.
-- Join/leave notices: set `chatJoinLeaveNotices = false` on the GameMode to silence them.
-- Moderate it: override `protected filterChatMessage(senderClientId, text)` on the GameMode.
-  The relay runs on a dedicated server when `chatEnabled` is true. Return rewritten text or `null` to drop the line.
-- React to lines (sounds, notifications): listen to `world.chatSystem.onServiceChanged` and
-  subscribe to the service's `onMessage` (`ENGINE.IChatService`). Entry text is untrusted;
-  render it with `textContent`.
-- The sender name comes from `PlayerInfo.playerName` on the server; clients cannot spoof it.
-- Closing with Escape releases the mouse; the player clicks the game to capture it again
-  (browsers do not let Escape re-lock the pointer).
+### Chat, build id, reconnect
 
-# References
+- **Chat.** Every multiplayer client gets a built-in text chat; configure it on the GameMode (`chatEnabled`, fade, history, emoji, join notices, `filterChatMessage`). Never build a second chat on RPCs. There is no voice.
+- **Build id.** Show `build <BUILD_ID>` (from `src/const.ts`, bumped per build handed to players) in a corner of the title and pause screens, so reports name the build.
+- **Reconnect.** `PlayerInfo.identityToken` (server-only) re-links a reconnecting player; invent no guest account or save slot.
 
-Read the reference that matches your current task:
+Chat options and the build-id badge code: [chat-and-build-id](references/chat-and-build-id.md).
 
-- [Gameplay systems](references/gameplay-systems.md): When to use classic movement, GSS, `NetPredictionManager`, or replicated properties and RPCs.
-- [Server Authority and Runtime](references/server-authority.md): NetRuntime API, NetRole values, and how to guard server-only code.
-- [RPCs](references/rpcs.md): All RPC decorator types, execution rules, reliable vs unreliable, and common patterns.
-- [Node Replication](references/node-replication.md): Enabling replication on `SceneNode`/`PrimitiveNode` roots, `ensureReplicationInfo`, replicating properties, transform sync, and relevance.
-- [GameMode](references/game-mode.md): Server-only match lifecycle, player join/leave hooks, and factory configuration.
-- [Matchmaking](references/matchmaking.md): Required connection to Genesys servers. Queues, parties, and the `joinParams` a placement sends to `canPlayerJoin`. `connectToServer` is only for a local editor test.
-- [Player Control and Autonomous Proxy](references/player-ownership.md): Ownership, possession, and which client may send input for a PlayerController and Pawn.
-- [Network prediction](references/network-prediction.md): `NetPredictionManager`, rewind registration, and canonical game time.
-- [Multiplayer UI security](references/ui-security.md): Rendering replicated / join strings safely (XSS).
-- [Safe player list example](references/player-list-safe.md): Canonical lobby / scoreboard pattern (`textContent`).
+## Limitations
+- Store items are not server-verified: [session](references/session.md#limitations). Classic and GSS pawns mis-predict each other: [gameplay-systems](references/gameplay-systems.md#limitations).
 
-# Tips
+## Traps
+- Score or health changes in one window only → client wrote a replicated property → write on the server via `@ServerRPC`.
+- Runtime-spawned node missing on clients → bare `world.add` on the server → spawn through a `MultiplayerSpawner` `@SpawnMethod`.
+- `@ClientRPC` never arrives → node has no `netOwningClientId` → set it, or use the owned controller/pawn.
+- Late joiner misses an open door → state sent with `@MulticastRPC` → use a replicated property.
+- Plain `Pawn` frozen on other clients → no transform replication on plain roots → use `CharacterPawn`/`MovementPawn` or replicated position/rotation properties.
+- `NetRuntime` wrong in a constructor → runtime not set yet → read it in `beginPlay` or later.
+- Player name renders as markup → `innerHTML` / `setHTML` → `textContent` or a text setter.
+- Second chat panel → RPC chat built beside the built-in one → configure the GameMode chat properties.
+- A `@ServerRPC` fires from server code too → with authority it executes directly → wrap the call site in `if (NetRuntime.isClient())` when the server should not trigger it.
+- `onRepX` never fires → wrong name, no `replicate: true` / `net` block, or expected on the server → fix the name; call the presentation directly on the server.
+- Spawning throws, or no player appears → the scene has no `PlayerSpawner`.
+- Matchmaking fails with `Placement failed (422)`, or a shipped game calls `connectToServer` → `gameId` hand-set or matchmaking bypassed → [matchmaking](references/matchmaking.md).
+- Controller, pawn, input and session traps (`getPawn<T>`, `onKeyDown`, null controller during load, no session plan): [session](references/session.md#traps).
 
-- When in doubt about where code runs, add a temporary `console.log(NetRuntime.getType())` to verify.
-- Replicated property updates flow from server to clients only. A client writing to a replicated property has no network effect.
-- `@ServerRPC` methods execute directly when called with authority on the server. Wrap the call site in `if (NetRuntime.isClient())` if the server shouldn't trigger the method.
-- Consult the engine source under `.engine/` for exact method signatures before writing RPC or replication code.
+## Done
+- Two clients: the owner's move is immediate, the other client's copy follows replication, and a score or hit changes only after the server accepts it. Query the replicated fields; a capture of one window is not this test. The two-client recipe and evidence are owned by `genesys-verification`; say exactly which items stayed unverified.
+- The Session line and the trust-model sentence are in `GAME.md`, and start, late join, and below-quorum behave as written.
+- A build id shows in a corner of the title and pause screens.
+- Every state-changing path goes through a server-guarded write.
+- Every network string in UI renders through a text setter.
+- When unsure where code runs, a temporary `console.log(ENGINE.NetRuntime.getType())` confirms it; remove it after.
+
+## References
+- [session](references/session.md) — solo or online, session plan defaults, trust model, GameMode flow, online feel and lag table, reconnect
+- [gameplay-systems](references/gameplay-systems.md) — classic movement vs GSS vs `NetPredictionManager` vs properties and RPCs
+- [server-authority](references/server-authority.md) — `NetRuntime`, `NetRole`, guarding server-only code
+- [node-replication](references/node-replication.md) — entity roots, replicated properties, `onRep`, net types, `replicateTo`, send rate, `MultiplayerSpawner`
+- [rpcs](references/rpcs.md) — RPC decorators, reliability, argument encodings, patterns
+- [game-mode](references/game-mode.md) — join/leave hooks, factories, `GameSessionInfo`, `PlayerInfo`
+- [player-ownership](references/player-ownership.md) — AutonomousProxy, input flow, owner-only spawns, local player
+- [matchmaking](references/matchmaking.md) — Genesys servers, queues, parties, `joinParams`; [network-prediction](references/network-prediction.md) — `NetPredictionManager`
+- [ui-security](references/ui-security.md), [player-list-safe](references/player-list-safe.md) — network strings in UI; [chat-and-build-id](references/chat-and-build-id.md) — chat options, build-id badge
+- [why-server-authority](references/why-server-authority.md) — the reasoning, for explaining it to a creator
+- Engine docs in `node_modules/@gnsx/genesys.js/docs/`: `multiplayer/README.md` (architecture), `multiplayer/lifecycle.md`, `replication.md`, `protocol.md`, `prediction.md`, `matchmaking.md`, `gameplay-sim/README.md`, `RPC_DECORATORS.md` (decorator options), and `security/multiplayer-ui-security.md`.

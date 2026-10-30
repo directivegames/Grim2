@@ -214,7 +214,8 @@ Audit call sites that assumed these were Actors:
 - `getActor()` (returns null when the root is not an `Actor` — use
   `getRoot()`);
 - Actor-only net helpers (`replicateTransform`, `netLocalRole`,
-  `setAutonomousProxy`, …) — use `getReplicationGroup()` instead.
+  `setAutonomousProxy`, …) — use `getReplicationGroup()` instead
+  (superseded in 14.1.0 by `getReplicationInfo()`, [14.x](../14.x.md) §2).
 
 `hasAuthority()` without a replication group is `true` on Actor but `false` on
 `SceneNode`. Unreplicated Controllers / GameModes / InfoNodes that relied on
@@ -238,6 +239,8 @@ does not move remote instances.
 
 ### ReplicationGroup on non-Actor roots
 
+> **Superseded in 14.1.0.** `ReplicationGroup`, `ensureReplicationGroup`, and `getReplicationGroup()` were removed. If the target version is 14.1.0 or later, skip this and use `isRoot = true` + `replicated = true` (auto-creates `ReplicationInfo`) and `getReplicationInfo()` ([14.x](../14.x.md) §2).
+
 Setting `replicated = true` auto-adds a `ReplicationGroup` on Actor (setter
 / `beginPlay`) and on Pawn (`initialize` when `replicated`). Custom
 `SceneNode` / `PrimitiveNode` roots (Controllers, InfoNode subclasses, and
@@ -254,6 +257,8 @@ that set `replicated = true` without `ensureReplicationGroup` will not register
 as net entities.
 
 ### Multiplayer hard renames (no aliases)
+
+> **Superseded later.** The `Group*` names below were renamed `Entity*` in 14.1.0 ([14.x](../14.x.md) §3), and in 16 the single packet split into four packet/ack pairs and `EntityUpdateType` / `EntityAckType` / `EntityUpdate` / `EntityAck` were removed ([15-16](../15-16.md) §12). `NetWorld.clearGroups` is `clearEntities()` in 18. Migrate straight to the target version's names.
 
 If game code touches net packets, custom NetWorld helpers, map load RPCs, or
 replicated property metadata:
@@ -473,7 +478,7 @@ World uses a different verb order:
 `detachRootsPreservingAcrossLevelTransition()`. The Actor-only
 `detachActorsPreservingAcrossLevelTransition()` is gone with no shim.
 
-Rename `OpenLevelOptions.preserveActors` to `preserveRoots`.
+Rename `OpenLevelOptions.preserveActors` to `preserveRoots`. (Superseded in 16: `preserveRoots` and the `*Roots*` preserve hooks were removed and `openLevel` is always a cold load — [15-16](../15-16.md) §10. Targeting 16+, delete the option instead.)
 
 ### Other removed `World` members
 

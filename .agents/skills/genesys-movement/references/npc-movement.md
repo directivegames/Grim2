@@ -15,7 +15,7 @@ forward/turn input every frame before delegating to `CharacterMovementNode`'s ph
 - `setPath(points, looped?)` — follow an explicit waypoint list (points too close to the NPC's
   current position are filtered out on assignment).
 - `setTargetPosition(target, stopDistance?)` — computes a path to `target` via the navigation
-  server if available (`useNavigationServer`, default `true`) and ready
+  server when `useNavigationServer` is true and the server is ready
   (`navigationServer.isReady()`), otherwise falls back to a direct straight-line path.
 - `followActor(actor, continueAfterReached?)` / `setFollowedActor(actor, continueAfterReached?)`
   — continuously path toward a moving `SceneNode`, recalculating when it drifts far enough from
@@ -35,11 +35,21 @@ line — this is the extent of `NpcMovementNode`'s own navmesh integration; the 
 `calculatePath`/`getClosestPointOnNavigationMesh`/`isPointOnNavigationMesh` calls belong to
 `genesys-navigation`.
 
-Movement speed/turn tuning: inherited `maxSpeed` (default 20 m/s) and `lookRightSpeed`
-(default 10 rad/s), `pathFollowingAccuracy` (waypoint arrival radius),
-`actorFollowingDistance` (how far a followed actor may drift before repathing), `stopDistance`.
-Optional built-in debug visualization (`debugVisualization` options) draws the path line, target
-sphere, and waypoint spheres in the world.
+Movement speed and turn tuning. `initialize()` applies the options you pass. Omitted fields use these defaults:
+
+| Field | When omitted |
+|---|---|
+| `maxSpeed` | 5 m/s (`CHARACTER_MAX_SPEED`, the player's). Walkers 2–4, chasers 4–6 |
+| `lookRightSpeed` | 10 |
+| `lookUpSpeed`, `jumpSpeed` | 0 |
+| `midAirAccelerationLambda` / `midAirDecelerationLambda` | 100 / 10 |
+| `pathFollowingAccuracy` | 0.5 (waypoint arrival radius) |
+| `actorFollowingDistance` | 4 |
+| `stopDistance` | 1 |
+| `useNavigationServer` | true |
+| `debugVisualization` | off. Pass `debugVisualization: { enabled: true }` or call `setDebugVisualizationEnabled(true)` |
+
+The debug visualization draws the path line, target sphere, and waypoint spheres in the world. Knockback needs the lambda mute in [jump-and-knockback](jump-and-knockback.md).
 
 ## GSS: AIController + GSSNode
 
@@ -48,8 +58,9 @@ steers a possessed pawn that has a `GSSNode` (for example `GSSCharacterPawn`).
 Navmesh queries still belong to `genesys-navigation`; the controller turns path/look-at state
 into `GSSInputCmd` vectors and down-tags each tick.
 
-Mixing locomotion stacks is fine for pawns that never collide or trace against each other:
-keep some AI on classic `NpcMovementNode` while the player uses GSS. A classic NPC
+Mixing locomotion stacks is fine in single-player and in any game without network prediction,
+and online for pawns that never collide or trace against each other: keep AI on classic
+`NpcMovementNode` while the player uses GSS. With prediction on, a classic NPC
 that the player can bump, shoot, or dash through is not rewindable, so those interactions
 mis-predict unless the game adds `IRewindable` history and re-simulation — see
 [gss-mechanics](gss-mechanics.md). To drive `GSSWalkingMode` /

@@ -1,15 +1,21 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
+import os
 import re
+import shutil
+import struct
+import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable
 
+import bmesh
 import bpy
-from mathutils import Euler, Matrix, Quaternion, Vector
+from mathutils import Euler, Matrix, Vector
 
 
 MANIFEST_FORMAT = "genesys-blender-bridge"
@@ -24,9 +30,24 @@ GUIDE_TEXT = (
 )
 GUIDE_PROP = "genesys_library_guide"
 LOGICAL_PATH_PROP = "genesys_logical_path"
-POSITION_SCALE_EPSILON = 1e-5
+# Tolerances: values cross MCP as rounded decimals and Blender stores float32, so a
+# fixed 1e-5 sat below the noise. Position/scale use max(1e-4, 1e-6 * |value|).
+POSITION_SCALE_EPSILON = 1e-4
+RELATIVE_EPSILON = 1e-6
 ROTATION_EPSILON = 1e-3
+# Extensions Blender's glTF importer cannot read; such files go through plain-glb.mjs first.
+BLENDER_UNSUPPORTED_GLTF = {"KHR_texture_basisu", "EXT_meshopt_compression", "EXT_texture_webp", "KHR_mesh_quantization"}
+SKILL_DIR = Path(__file__).resolve().parent.parent
+PLAIN_GLB_SCRIPT = SKILL_DIR.parent / "genesys-blender-modeling" / "scripts" / "plain-glb.mjs"
+SCRATCH_REL = Path(".scratch") / "blender-bridge"
 NUMERIC_SUFFIX_RE = re.compile(r"^(?P<base>.+?)\.(?P<suffix>\d{3})$")
+# Genesys rotations are three.js Euler angles in order 'XYZ': R = Rx(x) @ Ry(y) @ Rz(z)
+# (intrinsic X, then Y, then Z). Blender/mathutils names that same matrix 'ZYX' (its 'XYZ'
+# is Rz @ Ry @ Rx). Reading three.js 'XYZ' as Blender 'XYZ' was the old bug. The bridge does
+# its transform math in double precision with three.js's formulas (_compose / _decompose);
+# for a quick mathutils equivalent use Euler(rotation, GENESYS_EULER_ORDER).
+# Proof: scripts/test_euler_roundtrip.mjs.
+GENESYS_EULER_ORDER = "ZYX"
 BASIS_A = Matrix(((1.0, 0.0, 0.0), (0.0, 0.0, 1.0), (0.0, -1.0, 0.0)))
 BASIS_A_T = BASIS_A.transposed()
 SUPPORTED_SCENE_CLASSES = {
@@ -145,90 +166,174 @@ def _transform_dict(position: Iterable[Any], rotation: Iterable[Any], scale: Ite
     }
 
 
-def _genesys_position_to_blender(position: Iterable[Any]) -> Vector:
-    gx, gy, gz = [float(v) for v in position]
-    return Vector((gx, -gz, gy))
+# ---- transform math -------------------------------------------------------------------------
+# Done in double precision with three.js's own formulas; mathutils is float32, and its Euler
+# extraction drifted by up to 7e-4 rad near gimbal lock. Matrices here are row-major 4x4 lists.
+# Genesys world G and Blender world B relate by B = A^T G A, with A = BASIS_A_4 (Blender ->
+# Genesys axes): Genesys (x, y, z) is Blender (x, -z, y).
+M4 = list  # list[list[float]], 4 rows of 4
+BASIS_A_4: M4 = [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, -1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+BASIS_A_4_T: M4 = [list(row) for row in zip(*BASIS_A_4)]
 
 
-def _blender_position_to_genesys(position: Vector) -> Vector:
-    return Vector((position.x, position.z, -position.y))
+def _identity4() -> M4:
+    return [[1.0 if r == c else 0.0 for c in range(4)] for r in range(4)]
 
 
-def _genesys_scale_to_blender(scale: Iterable[Any]) -> Vector:
-    sx, sy, sz = [float(v) for v in scale]
-    return Vector((sx, sz, sy))
+def _mat_mul(left: M4, right: M4) -> M4:
+    return [[sum(left[r][k] * right[k][c] for k in range(4)) for c in range(4)] for r in range(4)]
 
 
-def _blender_scale_to_genesys(scale: Vector) -> Vector:
-    return Vector((scale.x, scale.z, scale.y))
+def _affine_inverse(matrix: M4) -> M4:
+    """Inverse of an affine 4x4 (any invertible 3x3 part); singular parts fall back to identity."""
+    a = [[matrix[r][c] for c in range(3)] for r in range(3)]
+    det = (
+        a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1])
+        - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0])
+        + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])
+    )
+    if abs(det) < 1e-12:
+        return _identity4()
+    inv = [
+        [(a[1][1] * a[2][2] - a[1][2] * a[2][1]) / det, (a[0][2] * a[2][1] - a[0][1] * a[2][2]) / det, (a[0][1] * a[1][2] - a[0][2] * a[1][1]) / det],
+        [(a[1][2] * a[2][0] - a[1][0] * a[2][2]) / det, (a[0][0] * a[2][2] - a[0][2] * a[2][0]) / det, (a[0][2] * a[1][0] - a[0][0] * a[1][2]) / det],
+        [(a[1][0] * a[2][1] - a[1][1] * a[2][0]) / det, (a[0][1] * a[2][0] - a[0][0] * a[2][1]) / det, (a[0][0] * a[1][1] - a[0][1] * a[1][0]) / det],
+    ]
+    t = [matrix[r][3] for r in range(3)]
+    out = [[inv[r][0], inv[r][1], inv[r][2], -sum(inv[r][k] * t[k] for k in range(3))] for r in range(3)]
+    out.append([0.0, 0.0, 0.0, 1.0])
+    return out
+
+
+def _euler_xyz_to_rotation(rotation: Iterable[Any]) -> list[list[float]]:
+    """three.js Matrix4.makeRotationFromEuler, order 'XYZ': R = Rx(x) @ Ry(y) @ Rz(z)."""
+    x, y, z = (float(v) for v in rotation)
+    a, b, c, d, e, f = math.cos(x), math.sin(x), math.cos(y), math.sin(y), math.cos(z), math.sin(z)
+    ae, af, be, bf = a * e, a * f, b * e, b * f
+    return [
+        [c * e, -c * f, d],
+        [af + be * d, ae - bf * d, -b * c],
+        [bf - ae * d, be + af * d, a * c],
+    ]
+
+
+def _rotation_to_euler_xyz(m: list[list[float]]) -> list[float]:
+    """Euler 'XYZ' angles of a rotation matrix: the same angles as three.js
+    Euler.setFromRotationMatrix for an exact matrix, but stable near gimbal lock (y = ±90°),
+    where Blender's float32 storage makes asin(m13) and the separate x/z atan2 drift by up to
+    3e-4 rad. y uses atan2 against cos(y) = |row 0 without m13|; x is solved last from
+    Rx = R @ Rz(z)^T @ Ry(y)^T, so x absorbs any error in z and the recomposed matrix matches."""
+    cos_y = math.hypot(m[0][0], m[0][1])
+    y = math.atan2(m[0][2], cos_y)
+    z = math.atan2(-m[0][1], m[0][0]) if cos_y > 1e-12 else 0.0
+    cz, sz = math.cos(z), math.sin(z)
+    # Column 1 of Rz(z)^T @ Ry(y)^T is (sin z, cos z, 0) (Ry leaves the Y axis alone), so
+    # Rx[1][1] = cos x and Rx[2][1] = sin x come from rows 1 and 2 of m.
+    rx_11 = m[1][0] * sz + m[1][1] * cz
+    rx_21 = m[2][0] * sz + m[2][1] * cz
+    return [math.atan2(rx_21, rx_11), y, z]
+
+
+def _euler_xyz_to_quaternion(rotation: Iterable[Any]) -> tuple[float, float, float, float]:
+    """three.js Quaternion.setFromEuler, order 'XYZ' -> (x, y, z, w)."""
+    x, y, z = (float(v) * 0.5 for v in rotation)
+    c1, c2, c3, s1, s2, s3 = math.cos(x), math.cos(y), math.cos(z), math.sin(x), math.sin(y), math.sin(z)
+    return (
+        s1 * c2 * c3 + c1 * s2 * s3,
+        c1 * s2 * c3 - s1 * c2 * s3,
+        c1 * c2 * s3 + s1 * s2 * c3,
+        c1 * c2 * c3 - s1 * s2 * s3,
+    )
+
+
+def _compose(transform: dict[str, Any]) -> M4:
+    """three.js Matrix4.compose(position, Euler 'XYZ', scale)."""
+    px, py, pz = (float(v) for v in transform["position"])
+    sx, sy, sz = (float(v) for v in transform["scale"])
+    r = _euler_xyz_to_rotation(transform["rotation"])
+    return [
+        [r[0][0] * sx, r[0][1] * sy, r[0][2] * sz, px],
+        [r[1][0] * sx, r[1][1] * sy, r[1][2] * sz, py],
+        [r[2][0] * sx, r[2][1] * sy, r[2][2] * sz, pz],
+        [0.0, 0.0, 0.0, 1.0],
+    ]
+
+
+def _decompose(matrix: M4) -> dict[str, list[float]]:
+    """three.js Matrix4.decompose -> position, Euler 'XYZ' (radians), scale."""
+    columns = [[matrix[r][c] for r in range(3)] for c in range(3)]
+    scale = [math.sqrt(sum(v * v for v in column)) for column in columns]
+    det = (
+        matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1])
+        - matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0])
+        + matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
+    )
+    if det < 0:
+        scale[0] = -scale[0]
+    rotation = [[matrix[r][c] / (scale[c] or 1.0) for c in range(3)] for r in range(3)]
+    return _transform_dict(
+        [matrix[0][3], matrix[1][3], matrix[2][3]],
+        _rotation_to_euler_xyz(rotation),
+        scale,
+    )
+
+
+def _to_blender_matrix(matrix: M4) -> Matrix:
+    return Matrix([[float(v) for v in row] for row in matrix])
+
+
+def _from_blender_matrix(matrix: Matrix) -> M4:
+    return [[float(matrix[r][c]) for c in range(4)] for r in range(4)]
 
 
 def _genesys_rotation_matrix_to_blender(rotation_genesys: Matrix) -> Matrix:
+    """3x3 mathutils helper kept for callers that hold a Genesys rotation matrix."""
     return BASIS_A_T @ rotation_genesys @ BASIS_A
 
 
-def _blender_rotation_matrix_to_genesys(rotation_blender: Matrix) -> Matrix:
-    return BASIS_A @ rotation_blender @ BASIS_A_T
-
-
-def _genesys_euler_to_blender_euler(rotation: Iterable[Any]) -> Euler:
-    genesys_euler = Euler(tuple(float(v) for v in rotation), "XYZ")
-    blender_matrix = _genesys_rotation_matrix_to_blender(genesys_euler.to_matrix())
-    return blender_matrix.to_euler("XYZ")
-
-
-def _blender_euler_to_genesys_euler(rotation: Euler) -> Euler:
-    genesys_matrix = _blender_rotation_matrix_to_genesys(rotation.to_matrix())
-    return genesys_matrix.to_euler("XYZ")
-
-
 def _genesys_transform_to_blender_matrix(transform: dict[str, Any]) -> Matrix:
-    position = _genesys_position_to_blender(transform["position"])
-    rotation = _genesys_euler_to_blender_euler(transform["rotation"])
-    scale = _genesys_scale_to_blender(transform["scale"])
-    return Matrix.LocRotScale(position, rotation, scale)
+    return _to_blender_matrix(_mat_mul(_mat_mul(BASIS_A_4_T, _compose(transform)), BASIS_A_4))
+
+
+def _blender_world_to_genesys_matrix(matrix_world: Matrix) -> M4:
+    return _mat_mul(_mat_mul(BASIS_A_4, _from_blender_matrix(matrix_world)), BASIS_A_4_T)
 
 
 def _blender_matrix_to_genesys_transform(matrix_world: Matrix) -> dict[str, list[float]]:
-    location, rotation, scale = matrix_world.decompose()
-    genesys_position = _blender_position_to_genesys(location)
-    genesys_rotation = _blender_rotation_matrix_to_genesys(rotation.to_matrix()).to_euler("XYZ")
-    genesys_scale = _blender_scale_to_genesys(scale)
-    return _transform_dict(genesys_position, genesys_rotation, genesys_scale)
+    return _decompose(_blender_world_to_genesys_matrix(matrix_world))
 
 
-def _genesys_transform_to_matrix(transform: dict[str, Any]) -> Matrix:
-    position = Vector(tuple(float(v) for v in transform["position"]))
-    rotation = Euler(tuple(float(v) for v in transform["rotation"]), "XYZ")
-    scale = Vector(tuple(float(v) for v in transform["scale"]))
-    return Matrix.LocRotScale(position, rotation, scale)
+def _genesys_transform_to_matrix(transform: dict[str, Any]) -> M4:
+    return _compose(transform)
 
 
-def _angular_distance(left: Quaternion, right: Quaternion) -> float:
+def _angular_distance(left: Iterable[float], right: Iterable[float]) -> float:
     # q and -q encode the same orientation. Measure the shortest arc so
     # equivalent quaternion signs cannot appear as a 2π rotation error.
-    dot = abs(left.normalized().dot(right.normalized()))
+    dot = abs(sum(a * b for a, b in zip(left, right)))
     return 2.0 * math.acos(max(-1.0, min(1.0, dot)))
 
 
 def _transform_error(left: dict[str, Any], right: dict[str, Any]) -> tuple[float, float, float]:
-    left_position = Vector(tuple(float(v) for v in left["position"]))
-    right_position = Vector(tuple(float(v) for v in right["position"]))
-    left_scale = Vector(tuple(float(v) for v in left["scale"]))
-    right_scale = Vector(tuple(float(v) for v in right["scale"]))
-    left_quat = Euler(tuple(float(v) for v in left["rotation"]), "XYZ").to_quaternion()
-    right_quat = Euler(tuple(float(v) for v in right["rotation"]), "XYZ").to_quaternion()
-    position_error = max(abs(a - b) for a, b in zip(left_position, right_position))
-    scale_error = max(abs(a - b) for a, b in zip(left_scale, right_scale))
-    rotation_error = _angular_distance(left_quat, right_quat)
+    position_error = max(abs(float(a) - float(b)) for a, b in zip(left["position"], right["position"]))
+    scale_error = max(abs(float(a) - float(b)) for a, b in zip(left["scale"], right["scale"]))
+    rotation_error = _angular_distance(
+        _euler_xyz_to_quaternion(left["rotation"]), _euler_xyz_to_quaternion(right["rotation"])
+    )
     return position_error, scale_error, rotation_error
+
+
+def _epsilon_for(*vectors: Iterable[Any]) -> float:
+    """max(1e-4, 1e-6 * |largest component|): absolute near the origin, relative far out."""
+    magnitude = max((abs(float(v)) for vector in vectors for v in vector), default=0.0)
+    return max(POSITION_SCALE_EPSILON, RELATIVE_EPSILON * magnitude)
 
 
 def _transform_changed(left: dict[str, Any], right: dict[str, Any]) -> bool:
     position_error, scale_error, rotation_error = _transform_error(left, right)
     return (
-        position_error > POSITION_SCALE_EPSILON
-        or scale_error > POSITION_SCALE_EPSILON
+        position_error > _epsilon_for(left["position"], right["position"])
+        or scale_error > _epsilon_for(left["scale"], right["scale"])
         or rotation_error > ROTATION_EPSILON
     )
 
@@ -249,26 +354,73 @@ def clean_numeric_suffix(name: str) -> str:
 
 
 def resolve_asset_path(url: str, project_root: Path | str) -> Path:
+    """@project/<path> (assets/, packs/, anywhere in the project) and @engine/<path>."""
     project_root = _normalize_project_root(project_root)
     logical = _normalize_posix_path(str(url))
-    if logical.startswith("@project/assets/"):
-        relative = PurePosixPath(logical[len("@project/") :])
-        return project_root / Path(*relative.parts)
-    if logical.startswith("@engine/assets/"):
-        relative = PurePosixPath(logical[len("@engine/assets/") :])
-        return project_root / "node_modules" / "@gnsx" / "genesys.js" / "assets" / Path(*relative.parts)
-    raise BridgeError(f"Unsupported asset URL: {url}")
+    if logical.startswith("@project/"):
+        base, relative = project_root, PurePosixPath(logical[len("@project/") :])
+    elif logical.startswith("@engine/"):
+        base = project_root / "node_modules" / "@gnsx" / "genesys.js"
+        relative = PurePosixPath(logical[len("@engine/") :])
+    else:
+        raise BridgeError(f"Unsupported asset URL: {url}")
+    _require(relative.parts and ".." not in relative.parts, f"Unsupported asset URL: {url}")
+    return base / Path(*relative.parts)
+
+
+def _gltf_extensions_used(path: Path) -> set[str]:
+    try:
+        with path.open("rb") as handle:
+            head = handle.read(20)
+            if head[:4] != b"glTF":
+                return set()
+            length = struct.unpack("<I", head[12:16])[0]
+            return set(json.loads(handle.read(length)).get("extensionsUsed", []))
+    except (OSError, ValueError, struct.error):
+        return set()
+
+
+def _importable_glb(path: Path, project_root: Path) -> Path:
+    """Engine GLBs ship KTX2 (KHR_texture_basisu), Meshopt and quantized data that Blender
+    cannot import (they came in as cubes). Convert once through
+    genesys-blender-modeling/scripts/plain-glb.mjs into .scratch/blender-bridge/plain-glb/."""
+    if path.suffix.lower() != ".glb" or not (_gltf_extensions_used(path) & BLENDER_UNSUPPORTED_GLTF):
+        return path
+    _require(PLAIN_GLB_SCRIPT.exists(), f"Missing {PLAIN_GLB_SCRIPT} (genesys-blender-modeling skill) to convert {path.name}")
+    _require(shutil.which("node") is not None, f"node is not on PATH; cannot convert {path.name} for Blender")
+    cache = project_root / SCRATCH_REL / "plain-glb"
+    cache.mkdir(parents=True, exist_ok=True)
+    key = hashlib.sha1(str(path.resolve()).encode("utf-8")).hexdigest()[:12]
+    out = cache / f"{path.stem}.{key}.glb"
+    if out.exists() and out.stat().st_mtime >= path.stat().st_mtime:
+        return out
+    tmp = out.with_suffix(f".{os.getpid()}.tmp.glb")
+    result = subprocess.run(
+        ["node", str(PLAIN_GLB_SCRIPT), str(path), str(tmp)],
+        cwd=str(project_root),
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0 or not tmp.exists():
+        if tmp.exists():
+            tmp.unlink()
+        raise BridgeError(
+            f"plain-glb.mjs could not convert {path.name} (exit {result.returncode}): "
+            f"{(result.stderr or result.stdout or '').strip()[:300]}"
+        )
+    os.replace(tmp, out)
+    return out
 
 
 def _resolve_import_asset_path(url: str, project_root: Path) -> tuple[Path, Path | None]:
     primary = resolve_asset_path(url, project_root)
     if primary.exists():
-        return primary, None
+        return _importable_glb(primary, project_root), None
     if not (_normalize_posix_path(url).startswith("@engine/assets/") and primary.suffix.lower() == ".glb"):
         raise BridgeError(f"Asset not found: {primary}")
     candidates = list((project_root / "assets").rglob(primary.name))
     if len(candidates) == 1:
-        return candidates[0], primary
+        return _importable_glb(candidates[0], project_root), primary
     raise BridgeError(f"Asset not found for {url}: {primary}")
 
 
@@ -814,13 +966,22 @@ def _remove_existing_library_guides() -> None:
             _delete_object(obj)
 
 
+def _principled_bsdf(material: bpy.types.Material) -> Any:
+    """The material's Principled BSDF, found by node type (node names are localized)."""
+    try:
+        material.use_nodes = True  # deprecated (always on) in Blender 5.x; harmless there
+    except (AttributeError, TypeError):
+        pass
+    if material.node_tree is None:
+        return None
+    return next((node for node in material.node_tree.nodes if node.type == "BSDF_PRINCIPLED"), None)
+
+
 def _guide_material() -> bpy.types.Material:
     material = bpy.data.materials.get("GenesysBridgeGuideOrange")
     if material is None:
         material = bpy.data.materials.new("GenesysBridgeGuideOrange")
-    material.use_nodes = True
-    nodes = material.node_tree.nodes
-    principled = nodes.get("Principled BSDF")
+    principled = _principled_bsdf(material)
     if principled is not None:
         if principled.inputs.get("Base Color"):
             principled.inputs["Base Color"].default_value = (1.0, 0.45, 0.05, 1.0)
@@ -974,8 +1135,7 @@ def _cached_material(material_payload: Any, cache: dict[str, bpy.types.Material]
     material = cache.get(key)
     if material is None:
         material = bpy.data.materials.new(f"GenesysMesh_{len(cache):03d}")
-        material.use_nodes = True
-        principled = material.node_tree.nodes.get("Principled BSDF")
+        principled = _principled_bsdf(material)
         if principled is not None:
             principled.inputs["Base Color"].default_value = color
             principled.inputs["Roughness"].default_value = 0.65
@@ -994,107 +1154,167 @@ def _geometry_type_name(geometry: dict[str, Any]) -> str:
     return str(geometry.get("type") or geometry.get("name") or geometry.get("geometryType") or "")
 
 
-def _primitive_operator_mesh(operator_name: str, **kwargs: Any) -> bpy.types.Mesh:
-    _ensure_object_mode()
-    snapshot = {obj.name_full for obj in bpy.data.objects}
-    operator = getattr(bpy.ops.mesh, operator_name, None)
-    _require(operator is not None, f"Unsupported Blender primitive operator: {operator_name}")
-    result = operator(**kwargs)
-    if "FINISHED" not in result:
-        raise BridgeError(f"Primitive creation failed: {operator_name}")
-    created = [obj for obj in bpy.data.objects if obj.name_full not in snapshot]
-    mesh_objects = [obj for obj in created if obj.type == "MESH" and obj.data is not None]
-    _require(mesh_objects, f"Primitive operator created no mesh: {operator_name}")
-    obj = mesh_objects[0]
-    mesh = obj.data.copy()
-    _delete_object(obj)
-    return mesh
+# Primitive meshes are built with bmesh (no operators, no context). Mesh data is in the
+# Blender-local frame of a mirrored object: Genesys local (x, y, z) -> Blender (x, -z, y), so a
+# three.js shape built along +Y stands along +Z here, and one lying in the XY plane (plane,
+# circle, torus) is turned +90 degrees about X.
+_QUARTER_TURN_X = Matrix.Rotation(math.pi / 2.0, 4, "X")
 
 
-def _capsule_mesh(radius: float, length: float) -> bpy.types.Mesh:
-    depth = max(length, 0.0)
-    return _primitive_operator_mesh("primitive_capsule_add", radius=radius, depth=depth, vertices=24, rings=8)
-
-
-def _torus_mesh(major_radius: float, minor_radius: float) -> bpy.types.Mesh:
-    return _primitive_operator_mesh(
-        "primitive_torus_add",
-        major_radius=max(major_radius, 0.001),
-        minor_radius=max(minor_radius, 0.001),
-        major_segments=48,
-        minor_segments=16,
-    )
-
-
-def _box_mesh(width: float, height: float, depth: float) -> bpy.types.Mesh:
-    mesh = _primitive_operator_mesh("primitive_cube_add", size=2.0)
-    mesh.transform(
-        Matrix.Diagonal((max(width, 0.001) * 0.5, max(depth, 0.001) * 0.5, max(height, 0.001) * 0.5, 1.0))
-    )
+def _new_mesh_from_bmesh(bm: bmesh.types.BMesh, name: str) -> bpy.types.Mesh:
+    mesh = bpy.data.meshes.new(name)
+    bm.to_mesh(mesh)
+    bm.free()
     mesh.update()
     return mesh
 
 
-def _cylinder_mesh(radius_top: float, radius_bottom: float, height: float) -> bpy.types.Mesh:
-    return _primitive_operator_mesh(
-        "primitive_cone_add",
-        radius1=max(radius_bottom, 0.001),
-        radius2=max(radius_top, 0.001),
+def _box_mesh(width: float, height: float, depth: float) -> bpy.types.Mesh:
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    bmesh.ops.scale(bm, vec=(max(width, 0.001), max(depth, 0.001), max(height, 0.001)), verts=bm.verts)
+    return _new_mesh_from_bmesh(bm, "GenesysBox")
+
+
+def _cylinder_mesh(radius_top: float, radius_bottom: float, height: float, segments: int = 32) -> bpy.types.Mesh:
+    bm = bmesh.new()
+    bmesh.ops.create_cone(
+        bm,
+        cap_ends=True,
+        cap_tris=False,
+        segments=segments,
+        radius1=max(radius_bottom, 0.0),
+        radius2=max(radius_top, 0.0),
         depth=max(height, 0.001),
-        vertices=32,
     )
+    return _new_mesh_from_bmesh(bm, "GenesysCylinder")
 
 
 def _sphere_mesh(radius: float) -> bpy.types.Mesh:
-    return _primitive_operator_mesh("primitive_uv_sphere_add", radius=max(radius, 0.001), segments=32, ring_count=16)
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=32, v_segments=16, radius=max(radius, 0.001))
+    return _new_mesh_from_bmesh(bm, "GenesysSphere")
+
+
+def _icosphere_mesh(radius: float, detail: int) -> bpy.types.Mesh:
+    bm = bmesh.new()
+    bmesh.ops.create_icosphere(bm, subdivisions=max(1, min(detail + 1, 4)), radius=max(radius, 0.001))
+    return _new_mesh_from_bmesh(bm, "GenesysIcosphere")
+
+
+def _capsule_mesh(radius: float, length: float) -> bpy.types.Mesh:
+    """No capsule operator exists in Blender 5.x: split a UV sphere at its equator and
+    push the halves apart by the straight length (three.js CapsuleGeometry, along +Y)."""
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=15, radius=max(radius, 0.001))
+    half = max(length, 0.0) * 0.5
+    for vert in bm.verts:
+        vert.co.z += half if vert.co.z >= 0.0 else -half
+    return _new_mesh_from_bmesh(bm, "GenesysCapsule")
+
+
+def _plane_mesh(width: float, height: float) -> bpy.types.Mesh:
+    bm = bmesh.new()
+    bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=0.5)
+    bmesh.ops.scale(bm, vec=(max(width, 0.001), max(height, 0.001), 1.0), verts=bm.verts)
+    bmesh.ops.transform(bm, matrix=_QUARTER_TURN_X, verts=bm.verts)
+    return _new_mesh_from_bmesh(bm, "GenesysPlane")
+
+
+def _circle_mesh(radius: float, segments: int = 32) -> bpy.types.Mesh:
+    bm = bmesh.new()
+    bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=segments, radius=max(radius, 0.001))
+    bmesh.ops.transform(bm, matrix=_QUARTER_TURN_X, verts=bm.verts)
+    return _new_mesh_from_bmesh(bm, "GenesysCircle")
+
+
+def _torus_mesh(major_radius: float, minor_radius: float, major_segments: int = 48, minor_segments: int = 12) -> bpy.types.Mesh:
+    bm = bmesh.new()
+    rings = []
+    for i in range(major_segments):
+        u = 2.0 * math.pi * i / major_segments
+        ring = []
+        for j in range(minor_segments):
+            v = 2.0 * math.pi * j / minor_segments
+            r = major_radius + minor_radius * math.cos(v)
+            ring.append(bm.verts.new((r * math.cos(u), r * math.sin(u), minor_radius * math.sin(v))))
+        rings.append(ring)
+    for i in range(major_segments):
+        a, b = rings[i], rings[(i + 1) % major_segments]
+        for j in range(minor_segments):
+            k = (j + 1) % minor_segments
+            bm.faces.new((a[j], b[j], b[k], a[k]))
+    bmesh.ops.transform(bm, matrix=_QUARTER_TURN_X, verts=bm.verts)
+    return _new_mesh_from_bmesh(bm, "GenesysTorus")
+
+
+def _buffer_geometry_mesh(geometry: dict[str, Any]) -> bpy.types.Mesh:
+    """A three.js BufferGeometry JSON (data.attributes.position, optional data.index)."""
+    data = geometry.get("data") or {}
+    position = (data.get("attributes") or {}).get("position") or {}
+    values = position.get("array")
+    _require(isinstance(values, list) and len(values) >= 9, "BufferGeometry has no position array")
+    _require(int(position.get("itemSize", 3)) == 3, "BufferGeometry position itemSize must be 3")
+    verts = [(float(values[k]), -float(values[k + 2]), float(values[k + 1])) for k in range(0, len(values) - 2, 3)]
+    index = (data.get("index") or {}).get("array")
+    indices = [int(v) for v in index] if isinstance(index, list) and index else list(range(len(verts)))
+    faces = [tuple(indices[k : k + 3]) for k in range(0, len(indices) - 2, 3)]
+    _require(all(0 <= v < len(verts) for face in faces for v in face), "BufferGeometry index out of range")
+    mesh = bpy.data.meshes.new("GenesysBufferGeometry")
+    mesh.from_pydata(verts, [], faces)
+    mesh.validate(clean_customdata=False)
+    mesh.update()
+    return mesh
 
 
 def _primitive_mesh_from_geometry(geometry_payload: Any) -> tuple[bpy.types.Mesh, str]:
     geometry = _geometry_dict(geometry_payload)
     geometry_type = _geometry_type_name(geometry)
-    if geometry_type in {"BoxGeometry", "BoxBufferGeometry", "box"}:
-        parameters = geometry.get("parameters", geometry)
-        return _box_mesh(
-            float(parameters.get("width", 1.0)),
-            float(parameters.get("height", 1.0)),
-            float(parameters.get("depth", 1.0)),
-        ), "box"
+    parameters = geometry.get("parameters", geometry)
+    if not isinstance(parameters, dict):
+        parameters = {}
+
+    def number(key: str, default: float) -> float:
+        value = parameters.get(key, default)
+        return float(default if value is None else value)
+
+    if geometry_type in {"BoxGeometry", "BoxBufferGeometry", "box", "cube"}:
+        return _box_mesh(number("width", 1.0), number("height", 1.0), number("depth", 1.0)), "box"
     if geometry_type in {"CylinderGeometry", "CylinderBufferGeometry", "cylinder"}:
-        parameters = geometry.get("parameters", geometry)
-        return _cylinder_mesh(
-            float(parameters.get("radiusTop", parameters.get("radius", 0.5))),
-            float(parameters.get("radiusBottom", parameters.get("radius", 0.5))),
-            float(parameters.get("height", 1.0)),
-        ), "cylinder"
+        radius = number("radius", 0.5)
+        return _cylinder_mesh(number("radiusTop", radius), number("radiusBottom", radius), number("height", 1.0)), "cylinder"
+    if geometry_type in {"ConeGeometry", "ConeBufferGeometry", "cone"}:
+        return _cylinder_mesh(0.0, number("radius", 0.5), number("height", 1.0)), "cone"
     if geometry_type in {"SphereGeometry", "SphereBufferGeometry", "sphere"}:
-        parameters = geometry.get("parameters", geometry)
-        return _sphere_mesh(float(parameters.get("radius", 0.5))), "sphere"
+        return _sphere_mesh(number("radius", 0.5)), "sphere"
+    if geometry_type in {"IcosahedronGeometry", "icosahedron"}:
+        return _icosphere_mesh(number("radius", 1.0), int(number("detail", 0))), "icosahedron"
     if geometry_type in {"CapsuleGeometry", "capsule"}:
-        parameters = geometry.get("parameters", geometry)
-        radius = float(parameters.get("radius", 0.25))
-        length = float(parameters.get("length", parameters.get("height", 1.0)))
-        return _capsule_mesh(radius, length), "capsule"
+        length = parameters.get("length", parameters.get("height", 1.0))
+        return _capsule_mesh(number("radius", 0.25), float(1.0 if length is None else length)), "capsule"
+    if geometry_type in {"PlaneGeometry", "PlaneBufferGeometry", "plane"}:
+        return _plane_mesh(number("width", 1.0), number("height", 1.0)), "plane"
+    if geometry_type in {"CircleGeometry", "circle"}:
+        return _circle_mesh(number("radius", 1.0)), "circle"
     if geometry_type in {"TorusGeometry", "torus"}:
-        parameters = geometry.get("parameters", geometry)
-        return _torus_mesh(
-            float(parameters.get("radius", 1.0)),
-            float(parameters.get("tube", 0.25)),
-        ), "torus"
+        return _torus_mesh(number("radius", 1.0), number("tube", 0.4)), "torus"
+    if geometry_type == "BufferGeometry" and isinstance(geometry.get("data"), dict):
+        return _buffer_geometry_mesh(geometry), "buffer"
     raise BridgeError(f"Unsupported MeshNode geometry type: {geometry_type or '<missing>'}")
 
 
-def _light_type_for_class(class_name: str) -> str:
+def _light_type_for_class(class_name: str) -> str | None:
+    """Blender light type, or None for lights Blender has no object for (ambient and
+    hemisphere light are world lighting in Blender): those mirror as an empty."""
     if class_name.endswith("DirectionalLightNode"):
         return "SUN"
     if class_name.endswith("SpotLightNode"):
         return "SPOT"
     if class_name.endswith("PointLightNode"):
         return "POINT"
-    if class_name.endswith("HemisphereLightNode"):
+    if class_name.endswith("RectAreaLightNode") or class_name.endswith("AreaLightNode"):
         return "AREA"
-    if class_name.endswith("AreaLightNode"):
-        return "AREA"
-    return "SUN"
+    return None
 
 
 def _record_transform(record: dict[str, Any]) -> dict[str, list[float]]:
@@ -1131,6 +1351,8 @@ def _instantiate_record_object(
 ) -> tuple[bpy.types.Object, str | None]:
     class_name = str(record["className"])
     name = str(record["name"])
+    placeholder_reason: str | None = None
+    missing_source = False
     if class_name == "ENGINE.SceneNode":
         obj = bpy.data.objects.new(name, None)
         obj.empty_display_type = "PLAIN_AXES"
@@ -1152,14 +1374,28 @@ def _instantiate_record_object(
             obj.hide_render = False
         primitive_type = None
     elif class_name == "ENGINE.MeshNode":
-        mesh, primitive_type = _primitive_mesh_from_geometry(record.get("geometry"))
-        obj = bpy.data.objects.new(name, mesh)
-        material = _cached_material(record.get("material"), material_cache)
-        obj.data.materials.clear()
-        obj.data.materials.append(material)
+        # One unsupported or malformed mesh must not abort the sync: it becomes a
+        # placeholder empty that still carries the node id, so its transform round-trips.
+        try:
+            mesh, primitive_type = _primitive_mesh_from_geometry(record.get("geometry"))
+            obj = bpy.data.objects.new(name, mesh)
+            material = _cached_material(record.get("material"), material_cache)
+            obj.data.materials.clear()
+            obj.data.materials.append(material)
+        except Exception as error:  # noqa: BLE001 - any geometry failure becomes a placeholder
+            placeholder_reason = str(error) or type(error).__name__
+            obj = bpy.data.objects.new(name, None)
+            obj.empty_display_type = "CUBE"
+            obj.empty_display_size = 0.5
+            primitive_type = None
     elif _is_light_class(class_name):
-        light = bpy.data.lights.new(name, type=_light_type_for_class(class_name))
-        obj = bpy.data.objects.new(name, light)
+        light_type = _light_type_for_class(class_name)
+        if light_type is None:
+            obj = bpy.data.objects.new(name, None)
+            obj.empty_display_type = "SPHERE"
+            obj.empty_display_size = 0.3
+        else:
+            obj = bpy.data.objects.new(name, bpy.data.lights.new(name, type=light_type))
         primitive_type = None
     else:
         raise BridgeError(f"Unsupported class {class_name}")
@@ -1170,7 +1406,34 @@ def _instantiate_record_object(
     _apply_record_metadata(obj, record, primitive_type=primitive_type)
     if class_name == "ENGINE.ModelMeshNode" and missing_source:
         obj["genesys_missing_library_source"] = 1
+        placeholder_reason = f"model not importable: {record.get('modelUrl') or '<no modelUrl>'}"
+    if record.get("unsupportedReason") and placeholder_reason is None and obj.type == "EMPTY" and class_name != "ENGINE.SceneNode":
+        placeholder_reason = str(record["unsupportedReason"])
+    if placeholder_reason:
+        obj["genesys_placeholder_reason"] = placeholder_reason
     return obj, primitive_type
+
+
+def _restore_record_names(records: list[dict[str, Any]], created: dict[str, bpy.types.Object]) -> None:
+    """Objects built while an older mirror still existed got `.001` names. Once the old
+    collection is gone, give each object its Genesys name back where it is free, then
+    remember the final Blender name: a later duplicate copies the property but not the name,
+    which is how the diff tells the original from its copies."""
+    for record in records:
+        obj = created.get(str(record["id"]))
+        if obj is None:
+            continue
+        wanted = str(record["name"])
+        if obj.name != wanted:
+            # The plain name, else the lowest free .NNN suffix (Twin, Twin.001, not Twin.003).
+            candidates = [wanted] + [f"{wanted}.{index:03d}" for index in range(1, 1000)]
+            for candidate in candidates:
+                if candidate == obj.name:
+                    break
+                if bpy.data.objects.get(candidate) is None:
+                    obj.name = candidate
+                    break
+        obj["genesys_blender_name"] = obj.name
 
 
 def _parent_objects(records: list[dict[str, Any]], created: dict[str, bpy.types.Object]) -> dict[str, Any]:
@@ -1283,11 +1546,16 @@ def _repair_duplicate_ids(
             continue
         baseline = baseline_by_id.get(node_id)
         baseline_name = baseline["name"] if baseline else None
-        originals = [obj for obj in objects if obj.name == baseline_name]
+        # The original still has the name it got at sync (genesys_blender_name, which may
+        # carry a .001 suffix); a Blender duplicate copies that property under a new name.
+        originals = [obj for obj in objects if obj.name == str(obj.get("genesys_blender_name") or baseline_name)]
+        if len(originals) != 1:
+            originals = [obj for obj in objects if obj.name == baseline_name]
         if len(originals) != 1:
             raise BridgeError(
-                f"Ambiguous duplicate genesys_node_id {node_id}: expected "
-                f"exactly one object named {baseline_name!r}"
+                f"Ambiguous duplicate genesys_node_id {node_id} on "
+                f"{', '.join(sorted(obj.name for obj in objects))}: rename none of them, or delete "
+                "the extra copies, then diff again"
             )
         keep = originals[0]
         resolved[node_id] = keep
@@ -1304,6 +1572,8 @@ def _repair_duplicate_ids(
                         "genesys_actor_group",
                         "genesys_group_id",
                         "genesys_missing_library_source",
+                        "genesys_placeholder_reason",
+                        "genesys_blender_name",
                     ):
                         if key in obj:
                             del obj[key]
@@ -1348,13 +1618,12 @@ def _is_linked_library_instance(obj: bpy.types.Object, model_url: str) -> bool:
     )
 
 
-def _current_genesys_world_matrix(obj: bpy.types.Object) -> Matrix:
-    return _genesys_transform_to_matrix(_blender_matrix_to_genesys_transform(obj.matrix_world))
+def _current_genesys_world_matrix(obj: bpy.types.Object) -> M4:
+    return _blender_world_to_genesys_matrix(obj.matrix_world)
 
 
-def _transform_from_genesys_matrix(matrix: Matrix) -> dict[str, list[float]]:
-    location, rotation, scale = matrix.decompose()
-    return _transform_dict(location, rotation.to_euler("XYZ"), scale)
+def _transform_from_genesys_matrix(matrix: M4) -> dict[str, list[float]]:
+    return _decompose(matrix)
 
 
 def sync_from_genesys(args: argparse.Namespace) -> dict[str, Any]:
@@ -1370,14 +1639,17 @@ def sync_from_genesys(args: argparse.Namespace) -> dict[str, Any]:
     _ensure_top_level_collection("@project")
     mirror_info = _mirror_project_model_directories(project_root)
     project_urls = _all_project_model_urls(project_root)
-    engine_urls = sorted(
+    referenced_urls = sorted(
         {
-            str(record["modelUrl"])
+            _normalize_posix_path(str(record["modelUrl"]))
             for record in manifest["records"]
-            if record.get("modelUrl") and _normalize_posix_path(str(record["modelUrl"])).startswith("@engine/assets/")
+            if record.get("modelUrl")
         }
     )
-    all_urls = sorted(dict.fromkeys(project_urls + engine_urls))
+    engine_urls = [url for url in referenced_urls if url.startswith("@engine/")]
+    # Every project model under assets/models, plus whatever the scene references anywhere
+    # else (packs/, other assets/ folders, the engine).
+    all_urls = sorted(dict.fromkeys(project_urls + referenced_urls))
     imported: list[dict[str, Any]] = []
     skipped: list[dict[str, Any]] = []
     library_sources: dict[str, bpy.types.Object] = {}
@@ -1399,11 +1671,13 @@ def sync_from_genesys(args: argparse.Namespace) -> dict[str, Any]:
     material_cache: dict[str, bpy.types.Material] = {}
     ordered_records = sorted(manifest["records"], key=lambda record: int(record.get("outlineOrder", 0)))
     created: dict[str, bpy.types.Object] = {}
-    placeholders: list[str] = []
+    placeholders: list[dict[str, Any]] = []
     for record in ordered_records:
         obj, _ = _instantiate_record_object(record, library_sources, material_cache)
-        if obj.get("genesys_missing_library_source"):
-            placeholders.append(obj.name)
+        if obj.get("genesys_placeholder_reason"):
+            placeholders.append(
+                {"id": str(record["id"]), "name": str(record["name"]), "reason": str(obj["genesys_placeholder_reason"])}
+            )
         temp_collection.objects.link(obj)
         created[str(record["id"])] = obj
     parenting_info = _parent_objects(ordered_records, created)
@@ -1418,6 +1692,7 @@ def sync_from_genesys(args: argparse.Namespace) -> dict[str, Any]:
     )
     removed_factory = remove_factory_starter_scene()
     swap_info = _swap_scene_collection(temp_collection, target_name, replace_untagged)
+    _restore_record_names(ordered_records, created)
     reorder_info = reorder_top_level_collections(target_name)
     viewport_info = _apply_viewport_preferences()
     _store_baseline_manifest(manifest)
@@ -1440,6 +1715,7 @@ def sync_from_genesys(args: argparse.Namespace) -> dict[str, Any]:
         mirrorDirectories=mirror_info["directoriesMirrored"],
         projectModelUrls=len(project_urls),
         engineModelUrls=len(engine_urls),
+        referencedModelUrls=len(referenced_urls),
         importedLibraries=imported,
         librarySkipped=skipped,
         libraryLayout=layout_result,
@@ -1503,16 +1779,18 @@ def diff(args: argparse.Namespace) -> dict[str, Any]:
             _record_parent_transform(baseline_record)
         )
         baseline_local = _transform_from_genesys_matrix(
-            baseline_parent_matrix.inverted_safe() @ baseline_world_matrix
+            _mat_mul(_affine_inverse(baseline_parent_matrix), baseline_world_matrix)
         )
         current_parent_matrix = (
             _current_genesys_world_matrix(obj.parent)
             if obj.parent is not None
-            else Matrix.Identity(4)
+            else _identity4()
         )
         current_local = _transform_from_genesys_matrix(
-            current_parent_matrix.inverted_safe()
-            @ _genesys_transform_to_matrix(current_transforms[node_id])
+            _mat_mul(
+                _affine_inverse(current_parent_matrix),
+                _current_genesys_world_matrix(obj),
+            )
         )
         if _transform_changed(baseline_local, current_local):
             changed_ids.add(node_id)
@@ -1560,9 +1838,9 @@ def diff(args: argparse.Namespace) -> dict[str, Any]:
         parent_world = (
             _current_genesys_world_matrix(obj.parent)
             if target_parent_id and obj.parent is not None
-            else Matrix.Identity(4)
+            else _identity4()
         )
-        desired_local_matrix = parent_world.inverted_safe() @ _genesys_transform_to_matrix(desired_world)
+        desired_local_matrix = _mat_mul(_affine_inverse(parent_world), _current_genesys_world_matrix(obj))
         additions.append(
             {
                 "operation": "addModel",
@@ -1782,23 +2060,37 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="blender_bridge.py")
+    parser = argparse.ArgumentParser(
+        prog="blender_bridge.py",
+        description="Genesys <-> Blender scene bridge. Run inside Blender: "
+        "blender -b [file.blend] --python blender_bridge.py -- <command> ... "
+        "The last stdout lines are one JSON result and RESULT ok|fail.",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    sync_parser = subparsers.add_parser("sync-from-genesys")
-    sync_parser.add_argument("--manifest", required=True)
-    sync_parser.add_argument("--project-root", required=True)
-    sync_parser.add_argument("--output", required=True)
-    sync_parser.add_argument("--target-level")
-    sync_parser.add_argument("--overwrite", action="store_true")
-    sync_parser.add_argument("--replace-untagged", action="store_true")
+    target_help = (
+        "Name of the Blender scene collection to build or read. Default: the scene file name "
+        "from the manifest's sourceScene (e.g. default.genesys-scene)."
+    )
+    sync_parser = subparsers.add_parser("sync-from-genesys", help="Build the Blender mirror from a merged manifest")
+    sync_parser.add_argument("--manifest", required=True, help="Merged manifest JSON (merge_manifest_chunks.py)")
+    sync_parser.add_argument("--project-root", required=True, help="Game project root (has assets/ and node_modules/)")
+    sync_parser.add_argument("--output", required=True, help="Output .blend, e.g. .scratch/blender-bridge/<scene>.blend")
+    sync_parser.add_argument("--target-level", help=target_help)
+    sync_parser.add_argument("--overwrite", action="store_true", help="Replace an existing output file")
+    sync_parser.add_argument(
+        "--replace-untagged",
+        action="store_true",
+        help="Allow replacing a target collection that holds objects the bridge did not create "
+        "(they are deleted and listed in swap.deletedUntagged)",
+    )
 
-    diff_parser = subparsers.add_parser("diff")
-    diff_parser.add_argument("--target-level")
-    diff_parser.add_argument("--output")
+    diff_parser = subparsers.add_parser("diff", help="Write the reviewed-edit delta from the open .blend")
+    diff_parser.add_argument("--target-level", help=target_help)
+    diff_parser.add_argument("--output", help="Delta JSON, e.g. .scratch/blender-bridge/changes.bridge-delta.json")
 
-    validate_parser = subparsers.add_parser("validate")
-    validate_parser.add_argument("--target-level")
+    validate_parser = subparsers.add_parser("validate", help="Check a fresh mirror against its baseline")
+    validate_parser.add_argument("--target-level", help=target_help)
     return parser
 
 
@@ -1823,13 +2115,17 @@ def main(argv: list[str] | None = None) -> int:
         else:
             raise BridgeError(f"Unsupported command: {operation}")
         _print_json_result(result)
-        return 0 if result.get("ok", False) else 1
+        ok = bool(result.get("ok", False))
     except BridgeError as error:
         _print_json_result(_error_result(operation, error))
-        return 1
+        ok = False
     except Exception as error:  # pragma: no cover - Blender runtime failure path
         _print_json_result(_error_result(operation, error))
-        return 1
+        ok = False
+    # Blender's exit status does not reliably carry the script's; callers read this line.
+    sys.stdout.write(f"RESULT {'ok' if ok else 'fail'}\n")
+    sys.stdout.flush()
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

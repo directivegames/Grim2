@@ -1,14 +1,21 @@
-// Genesys MCP run_script body for a reviewed Blender bridge delta.
-// Replace DELTA with the parsed bridge-delta JSON. Keep APPLY=false for preview.
+// Genesys MCP run_script body for a reviewed Blender bridge delta (one batch of it).
+// Generate the bodies with `python3 <this-skill>/scripts/make_bridge_scripts.py apply ...`
+// (it splits the delta into batches under the code-size and time limits and injects DELTA,
+// APPLY and DELETIONS), or paste the parsed delta into DELTA by hand. APPLY=false previews.
+// Re-running a batch is safe: transforms already at their target and additions that already
+// exist (same model, parent and world transform) are reported and skipped, never duplicated.
 
 const DELTA = null;
 const APPLY = false;
 // Deletions are never inferred. Embed only IDs the user explicitly approved,
 // each as { id, name, className }, so a stale ID cannot delete the wrong node.
 const DELETIONS = [];
-const POSITION_EPSILON = 1e-5;
-const SCALE_EPSILON = 1e-5;
+// max(1e-4, 1e-6 * |value|): MCP values are rounded decimals, so a fixed 1e-5 sat in the noise.
+const POSITION_EPSILON = 1e-4;
+const SCALE_EPSILON = 1e-4;
+const RELATIVE_EPSILON = 1e-6;
 const ROTATION_EPSILON = 1e-3;
+const SAMPLE = 20; // arrays in the response stay short; counts carry the totals
 
 if (!DELTA || DELTA.format !== "genesys-blender-bridge-delta") {
   throw new Error("Embed a valid genesys-blender-bridge-delta in DELTA");
@@ -66,6 +73,19 @@ function distance(left, right) {
   );
 }
 
+function epsilonFor(base, ...vectors) {
+  const magnitude = Math.max(0, ...vectors.flat().map((value) => Math.abs(Number(value) || 0)));
+  return Math.max(base, RELATIVE_EPSILON * magnitude);
+}
+
+// A result over the MCP response limit comes back cut to 100 items with a _meta block.
+function assertComplete(label, result) {
+  if (result?._meta || result?.truncated === true) {
+    throw new Error(`${label} result was truncated by the MCP response limit; use smaller batches`);
+  }
+  return result;
+}
+
 function quaternionXYZ(rotation) {
   const [x, y, z] = rotation;
   const c1 = Math.cos(x / 2);
@@ -82,8 +102,9 @@ function quaternionXYZ(rotation) {
   ];
 }
 
-// Quaternion comparison, so equivalent Euler representations of one orientation
-// do not register as changes or conflicts.
+// Genesys rotations are three.js Euler 'XYZ' (radians); quaternionXYZ is three's own
+// Quaternion.setFromEuler for that order. Comparing quaternions means equivalent Euler
+// representations of one orientation do not register as changes or conflicts.
 function rotationError(left, right) {
   const a = quaternionXYZ(left);
   const b = quaternionXYZ(right);
@@ -99,8 +120,8 @@ function rotationError(left, right) {
 
 function transformChanged(left, right) {
   return (
-    distance(left.position, right.position) > POSITION_EPSILON ||
-    distance(left.scale, right.scale) > SCALE_EPSILON ||
+    distance(left.position, right.position) > epsilonFor(POSITION_EPSILON, left.position, right.position) ||
+    distance(left.scale, right.scale) > epsilonFor(SCALE_EPSILON, left.scale, right.scale) ||
     rotationError(left.rotation, right.rotation) > ROTATION_EPSILON
   );
 }
@@ -139,11 +160,14 @@ for (const deletion of DELETIONS) {
 
 const detailsById = new Map();
 const ids = [...requestedIds];
-for (let index = 0; index < ids.length; index += 200) {
-  const result = await genesys.queryNode({
-    operation: "getDetails",
-    componentIds: ids.slice(index, index + 200),
-  });
+for (let index = 0; index < ids.length; index += 50) {
+  const result = assertComplete(
+    "getDetails",
+    await genesys.queryNode({
+      operation: "getDetails",
+      componentIds: ids.slice(index, index + 50),
+    }),
+  );
   for (const component of result.components || []) {
     detailsById.set(component.id, component);
   }
@@ -151,6 +175,7 @@ for (let index = 0; index < ids.length; index += 200) {
 
 const conflicts = [];
 const approvedChanges = [];
+const alreadyApplied = [];
 for (const change of changes) {
   if (!supportedTransformClass(change.className)) {
     conflicts.push({ id: change.id, reason: "unsupported class" });
@@ -167,6 +192,11 @@ for (const change of changes) {
     (current.parentId || null) !== (change.parentId || null)
   ) {
     conflicts.push({ id: change.id, reason: "node identity or parent changed" });
+    continue;
+  }
+  if (!transformChanged(transform(current), change.desiredWorld)) {
+    // Already at the target: an earlier run of this batch got here. Nothing to write.
+    alreadyApplied.push(change.name);
     continue;
   }
   if (transformChanged(transform(current), change.baselineWorld)) {
@@ -188,12 +218,15 @@ for (const change of changes) {
 
 const editableById = new Map();
 for (let index = 0; index < approvedChanges.length; index += 20) {
-  const result = await genesys.queryNode({
-    operation: "getEditableProperties",
-    componentIds: approvedChanges
-      .slice(index, index + 20)
-      .map((change) => change.id),
-  });
+  const result = assertComplete(
+    "getEditableProperties",
+    await genesys.queryNode({
+      operation: "getEditableProperties",
+      componentIds: approvedChanges
+        .slice(index, index + 20)
+        .map((change) => change.id),
+    }),
+  );
   for (const component of result.components || []) {
     editableById.set(
       component.id,
@@ -234,11 +267,75 @@ for (const addition of additions) {
   approvedAdditions.push({ ...addition, targetParentId: parentId });
 }
 
+// Idempotent re-apply: an addition whose model already sits under the same parent at the same
+// world transform was created by an earlier run of this batch. Skip it instead of duplicating.
+const existingAdditions = [];
+if (approvedAdditions.length) {
+  const tree = assertComplete(
+    "getTree(ModelMeshNode)",
+    await genesys.queryNode({ operation: "getTree", query: "ENGINE.ModelMeshNode", limit: 500 }),
+  );
+  if ((tree.nodes || []).length >= 500) {
+    throw new Error("500+ ModelMeshNodes: cannot prove additions are not already applied");
+  }
+  const parents = new Set(approvedAdditions.map((addition) => addition.targetParentId));
+  const candidates = (tree.nodes || []).filter(
+    (node) => node.className === "ENGINE.ModelMeshNode" && parents.has(node.parentId || null),
+  );
+  const candidateDetails = new Map();
+  for (let index = 0; index < candidates.length; index += 50) {
+    const result = assertComplete(
+      "getDetails",
+      await genesys.queryNode({
+        operation: "getDetails",
+        componentIds: candidates.slice(index, index + 50).map((node) => node.id),
+      }),
+    );
+    for (const component of result.components || []) {
+      if (component?.id && !component.error) candidateDetails.set(component.id, component);
+    }
+  }
+  const usedCandidates = new Set();
+  const stillNeeded = [];
+  for (const addition of approvedAdditions) {
+    const near = candidates.filter(
+      (node) =>
+        !usedCandidates.has(node.id) &&
+        (node.parentId || null) === addition.targetParentId &&
+        candidateDetails.has(node.id) &&
+        !transformChanged(transform(candidateDetails.get(node.id)), addition.desiredWorld),
+    );
+    let match = null;
+    if (near.length) {
+      const editable = assertComplete(
+        "getEditableProperties",
+        await genesys.queryNode({ operation: "getEditableProperties", componentIds: near.slice(0, 20).map((node) => node.id) }),
+      );
+      for (const component of editable.components || []) {
+        const url = (component.editableProperties || []).find((property) => property.path === "modelUrl")?.value;
+        if (url === addition.modelUrl && !usedCandidates.has(component.id)) {
+          match = component.id;
+          break;
+        }
+      }
+    }
+    if (match) {
+      usedCandidates.add(match);
+      existingAdditions.push({ blenderName: addition.name, componentId: match });
+    } else {
+      stillNeeded.push(addition);
+    }
+  }
+  approvedAdditions.length = 0;
+  approvedAdditions.push(...stillNeeded);
+}
+
 const approvedDeletions = [];
 for (const deletion of DELETIONS) {
   const current = detailsById.get(deletion.id);
   if (!current || current.error) {
-    conflicts.push({ id: deletion.id, reason: "delete target already gone" });
+    // Gone already: an earlier run of this batch deleted it (re-running is safe).
+    alreadyApplied.push(deletion.name);
     continue;
   }
   if (current.name !== deletion.name || current.className !== deletion.className) {
@@ -258,16 +355,22 @@ for (const deletion of DELETIONS) {
 
 const preview = {
   scenePath: DELTA.sourceScene,
+  batch: DELTA.batch ?? null,
   updates: approvedChanges.length,
   additions: approvedAdditions.length,
-  deletions: approvedDeletions.map((deletion) => deletion.name),
-  conflicts,
-  unsupported: DELTA.unsupported || [],
-  missingBaselineIds: DELTA.missingBaselineIds || [],
-  updateSamples: approvedChanges.slice(0, 20).map((change) => change.name),
+  alreadyApplied: alreadyApplied.length + existingAdditions.length,
+  deletions: approvedDeletions.map((deletion) => deletion.name).slice(0, SAMPLE),
+  deletionCount: approvedDeletions.length,
+  conflictCount: conflicts.length,
+  conflicts: conflicts.slice(0, SAMPLE),
+  unsupportedCount: (DELTA.unsupported || []).length,
+  unsupported: (DELTA.unsupported || []).slice(0, SAMPLE),
+  missingBaselineIdCount: (DELTA.missingBaselineIds || []).length,
+  updateSamples: approvedChanges.slice(0, SAMPLE).map((change) => change.name),
   additionSamples: approvedAdditions
-    .slice(0, 20)
+    .slice(0, SAMPLE)
     .map((addition) => addition.name),
+  alreadyAppliedSamples: [...alreadyApplied, ...existingAdditions.map((entry) => entry.blenderName)].slice(0, SAMPLE),
   wouldSave:
     APPLY &&
     (approvedChanges.length > 0 ||
@@ -293,7 +396,10 @@ async function uniqueName(modelUrl) {
   const stem = (modelUrl.split("/").pop() || "Model").replace(/\.glb$/i, "");
   let usedNames = namesByStem.get(stem);
   if (!usedNames) {
-    const result = await genesys.queryNode({ operation: "find", query: stem });
+    const result = assertComplete(
+      "find",
+      await genesys.queryNode({ operation: "find", query: stem, limit: 500 }),
+    );
     if ((result.nodes || []).length >= 500) {
       throw new Error(`Cannot prove a unique node name for asset stem ${stem}`);
     }
@@ -354,11 +460,14 @@ const verifyIds = [
   ...created.map((entry) => entry.componentId),
 ];
 const verifiedById = new Map();
-for (let index = 0; index < verifyIds.length; index += 200) {
-  const result = await genesys.queryNode({
-    operation: "getDetails",
-    componentIds: verifyIds.slice(index, index + 200),
-  });
+for (let index = 0; index < verifyIds.length; index += 50) {
+  const result = assertComplete(
+    "getDetails",
+    await genesys.queryNode({
+      operation: "getDetails",
+      componentIds: verifyIds.slice(index, index + 50),
+    }),
+  );
   for (const component of result.components || []) {
     if (component?.id && !component.error) verifiedById.set(component.id, component);
   }
@@ -413,8 +522,9 @@ if (approvedChanges.length || created.length || deleted.length) {
 return {
   ...preview,
   applied: true,
-  created,
-  deleted,
+  createdCount: created.length,
+  created: created.slice(0, SAMPLE),
+  deleted: deleted.slice(0, SAMPLE),
   verifiedTransforms: verifyIds.length,
   verifiedDeletions: deleted.length,
   saved:

@@ -2,10 +2,16 @@
 
 "This project is not linked to a game yet"
 : `store-config.ts` has an empty `gameId` and the runtime id is a placeholder
-  (`"editor"`, `"dev-game"`). Run `genesys.actionStore({ action: 'linkGame' })`
+  (`"editor"`, `"dev-game"`, `"local"`). Run `genesys.actionStore({ action: 'linkGame' })`
   (it writes `gameId` into `<project>.genesys-project`) and rerun the install
   script, or copy `gameId` from `<project>.genesys-project` into
   `store-config.ts`.
+
+Test Silicon or drafts show on a published game, or real Silicon in the editor
+: The store reads `window._genesys_is_published_game_` from the page: `true` is
+  a player store, anything else is the editor. Only the published play page
+  `/play/<gameId>` sets it. If a custom host serves a published game, set the flag
+  before the game starts.
 
 Guest state in the editor
 : The creator is not signed into Studio, or the game runs on plain

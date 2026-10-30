@@ -1,0 +1,1 @@
+{ "role": "kit", "export": "assets/models/kit/SM_Wall_4m.glb", "expect": { "size": [4.0, 4.0, 0.6], "tris": [500, 6000], "materials": 4, "bottom": 0 } }

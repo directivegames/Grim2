@@ -21,6 +21,7 @@ Re-registering an existing id replaces that entry and keeps its index — that i
 to override base content after `super.createGSSNode()`. Applying or triggering an
 unregistered id warns and is ignored; nothing registers lazily at apply time.
 
+Source: .engine/src/gameplay-sim/GSSNode.ts (`addMovementMode`, `addAbility`), entities/GSSCharacterPawn.ts (`createGSSNode`)
 ```ts
 class MyPawn extends ENGINE.GSSCharacterPawn {
   protected override createGSSNode(): ENGINE.GSSNode {
@@ -39,7 +40,7 @@ the first registered mode. Seed base attributes alongside registration with
 Registering no modes at all is allowed — a sim node is a usable ability, attribute, and tag
 container on its own, and it leaves the target's transform to whatever else moves the actor. Be
 aware that it then has no movement of **any** kind: `simulate()` still collects
-`IGSSEffect.proposeMove` proposals and mixes them, but with no mode to consume the result it is
+`IGSSEffect.proposeMove` proposals, but with no mode to receive them in `generateMove` the result is
 discarded, so knockback and launch effects silently do nothing. When an actor should hold still yet
 stay pushable, register `GSSIdleMode` rather than leaving the mode list empty.
 
@@ -74,6 +75,8 @@ That also means there is no way to reposition a sim-driven actor by assignment. 
 teleporter, or cutscene move has to go through the simulation so that it replays identically: apply
 an effect, run an ability, or set an external tag a mode reacts to. `setSyncState` looks like the
 exception but is not — it is the correction path, called by prediction with authoritative state.
+The working respawn/checkpoint recipe (`queueEvent('respawn')` → ability → instant effect →
+`ctx.teleport`) is in [gss-abilities-effects](gss-abilities-effects.md).
 
 ## The movement target
 
@@ -113,6 +116,7 @@ and deliberately unapplied: putting it on the simulated node would drag collisio
 along with the blend. Add it to a child visual instead, rotating it into that child's parent space
 first — `GSSCharacterPawn` does exactly this with its mesh:
 
+Source: .engine/src/gameplay-sim/GSSNode.ts (`onMovementModeChanged`), entities/GSSCharacterPawn.ts (`beginPlay`, `onSimVisualOffsetChanged`)
 ```ts
 class MyPawn extends ENGINE.GSSCharacterPawn {
   public override beginPlay(): boolean {
@@ -142,7 +146,7 @@ Each simulating tick:
 3. Run abilities (`shouldRun`, `onActivate`, `execute`, cooldown).
 4. Run newly applied effects' `onApplied`, then `onTick`.
 5. Run effect `modifyAttributes` pass B.
-6. Collect effect movement proposals, then run the active mode.
+6. Collect effect movement proposals and pass them to the active mode's `generateMove`, then `tick` the desired move it returns. The mode decides whether and how to mix them (`mixProposedMoves`); the node does not.
 7. Expire instant, timed, or explicitly removed effects after movement.
 8. Queue transitions. The switch itself runs in post-physics, after the simulated mode's `onPostPhysics` and before the network digest, so that mode finishes before `onDeactivate` and the hashed state includes the new mode.
 9. Store `prevInputTagsDown`.
@@ -157,7 +161,7 @@ A sim node pulls from a single input producer (`setInputProducer`), which report
 tags only. The sim node owns edge detection so correction replay and repeated inputs cannot
 double-fire press-triggered abilities.
 
-GSS and network-prediction bookkeeping uses integer milliseconds. `GSSTimeStep`
+GSS and network-prediction bookkeeping (see `../../genesys-multiplayer/references/network-prediction.md`) uses integer milliseconds. `GSSTimeStep`
 exposes `simTimeMs`, `dtMs`, and `traceTimeMs`; effect `durationMs` / `elapsedMs` and ability
 cooldown durations use the same unit. Per-tick callbacks receive `dt` in seconds: input producers,
 abilities, effects, movement `tick`, rewind-radius hooks, and cues. `onPostPhysics` takes no delta.
@@ -182,9 +186,10 @@ Correction resimulation (`timeStep.isResim`) rewinds nearby `IRewindable` nodes
 (`rewindInRadius` around the sim pose) before that replayed `tick`, then restores them.
 A normal predicted tick and a normal authority tick do not. `GSSNode` registers as rewindable;
 `NetRewindablePhysicsProp` is the shipped pattern for barrels, crates, and similar props.
-Classic `BasePawnMovementNode` pawns do not implement `IRewindable`. Mixing classic locomotion
-on some pawns and GSS on others is therefore safe only when they do not interact
-through collision, traces, or effects. Contact with a non-rewindable pawn uses present pose
+Classic `BasePawnMovementNode` pawns do not implement `IRewindable`. In single-player and in any
+game without network prediction nothing is rewound, so classic NPCs next to a GSS player are fine.
+With prediction on, mixing classic locomotion on some pawns and GSS on others is safe only when they
+do not interact through collision, traces, or effects. Contact with a non-rewindable pawn uses present pose
 instead of sim-time pose, so dashes, jumps, knockback, and hit confirmation diverge. Making
 those pawns trustworthy partners means adding history, `rewind`/`restore`, registration with
 `NetPredictionManager`, and re-simulation from saved input — the work GSS already
@@ -194,3 +199,16 @@ does for sim-driven actors.
 
 `IGSSCue` supports state cues evaluated from simulation/proxy state and event cues multicast with
 prediction-key deduplication.
+
+## Limitations
+
+- Top-down GSS dash always goes screen-up → `GSSDashEffect` uses `ctx.getYaw()` (control yaw) → replace `ability.Dash`/`effect.Dash` with the stick-direction pair ([gss-abilities-effects](gss-abilities-effects.md)).
+
+## Traps
+
+- `GSSWalkingMode({ maxSpeed })` has no effect on `GSSCharacterPawn` → the `MoveSpeed` attribute (5) wins → `sim.setBaseAttribute(ENGINE.GSSTags.MoveSpeed, v)`.
+- GSS launch pad never lifts the hero → the effect proposes Y with `mixY: Ignore`, or the pawn has no character controller (walking then keeps the vertical speed but does not translate Y) → propose Y with Override or Additive, and give the hero a physics body.
+- Knockback does nothing on a GSS turret → no modes registered → `GSSIdleMode`.
+- Clients desync after a code change → content registered from a lifecycle hook → register only in `createGSSNode()`; tags at module load.
+- Two controllers fight over a pawn (warning from `setInputProducer`) → clear with `setInputProducer(null)` guarded by `getInputProducer() === this`.
+- Jump or dash fires twice after a correction → a custom producer detects edges itself → report currently-down tags only.

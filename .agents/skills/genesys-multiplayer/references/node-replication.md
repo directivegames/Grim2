@@ -1,5 +1,7 @@
 # Node Replication
 
+Source: .engine/src/nodes/multiplayer/ReplicationInfo.ts, .engine/src/nodes/multiplayer/MultiplayerSpawner.ts, .engine/src/multiplayer/Networking.ts (`SpawnMethod`), .engine/src/multiplayer/ServerAuthorityNetWorld.ts.
+
 Replication is the mechanism by which the server keeps clients up to date. A replicated entity is an `isRoot && replicated` `SceneNode` plus its replicated descendants, stopping at nested roots (those are their own entities). The engine auto-creates `ReplicationInfo` on the entity root and periodically transmits property updates for every member (see Replication Send Rate below — not every game tick).
 
 ## Enabling Replication
@@ -20,6 +22,7 @@ export class PickupRoot extends ENGINE.PrimitiveNode {
 Call `this.ensureReplicationInfo()` when you need the info object before play (for example to call `setAutonomousProxy`). `PlayerController` and `Pawn` already do this internally.
 
 When the server adds a replicated entity root to the world, the engine assigns a global `NetId` to its `ReplicationInfo` and spawns a copy on all relevant clients. When the server destroys the root, the copies are removed. The info also carries `netLocalRole` / `netRemoteRole` — Authority on the server, `SimulatedProxy` on clients by default (`AutonomousProxy` for the owning client's controller/pawn — see [player-ownership](player-ownership.md)).
+
 ## Replicating Properties
 
 Mark individual properties with `replicate: true` inside the `@ENGINE.property` decorator. The enclosing class must be `@ENGINE.GameClass()`.
@@ -49,6 +52,26 @@ Rules:
 - Replicated properties are also persisted when the property metadata instructs it. Add `transient: true` if the property should travel over the network but not be saved to a scene file.
 - Properties are transmitted in a compact binary format. See Net Type and Quantization below for how to control wire encoding.
 - A replicated property that holds a reference to another node is only reconciled on the client once both nodes have replicated. If the referenced node is not inside a replicated entity, the reference will never resolve on the client.
+
+### `onRep<PropName>()` callbacks
+
+When a client applies an update, it calls a method named `onRep` + the property name with its first letter upper-cased (`isOpen` → `onRepIsOpen()`, `sessionState` → `onRepSessionState()`), with no arguments, after every property in that update has been applied (`.engine/src/multiplayer/ObjectSerializer.ts`, `ClientNetWorld.ts`). The property needs `replicate: true` and a resolved `net` block (the build's property-metadata step fills one in; a property still without `net` is skipped with a warning). Node-reference properties fire their callback once the reference resolves; for an array the callback fires once for the whole array. Callbacks never run on the server: call the same presentation method there directly. The engine's own example is `GameSessionInfo.onRepSessionState()`.
+
+Source: .engine/src/multiplayer/ObjectSerializer.ts (`onRep` + capitalised property name), .engine/src/entities/GameSessionInfo.ts (`onRepSessionState`); typechecked against 18.1.0-alpha.317
+```ts
+@ENGINE.GameClass()
+export class Gate extends ENGINE.PrimitiveNode {
+  constructor() { super(); this.isRoot = true; this.replicated = true; }
+
+  @ENGINE.property({ replicate: true, net: { netType: 'bool' } })
+  public isOpen = false;
+
+  // Client only: runs after an update that changed isOpen has been applied (no arguments).
+  public onRepIsOpen(): void {
+    this.setHiddenInGame(this.isOpen);
+  }
+}
+```
 
 ## Reparenting
 
@@ -95,8 +118,7 @@ Quantization converts a float to a compact integer representation on the wire. C
 
 | Mode | Description | Best for |
 |---|---|---|
-| `range` | Fixed-bit index in `[min, max]`; clamps outside the range | Bounded values that should stick at a limit (limited pitch, bounded position) |
-| `angle` | `2^bits` steps around one turn; wraps with modulo, short deltas across the branch cut | Free rotations (euler components, yaw) |
+| `range` | Fixed-bit index in `[min, max]`; always `bits` bits per value | Bounded values with predictable cost (rotation, bounded position) |
 | `scale` | Multiply by `scale`, round, zigzag varint; cheap near zero | Unbounded floats with a fixed decimal precision (velocity, health fraction) |
 | `float16` | IEEE 754 half-precision delta; ~3 sig. figs | General floats where ~0.001 error is acceptable |
 | `float32` | 32-bit monotone delta varint; full precision | High-precision floats where delta compression still helps |
@@ -110,10 +132,10 @@ Quantization converts a float to a compact integer representation on the wire. C
 }})
 public position: THREE.Vector3 = new THREE.Vector3();
 
-// Free euler rotation — 16 bits per axis, wraps past ±π instead of clamping
+// Euler rotation — 16 bits per axis over full [-π, π] range
 @ENGINE.property({ replicate: true, net: {
   netType: 'euler',
-  quantization: { mode: 'angle', bits: 16 }
+  quantization: { mode: 'range', min: -Math.PI, max: Math.PI, bits: 16 }
 }})
 public rotation: THREE.Euler = new THREE.Euler();
 
@@ -160,7 +182,7 @@ public blendWeight: number = 0;
 
 There is no generic `replicateTransform` flag for `SceneNode`/`PrimitiveNode` roots. For a plain `Pawn`, transform replication is not automatic: creating a `ReplicationInfo` does not by itself move the node on remote clients.
 
-- For player/AI-controlled movement, use a `MovementPawn` subclass (e.g. `CharacterPawn`) whose movement node consumes `NetMovementPredictor` — client-side prediction and server reconciliation are built in.
+- For player/AI-controlled movement, use a `MovementPawn` subclass (e.g. `CharacterPawn`) whose movement node predicts and reconciles the owning client (saved moves in `BasePawnMovementNode`); `NetMovementPredictor` only smooths simulated proxies.
 - For simple non-player roots that move (projectiles, pickups, moving platforms), implement an explicit replicated `NetTransform`-style property (position/rotation as replicated properties with quantization, see above) with authority-side writes and an `onRep*` callback that applies the value on remote clients. Merely adding replicated position/rotation properties is sufficient.
 
 ## Relevance and Ownership Scoping
@@ -168,7 +190,7 @@ There is no generic `replicateTransform` flag for `SceneNode`/`PrimitiveNode` ro
 By default, once a replicated root's `ReplicationInfo` channel is established with a client, that client keeps receiving its updates for as long as both are connected — there is no per-tick distance/relevance culling hook on `SceneNode`/`PrimitiveNode` roots. To scope *who* sees what:
 
 - Use `replicateTo: 'owner'` / `'non-owner'` (above) to control which clients receive a given property, not the whole entity.
-- Use `@SpawnMethod({ audience: 'owner' })` or `spawnPrefab(path, [clientId])` (see Scene-Placed vs Dynamically Spawned Roots below) to spawn a subtree that only materializes for one client — a player's private inventory, hand UI, or other per-player entity.
+- Use a `MultiplayerSpawner` method decorated `@ENGINE.SpawnMethod({ audience: 'owner' })`, or `spawnPrefab(path, [clientId])` (see Scene-Placed vs Dynamically Spawned Roots below), to spawn a whole subtree that only materializes for one client — the right tool for a player's private inventory, hand-UI, or other per-player-only entity.
 
 There is no distance-culling hook and no `setNetRelevant` / `onlyRelevantToOwner` API. Owner-only entities go through the spawner audience above.
 
@@ -176,17 +198,21 @@ There is no distance-culling hook and no `setNetRelevant` / `onlyRelevantToOwner
 
 The server batches replication into packets sent at a fixed global rate, independent of the game loop tick rate. The default is 30 Hz and applies to all replicated roots uniformly. Change it via `setReplicationSendRate` on the `ServerAuthorityNetWorld`, typically from server-only setup code (e.g. inside `GameMode.initialize` or the server entry point), not inside node code:
 
+Source: .engine/src/multiplayer/ServerAuthorityNetWorld.ts (`setReplicationSendRate`), .engine/src/game/World.ts (`netWorld` getter) — typechecked against 18.1.0-alpha.317
 ```typescript
 import * as ENGINE from '@gnsx/genesys.js';
 
-// Access netWorld through the World instance (world.netWorld is a public readonly property).
-const netWorld = world.netWorld as ENGINE.ServerAuthorityNetWorld;
+declare const world: ENGINE.World;
+
+// The server's net world (ServerAuthorityNetWorld) has setReplicationSendRate, but the class is not exported,
+// so narrow structurally. On clients and standalone the method is absent and the call does nothing.
+const net = world.netWorld as ENGINE.NetWorld & { setReplicationSendRate?: (hz: number) => void };
 
 // Send 20 packets per second instead of the default 30
-netWorld.setReplicationSendRate(20);
+net.setReplicationSendRate?.(20);
 
 // Disable throttling — send a replication packet every game tick
-netWorld.setReplicationSendRate(0);
+net.setReplicationSendRate?.(0);
 ```
 
 A lower rate reduces outbound bandwidth at the cost of higher client-visible latency for property updates. RPCs are not affected by this setting — they are sent immediately regardless of the replication send rate.
@@ -225,6 +251,8 @@ await spawner.spawnPickup(position);
 // Server: spawn a private entity visible only to one player
 await spawner.spawnPrivateItem(ownerClientId);
 ```
+
+With `audience: 'owner'`, the first call argument is the owner `ClientId` (non-zero; it is not sent on the wire), and the spawned entity is owned by that client. A spawner method without `@SpawnMethod` is refused (`is not a @SpawnMethod`). Remove a spawn with `despawn(spawnId)` or `despawnInstance(root)`.
 
 `MultiplayerSpawner` keeps a journal of its spawns (recipe + args) keyed by its own stable `NodePath`. The server notifies clients (or the owner-only audience) of new/removed journal entries; each client materializes the same recipe locally via `applyRemoteSpawn`, so both sides end up with an equivalent tree that the generic `ReplicationInfo` channel can then bind to and delta-update. Late-joining clients replay the spawner's current journal instead of missing spawns that happened before they connected.
 

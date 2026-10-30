@@ -7,11 +7,12 @@ virtualStoreType: global
 publicHoistPattern:
   - '*eslint*'
   - '*prettier*'
+  # @types/three's meshopt_decoder.module.d.ts re-exports `meshoptimizer/decoder`
+  # (MeshoptDecoder, used by scripts/genesys/calc-bounding-box.ts).
   - 'meshoptimizer'
   - 'node-stdlib-browser'
 allowBuilds:
   esbuild: true
-  sharp: true
   canvas: true
   # Node WebTransport (optional engine dep). Unlisted packages get a
   # "set this to true or false" placeholder and ERR_PNPM_IGNORED_BUILDS.

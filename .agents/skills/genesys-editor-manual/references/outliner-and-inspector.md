@@ -4,13 +4,13 @@ The editor uses a Node Outliner (world-level `SceneNode` tree) and Node Inspecto
 
 ## Outliner panel
 
-Dock Left/Right via Outliner Options.
+Dock it from the panel's ⋯ menu (Left, Right or Bottom zone, Split, Merge With Group, Move Tab, Collapse, Hide), or drag its tab.
 
 | Control | Path | Notes |
 | --- | --- | --- |
 | Search | Toolbar | Filter Nodes. Prefixes: `t:` / `type:` (class), `id:` (uuid). `#uuid` and trailing `[uuid]` still match ids. Visible rows are matches plus ancestors (ancestors dimmed; children of a hit stay hidden unless they also match). Enter selects direct matches. `Ctrl/Cmd+F` focuses the field. Outliner Options **Filter by Type** inserts `t:` |
 | Expand / collapse | Chevron | Shift-click expands or collapses the whole branch. Outliner Options **Expand All** / **Collapse All** (sticky document root stays open). While dragging a node, hold over a collapsed parent for a moment to expand it so you can drop onto its children |
-| Add node / prefab | + (`NodeAddPicker`) | Node class picker (tab reads "Node") or prefab place. `Ctrl/Cmd+Shift+A` opens the picker (`Ctrl/Cmd+A` stays select-all) |
+| Add node / prefab | + (Add Node dialog) | Categorised dialog (Recent, Favorites, Common, Custom Classes, Prefabs, engine groups such as Lights / Meshes / Cameras) with search across all of them. Adds under the current selection. Enter adds, Shift+Enter adds and keeps it open, Tab changes category. `Ctrl/Cmd+Shift+A` opens it (`Ctrl/Cmd+A` stays select-all) |
 | Missing asset | Warning glyph before lock/eye | Tooltip lists missing paths on that node only |
 | Editor hide | Eye; tooltip Hide/Show Object in Editor; H | Editor-only. Children of a hidden ancestor are dimmed; the eye stays open with tooltip **Hidden by Parent**. Viewport still uses the per-node flag |
 | Editor lock | Lock; Lock/Unlock selection (L) | Editor-only |
@@ -23,7 +23,7 @@ Folders, Move to Folder, and Add Folder are not in the Node Outliner. Organisati
 
 ### Node context menu
 
-Header · Add to Current/New Chat · Prefab slot · Add · Move Up (`Ctrl/Cmd+Up`) · Move Down (`Ctrl/Cmd+Down`) · Reparent… · Reparent to New Node… · Show/Hide (H) · Lock Selection / Unlock Selection (L) · Focus (F) · Rename (F2) · Cut (`Ctrl/Cmd+X`) · Copy (`Ctrl/Cmd+C`) · Paste (`Ctrl/Cmd+V`) · Paste as Sibling (`Ctrl/Cmd+Shift+V`) · Duplicate (`Ctrl/Cmd+D`) · Remove (Del)
+Header · Add to Current/New Chat · Prefab slot · Add Node… · Move Up (`Ctrl/Cmd+Up`) · Move Down (`Ctrl/Cmd+Down`) · Reparent… · Reparent to New Node… · Show/Hide (H) · Lock Selection / Unlock Selection (L) · Focus (F) · Rename (F2) · Cut (`Ctrl/Cmd+X`) · Copy (`Ctrl/Cmd+C`) · Paste (`Ctrl/Cmd+V`) · Paste as Sibling (`Ctrl/Cmd+Shift+V`) · Duplicate (`Ctrl/Cmd+D`) · Remove (Del)
 
 View commands (Show/Hide, Lock, Focus) are grouped separately from Rename / Cut / Copy / Paste / Duplicate. Remove stays last.
 
@@ -42,11 +42,11 @@ The Prefab slot is one row so shared commands stay in the same place:
 - Placed instance (and children): Prefab submenu — Edit Prefab (`/`; MCP `action_prefab.open`), and on instance roots also Apply to Prefab, Resync Prefab, Editable Children, Show in Asset Browser, Unlink from Prefab… (MCP `action_prefab.apply` / `resync` / `setEditableChildren` / `unlink`)
 - Normal node: Save Branch as Prefab (not on placed prefab instance roots; MCP `action_prefab.createFromNode`)
 
-Prefab document Root: Show Prefab in Asset Browser · Add · Paste. Scene Root: Add · Paste. Copy nodes in the scene Outliner, then open a prefab and Paste / `Ctrl/Cmd+V` under Root or a selected prefab node (nested instances stay instances). Apply / Resync / Unlink still prompt (Inspector toolbar or this submenu). Engine prefabs disable Apply and Unlink.
+Prefab document Root: Show Prefab in Asset Browser · Add Node… · Paste. Scene Root: Add Node… · Paste. Copy nodes in the scene Outliner, then open a prefab and Paste / `Ctrl/Cmd+V` under Root or a selected prefab node (nested instances stay instances). Apply / Resync / Unlink still prompt (Inspector toolbar or this submenu). Engine prefabs disable Apply and Unlink.
 
 ### Outliner-focused extras
 
-F Focus · `Ctrl/Cmd+F` filter · `Ctrl/Cmd+Shift+A` Add picker · `Ctrl/Cmd+X`/`C`/`V`/`Shift+V`/`D` · `Ctrl/Cmd+Up`/`Down` move among siblings (Outliner focus only — unmodified arrows stay focus/selection) · F2 rename · Root Paste for world-level paste
+F Focus · `Ctrl/Cmd+F` filter · `Ctrl/Cmd+Shift+A` Add Node dialog · `Ctrl/Cmd+X`/`C`/`V`/`Shift+V`/`D` · `Ctrl/Cmd+Up`/`Down` move among siblings (Outliner focus only — unmodified arrows stay focus/selection) · F2 rename · Root Paste for world-level paste
 
 ## Inspector panel
 

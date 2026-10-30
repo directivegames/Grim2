@@ -1,82 +1,73 @@
-# Input Handling
+# Input handling
 
-The Genesys engine provides a centralized input management system via the InputManager class.
+The engine centralizes input in `InputManager`. Raw input reaches gameplay through a `PlayerController`, which calls action methods on the pawn.
 
-## Core Classes
+Source: .engine/src/systems/InputManager.ts, .engine/src/entities/PlayerController.ts, .engine/src/entities/DefaultPlayerController.ts, .engine/src/nodes/movement/BasePawnMovementNode.ts
 
-InputManager — Centralized system for capturing and distributing keyboard, mouse, gamepad, and touch input. Created by the World.
+## Core classes
 
-IInputHandler Interface — Objects implementing this receive events. Handlers return true to consume events.
+- **InputManager** — captures keyboard, mouse, gamepad, and touch input and distributes it. The World creates it: `world.inputManager`.
+- **IInputHandler** — objects that receive events. Methods return `true` to consume an event. Members: `handleKeyDown`, `handleKeyUp`, `handleMouseDown`, `handleMouseUp`, `handleMouseMove`, `handleMouseClick`, and optional `handleGamepadButtonDown`, `handleGamepadButtonUp`, `handleGamepadAxisChange`, `handleVirtualJoystick`, `handleSwipe`, `handleTap`, `handleMouseWheel`, plus `setInputManager`.
+- **BaseInputHandler** — convenience base with no-op methods. Extend it and override only what you need. `UIManager` is one.
 
-BaseInputHandler — Convenience base class with default no-op methods. Extend this to override only specific inputs.
+## Registering handlers
 
-Reference: See InputManager.ts in engine source.
+`world.inputManager.addInputHandler(handler)` and `removeInputHandler(handler)`. Register in `beginPlay`, unregister in `endPlay`.
 
-## Virtual Joysticks (Mobile)
+## Pointer lock
 
-On mobile browsers, InputManager creates nipplejs virtual joysticks in the game container. Configure them via `virtualJoystickOptions` on `BaseGameLoopOptions` (forwarded through `WorldOptions` to `InputManager`).
+First-person and mouse-look controls need pointer lock. Use `inputManager.requestPointerLock(options?)` and `exitPointerLock()`. The browser grants it only after a user gesture (a click). `PointerLockOptions.unadjustedMovement` (default false) requests raw mouse movement without OS acceleration. `PlayerController` requests pointer lock on `beginPlay` unless created with `noPointerLock: true`. When to lock and unlock (aim with cursor, menus, pause) is owned by `genesys-camera` and `genesys-ui`.
 
-Key types: `VirtualJoystickOptions`, `VirtualJoystickStickOptions`, `VirtualJoystickZoneOptions`.
+## Virtual joysticks (mobile)
 
-- Shared options apply to both sticks: `size`, `color`, `opacity`, `mode`, `fadeTime`, `threshold`, `catchDistance`
-- Per-stick overrides: `left` and `right` (each `VirtualJoystickStickOptions | false`)
-- `enabled: 'auto' | boolean` — `auto` (default) limits joysticks to mobile; set `VITE_DEBUG_TOUCH_INPUT=true` to test on desktop
-- `hidden: true` is deprecated; use `enabled: false`
-- Modes: `static`, `dynamic`, `semi`
-- Zone elements use `data-genesys-virtual-joystick-zone="left"` or `"right"` for CSS targeting
+On mobile browsers `InputManager` creates nipplejs virtual joysticks in the game container. Configure them with `virtualJoystickOptions` on `BaseGameLoopOptions` (forwarded through `WorldOptions` to `InputManager`).
 
-Runtime API on `world.inputManager`:
+- Types: `VirtualJoystickOptions`, `VirtualJoystickStickOptions`, `VirtualJoystickZoneOptions`, `VirtualJoystickPositionOptions`.
+- Shared options: `size`, `color`, `opacity`, `mode`, `fadeTime`, `threshold`, `catchDistance`.
+- Per-stick overrides: `left` and `right` (each `VirtualJoystickStickOptions | false`), which also take `zone` and `position`.
+- `enabled: 'auto' | boolean` — `auto` (default) creates sticks on mobile, or on desktop when the page URL has `?debugTouchInput=1` (editor Play's Mobile Preview adds it). Use `enabled: false` to turn them off.
+- Modes: `static`, `dynamic`, `semi`.
+- Zone elements carry `data-genesys-virtual-joystick-zone="left"` or `"right"` for CSS targeting.
+- Runtime: `world.inputManager.showVirtualJoystick()` / `hideVirtualJoystick()` / `isVirtualJoystickEnabled()` / `isVirtualJoystickVisible()`.
 
-- `showVirtualJoystick()` / `hideVirtualJoystick()`
-- `isVirtualJoystickEnabled()` / `isVirtualJoystickVisible()`
+Touch layouts per genre, buttons, and recipes: `genesys-touch-controls`.
 
-See [mobile-controls pattern](../patterns/mobile-controls.md) for configuration recipes.
+## PlayerController integration
 
-## Registering Handlers
+`PlayerController` is a minimal base (identity, networking, possession, pointer lock, handler registration) that implements `IInputHandler` with inert stubs. `DefaultPlayerController` does the raw-input-to-action translation and owns all raw input handling. `Pawn`, `MovementPawn`, `CharacterPawn`, and `GameplayPawn` have no `onKeyDown` / `handleKeyDown`-style input methods; they expose actions only.
 
-Register handlers with inputManager.addInputHandler and remove with removeInputHandler.
+1. `InputManager` captures raw input.
+2. `DefaultPlayerController` receives events through `IInputHandler`.
+3. It accumulates normalized movement values. It guards movement dispatch with `instanceof MovementPawn`, and combat/interaction with the structural `isCombatPawn` / `isInteractPawn` guards from `PawnActions.ts`, because not every pawn supports them and `GameplayPawn` / `DefaultCharacterPawn` share no ancestor for that code.
+4. In `tickPrePhysics` it calls the pawn's actions: `moveForward`, `moveRight`, `lookUp`, `lookRight`, `zoom`, `jump`, `stopJump`.
+5. `MovementPawn` and subclasses forward these to `movementNode`.
 
-## Pointer Lock
+`DefaultCharacterPawn` is the exception. It re-exposes `onKeyDown`, `onKeyUp`, `onMouseDown`, `onMouseUp`, `onGamepadButtonDown`, `onGamepadButtonUp`, and `onGamepadAxisChange` delegates, which `DefaultPlayerController` invokes first whenever the possessed pawn is a `DefaultCharacterPawn`. This exists so older games can migrate by swapping `CharacterPawn` for `DefaultCharacterPawn`. New pawns use a `PlayerController` subclass instead.
 
-Essential for first-person controls. Use inputManager.requestPointerLock and exitPointerLock. Pointer lock requires user interaction (click) to activate.
+Write a custom `PlayerController` subclass when a game needs a different control scheme (vehicle or RTS layout) or extra keys. Override `handleKeyDown` and friends, narrow `this.pawn` with `instanceof YourPawn`, and call a public action on the pawn.
 
-## PlayerController Integration
+Source: .engine/src/entities/PlayerController.ts
+```typescript
+@ENGINE.GameClass()
+export class PuzzleController extends ENGINE.DefaultPlayerController {
+  public override handleKeyDown(e: KeyboardEvent): boolean {
+    if (e.code === 'KeyR' && this.pawn instanceof PuzzlePawn) {
+      this.pawn.resetBoard();
+      return true;
+    }
+    return super.handleKeyDown(e);
+  }
+}
+```
 
-`PlayerController` is a minimal base (identity, networking, possession, pointer-lock/input-handler
-registration) that implements `IInputHandler` with inert stubs. `DefaultPlayerController` (the
-concrete class every demo/template uses) does the actual raw-input-to-action translation, and owns
-*all* raw input handling — `Pawn`/`MovementPawn`/`CharacterPawn`/`GameplayPawn` have no
-`onKeyDown`/`onMouseDown`/etc. delegates or `handleKeyDown`/etc. methods; they only expose action
-methods for a controller to call:
-1. InputManager captures raw input.
-2. DefaultPlayerController receives events via IInputHandler.
-3. DefaultPlayerController accumulates normalized movement values, and guards pawn-specific
-   dispatch with `instanceof MovementPawn` for movement, and the structural `isCombatPawn` /
-   `isInteractPawn` guards (from `PawnActions.ts`) for combat/interaction — since not every
-   possessed Pawn supports movement or combat/interaction, and `GameplayPawn` /
-   `DefaultCharacterPawn` intentionally don't share a common ancestor for that code.
-4. During tickPrePhysics, values are sent to the Pawn via its action methods (`moveForward`,
-   `moveRight`, `lookUp`, `lookRight`, `zoom`, `jump`, `stopJump`).
-5. `MovementPawn` (and subclasses) forward these calls to `movementNode` (deprecated `movementComponent` accessor still exists).
+## Movement nodes and the mouse
 
-`DefaultCharacterPawn` is the one exception: it re-exposes `onKeyDown`/`onKeyUp`/`onMouseDown`/
-`onMouseUp`/`onGamepadButtonDown`/`onGamepadButtonUp`/`onGamepadAxisChange` delegates, which
-`DefaultPlayerController` invokes first (before its own built-in handling) whenever the possessed
-pawn is a `DefaultCharacterPawn`. This exists purely so existing games built against the
-pre-refactor `Pawn` can migrate by swapping `CharacterPawn` for `DefaultCharacterPawn` without
-having to move input handling into a controller; new pawns should not rely on this and should use
-a `PlayerController` subclass instead.
+`BasePawnMovementNode` has no-op `handleMouseDown`, `handleMouseUp`, `handleMouseMove`, and a `handleMouseWheel`. `DefaultPlayerController` forwards raw mouse events to `this.pawn.movementNode` (when the pawn is a `MovementPawn`) before its own handling. `TopDownMovementNode` uses this for middle-mouse drag pan without pointer lock.
 
-Write a custom `PlayerController` subclass instead of `DefaultPlayerController` when a game needs
-a different control scheme entirely (e.g. bespoke vehicle or RTS input layout), or extra
-game-specific keys — override the relevant `handleKeyDown`/etc. method, narrow `this.pawn` with
-`instanceof YourPawnClass`, and call a public action method on the pawn.
+## Best practices
 
-Movement nodes may also handle mouse directly: `BasePawnMovementNode` provides default no-op `handleMouseDown`, `handleMouseUp`, and `handleMouseMove`. `DefaultPlayerController` forwards raw mouse events straight to `this.pawn.movementNode` (when the pawn is a `MovementPawn`) before falling back to its own delegate events — used by `TopDownMovementNode` for middle-mouse drag pan without pointer lock.
-
-## Best Practices
-
-- Return true from handler methods to consume events and stop propagation.
-- Register handlers in beginPlay and unregister in endPlay.
-- Extend BaseInputHandler instead of implementing the full interface.
-- Normalize movement input to -1..1 range.
+- Return `true` from a handler to consume the event and stop propagation.
+- Register handlers in `beginPlay`, unregister in `endPlay`.
+- Extend `BaseInputHandler` instead of implementing the whole interface.
+- Normalize movement input to -1..1.
+- Check that each control moves the pawn the way its label says on screen (`genesys-movement`).

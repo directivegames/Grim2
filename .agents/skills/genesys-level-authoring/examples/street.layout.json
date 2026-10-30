@@ -1,0 +1,203 @@
+{
+  "_comment": "ILLUSTRATIVE: road, lawn, house, fence and lamp paths under @project/assets/models/town/ are placeholders (build prints WARN missing model) - replace them with your kit. Trees use an engine model. Small-town street on a 6 degree slope: 10 road tiles, lawns both sides, 14 houses per side, fences and trees instanced, lamps.",
+  "prefab": "assets/prefabs/levels/Street.prefab.json",
+  "name": "Street",
+  "seed": 3,
+  "root": {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotation": [
+      -6,
+      0,
+      0
+    ]
+  },
+  "assets": {
+    "road": "@project/assets/models/town/SM_Road_20m.glb",
+    "lawn": "@project/assets/models/town/SM_Lawn_20m.glb",
+    "cottage": "@project/assets/models/town/SM_House_Cottage.glb",
+    "tall": "@project/assets/models/town/SM_House_Tall.glb",
+    "porch": "@project/assets/models/town/SM_House_Porch.glb",
+    "fence": "@project/assets/models/town/SM_Fence_4m.glb",
+    "tree": "@engine/assets/models/demo/LowPoly/SM_Tree01.glb",
+    "lamp": "@project/assets/models/town/SM_StreetLamp.glb"
+  },
+  "defaults": {
+    "physics": false
+  },
+  "groups": [
+    {
+      "name": "Road",
+      "defaults": {
+        "castShadow": false
+      },
+      "items": [
+        {
+          "key": "road",
+          "asset": "road",
+          "position": [
+            0,
+            0,
+            10
+          ],
+          "repeat": {
+            "count": 10,
+            "step": [
+              0,
+              0,
+              -20
+            ]
+          }
+        },
+        {
+          "key": "lawn",
+          "asset": "lawn",
+          "position": [
+            27,
+            0,
+            10
+          ],
+          "repeat": {
+            "count": 10,
+            "step": [
+              0,
+              0,
+              -20
+            ]
+          },
+          "mirror": "x",
+          "instanced": true
+        }
+      ]
+    },
+    {
+      "name": "Houses",
+      "items": [
+        {
+          "key": "house",
+          "asset": [
+            "cottage",
+            "tall",
+            "porch"
+          ],
+          "position": [
+            17,
+            0.42,
+            0
+          ],
+          "rotation": [
+            0,
+            -90,
+            0
+          ],
+          "repeat": {
+            "count": 14,
+            "step": [
+              0,
+              0,
+              -16
+            ]
+          },
+          "mirror": "x",
+          "jitter": {
+            "position": [
+              1,
+              0,
+              0.8
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Props",
+      "items": [
+        {
+          "key": "fence",
+          "asset": "fence",
+          "position": [
+            7.35,
+            0.42,
+            -6
+          ],
+          "rotation": [
+            0,
+            90,
+            0
+          ],
+          "repeat": {
+            "count": 24,
+            "step": [
+              0,
+              0,
+              -8
+            ]
+          },
+          "mirror": "x",
+          "instanced": true,
+          "castShadow": false
+        },
+        {
+          "key": "tree",
+          "asset": "tree",
+          "position": [
+            10.5,
+            0.42,
+            -8
+          ],
+          "repeat": {
+            "count": 12,
+            "step": [
+              0,
+              0,
+              -16
+            ]
+          },
+          "mirror": "x",
+          "jitter": {
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "rotation": [
+              0,
+              180,
+              0
+            ],
+            "scale": 0.15
+          },
+          "instanced": true,
+          "castShadow": true
+        },
+        {
+          "key": "lamp",
+          "asset": "lamp",
+          "position": [
+            6.55,
+            0.45,
+            -16
+          ],
+          "rotation": [
+            0,
+            -90,
+            0
+          ],
+          "repeat": {
+            "count": 6,
+            "step": [
+              0,
+              0,
+              -32
+            ]
+          },
+          "mirror": "x",
+          "instanced": true
+        }
+      ]
+    }
+  ]
+}

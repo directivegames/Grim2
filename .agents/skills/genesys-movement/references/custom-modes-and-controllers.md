@@ -2,56 +2,103 @@
 
 ## Writing a custom IGSSMovementMode
 
-Implement the `IGSSMovementMode` contract from `.engine/src/gameplay-sim/IGSSMovementMode.ts`:
+Implement the `IGSSMovementMode` contract from `.engine/src/gameplay-sim/IGSSMovementMode.ts`. A body
+mode that must collide (swim, glide, wall-run) is easiest as a subclass of `GSSFallingMode` or
+`GSSWalkingMode`: they own the character-controller sweep, and the shared controller helpers are not
+exported. Every mode needs a way in and a way out.
 
-```typescript
-import * as THREE from 'three';
-import * as ENGINE from '@gnsx/genesys.js';
+Example: swimming. A trigger volume sets an external tag; walking and falling switch to `swimming`
+while it is held; swimming leaves when it is gone.
 
-class SwimmingMode implements ENGINE.IGSSMovementMode {
-  public readonly id = 'swimming';
-  public readonly transitions: ENGINE.IGSSMovementModeTransition[] = [];
-  public maxSpeed = 4;
-
-  public onActivate(_target: ENGINE.SceneNode): void {}
-  public onDeactivate(_target: ENGINE.SceneNode): void {}
-
-  public generateMove(ctx: ENGINE.GSSMovementContext): ENGINE.GSSDesiredMove {
-    const dir = ctx.input.moveInput.clone();
-    if (dir.lengthSq() > 1) dir.normalize();
-    return { velocity: dir.multiplyScalar(this.maxSpeed) };
-  }
-
-  public tick(
-    ctx: ENGINE.GSSMovementSimContext,
-    proposedMove: ENGINE.GSSDesiredMove,
-    dt: number,
-  ): void {
-    ctx.translate(proposedMove.velocity, dt);
-    ctx.setVelocityFrom(proposedMove.velocity);
-  }
-}
-```
-
-Register on the pawn, in `createGSSNode()`:
-
+Source: .engine/src/gameplay-sim/modes/GSSFallingMode.ts, IGSSMovementModeTransition.ts, GSSNode.ts (`addExternalTagId`), .engine/src/nodes/gameplay/TriggerZoneNode.ts (composed — typechecked against 18.1.0-alpha.317)
 ```ts
-protected override createGSSNode(): ENGINE.GSSNode {
-  const sim = super.createGSSNode();
-  sim.addMovementMode(new SwimmingMode());
-  return sim;
+export const IN_WATER = ENGINE.GSSTagRegistry.register('status.InWater'); // external tag, set by the volume
+
+class EnterWater implements ENGINE.IGSSMovementModeTransition {
+  public evaluate(ctx: ENGINE.GSSMovementContext): string | null {
+    return ctx.tags.has(IN_WATER) ? 'swimming' : null;
+  }
+}
+class LeaveWater implements ENGINE.IGSSMovementModeTransition {
+  public evaluate(ctx: ENGINE.GSSMovementContext): string | null {
+    return ctx.tags.has(IN_WATER) ? null : 'falling'; // falling hands over to walking on contact
+  }
+}
+
+/** Falling-mode subclass: inherits the controller sweep, so walls and the pool floor collide. */
+export class SwimmingMode extends ENGINE.GSSFallingMode {
+  public swimUp = 3;   // m/s while Jump is held
+  public sink = -1;    // m/s otherwise
+  public speedScale = 0.6;
+  constructor() {
+    super({ id: 'swimming', maxMidAirJumps: 0, accelerationLambda: 4, decelerationLambda: 2 });
+    this.transitions.length = 0;          // drop falling's "grounded → walking" exit
+    this.transitions.push(new LeaveWater());
+  }
+  public override generateMove(ctx: ENGINE.GSSMovementContext, proposals: readonly ENGINE.GSSProposedMove[]): ENGINE.GSSDesiredMove {
+    const move = super.generateMove(ctx, proposals); // MoveSpeed attribute, camera-relative, proposals mixed
+    move.velocity.x *= this.speedScale;
+    move.velocity.z *= this.speedScale; // leave Y: it is the current vertical speed plus any effect
+    return move;
+  }
+  public override tick(ctx: ENGINE.GSSMovementSimContext, move: ENGINE.GSSDesiredMove, dt: number): void {
+    const target = ctx.inputTags.has(ENGINE.GSSTags.InputJump) ? this.swimUp : this.sink;
+    const g = (ctx.target.getPhysicsEngine()?.getOptions()?.gravity.y ?? -9.81) * this.characterControllerOptions.simulatedGravityScale;
+    // super.tick adds g*dt to move.velocity.y; pre-subtract it so the net vertical speed is the damped swim target
+    const vy = THREE.MathUtils.damp(ctx.getVelocityY(), target, 6, dt);
+    move.velocity.y = vy - g * Math.min(dt, 0.2);
+    super.tick(ctx, move, dt);
+  }
+}
+
+/** Trigger volume over the water. Place it with MCP; size it to the swimmable depth. */
+@ENGINE.GameClass()
+export class WaterVolume extends ENGINE.TriggerZoneNode {
+  public override beginPlay(): boolean {
+    if (!super.beginPlay()) return false;
+    this.onActorEntered.add((actor) => actor.getNode(ENGINE.GSSNode)?.addExternalTagId(IN_WATER));
+    this.onActorExited.add((actor) => actor.getNode(ENGINE.GSSNode)?.removeExternalTagId(IN_WATER));
+    return true;
+  }
 }
 ```
+
+Register on the pawn, in `createGSSNode()`. Walking and falling get the way in; the first non-null
+transition wins, so put it first.
+
+Source: .engine/src/gameplay-sim/entities/GSSCharacterPawn.ts (`createGSSNode`) (composed — typechecked against 18.1.0-alpha.317)
+```ts
+@ENGINE.GameClass()
+export class Swimmer extends ENGINE.GSSCharacterPawn {
+  protected override createGSSNode(): ENGINE.GSSNode {
+    const sim = super.createGSSNode();
+    const walking = new ENGINE.GSSWalkingMode();
+    const falling = new ENGINE.GSSFallingMode();
+    walking.transitions.unshift(new EnterWater());
+    falling.transitions.unshift(new EnterWater());
+    sim.addMovementMode(walking);                  // replace in place, now with a way into water
+    sim.addMovementMode(falling);
+    sim.addMovementMode(new SwimmingMode());
+    return sim;
+  }
+}
+```
+
+Size the volume to the swimmable depth: inside it the pawn always swims, so shallow water left outside it stays walking. Swim animation is
+presentation: react to `onMovementModeChanged` ([gss-mechanics](gss-mechanics.md)). Overlap events
+between a trigger and the kinematic character capsule, and the in-water feel, verify in Play. A mode
+written from scratch (no subclass) must collide on its own: `ctx.translate` alone moves through
+geometry, like `GSSIdleMode`'s effect displacement.
 
 Required members:
 
 - `id` — registration id, also the target of `queueMovementMode` and transitions.
 - `transitions` — outgoing automatic transitions, checked after movement.
-- `generateMove(ctx)` — intent only; do not call physics and do not mutate anything.
-- `tick(ctx, proposedMove, dt)` — resolve the proposed move (character controller, etc.)
-  through `ctx`; `dt` is in seconds.
+- `generateMove(ctx, proposals)` — the desired velocity for this tick, from input and the effect proposals. Do not call physics and do not mutate anything. `mixProposedMoves(seed, proposals)` applies each proposal per axis. A mode that ignores `proposals` does not move from effects.
+- `tick(ctx, proposedMove, dt)` — integrate that desired move (character controller, etc.)
+  through `ctx`; `dt` is in seconds. `proposedMove.velocity` is already resolved, including effect contributions the mode chose to mix.
 - `onActivate(target)` / `onDeactivate(target)` — mode switch hooks.
-- Optional `cleanup(target)`, `onPostPhysics(target)`, `applySyncState(target, state)`,
+- Optional `onTeleported(ctx)` (runs instead of `tick` on a teleport tick), `cleanup(target)`, `onPostPhysics(target)`, `applySyncState(target, state)`,
   `getRewindRadius(dt, attrs)`. `tick` and `getRewindRadius` take seconds. `onPostPhysics` runs after the physics step and takes no delta.
 
 ### The two contexts
@@ -88,16 +135,12 @@ just teleports the target.
 
 ## Writing a custom IGSSMovementModeTransition
 
-```typescript
-class ToSwimmingTransition implements ENGINE.IGSSMovementModeTransition {
-  evaluate(ctx: ENGINE.GSSMovementContext): string | null {
-    return ctx.tags.has(ENGINE.GSSTags.Falling) ? null : 'swimming';
-  }
-}
-```
+A transition reads the `GSSMovementContext` (read-only) and returns a mode id or `null`. `EnterWater`
+and `LeaveWater` above are complete examples. Transitions live on the mode's `transitions` array
+(readonly property, mutable array): `push` adds a fallback, `unshift` adds a priority check.
 
-First non-null `evaluate` result wins. `GSSNode.queueMovementMode(id, priority)` overrides
-when something (an ability or effect) requests a switch this tick.
+First non-null `evaluate` result wins. An ability or effect requests a switch this tick with
+`ctx.movement.queueMovementMode(id, priority?)`; the switch runs in post-physics.
 
 ## Writing a custom IGSSInputProducer / controller
 
@@ -107,6 +150,7 @@ detect edges.
 
 `AIController` implements the same producer against `GSSNode` for path follow / look-at.
 
+Source: .engine/src/gameplay-sim/IGSSInputProducer.ts, entities/GSSPlayerController.ts
 ```typescript
 class MyProducer implements ENGINE.IGSSInputProducer {
   produceInputCmd(cmd: ENGINE.GSSInputCmd, _dt: number): void {

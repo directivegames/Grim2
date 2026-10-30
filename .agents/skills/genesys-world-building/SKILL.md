@@ -2,12 +2,18 @@
 name: genesys-world-building
 description: Build outdoor worlds and their look in Genesys — world recipes (applyWorld), environment presets, world styles (realistic, anime, low-poly, volcanic, snow, desert, alien), sky, sun, fog, tone mapping, textured terrain and islands, grass, trees and plants, water (ocean, lake, river), landmarks, floating objects, and orbit/showcase cameras. Use for any "make a scene / ocean / islands / forest / valley / landscape / city at night" prompt, before primitives or Poly Builder, when adding terrain or water to a scene that already has gameplay props, and when wrapping a three.js addon as a node.
 metadata:
-  tokens: 2341
+  tokens: 2438
 ---
 
 # World Building
 
 Genesys has engine nodes for every part of an outdoor scene. Use them; do not fake terrain with cones, water with a recoloured ground plane, or sky with a background colour. Engine source is at `.engine/src/` — read signatures there before setting unfamiliar properties.
+
+## Use another skill when
+
+- Indoor, dungeon and practical lights, shadows and cascades, emissive glow, lightmaps, a game's grade set from code → `genesys-lighting`
+- Play-space blockout, walls, bounds, spawns, bulk prop layouts, instanced props in a built space → `genesys-level-authoring`; Poly Builder → `genesys-polybuilder`
+- Where a model, texture or HDRI comes from → `genesys-assets`
 
 ## Decision: recipe, hand-build, or escape hatch
 

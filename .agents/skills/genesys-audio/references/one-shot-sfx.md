@@ -4,26 +4,28 @@ For sounds that aren't tied to a node you already control — an impact at a ray
 
 ## Getting the manager
 
+Source: `.engine/src/utils/GlobalAudioManager.ts` (`getInstance`), `.engine/src/game/World.ts` (`globalAudioManager`) — typechecked against 18.1.0-alpha.317
 ```typescript
 const audio = this.getWorld()?.globalAudioManager; // bound to the current world
 // or, equivalently, the singleton itself:
-const audio = ENGINE.GlobalAudioManager.getInstance();
+const same = ENGINE.GlobalAudioManager.getInstance();
 ```
 
 Both return the same instance — the world calls `setWorld(this)` on it during startup and `setWorld(null)` on teardown, which is what wires it to the current `AudioListener`/`AudioContext` and resets its buses between play sessions.
 
 ## Playing
 
+Source: `.engine/src/utils/GlobalAudioManager.ts` (`playSoundAtPosition`, `playGlobalSound`) — typechecked against 18.1.0-alpha.317
 ```typescript
 // Positional — snapshots `position` once; does not track a moving emitter.
-const handle = await audio.playSoundAtPosition('@project/assets/sounds/impact.wav', hitPoint, {
+const handle = await audio.playSoundAtPosition('@project/assets/audio/impact.wav', hitPoint, {
   volume: 0.8,
   maxDistance: 20,
   bus: 'SFX',
 });
 
 // Non-positional — same volume everywhere.
-const musicHandle = await audio.playGlobalSound('@project/assets/sounds/theme.mp3', {
+const musicHandle = await audio.playGlobalSound('@project/assets/audio/theme.wav', {
   loop: true,
   bus: 'Music',
 });
@@ -37,10 +39,10 @@ Each call creates a brand-new `THREE.Audio`/`PositionalAudio` object — there i
 
 ## Stopping and cleanup
 
-- Non-looping one-shots clean themselves up automatically when the clip's `onEnded` fires.
+- Non-looping one-shots clean themselves up when the clip ends. The manager installs that cleanup before `play()`.
 - Looping one-shots do not clean themselves up. Keep the returned `SoundHandle` and call `audio.stopSound(handle)` yourself, or it plays forever (and leaks the underlying `AudioBufferSourceNode`/`PositionalAudio`).
 - `audio.stopAllSounds()` stops and cleans up everything tracked by the manager — useful on a scene/level transition. `world.destroy()`/end-play already calls this for you.
-- `audio.isSoundPlaying(handle)`, `getPlayingSoundCount()`, `getPlayingSounds()` for introspection.
+- `audio.isSoundPlaying(handle)`, `getPlayingSoundCount()`, `getPlayingSounds()` for introspection. `getPlayingSoundCount()` drops when a one-shot ends.
 
 ## Preloading
 

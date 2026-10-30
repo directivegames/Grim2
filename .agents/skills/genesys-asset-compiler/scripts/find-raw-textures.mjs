@@ -15,8 +15,8 @@
  * convert, applying enabled flags, format toggles, exclude patterns, and the
  * conversion hook.
  *
- * Usage (from the project root):
- *   node .agents/skills/genesys-asset-compiler/scripts/find-raw-textures.mjs [options]
+ * Usage (from the project root; --help prints the exact path of this script):
+ *   node <this-script> [options]
  *
  * Options:
  *   --project <dir>    Project root (default: current directory)
@@ -30,7 +30,7 @@
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const TEXTURE_FILE = /\.(png|jpe?g|webp)$/i;
 const TEXTURE_REF = /[A-Za-z0-9_@.\/\-~%+${}]*\.(?:png|jpe?g|webp)\b/gi;
@@ -56,6 +56,8 @@ const ENGINE_DATA_KEY =
 const TEXTURE_FORMAT_KEY = { png: 'png', jpg: 'jpeg', jpeg: 'jpeg', webp: 'webp' };
 const STANDALONE_TEXTURE_COMPILER = 'ktx2-standalone-texture-compression';
 const RAW_KINDS = new Set(['ui', 'cpu']);
+// The build itself keeps raw every texture these files name by an `@project/` path (the engine's UI loader reads them).
+const BUILD_KEPT_UI_EXTS = new Set(['.html', '.htm', '.css']);
 
 function parseArgs(argv) {
   const args = { project: process.cwd(), includeReview: false, collapse: true, write: false, check: false, json: false };
@@ -68,7 +70,10 @@ function parseArgs(argv) {
     else if (arg === '--check') args.check = true;
     else if (arg === '--json') args.json = true;
     else if (arg === '--help' || arg === '-h') {
-      console.log(fs.readFileSync(new URL(import.meta.url), 'utf8').split('*/')[0]);
+      const self = fileURLToPath(import.meta.url);
+      const rel = path.relative(process.cwd(), self);
+      const shown = rel && !rel.startsWith('..') ? rel : self;
+      console.log(fs.readFileSync(self, 'utf8').split('*/')[0].replace('<this-script>', shown));
       process.exit(0);
     } else {
       console.error(`Unknown option: ${arg}`);
@@ -350,7 +355,7 @@ async function loadHook(root, hookPath, notes) {
 }
 
 /** Mirrors the loose-texture compiler's decision for one texture. */
-function wouldConvert(relPath, compilerConfig, rules, hook) {
+function wouldConvert(relPath, compilerConfig, rules, hook, keptByBuild) {
   if (compilerConfig.enabled !== true) return false;
   const texture = compilerConfig.textureCompression ?? {};
   if (texture.enabled === false) return false;
@@ -358,7 +363,7 @@ function wouldConvert(relPath, compilerConfig, rules, hook) {
   const formatKey = TEXTURE_FORMAT_KEY[ext];
   const formats = { png: true, jpeg: true, webp: false, ...(texture.formats ?? {}) };
   if (!formatKey || formats[formatKey] !== true) return false;
-  const defaultConvert = !isExcluded(rules, relPath);
+  const defaultConvert = !isExcluded(rules, relPath) && !keptByBuild.has(relPath);
   if (!hook) return defaultConvert;
   try {
     const result = hook({ relativePath: relPath, compiler: STANDALONE_TEXTURE_COMPILER, defaultConvert });
@@ -430,6 +435,7 @@ async function main() {
   const reviewRefs = new Map();
   const dynamicFolders = new Map();
   const unresolved = [];
+  const keptByBuild = new Set();
 
   for (const file of files) {
     const ext = path.extname(file).toLowerCase();
@@ -461,6 +467,7 @@ async function main() {
         continue;
       }
       pushTo(mustStayRaw ? rawRefs : reviewRefs, texture, where);
+      if (mustStayRaw && BUILD_KEPT_UI_EXTS.has(ext) && ref.raw.startsWith('@project/')) keptByBuild.add(texture);
     }
   }
   for (const texture of rawRefs.keys()) reviewRefs.delete(texture);
@@ -490,7 +497,7 @@ async function main() {
   const hook = await loadHook(root, compilerConfig.conversionHook, notes);
 
   const rawList = [...rawSet].sort();
-  const needed = rawList.filter(t => !isExcluded(currentRules, t));
+  const needed = rawList.filter(t => !keptByBuild.has(t) && !isExcluded(currentRules, t));
   const newDynamic = [...dynamicFolders.keys()].filter(folder =>
     allTextures.some(t => t.startsWith(`${folder}/`) && !isExcluded(currentRules, t)),
   );
@@ -500,8 +507,8 @@ async function main() {
   const mergedExclude = [...currentExclude, ...suggested];
   const mergedRules = compileRules(mergedExclude);
 
-  const convertedNow = rawList.filter(t => wouldConvert(t, compilerConfig, currentRules, hook));
-  const convertedAfter = rawList.filter(t => wouldConvert(t, compilerConfig, mergedRules, hook));
+  const convertedNow = rawList.filter(t => wouldConvert(t, compilerConfig, currentRules, hook, keptByBuild));
+  const convertedAfter = rawList.filter(t => wouldConvert(t, compilerConfig, mergedRules, hook, keptByBuild));
   const blockedByNegation = needed.filter(t => !isExcluded(mergedRules, t));
 
   if (compilerConfig.enabled !== true) notes.push('assetCompiler.enabled is not true; nothing is converted yet.');
@@ -533,7 +540,12 @@ async function main() {
   const report = {
     projectFile: projectFile ? toPosix(path.relative(root, projectFile)) : null,
     texturesInProject: allTextures.length,
-    rawTextures: rawList.map(texture => ({ path: texture, kinds: kindsFor(texture), references: rawRefs.get(texture) ?? [] })),
+    rawTextures: rawList.map(texture => ({
+      path: texture,
+      kinds: kindsFor(texture),
+      keptByBuild: keptByBuild.has(texture),
+      references: rawRefs.get(texture) ?? [],
+    })),
     dynamicFolders: [...dynamicFolders].map(([folder, references]) => ({ folder, references })),
     review: [...reviewRefs].map(([texture, references]) => ({ path: texture, references })),
     unresolvedReferences: unresolved,
@@ -569,7 +581,7 @@ function printReport(report, args) {
   if (report.rawTextures.length > 0) {
     out.push('', 'Textures that must stay raw:');
     for (const t of report.rawTextures) {
-      out.push(`  [${t.kinds.join(', ')}] ${t.path}`);
+      out.push(`  [${t.kinds.join(', ')}] ${t.path}${t.keptByBuild ? '  (kept raw by the build: named in UI markup)' : ''}`);
       for (const r of t.references.slice(0, 3)) out.push(refLine(r));
       if (t.references.length > 3) out.push(`      … ${t.references.length - 3} more`);
     }

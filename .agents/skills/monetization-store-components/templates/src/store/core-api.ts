@@ -1,8 +1,7 @@
 /**
  * Where the game's items live: tsb-core-api, one deployment per platform
- * environment. The game picks it from the host it runs on, the way the
- * engine picks its matchmaking API. Core knows players only by their Studio
- * login, so this file also says where a player can sign in to Studio.
+ * environment. The game picks it from the host it runs on. Core knows players
+ * only by their Studio login, so this file also says where a player can sign in to Studio.
  *
  * Platform-owned, not a creator setting: store updates overwrite this file
  * (store-config.ts is the one they keep). To test another core build, set

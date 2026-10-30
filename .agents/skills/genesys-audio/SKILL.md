@@ -1,139 +1,148 @@
 ---
 name: genesys-audio
-description: Sound, audio, music, SFX, ambient sound, and spatial (3D positional) audio in Genesys. Covers SoundNode playback, SoundResource clip properties, looping/autoplay, volume and pitch control, audio buses (Music/SFX/Voice/Ambience), one-shot procedural sounds, and loading sound assets. Use when adding, playing, mixing, or debugging any sound effect, music track, or ambient audio.
+description: "Sound and music: SoundNode, one-shots, buses, spatial audio, music crossfades, ambience loops, clip sources (project, engine, bundled synth), and the sound set every game ships. Use for any sound, music, SFX, footsteps, ambience, wind, rain, engine hum, 3D sound, volume, mute, ducking, a silent game. Not for the settings screen (use `genesys-ui`), Scenario audio (use `genesys-generated-assets`) or MP3 compression (use `genesys-asset-compiler`)."
 metadata:
-  tokens: 2401
+  tokens: 2988
 ---
 
 # Audio
 
-Engine audio lives in `.engine/src/nodes/audio/` (`SoundNode`, `SoundResource`) and `.engine/src/utils/GlobalAudioManager.ts` / `AudioBus.ts`. Read source for exact signatures — this skill maps what exists and flags non-obvious pitfalls.
+This skill owns playback (`SoundNode`, `GlobalAudioManager`), the bus mix, spatial audio, ambience, music switching, and the sound defaults every game ships. The one rule: every game has a music bed and a sound on the main action, UI confirm, hit, and death. A silent game, or a silent confirm, is a defect.
 
-## Mental model
+## Use another skill when
+- Which route a clip takes, its Assets row, the size budget table → `genesys-assets`
+- A clip generated with Scenario (only when the project's art routes name it) → `genesys-generated-assets`
+- Which moments deserve a sound and how strong → `genesys-game-feel`
+- The particle half of the same moment → `genesys-vfx`
+- The settings screen, Music/Effects volume controls, mute toggle, hover and confirm wiring on widgets → `genesys-ui`
+- Saving the volumes across sessions → `genesys-game-boot`
+- Voice chat or who hears a networked sound → `genesys-multiplayer`
+- Turning on MP3 transcoding at build → `genesys-asset-compiler`
+- Placing an ambience emitter in the scene through MCP → `genesys-mcp-orchestrator` (the recipe is in [sound-node](references/sound-node.md))
 
-- `SoundNode` — a `SceneNode` that owns one or more named `SoundResource` clips, loads them, and plays/stops/loops them. Attach one to any node whose lifetime should own the sound (a torch, a weapon, an ambient marker).
-- `SoundResource` — describes one clip: file path, volume, and spatial falloff params. Not playable by itself; `SoundNode` turns each one into a `THREE.Audio` or `THREE.PositionalAudio`.
-- `GlobalAudioManager` — singleton (`world.globalAudioManager` or `ENGINE.GlobalAudioManager.getInstance()`) for fire-and-forget one-shots that don't need a dedicated node, plus the bus mixer. See [one-shot-sfx](references/one-shot-sfx.md).
-- Every sound is routed through a named bus (`Master`, `SFX`, `Music`, `Voice`, `Ambience` by default), so a bus volume change (ducking, mute) affects every sound on it at once. See [mixing-and-filters](references/mixing-and-filters.md).
+## Decide
 
-## Methodology
+### The sound set every game ships
 
-1. Sound tied to a node's lifetime — footsteps, engine hum, weapon fire/reload, a looping ambience — attach a `SoundNode` to that node.
-2. One-shot SFX at a position or globally, not owned by a node you control (impact at a raycast hit, a UI click) — use `GlobalAudioManager.playSoundAtPosition` / `playGlobalSound`.
-3. Need mixing (music ducking, mute SFX, a master volume slider) or WebAudio filters (lowpass, reverb) — read [mixing-and-filters](references/mixing-and-filters.md).
-4. Always reference clips through `@project/...` / `@engine/...` asset paths, never raw URLs or relative paths — same convention used for textures and models.
+| Slot | Default | Bus | Volume |
+|---|---|---|---|
+| Music bed | One looping track, started on the title as soon as the game loads, kept across Start and Retry | `Music` | 0.3–0.4 |
+| Main action (shoot, jump, swing, kick, place) | One-shot, preloaded, throttled | `SFX` | 0.6–0.8 |
+| UI confirm (Start, Resume, Retry, Next) and hover | One-shot from the button's `onClick`; hover tick on menu buttons | `SFX` | 0.5 confirm, 0.2 hover |
+| Hit (player hits or is hit) | One-shot at the hit point | `SFX` | 0.7–0.9 |
+| Death / fail | One-shot, loudest event | `SFX` | 1.0 |
+| Pickup / score | Short one-shot | `SFX` | 0.6 |
+| Footsteps (walking heroes) | `SoundNode` on the pawn, played on a step timer, ±5 % pitch | `SFX` | 0.3–0.5 |
+| Ambience (wind, rain, fire, hum, birds) | Looping `SoundNode`, positional at its source or non-positional for weather | `Ambience` | 0.2–0.4 |
 
-## SoundNode
+The music bed is never an open item. The engine ships no music track, so it is a project file or a `synth.mjs` loop, which always reaches it (Scenario only when the project's art routes name it). A game with sound also ships Music and Effects volume controls (`genesys-ui`).
 
-Create with `ENGINE.SoundNode.create({ ...options })`, then `parentNode.add(soundNode)`.
+### Where each clip comes from
 
-| Option | Default | Notes |
-| --- | --- | --- |
-| `sounds` | `[]` | `SoundResource[]`; each needs a unique `name` used as the playback key |
-| `loop` | `false` | Applied to every clip on load |
-| `positional` | `false` | `true` → 3D `PositionalAudio`; `false` → non-attenuated `Audio` |
-| `autoPlay` | `false` | Plays once loading finishes in `beginPlay()` |
-| `autoPlayClipKey` | first clip | Which clip `autoPlay` plays |
-| `bus` | `'SFX'` | Bus name to route through (`Master`/`SFX`/`Music`/`Voice`/`Ambience`, or a custom bus) |
+In order ([clip-sources](references/clip-sources.md)):
+1. **Project files** the user has → under `assets/audio/`, as `@project/assets/audio/<file>`.
+2. **Engine sounds** in `@engine/assets/sounds/`: `laser.mp3`, `game-gun-short.mp3`, `explosion.mp3`, `pickup.mp3`, `tuba.mp3` (fail sting), `birds.mp3` (ambience). No music, footsteps, UI click or weather loops.
+3. **Synthesised**, offline and free: `node .agents/skills/genesys-audio/scripts/synth.mjs list`, then `sfx <preset> assets/audio/<name>.wav [--seed N --pitch 0.9 --loop]` or `music <mood> assets/audio/<name>.wav [--bars 16 --key D]`. Ambience presets (wind, rain, hum, fire) render seamless loops; moods are dark, tense, heroic, upbeat, calm, mystic, picked from the art direction. Vary `--seed` / `--pitch` so no two sounds share a clip. Use the exact `@project/...` path each run prints, and tell the user which clips are synthesised (you cannot hear them).
+4. **Scenario**, only when the art routes include it → `genesys-generated-assets`, then wire it here.
 
-| Method | Notes |
-| --- | --- |
-| `play(key, volume?, forceRestart?)` | Stops the current clip and plays `key`. No-ops if something is already playing unless `forceRestart: true`. |
-| `stop()` / `stopAll()` | Stop the current clip / stop every clip on this node |
-| `pause()` / `resume()` | Pause/resume the current clip |
-| `isSoundPlaying()` | Whether the current clip is playing (not the node's play-lifecycle `isPlaying`) |
-| `setVolume(key, v)` / `setVolumeAll(v)` | `v` clamped to `0..1` |
-| `setLoop(key, loop)` | Per-clip loop toggle |
-| `getAudio(key)` | Raw `THREE.Audio`/`PositionalAudio` for direct WebAudio access (pitch, custom nodes) |
-| `getAudioContext()` | The listener's `AudioContext`, for building filters |
-| `setFilter` / `setFilters` / `getFilters` | WebAudio filter chain per clip — see [mixing-and-filters](references/mixing-and-filters.md) |
-| `onEnded` | Public field: one callback for the whole node, fires whenever the current clip ends |
+**Size.** Synth WAV is ~86 KB/s and ships raw unless audio compression is on (then MP3, ~16 KB/s). For synthesised music, turn compression on (`genesys-asset-compiler`) or keep the bed under the 1.5 MB budget: 8 bars at 110 bpm or faster.
 
-## SoundResource
+Write asset paths as string literals. Never build them from variables. Never play game sound through an `<audio>` element or a URL loader, and never create or touch an `<audio>` element per frame: it stutters while moving and ignores the buses.
 
-| Property | Default | Notes |
-| --- | --- | --- |
-| `name` | `''` | Playback key passed to `SoundNode.play(name)` |
-| `audioPath` | `''` | Asset path (`AudioPath`), e.g. `'@project/assets/sounds/Explosion.wav'` |
-| `volume` | `1.0` | `0..1` |
-| `refDistance` | `1.0` | Spatial only |
-| `maxDistance` | `10000` | Spatial only |
-| `distanceModel` | `'inverse'` | `'linear' \| 'inverse' \| 'exponential'`, spatial only |
-| `rolloffFactor` | `1.0` | Spatial only |
+### Which API
 
-The `refDistance`/`maxDistance`/`distanceModel`/`rolloffFactor` fields are only applied when the owning `SoundNode` has `positional: true` — they're silently ignored on non-positional clips.
+| Job | API |
+|---|---|
+| Sound owned by a node (engine hum, torch, footsteps, a weapon's reload) | `SoundNode` child of that node |
+| Ambience placed in the level (a waterfall, a fire, wind at a cliff) | A `SoundNode` placed through MCP, or a small placeable class ([sound-node](references/sound-node.md)) |
+| One-shot at a point (impact, explosion, pickup) | `world.globalAudioManager.playSoundAtPosition` |
+| Non-spatial one-shot or loop (UI, music, stingers) | `world.globalAudioManager.playGlobalSound` |
+| Group volume, mute, ducking, settings | `getBus(name).setVolume(v)` |
+| Music switching (title → combat → boss) | Crossfade between two child buses ([mixing-and-filters](references/mixing-and-filters.md)) |
+| Lowpass, reverb-like filtering | `SoundNode.setFilter` / `setFilters` |
 
-## Spatial vs non-spatial
+Spatial (`positional: true`) for anything with a world position; non-spatial for music, UI, weather beds, and voice-over. The listener follows the active camera, not the pawn's body.
 
-- `positional: true` → `THREE.PositionalAudio` parented to the `SoundNode`; falls off with distance from it per the resource's spatial params. Use for anything with a world position (a weapon, a door, a character, a torch).
-- `positional: false` (default) → plain `THREE.Audio`, same volume regardless of listener distance. Use for music, UI sounds, voice-over.
-- The world's `AudioListener` (`world.audioListener`) is synced to the active camera every tick, so spatial falloff is relative to the camera, not necessarily the player pawn's body.
+## Build
 
-## Loading sounds
+### Music bed
 
-- Reference clips with `@project/...` / `@engine/...` asset paths — see this project's asset-path conventions for the full pattern.
-- Two ways to attach clips: construct `SoundResource` instances inline and pass `sounds: [...]` to `SoundNode.create(...)` (see example below), or point at a serialized sound-resource asset file and pass its path string — `SoundNode.beginPlay()` resolves string entries via `resourceManager.loadResource(AssetPath.fromString(path))`.
-- Loading happens asynchronously inside `beginPlay()`, not the constructor or `initialize()` — see Footguns.
+Start the bed on the title, not on the Start click: the title is the first thing the player hears. `playGlobalSound` resumes the `AudioContext`.
 
-## Volume and pitch
+Source: `.engine/src/utils/GlobalAudioManager.ts` (`playGlobalSound`, `stopSound`); `.engine/src/game/World.ts` (`audioListener`) — typechecked against 18.1.0-alpha.317
+```ts
+// GameMode, once the screens are mounted and the Title state is shown.
+if (!this.music) {
+  this.music = await world.globalAudioManager.playGlobalSound('@project/assets/audio/music-loop.wav',
+    { loop: true, volume: 0.35, bus: 'Music' });
+}
+// Start and Retry keep the same handle. To stop early (world end stops it for you):
+if (this.music) { world.globalAudioManager.stopSound(this.music); this.music = null; }
+```
 
-- Volume: `soundNode.setVolume(key, 0..1)` / `setVolumeAll(...)`. For group volume or ducking, adjust the bus instead (see [mixing-and-filters](references/mixing-and-filters.md)).
-- Pitch: `SoundNode` has no pitch/playback-rate wrapper. Get the raw sound via `soundNode.getAudio(key)` and call its native `setPlaybackRate(rate)` / `setDetune(cents)`.
+A second track (combat, boss, result) crossfades in over 1–2 s instead of cutting: [mixing-and-filters](references/mixing-and-filters.md) → *Music switching*.
 
-## Example: looping ambient positional sound
+### One-shots with a cooldown and a voice cap
 
-```typescript
-import * as ENGINE from '@gnsx/genesys.js';
+Each `playSoundAtPosition` or `playGlobalSound` call makes a new audio object. There is no voice pool. Skip a repeat of the same clip inside 40–80 ms, and cap concurrent one-shots with `getPlayingSoundCount()`.
 
-@ENGINE.GameClass()
-export class Torch extends ENGINE.SceneNode {
-  private soundNode!: ENGINE.SoundNode;
-
-  public override initialize(options?: ENGINE.SceneNodeOptions): void {
-    super.initialize(options);
-
-    const crackle = new ENGINE.SoundResource();
-    crackle.name = 'crackle';
-    crackle.audioPath = '@project/assets/sounds/torch_crackle.wav';
-    crackle.volume = 0.6;
-    crackle.refDistance = 2;
-    crackle.maxDistance = 15;
-
-    this.soundNode = ENGINE.SoundNode.create({
-      name: 'Sound',
-      sounds: [crackle],
-      positional: true, // 3D — falls off with distance from this torch
-      loop: true,
-      autoPlay: true,
-      bus: 'Ambience',
-    });
-    this.add(this.soundNode);
-    // No manual stop() needed on removal — SoundNode.endPlay() calls stopAll().
-  }
+Source: `.engine/src/utils/GlobalAudioManager.ts` (`playSoundAtPosition`, `playGlobalSound`, `getPlayingSoundCount`); the throttle is game code — typechecked against 18.1.0-alpha.317
+```ts
+const lastPlayed = new Map<string, number>();
+export function playSfx(world: ENGINE.World, clip: string, at?: THREE.Vector3, volume = 0.8, minGapMs = 60): void {
+  const now = performance.now();
+  if (now - (lastPlayed.get(clip) ?? 0) < minGapMs) return;   // per-clip cooldown
+  const audio = world.globalAudioManager;
+  if (audio.getPlayingSoundCount() >= 24) return;
+  lastPlayed.set(clip, now);
+  void (at ? audio.playSoundAtPosition(clip, at, { volume, bus: 'SFX' })
+           : audio.playGlobalSound(clip, { volume, bus: 'SFX' }));
 }
 ```
 
-## Footguns
+Preload the main-action clips in `beginPlay` with `await world.globalAudioManager.loadSound(name, clip)` so the first shot is not the first decode.
 
-- Autoplay / browser gesture restriction — a suspended `AudioContext` cannot resume without a user gesture. `SoundNode.play()` tries `context.resume()` and, if the browser still blocks it, queues the sound to start on the next user interaction instead of failing — this is expected, not a bug; don't assume a sound that doesn't start immediately failed to load.
-- Calling `play()` right after creating a node races the load — clip loading is fired-and-forgotten inside `beginPlay()` (not awaited), so a `play(key)` called immediately after `.create()`/`.add()` can log `Sound with key "..." not found` if loading hasn't finished. Prefer `autoPlay`, or `await soundNode.waitForLoad()` before calling `play()`.
-- Spatial params ignored on non-positional clips — setting `refDistance`/`maxDistance`/etc. on a `SoundResource` does nothing unless the owning `SoundNode` has `positional: true`.
-- Only one "current" sound per `SoundNode` — `play()` stops whatever was previously current. Rapid, overlapping one-shots (gunfire, footsteps) need either `forceRestart: true` (still serialized to one voice) or `GlobalAudioManager.playSoundAtPosition`/`playGlobalSound`, which spins up an independent `Audio` object per call.
-- Not disposing looping sounds — a `SoundNode` stops its sounds automatically in `endPlay()`, but a looping `GlobalAudioManager` one-shot (`loop: true`) is never auto-cleaned; keep its `SoundHandle` and call `stopSound(handle)` yourself or it plays forever.
-- SFX spam — nothing pools or rate-limits one-shot calls; spawning one per frame (e.g. every physics tick of a scraping collision) will pile up overlapping voices. Throttle at the call site.
+### Sound owned by a node
 
-## Source index
+Source: `.engine/src/nodes/audio/SoundNode.ts`, `.engine/src/nodes/audio/SoundResource.ts` — typechecked against 18.1.0-alpha.317
+```ts
+const hum = new ENGINE.SoundResource();
+hum.name = 'hum';
+hum.audioPath = '@project/assets/audio/engine-hum.wav';
+hum.volume = 0.5; hum.refDistance = 2; hum.maxDistance = 25;
+const sound = ENGINE.SoundNode.create({ sounds: [hum], positional: true, loop: true, autoPlay: true, bus: 'Ambience' });
+this.add(sound); // endPlay() stops it; no manual cleanup
+```
 
-| File | Contents |
-| --- | --- |
-| `.engine/src/nodes/audio/SoundNode.ts` | Node-attached clip playback, buses, filters |
-| `.engine/src/nodes/audio/SoundResource.ts` | Clip definition and spatial params |
-| `.engine/src/utils/GlobalAudioManager.ts` | Singleton one-shot playback and bus registry |
-| `.engine/src/utils/AudioBus.ts` | Bus gain-node wrapper (`connect`, `setVolume`, `getInput`) |
+Tables, pitch, footsteps, the load race, ambience placed in the scene: [sound-node](references/sound-node.md).
+
+## Limitations
+- A wall of noise in a big fight → no cooldown or cap. Throttle per clip (40–80 ms) and cap concurrent voices.
+- Hard music cuts between tracks (no built-in crossfade): [mixing-and-filters](references/mixing-and-filters.md#limitations).
+
+## Traps
+- No music in Play → the music bed was never added. Add one; the engine has no track, so import or synthesise (`synth.mjs music`).
+- Start, Resume, or Retry is silent, or menus have no hover tick → play the one-shots from the widget (`genesys-ui` → *Sound on UI*).
+- Music only starts after Start is pressed → the bed was started from the Start click → start it on the title (*Music bed*).
+- Rapid fire cuts its own tail off → `SoundNode` has one current sound; `play()` no-ops while it plays unless `forceRestart`. Use `GlobalAudioManager` one-shots for overlapping shots.
+- A looping one-shot never stops → keep its `SoundHandle` and call `stopSound(handle)`.
+- A projectile's sound stays where it was fired → `playSoundAtPosition` is a snapshot. Attach a `SoundNode` to the moving node.
+- Music hides the main action → lower the `Music` bus or clip volume. Never delete the action sound.
+- First shot is late → preload with `loadSound`.
+- Stutter that appears only during movement and doesn't change with quality settings → audio, not rendering: an `<audio>` element created or seeked every frame. Use `SoundNode` or `GlobalAudioManager`.
+- `SoundNode` load race and `refDistance`: [sound-node](references/sound-node.md#traps). Bus fades, server worlds: [mixing-and-filters](references/mixing-and-filters.md#traps). Loop clicks, WAV size, synth `WARN`: [clip-sources](references/clip-sources.md#traps).
+
+## Done
+- In Play the music bed is audible on the title and keeps playing through Start and Retry without a second copy; a track change crossfades.
+- The main action, a hit, a death, a pickup (if any), and every confirm button make a sound; menu buttons tick on hover.
+- Holding fire for 10 s gives steady shots without clipping, and after a 2-minute run every sound effect still plays.
+- Spatial sounds get quieter with distance from the camera; ambience loops play without an audible seam.
+- Moving the Music and Effects volumes in settings changes what you hear (`genesys-ui`).
+- Every clip path is a literal `@project/assets/...` or `@engine/assets/...` that exists on disk, and `node .agents/skills/genesys-assets/scripts/asset-check.mjs` passes with no unreferenced audio.
+- Synthesised music either ships compressed (the synth printed `ships as MP3`) or is under the 1.5 MB music budget raw.
 
 ## References
-
-- [one-shot-sfx](references/one-shot-sfx.md): `GlobalAudioManager` one-shot playback, handles, and cleanup, for sounds not owned by a `SoundNode`.
-- [mixing-and-filters](references/mixing-and-filters.md): The bus graph, custom buses, ducking, and WebAudio filter chains.
-
-Related: combining sound with particle effects — see the `genesys-vfx` skill.
+- [clip-sources](references/clip-sources.md) — project, engine, synth (presets, flags, measured loop lengths and sizes), Scenario; choosing a clip per slot; clip traps
+- [sound-node](references/sound-node.md) — `SoundNode` options and methods, `SoundResource` fields, spatial vs non-spatial, pitch, footsteps, load timing, ambience placed through MCP, traps
+- [one-shot-sfx](references/one-shot-sfx.md) — `GlobalAudioManager` playback, handles, cleanup, preloading
+- [mixing-and-filters](references/mixing-and-filters.md) — bus graph, custom buses, ducking, mute, settings volumes, music crossfades, WebAudio filters, mix limitations and traps

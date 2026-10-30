@@ -12,20 +12,21 @@ Mover pawn to GSS or to a classic movement node.
 - `IMovementMode` → `IGSSMovementMode`
 - `WalkingMode` / `FallingMode` → `GSSWalkingMode` / `GSSFallingMode`
 - `MoveMixMode` → `GSSMoveMixMode` (effect contributions; includes `Ignore`)
-- `ProposedMove` → `GSSDesiredMove` from `generateMove` / mixed result; `GSSProposedMove` from `IGSSEffect.proposeMove`
+- `ProposedMove` → `GSSDesiredMove` (`{ velocity }`) returned by `generateMove`; `GSSProposedMove` from `IGSSEffect.proposeMove`. The mode mixes proposals with `mixProposedMoves`; the node only passes them in.
 - `SimulationTickParams` → direct `tick(ctx, proposedMove, dt)` arguments
 - `MovementInputCmd` → `GSSInputCmd`
-- `MovementSyncState` → `GSSSyncState`
+- `MovementSyncState` → no public replacement; read state through the GSS context readers (`GSSStateReader`, `GSSTagReader`)
 - `IMoverTransition` → `IGSSMovementModeTransition`
 - `startingModeName` → `startingMovementModeId`
 - `addMovementMode(name, mode)` → `addMovementMode(mode)` — the id now lives on `IGSSMovementMode.id`
 - `queueNextMode(name)` → `queueMovementMode(id, priority?)`
-- `applyEffect(effectInstance)` → `applyEffect(effectId)` — ids only, registered up front
+- `applyEffect(effectInstance)` → `ctx.effects.apply(effectId, payload?)` inside an ability (this sim), or `ctx.world.applyEffect(target, effectId, payload?)` (another sim). Ids only, registered up front. `GSSNode.applyEffect(handle, …)` is `@internal`; game code outside a sim uses `queueEvent` ([gss-abilities-effects](gss-abilities-effects.md))
 
-The `GS` prefix distinguishes GSS movement types from compatibility-only Mover exports.
+The `GS` prefix marks the GSS movement types.
 
 ## Pawn and controller
 
+Source: .engine/src/gameplay-sim/entities/GSSCharacterPawn.ts
 ```ts
 // Before: Mover (removed in 19)
 class MyPawn extends ENGINE.MoverCharacterPawn {
@@ -41,15 +42,21 @@ class MyPawn extends ENGINE.MoverCharacterPawn {
 class MyPawn extends ENGINE.GSSCharacterPawn {
   protected override createGSSNode(): ENGINE.GSSNode {
     const sim = super.createGSSNode();
-    sim.addMovementMode(new ENGINE.GSSWalkingMode({ maxSpeed: 8 })); // replaces 'walking' in place
+    sim.addMovementMode(new ENGINE.GSSWalkingMode({ decelerationLambda: 20 })); // replaces 'walking' in place
+    sim.setBaseAttribute(ENGINE.GSSTags.MoveSpeed, 8); // walk speed: the attribute wins over maxSpeed
     return sim;
   }
 }
 ```
 
+`GSSCharacterPawn.createGSSNode()` seeds the `MoveSpeed` attribute with `CHARACTER_MAX_SPEED` (5), and
+`GSSWalkingMode` / `GSSFallingMode` read `ctx.attributes.get(GSSTags.MoveSpeed) ?? this.maxSpeed`. On that
+pawn a mode's `maxSpeed` option is ignored; set the attribute instead.
+
 Replace a custom `MoverPlayerController` subclass or Mover input producer with
 `GSSPlayerController` or `IGSSInputProducer`. The GSS producer signature is:
 
+Source: .engine/src/gameplay-sim/IGSSInputProducer.ts
 ```ts
 produceInputCmd(cmd: ENGINE.GSSInputCmd, deltaTime: number): void
 ```
@@ -59,6 +66,7 @@ produceInputCmd(cmd: ENGINE.GSSInputCmd, deltaTime: number): void
 Mover exposes `jumpJustPressed` and `jumpPressed`. GSS input carries currently-down
 numeric tags; the sim derives edges from the previous Sync:
 
+Source: .engine/src/gameplay-sim/GSSTagSet.ts (`tagSetAdd`), entities/GSSPlayerController.ts (`produceInputCmd`)
 ```ts
 if (jumpIsDown) {
   ENGINE.tagSetAdd(cmd.inputTagsDown, ENGINE.GSSTags.InputJump);
@@ -71,7 +79,7 @@ ability.
 
 ## Modes and transitions
 
-Implement `IGSSMovementMode`. `generateMove(ctx)` returns `GSSDesiredMove` and mutates nothing;
+Implement `IGSSMovementMode`. `generateMove(ctx, proposals)` returns `GSSDesiredMove` and mutates nothing;
 `tick(ctx, proposedMove, dt)` advances the simulation through the writable
 `GSSMovementSimContext` and returns nothing; `dt` is in seconds. Transitions receive a read-only
 `GSSMovementContext` and return a mode id or `null`. Neither ever sees the sim node or
@@ -85,7 +93,7 @@ identical on every peer.
 
 ## Layered moves and modifiers
 
-- Convert `LayeredMove.generateMove` to an `IGSSEffect.proposeMove`.
+- Convert `LayeredMove.generateMove` to an `IGSSEffect.proposeMove` (shape: [gss-abilities-effects](gss-abilities-effects.md)).
 - Convert temporary speed or attribute modifiers to `IGSSEffect.modifyAttributes`.
 - Convert activation/lifetime logic to an `IGSSAbility` that applies/removes an effect.
 - Convert Mover string sync tags to registered GSS tag ids.

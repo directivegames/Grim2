@@ -14,7 +14,7 @@ Source paths are under `.engine/src/`. Add with `action_node(add, className: "EN
 
 **`DirectionalLightNode`** (`nodes/lights/DirectionalLightNode.ts`) — the sun. Rotate it (or place it and look at the origin) to set the sun angle.
 - `drivesSky: true`, `castShadow: true`, `intensity` 2–3.5 by day, 0.2–0.4 for moonlight, warm `color` at golden hour (`#ffc995`).
-- Large worlds: `useCsmShadows: true`, `csmMaxFar` 400–800.
+- Large worlds and terrain: keep `useCsmShadows` false. Size `shadowCamera*` and `shadowFar` to the area around the player (a possessed pawn moves the light with the player); far terrain stays unshadowed under fog. A free or cinematic camera with nothing moving the light: one cascade (`csmCascadeCount: 1`). CSM only under `genesys-lighting` → `references/lights-and-shadows.md` (*Cascaded shadows: default off*).
 
 **`HemisphereLightNode`** (`nodes/lights/HemisphereLightNode.ts`) — soft sky/ground fill. `color` (sky), `groundColor`, `intensity` 0.3–0.6 by day (presets: 0.3 valley, 0.4 tropical, 0.6 overcast; 0.15 at night).
 

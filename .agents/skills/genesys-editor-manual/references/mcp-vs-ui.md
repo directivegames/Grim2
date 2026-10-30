@@ -9,7 +9,7 @@ MCP node era: use `query_node` / `action_node`. MCP schemas name node UUIDs `com
 | Task | MCP | Status | Manual UI |
 | --- | --- | --- | --- |
 | Inspect scene / nodes | `query_node`, `query_editor` | Available | Outliner (node tree); Inspector |
-| Add node | `action_node.add` (`className`, optional `parentComponentId`) | Available | Outliner + (`NodeAddPicker`: Node / Prefab tabs) |
+| Add node | `action_node.add` (`className`, optional `parentComponentId`) | Available | Outliner + → Add Node dialog |
 | Delete node | `action_node.delete` (`componentIds` / `componentId`) | Available | Outliner Remove (Del) |
 | Select node | `action_node.select` | Available | Click in viewport / Outliner |
 | Property set | `action_node.setProperties` (`componentId`, `properties`) | Available | Inspector property rows |
@@ -34,25 +34,28 @@ MCP node era: use `query_node` / `action_node`. MCP schemas name node UUIDs `com
 | Browse / export packs | — | UI only | Tools → Browse / Export Asset Pack |
 | Build / register classes | `action_build(buildProject)` | Available | Menu Build Project (`Ctrl/Cmd+B`) |
 | Lightmap | `action_build(buildLightmap)` | Available | Title bar Build Lightmap |
-| Play / exit | `enterPlayMode` / `exitPlayMode` | Available | Play ▾ / F5 / F6; Exit (Esc or title-bar Exit) |
+| Play / exit | `enterPlayMode` / `exitPlayMode` (check `query_editor(getPlayModeState)` first) | Available | Play ▾ / F5 / F6; Exit: F8 always, Esc only when the game did not consume it and pointer lock is off, or title-bar Exit |
 | Diagnose performance | Compact-hidden `query_profiler` / `action_profiler`: `setInsights` then `generateReport` (returns `path`, `issues`, timing, and a compact memory summary), `listArtifacts` for saved files, or start/stop/arm a streamed Trace with `maxDurationMs` / `maxBytes` and read its manifest. `setGpuDetail` saves Passes, Stages, or Draws for the next Play. Trace bodies are never returned. Heap and VRAM captures stay in the memory-profiling skill | Available | Tools → Profiler; Insights in Edit/Play; Trace controls only in desktop Play |
 | Check PlayerStart spawn / read live Play state | `query_node` op `checkSpawnPoints` (edit mode; raycasts render meshes below each PlayerStart: `floorY`, `feetGap`, `suggestedY`, `penetrating`, `noFloor`). Compact-hidden read-only `query_play` (Play only; `getPlayerPawns`, `getNodeTransform`, `raycast`; outside Play returns `play_not_active`). `query_node` returns `play_mode_active` during Play | Available | Inspector (PlayerStart, Spawn); no UI for live queries |
 | Play window/mobile/multiplayer prefs | — | UI only | Play ▾ options; Network menu |
 | Screenshot | `action_editor.captureScreenshot` only when the user asks for a picture. `target: "auto"` returns the running game during Play (`surface: "all"` for extra multiplayer windows) and the editor viewport otherwise. Do not use it to verify the scene — use `query_node` and `query_editor` | Available | Assistant/viewport affordances |
 | NavMesh | `query_navmesh` / `action_navmesh` | Available | Tools → Generate NavMesh |
-| Viewport overlays / transform mode / snap | — | UI only | Viewport View / Snap / QWER |
-| Poly Builder (place, mesh edit) | Compact-hidden `query_polybuilder` / `action_polybuilder` via `run_script` / `batch_execute`. See the `genesys-polybuilder` skill | Available | Viewport **Poly Builder** toggle; pointer tools stay the human UI. See [viewport-and-assets.md](viewport-and-assets.md) |
+| Viewport overlays / transform mode / snap | — | UI only | Viewport Camera / View Mode / Show menus, Snap, QWER |
+| Poly Builder (place, mesh edit) | Compact-hidden `query_polybuilder` / `action_polybuilder` via `run_script` / `batch_execute`. See the `genesys-polybuilder` skill | Available | **Poly Builder** at the foot of the Place bar; pointer tools stay the human UI. See [viewport-and-assets.md](viewport-and-assets.md) |
 | Animation / VFX / Skeleton editors | — | UI only | Asset Browser create + dialogs |
-| Foundry / Scenario | `action_asset_generation` (skybox, image, texture, 3D model, audio; upscale, remove background, PBR convert, cancel, import). `apply` (`applyAs` for images) only when the user asked to place it | Available | Title bar Foundry. Prompt enhance stays in the Foundry dialog. Import is the only way to save a Scenario asset into the project |
+| Generated art (mesh, image, texture, skybox, sound) | Scenario MCP via `genesys-generated-assets`, then place/assign with `action_node` | Available when Scenario MCP is connected | — |
+| Foundry dialog (editor's own generator) | `action_asset_generation` (skybox, image, texture, 3D model; upscale, remove background, PBR convert, cancel) — only when the user asks for Foundry. Recipes: `genesys-mcp-orchestrator` `references/editor-asset-generation.md` | Available | Title bar Foundry. Prompt enhance stays in the Foundry dialog |
 | Project open/create/close | — | UI only | App picker / `genesys-sdk new` |
 | Getting Started / Environment Setup | — | UI only | [app-setup-and-recovery.md](app-setup-and-recovery.md) |
 | Configure / restart external MCP | — | UI only | Genesys AI Settings → MCP |
-| Clarifying question | `request_user_input` when a wrong assumption would change the work. Otherwise state the assumption and continue | Available | Assistant question card (options, Other, Skip). Stop cancels it |
 | Project Recovery / Fix with AI entry | — | UI only | Recovery dialog on failed open |
-| Play Local Project | — | UI only | Dashboard *(dev SDK)* |
-| Diagnostics | `query_diagnostics` | Available | Title bar Errors; console |
+| Diagnostics | `query_diagnostics` (`operation: getBuildErrors` / `getConsole`) | Available | Title bar Errors; console |
+| Store items (list, create, price, publish, take down, delete, image) | Compact-hidden `query_store` / `action_store` via `run_script` / `batch_execute`; `linkGame` is 18.1+ only. See `monetization-store-items` | Available | Menu → Store Manager (opening it links the game) |
+| Current selection | `query_editor(getSelection)` | Available | Outliner / viewport selection |
 
-Compact-hidden (still callable via `run_script` / `batch_execute` / `search_tools`): `action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`, `query_polybuilder`, `action_polybuilder`, `query_profiler`, `action_profiler`, `query_play`.
+Compact-hidden (still callable via `run_script` / `batch_execute` / `search_tools`): `action_asset`, `action_prefab`, `query_asset`, `query_diagnostics`, `query_navmesh`, `action_navmesh`, `query_polybuilder`, `action_polybuilder`, `query_profiler`, `action_profiler`, `query_play`, `query_store`, `action_store`.
+
+Version gate: Poly Builder, profiler, and asset-generation tools and `action_store(linkGame)` exist only in Sandbox Studio 18.1+. On an older app, give the UI path.
 
 installAssetPack: scaffolds an empty `packs/<name>/` only — not catalog / cloud packs (use Browse Asset Packs).
 

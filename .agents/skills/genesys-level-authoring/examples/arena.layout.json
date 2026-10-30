@@ -1,0 +1,27 @@
+{
+  "_comment": "Round arena from engine pieces: 16 pillars facing the centre, an outer ring of rocks, 64 grass tufts as one instanced node (no collider, no shadow). Collision on the pillars only; they stay separate nodes (\"instanced\": false) because gameplay code may find them one by one.",
+  "prefab": "assets/prefabs/levels/Arena.prefab.json",
+  "name": "Arena",
+  "seed": 11,
+  "assets": {
+    "pillar": "@engine/assets/models/demo/SandboxAsset/Dungeon/SM_SB_Pillar.glb",
+    "rockA": "@engine/assets/models/demo/LowPoly/SM_Rock01.glb",
+    "rockB": "@engine/assets/models/demo/LowPoly/SM_Rock02.glb",
+    "rockC": "@engine/assets/models/demo/LowPoly/SM_Rock03.glb",
+    "grass": "@engine/assets/models/demo/LowPoly/SM_Grass01.glb"
+  },
+  "defaults": { "physics": false },
+  "groups": [
+    { "name": "Pillars", "defaults": { "physics": true }, "items": [
+      { "key": "pillar", "asset": "pillar", "instanced": false, "ring": { "count": 16, "radius": 18, "faceCenter": true } }
+    ]},
+    { "name": "Rocks", "items": [
+      { "key": "rock", "asset": ["rockA", "rockB", "rockC"], "scale": 4, "ring": { "count": 24, "radius": 26, "startDeg": 7.5 },
+        "jitter": { "position": [1.5, 0, 1.5], "rotation": [0, 180, 0], "scale": 0.3 } }
+    ]},
+    { "name": "Grass", "defaults": { "instanced": true, "castShadow": false }, "items": [
+      { "key": "tuft", "asset": "grass", "ring": { "count": 64, "radius": 22 },
+        "jitter": { "position": [3, 0, 3], "rotation": [0, 180, 0], "scale": 0.4 } }
+    ]}
+  ]
+}

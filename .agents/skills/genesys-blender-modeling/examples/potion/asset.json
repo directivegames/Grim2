@@ -1,0 +1,1 @@
+{ "role": "pickup", "export": "assets/models/pickups/SM_Potion.glb", "expect": { "size": [0.24, 0.36, 0.24], "materials": 3, "bottom": 0 } }

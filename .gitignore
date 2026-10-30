@@ -24,6 +24,9 @@
 **/.turbo/**
 **/.cache/**
 **/.intermediate/*
+# Agent work files and raw art downloads (Blender and generated-asset skills); never committed or shipped
+/.scratch/
+/art-source/
 
 # GENESYS-SDK-END
 

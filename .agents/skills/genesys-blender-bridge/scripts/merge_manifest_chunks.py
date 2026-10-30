@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Merge compressed Genesys bridge extraction chunks into one manifest."""
+"""Merge compressed Genesys bridge extraction chunks into one manifest.
+
+    python3 merge_manifest_chunks.py .scratch/blender-bridge/chunks/chunk-*.json \
+        --output .scratch/blender-bridge/manifest.json
+
+Each chunk file is one extract_genesys_scene.js response saved as JSON (the object with
+format "genesys-blender-bridge-chunk-compressed"; a {"result": ...} wrapper is accepted).
+Chunks may have different counts; offsets must be contiguous from 0 to total.
+"""
 
 from __future__ import annotations
 
@@ -43,6 +51,11 @@ def decode_chunk(raw: Any) -> dict[str, Any]:
     # Genesys run_script wrappers often nest under result.
     if "result" in raw and isinstance(raw["result"], dict):
         raw = raw["result"]
+    if "_meta" in raw or raw.get("truncated") is True:
+        raise MergeError(
+            "Chunk response was truncated by the MCP response limit (_meta present); "
+            "re-extract that offset with a smaller COUNT"
+        )
 
     if raw.get("format") == "genesys-blender-bridge-chunk-compressed":
         payload = raw.get("payload")

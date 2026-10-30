@@ -1,0 +1,1 @@
+{ "role": "prop", "export": "assets/models/props/SM_Torch.glb", "expect": { "tris": [100, 1500], "size": [0.18, 0.77, 0], "markers": ["light_socket"], "materials": 4 } }

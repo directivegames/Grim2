@@ -1,178 +1,115 @@
 ---
 name: genesys-physics
-description: Genesys physics beyond basic PrimitiveNode setup - raycasts/hit tests, joints/constraints, impulses, raw physics bodies, collision-ignore pairs, character-controller internals, and vehicle physics (wheels, suspension, friction, steering). Use for shooting, ragdolls, hinges, or drivable vehicles. Basic PrimitiveNode options live in genesys-engine; vehicle pawn integration lives in genesys-movement.
+description: "Physics queries and bodies: raycasts, line of sight, overlaps, sweeps, pushing props, explosions, joints, collision channels, ignore pairs, CCD, debris; substitutes for ragdolls and bouncy or slippery materials (the engine has neither). Use for physics queries, collision layers, crates, hinges, chains, objects falling through walls, ragdoll, bouncy. Not for knockback (use `genesys-movement`), damage (use `genesys-combat`), doors (use `genesys-interactions`) or cars (use `genesys-vehicles`)."
 metadata:
-  tokens: 2565
+  tokens: 2873
 ---
 
-# Genesys Physics (Advanced)
+# Physics
 
-Engine physics lives under `.engine/src/physics/` — `PhysicsEngine.ts` (public types/interface), `BasePhysicsEngine.ts` (shared logic, node/joint/body bookkeeping), `IPhysicsVehicle.ts` (vehicle contract), `PhysicsTypes.ts` (motion types, collision mesh types), `implementations/RapierPhysics.ts` + `implementations/RapierVehicle.ts` (the only backend — Rapier). Read source for exact signatures; this skill maps what exists and flags non-obvious behavior.
+This skill maps the engine's physics API (Rapier is the only backend), owns collision profiles and channels, and lists what the engine does not have. The rule: **reach physics through `node.getPhysicsEngine()`, null-check it, and use the call that matches the body type — node-attached bodies and raw handles are separate systems, and kinematic characters ignore velocity writes.**
 
-## Accessing the engine
+## Use another skill when
+- A gun, hitscan, projectile, melee swing, or damage → `genesys-combat` (`InstantHitWeaponNode` already does the hitscan ray)
+- Knocking back or launching a character or pawn → `genesys-movement` (jump-and-knockback reference)
+- A door that opens and stops at an angle → `DoorNode` in `genesys-interactions`
+- Triggers, pickups, moving platforms and their riders → `genesys-interactions`
+- Walking, jumping, character movement → `genesys-movement` (it uses the character controller for you)
+- A drivable car, wheels, suspension, `IPhysicsVehicle` → `genesys-vehicles`
+- `PrimitiveNode` basics, class registration, `isRoot`, local vs world transforms → `genesys-engine`
+- Predicted queries inside GSS abilities → `genesys-movement` (its GSS mechanics reference covers `GSSAbilityContext.world`)
+- Physics cost and hitches → `genesys-profiler`
 
-Any `SceneNode` (not just `PrimitiveNode`) can reach physics: `node.getPhysicsEngine(): IPhysicsEngine | null` (`.engine/src/nodes/SceneNode.ts`). Returns null before the node is in the world or if physics isn't initialized — always null-check.
+## Decide
 
-## Two body identity systems — do not mix them
+| Need | Call |
+|---|---|
+| Line of sight, ground probe, "what is in front of me" | `raycast(options)` (nearest) / `raycastAll(options)` (all, nearest first) |
+| Fat probe, "will this capsule fit" | `sweepShape(options)` |
+| Explosion radius, area check now | `overlapShape(options)` |
+| Is this point inside something / closest surface | `projectPoint(options)`, `overlapPoint(options)` |
+| Are these two nodes touching, how deep | `contactBetweenNodes(a, b, maxDistance?)` |
+| Will a fast mover hit that node this frame | `sweepBetweenNodes(a, velA, b, velB, maxTime)` |
+| Who touched me after the last step | `getContactingNodes(node, includeTriggers?)` |
+| Shove a Dynamic `PrimitiveNode` (crate, barrel, ball) | Add a velocity change (m/s) to `LinearVelocity` |
+| Knock back a character or pawn | Not here: kinematic bodies ignore `LinearVelocity` → `genesys-movement` |
+| Push a raw debris body | `applyImpulseToPhysicsBody(handle, impulse, worldSpace = true)` |
+| Free swing: sign, chain, lamp, wrecking ball, flail | `createJoint({ type: Revolute / Spherical, ... })` |
+| Door with an open angle | `DoorNode` (`genesys-interactions`); joints have no limits |
+| Slider, piston | `JointType.Prismatic`; weld two bodies: `JointType.Fixed` |
+| Hundreds of short-lived chunks not worth a node | `createPhysicsBody(desc)` raw bodies |
+| Teleport a physics node | `teleportBody(node, position, rotation?)` |
+| Small fast body tunnels through thin walls | `physicsOptions.enableCCD: true` |
+| Two bodies must pass through each other | `setNodeCollisionIgnore(nodeA, nodeB, true)`. Profiles set channel-wide rules |
 
-- Node-attached bodies — created automatically when a physics-enabled `PrimitiveNode` enters the world (`registerPhysicsBody`/`addNode`). Addressed by the `PrimitiveNode` itself: `hasNode`/`addNode`/`removeNode` (manual use is rare — mainly to pull a node out of the sim without destroying it), `getScalarParam`/`setScalarParam`, `getVectorParam`/`setVectorParam`/`clearVectorParam`, `teleportBody(node, position, rotation?)`, `getNodeState(node)`, `createJoint(desc)` (takes `nodeA`/`nodeB`), `setNodeCollisionIgnore(nodeA, nodeB, ignore)`.
-- Raw/direct bodies — created via `createPhysicsBody(desc): PhysicsBodyHandle | null`, not tied to any `SceneNode` (e.g. debris, procedural physics props). Addressed by an opaque string handle: `removePhysicsBody`, `isValidPhysicsBody`, `getPhysicsBodyPosition`/`getPhysicsBodyRotation`, `setPhysicsBodyPosition`/`setPhysicsBodyRotation`, `applyImpulseToPhysicsBody(handle, impulse, worldSpace = true)`, `setPhysicsBodyEnabled`, `createJointFromBodies(...)` (joins two handles).
+Query defaults: no `collisionProfile` means **no channel filter** — the query hits every non-trigger collider except what `ignoredRootNodes` / `ignoredNodes` remove. `InstantHitWeaponNode` relies on exactly that: `raycast` with no profile and `ignoredRootNodes: [its root]`. Triggers are excluded unless `includeTriggers: true`.
 
-There is no impulse method for node-attached bodies — to push one, add to its `LinearVelocity` via `setVectorParam` (there's no additive "applyImpulse" for nodes, so read the current value first if you want to add rather than replace).
+**Not in the engine — use the substitute.**
 
-Use `createJoint` to join two nodes, or `createJointFromBodies` to join two raw handles. Other joint-creation overloads on the engine are for internal use.
+| Asked for | Engine has | Default substitute |
+|---|---|---|
+| Ragdoll | No ragdoll system. The `Ragdoll` collision profile exists; nothing builds one. | Death beat: tip-over/shrink tween + VFX (`genesys-creatures`). For a physical collapse, hide the model and spawn 1–3 Dynamic primitives (or raw bodies) with an outward 2–4 m/s velocity; despawn after 2–4 s. |
+| Bouncy surface or ball | No restitution option on bodies. | On the collision event, write the reflected velocity × 0.6–0.8 with `setVectorParam` (verify in Play). Bounce pads for characters → `genesys-movement` (launch). |
+| Slippery / sticky surface | No friction option on bodies (only vehicle wheels have friction). | Characters: movement tuning (lower deceleration) inside a trigger zone, `genesys-movement`. Props: raise `LinearDamping` for sticky; slippery props cannot be made. |
 
-## Raycasts / hit tests
+## Build
 
-Use `raycast(options): PhysicsQueryHit | null` for the nearest hit and
-`raycastAll(options): PhysicsQueryHit[]` for every hit ordered nearest first.
+**Access.** Any `SceneNode` can reach physics: `node.getPhysicsEngine(): IPhysicsEngine | null`. It returns null before the node is in the world or when physics is not initialized.
 
-- Options: `origin`, `direction` (normalized internally), `maxDistance`, optional
-  `collisionProfile`, `ignoredRootNodes`, `ignoredNodes`, and `includeTriggers` (default false).
-- Results include `hitLocation`, `hitNormal`, `hitNode`, and `distance`.
-- `performHitTest` remains available for compatibility. Prefer the explicit raycast methods in new code.
+**Direction is world space.** Query `direction` is world space. `node.forwardDirection()` is world space on any node, a child (muzzle, visual) included; `forwardDirection(false)` is the parent-space axis. For a three camera, `camera.getWorldDirection()` is its look direction (−Z). Three's `getWorldDirection()` on a non-camera node returns world **+Z**.
 
-## Sweeps, overlaps, and point queries
+**Raycast.** Options: `origin`, `direction` (normalized internally), `maxDistance`, plus shared `collisionProfile`, `ignoredRootNodes`, `ignoredNodes`, `includeTriggers` (default false). Hits carry `hitLocation`, `hitNormal`, `hitNode`, `distance`; `performHitTest` is deprecated and does not normalize `direction`; use `raycast` or `raycastAll`. A query's `collisionProfile` takes a profile name (`ENGINE.DefaultCollisionProfile.X`) or a `CollisionProfile` object. Line of sight is a raycast with the `SpringArmCamera` profile (walls block, characters don't) that ignores both roots: `hasLineOfSight` in [queries](references/queries.md#line-of-sight).
 
-All scene queries share `PhysicsQueryOptions` (`collisionProfile`, ignore lists,
-and `includeTriggers`). Shape queries take a `PhysicsShape`, or a `PhysicsBodyShape`
-bag which is converted. Overlap results are unique by node.
+**Push a dynamic body.** There is no impulse call for scene nodes. Add a velocity change in m/s, which needs no mass. Crate shove 3–6 m/s horizontal plus 1–2 m/s up; explosion 8–15 m/s falling off to 0 at the radius. This moves only `Dynamic` bodies.
 
-- `sweepShape(options)` returns the first hit along a unit direction.
-- `overlapShape(options)` returns nodes overlapping a posed shape.
-- `projectPoint(options)` returns the closest point and whether the query point is inside.
-- `overlapPoint(options)` returns nodes containing a point.
-
-```typescript
-const sweep = physicsEngine.sweepShape({
-  position: origin,
-  shape: ENGINE.PhysicsShape.sphere(0.4)!,
-  direction: this.forwardDirection(),
-  maxDistance: 8,
-  ignoredRootNodes: [this.getRoot()!],
-});
-if (sweep?.hitNode) {
-  console.log('swept into', sweep.hitNode.name, 'at', sweep.distance);
-}
-
-const overlaps = physicsEngine.overlapShape({
-  position: this.getWorldPosition(new THREE.Vector3()),
-  shape: ENGINE.PhysicsShape.box(new THREE.Vector3(2, 2, 2))!,
-});
-```
-
-## Node pair queries
-
-These include all physics shapes attached to each `PrimitiveNode`, including compounds.
-
-- `contactBetweenNodes(nodeA, nodeB, maxDistance?)` — closest points; negative `distance` is penetration.
-- `sweepBetweenNodes(nodeA, velocityA, nodeB, velocityB, maxTime)` — first impact along world-space velocities.
-- `getContactingNodes(node, includeTriggers?)` — nodes touching after the last physics step.
-
-```typescript
-const contact = physicsEngine.contactBetweenNodes(crateA, crateB, 0.05);
-if (contact && contact.distance < 0) {
-  console.log('penetrating by', -contact.distance);
-}
-
-const hit = physicsEngine.sweepBetweenNodes(
-  projectile,
-  velocity,
-  wall,
-  new THREE.Vector3(),
-  dt,
-);
-if (hit) {
-  console.log('impact at t=', hit.time);
+Source: Composed — typechecked against 18.1.0-alpha.317 (`PhysicsEngine.ts` `PhysicsVectorParam`, `getVectorParam`, `setVectorParam`)
+```ts
+/** Shove a Dynamic PrimitiveNode by a velocity change in m/s (mass-independent). */
+export function pushBody(body: ENGINE.PrimitiveNode, deltaV: THREE.Vector3): void {
+  const physics = body.getPhysicsEngine();
+  if (!physics) return;
+  const v = physics.getVectorParam(body, ENGINE.PhysicsVectorParam.LinearVelocity) ?? [0, 0, 0];
+  physics.setVectorParam(body, ENGINE.PhysicsVectorParam.LinearVelocity, [v[0] + deltaV.x, v[1] + deltaV.y, v[2] + deltaV.z]);
 }
 ```
 
-```typescript
-import * as ENGINE from '@gnsx/genesys.js';
-import * as THREE from 'three';
+The explosion loop (overlap → `pushBody` with falloff) is in [queries](references/queries.md). Scalars: `PhysicsScalarParam.LinearDamping`, `AngularDamping`, `GravityScale` through `getScalarParam` / `setScalarParam`. `clearVectorParam` clears a vector param.
 
-@ENGINE.GameClass()
-export class HitscanWeaponNode extends ENGINE.SceneNode {
-  @ENGINE.property()
-  public damage: number = 10;
+**Tunnelling.** A small body that moves more than its own size per frame (a 0.2 m ball at 30 m/s moves 0.5 m per 60 Hz frame) passes through thin walls. Set `physicsOptions: { enableCCD: true }` on it. `PrimitiveNode` defaults to `false`; `Projectile` already turns it on.
 
-  @ENGINE.property()
-  public range: number = 100;
+**Joints.** `createJoint`, `getActiveJoints` and `removeJoint(id)` are on `IPhysicsEngine`. `JointDesc` is `{ type, nodeA, nodeB, anchorA, anchorB, axis? }` (anchors local, `axis` required for `Revolute` / `Prismatic`) with **no limits and no motors**, so a `Revolute` hinge swings a full 360°. Create joints after `beginPlay`, between nodes that each resolve to exactly one body; raw handles join with `createJointFromBodies`. Snippet and joint uses: [bodies-and-joints](references/bodies-and-joints.md#joints-and-constraints).
 
-  public fire(): void {
-    const physicsEngine = this.getPhysicsEngine();
-    if (!physicsEngine) {
-      return;
-    }
+**Collision profiles.** A body's profile sets its channel and how it responds (Block, Overlap, Ignore) to every other channel; unlisted channels Block. Set it on the node with `physicsOptions.collisionProfile: ENGINE.DefaultCollisionProfile.X` (enum or name string). Pass the looked-up profile object to queries. Defaults: static level geometry `BlockAll`; moving props `BlockAllDynamic`; triggers `Trigger`; pawns `Character` (set by `CharacterPawn`; it ignores the Pawn channel); invisible bounds `InvisibleWall`. The full table, custom channels, and custom profiles: [collision-profiles](references/collision-profiles.md).
 
-    const origin = new THREE.Vector3();
-    this.getWorldPosition(origin);
+Shape and node-pair queries: [queries](references/queries.md). Body identity, raw bodies, collision-ignore semantics, the character controller, and the source index: [bodies-and-joints](references/bodies-and-joints.md).
 
-    const hit = physicsEngine.raycast({
-      origin,
-      direction: this.forwardDirection(),
-      maxDistance: this.range,
-      collisionProfile: ENGINE.DefaultCollisionProfile.BlockAllDynamic,
-      ignoredRootNodes: [this.getRoot()!],
-    });
+## Limitations
+- Knockback on an enemy or the player does nothing → characters are kinematic, so `LinearVelocity` writes are ignored → `genesys-movement` (jump-and-knockback reference).
+- A hinged door spins all the way round → joints have no limits → `DoorNode` (`genesys-interactions`).
+- A "ragdoll" or "bouncy material" option invented in code → the engine has neither → the substitutes table above.
 
-    if (!hit?.hitNode) {
-      return;
-    }
+## Traps
+- A ray from a camera or muzzle child goes the wrong way → three's `getWorldDirection()` on a non-camera node (+Z) or `forwardDirection(false)` → `node.forwardDirection()`, or the camera's `getWorldDirection()`.
+- A hand-written hitscan weapon class → reinvents `InstantHitWeaponNode` → use it (`genesys-combat`).
+- `getPhysicsEngine()` is null → called in `initialize` or before the node is in the world → call from `beginPlay` or later, and null-check.
+- Ray hits the shooter → shooter not ignored → `ignoredRootNodes: [this.getRoot()!]`.
+- Ray ignores a trigger zone the design needs → triggers excluded by default → `includeTriggers: true`.
+- A fast ball or bolt passes through a wall → no CCD → `enableCCD: true`.
+- `teleportBody` or `setPhysicsBodyPosition` silently does nothing → wrong system for the body → `teleportBody(node, …)` for node bodies, `setPhysicsBodyPosition(handle, …)` for raw handles.
+- `applyImpulseToPhysicsBody` on a scene node fails → it only takes raw handles → add to `LinearVelocity`.
+- `createJoint` returns null with a console error → a compound node (contributing children) or instanced mesh has several bodies → joint single-body nodes.
+- Hand-written character controller jitters on steps and slopes → reimplemented layer → use the engine movement nodes (`genesys-movement`).
+- Stored `IPhysicsVehicle` goes inert after the chassis changed (`isDestroyed()` true, `getState()` null) → removing the chassis body destroys its controller → create a new vehicle; check `isDestroyed()` before use (`genesys-vehicles`).
 
-    console.log(`Hit ${hit.hitNode.name} at`, hit.hitLocation, 'normal', hit.hitNormal);
-    // Spawn impact VFX at hit.hitLocation oriented to hit.hitNormal, then apply
-    // this.damage to hit.hitNode.getRoot() if it exposes a health API.
-  }
-}
-```
+## Done
+- In Play, the query hits exactly what it should: test a hit, a miss, the shooter, and a trigger.
+- Pushes move dynamic bodies by a visible amount and never move static geometry.
+- A fast mover fired at the thinnest wall 10 times never passes through.
+- A joint holds under load: the sign swings on its axis and the anchor body stays put.
+- No physics warnings or joint errors in the console (`read_console_messages`).
+- The hit is also seen and heard (`genesys-game-feel`); evidence per `genesys-verification`.
 
-## Joints and constraints
-
-`JointType`: `Spherical`, `Fixed`, `Revolute`, `Prismatic`. `JointDesc`: `{ type, nodeA, nodeB, anchorA, anchorB, axis? }` — anchors are local to each body; `axis` is required for `Revolute`/`Prismatic`.
-
-`createJoint(desc)` fails (returns `null`, logs) unless `nodeA` and `nodeB` each resolve to exactly one physics body — a compound node (contributing children) or an instanced-mesh node has multiple records and cannot be jointed directly. Manage with `removeJoint(id)` and `getActiveJoints()`.
-
-```typescript
-const jointId = physicsEngine.createJoint({
-  type: ENGINE.JointType.Revolute,
-  nodeA: hingeMount,               // static or kinematic anchor body
-  nodeB: door,                     // dynamic PrimitiveNode that swings
-  anchorA: new THREE.Vector3(0, 1, 0),   // local to hingeMount
-  anchorB: new THREE.Vector3(-0.5, 1, 0), // local to door
-  axis: new THREE.Vector3(0, 1, 0),
-});
-```
-
-## Collision ignore pairs
-
-`setNodeCollisionIgnore(nodeA, nodeB, ignore)` only suppresses the `onCollideWith`/`onOverlapWith` (and stop-*) event pair between the two nodes — it does not disable the physical contact response. The bodies still solidly push against each other; only the JS notification is skipped. To make two dynamic bodies pass through each other physically, use collision profiles/channels (`genesys-engine`), not this call.
-
-## Character controller internals
-
-`createCharacterController(node, options)` / `removeCharacterController(node)` / `computeCharacterMovement(...)` back every kinematic movement node's ground/step/slope handling (`CharacterControllerOptions`: offset, gravity scale, slope angles, auto-step, snap-to-ground — see `.engine/src/physics/PhysicsEngine.ts`). Call these directly only when authoring a fully custom movement node from scratch; standard character movement should go through the engine's existing movement nodes rather than reimplementing this layer.
-
-## Vehicle physics
-
-`createVehicle(movementNode, chassisNode): IPhysicsVehicle | null` turns an existing Dynamic `PrimitiveNode` chassis (already registered with physics) into a wheeled vehicle. Wheel tuning (`addWheel`, suspension/friction parameters, engine/brake/steering, state queries) is substantial enough to have its own reference: [vehicle-physics](references/vehicle-physics.md). Pawn-level driving integration (`VehicleMovementNode`, input wiring) is owned by the `genesys-movement` skill — this reference covers only the underlying `IPhysicsVehicle` API those classes call into.
-
-## Footguns
-
-- `teleportBody` vs handle-based body control are different systems — `teleportBody(node, ...)` only works for node-attached bodies; raw bodies from `createPhysicsBody` use `setPhysicsBodyPosition`/`setPhysicsBodyRotation` instead. Calling the wrong one for a given body silently no-ops (node not found in the relevant map).
-- Joints need single-body nodes — see Joints above; compound/instanced nodes fail `createJoint` with a console error, not a thrown exception.
-- Vehicle chassis must already be in the sim as Dynamic — `createVehicle` looks up the chassis's existing physics record; call it after the chassis `PrimitiveNode` has a body (post-`beginPlay`), not before.
-- Destroying/rebuilding a vehicle's chassis body invalidates the controller — check `vehicle.isDestroyed()` before reusing a stored `IPhysicsVehicle` reference; removing the chassis node destroys its vehicle controller automatically.
-- `applyImpulseToPhysicsBody` only targets raw handles — there is no impulse call for node-attached bodies (see Two body identity systems above).
-
-## Source index
-
-| File | Contents |
-| --- | --- |
-| `.engine/src/physics/PhysicsEngine.ts` | `IPhysicsEngine` interface, `PhysicsShape`, ray/sweep/overlap/point/node-contact query types, `PhysicsBodyDesc`/`PhysicsBodyShape`, scalar/vector param enums, `CharacterControllerOptions` |
-| `.engine/src/physics/BasePhysicsEngine.ts` | Shared engine logic; `JointType`, `JointDesc`; node/joint/direct-body bookkeeping |
-| `.engine/src/physics/IPhysicsVehicle.ts` | `VehicleWheelConfig`, `VehicleWheelState`, `VehicleState`, `IPhysicsVehicle` |
-| `.engine/src/physics/PhysicsTypes.ts` | `PhysicsMotionType`, `CollisionMeshType`, `NodePhysicsOptions`, voxel/heightfield collision descriptors |
-| `.engine/src/physics/createPhysicsEngine.ts` | Backend factory (Rapier only) |
-| `.engine/src/physics/implementations/RapierPhysics.ts` | Rapier backend: scene queries, joints, direct bodies, collision groups/ignore, character controller |
-| `.engine/src/physics/implementations/RapierVehicle.ts` | Rapier `DynamicRayCastVehicleController` wrapper backing `IPhysicsVehicle` |
-| `.engine/src/nodes/SceneNode.ts` | `getPhysicsEngine()` accessor |
+## References
+- [queries](references/queries.md) — raycast, sweep, overlap, point, and node-pair queries, with snippets and the explosion push
+- [collision-profiles](references/collision-profiles.md) — every default profile, channels, modes, responses, custom profiles, query filtering
+- [bodies-and-joints](references/bodies-and-joints.md) — node vs raw bodies, all body calls, joints, collision ignore, character controller, footguns, source index

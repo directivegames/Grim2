@@ -167,8 +167,8 @@ importers:
   .:
     dependencies:
       '@gnsx/genesys.js':
-        specifier: 19.0.0-alpha.571
-        version: 19.0.0-alpha.571(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)
+        specifier: 19.0.0-alpha.1058
+        version: 19.0.0-alpha.1058(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)
       three:
         specifier: npm:@gnsx/three@0.186.24
         version: '@gnsx/three@0.186.24'
@@ -535,8 +535,8 @@ packages:
   '@gltf-transform/functions@4.5.1':
     resolution: {integrity: sha512-rfm4nQY2DJ+ip1e15xp7YfQwhRno3kPLcGw4EZiRk1dVwMV3cdFMcF08glYcO/+oLyYkUEs3xXMJYXa0cPgcTg==}
 
-  '@gnsx/genesys.js@19.0.0-alpha.571':
-    resolution: {integrity: sha512-wVeMdzV3Y1aNvFx9vPIXQsiQLwtfN4nn1VfrePjlBs7jmMFXhtf6CbNKdEZzeVZcXVeVQ8BW8Vpv8kmITTXpSA==}
+  '@gnsx/genesys.js@19.0.0-alpha.1058':
+    resolution: {integrity: sha512-BU8Xqn920slgojrdTFDjI6UXobAgMD4YrvsmV4K7iavgjRirJ3ntgPY3dRxd2H+EDVTl8V+9V9BOjIJC28TQ/A==}
     hasBin: true
     peerDependencies:
       commander: '>=12'
@@ -3643,7 +3643,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@gnsx/genesys.js@19.0.0-alpha.571(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)':
+  '@gnsx/genesys.js@19.0.0-alpha.1058(@gltf-transform/core@4.5.1)(@gltf-transform/extensions@4.5.1)(@gltf-transform/functions@4.5.1(@types/node@25.9.3))(@gnsx/three-types@0.186.13)(commander@13.1.0)(jsdom@26.1.0(canvas@3.1.0)(supports-color@10.2.2))(supports-color@10.2.2)':
     dependencies:
       '@dimforge/rapier3d-compat': 0.18.2
       '@recast-navigation/core': 0.43.1

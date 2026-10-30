@@ -6,6 +6,22 @@
 { "assetCompiler": { "enabled": true, "conversionHook": "scripts/asset-conversion-hook.mjs" } }
 ```
 
+## Patterns or a hook
+
+The short version is in [SKILL.md → Prefer the simplest tool](../SKILL.md#prefer-the-simplest-tool). Pick the first row that fits:
+
+| Need | Use |
+| --- | --- |
+| Skip a whole texture or audio file type | Format toggle (`textureCompression.formats`, `audioCompression.formats`) |
+| Keep a folder or file of textures raw (UI, CPU data) | Exclude pattern |
+| Keep a GLB's embedded textures raw | Exclude pattern on the GLB path |
+| Re-include one texture inside an excluded folder | `folder/*` plus a `!folder/file.png` pattern |
+| Skip Meshopt, the override strip, or MP3 for specific files | Conversion hook |
+| Force-convert a texture that a pattern excludes | Conversion hook |
+| Decide from data (a JSON list, naming rules patterns cannot express) | Conversion hook |
+
+Patterns are the default because they are plain data: editable in Project Settings (with a live match count), applied to asset-browser badges in every editor, and they cannot fail. The hook is a separate JavaScript file that must stay synchronous, only drives badges in the desktop app, and falls back to built-in rules with a single warning if it fails to load. When you do write one, keep it deterministic (same input, same answer, no reliance on time or environment), return `undefined` for everything it does not care about, and leave texture folders to patterns.
+
 ## Module contract
 
 The module must export a function named `shouldConvertAsset`:

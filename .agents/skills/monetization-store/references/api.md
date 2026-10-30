@@ -74,17 +74,18 @@ database: a purchase, claim or consume shows in the next read.
 ### Environment and identity
 
 The store API resolves the environment from the request `Origin`: the studio
-and sandbox.game hosts are production (real payments); the internal
-development hosts and `localhost` are development (sandbox payments). Each
-environment validates its own platform cookie and accepts its own Studio
-tokens.
+and sandbox.game hosts are production; the internal development hosts and
+`localhost` are development. Each environment validates its own platform
+cookie and accepts its own Studio tokens. The environment never decides money:
+every Pay Station payment is real, on dev and staging too (orders there are
+recorded DEV and stay out of the reports). Only editor play uses Test Silicon.
 
 Identity, in order:
 
 1. `X-Genesys-Token`: the Studio token, the same one core receives. With
-   `X-Store-Context: editor` and a game the token's user owns, the balance is
-   Test Silicon and the session reports sandbox payments. There is no Get
-   Silicon in the editor.
+   `X-Store-Context: editor` (core forwards it only for the game's owner), the
+   balance is Test Silicon and the session reports `paymentMode: "sandbox"`,
+   display only. There is no Get Silicon in the editor.
 2. The platform cookie, sent by browsers with `credentials: "include"` from
    any `*.sandbox.game` page. A page on plain `localhost` has neither and is
    a guest.
@@ -127,11 +128,17 @@ POST /api/balance/refresh (session, no body)
   Silicon (`controller.returnedToGame()`). A read made in the last 10 s is
   reused. An older API answers 404; the client then uses `GET /api/balance`.
 
-POST /api/balance/test-coins/refill?gameId= (session, editor context, game owner)
-: Grants 10,000 Test Silicon for free.
-  `{ currency: "test-coins", granted: 10000, orderId }`. The balance updates
-  about 1 s later; re-read it. 403 `EDITOR_OWNER_REQUIRED` outside the editor
-  or for anyone but the game's owner.
+POST /v2/games/{gameId}/test-silicon/refill (core, Studio token, game owner)
+: Grants 10,000 Test Silicon for free. `{ granted }`. The balance updates
+  about 1 s later; re-read it. 403 `NOT_GAME_OWNER` for anyone but the game's
+  owner, 404 `GAME_NOT_FOUND`. The store's own refill route is core-only; games
+  never call it.
+
+The store is in the editor unless the page set
+`window._genesys_is_published_game_ = true` (the published play page does, before
+the game starts). Editor context sends `X-Store-Context: editor`: Test Silicon,
+drafts visible. Core answers a non-owner's editor purchase with 409
+`REAL_COINS_DISABLED_IN_EDITOR`.
 
 The store API also has `POST /api/games/{gameId}/items/{sku}/acquire` and
 `/claim`. Core calls them on the player's behalf; games never do.
